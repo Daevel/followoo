@@ -11,11 +11,14 @@ function App() {
         <div>
           <p>Insert here your 2 JSON files to compare</p>
           //TODO: Add file input and comparison logic
+          <button>Compare files</button>
         </div>
 
         <div>
           //TODO: Display results of comparison (followers not following back, following not followed back, mutual followers)
         </div>
+
+
       </div>
     </>
   )
