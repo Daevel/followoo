@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { Icon } from "./components/Icon";
 
 function safeJsonParse(text) {
   try {
@@ -69,13 +70,19 @@ function compareLists(followersJson, followingJson) {
 
   const onlyA = followers.filter((u) => !setB.has(u)); // follows you, you don't follow
   const onlyB = following.filter((u) => !setA.has(u)); // you follow, they don't follow back
-  const both = following.filter((u) => setA.has(u));   // mutuals (restricted to people you follow)
+  const both = following.filter((u) => setA.has(u)); // mutuals (restricted to people you follow)
 
   onlyA.sort();
   onlyB.sort();
   both.sort();
 
-  return { followersCount: followers.length, followingCount: following.length, onlyA, onlyB, both };
+  return {
+    followersCount: followers.length,
+    followingCount: following.length,
+    onlyA,
+    onlyB,
+    both,
+  };
 }
 
 export default function App() {
@@ -125,25 +132,64 @@ export default function App() {
     }
   }
 
-  const list =
-    result
-      ? activeTab === "onlyA"
-        ? result.onlyA
-        : activeTab === "both"
-          ? result.both
-          : result.onlyB
-      : [];
+  const list = result
+    ? activeTab === "onlyA"
+      ? result.onlyA
+      : activeTab === "both"
+        ? result.both
+        : result.onlyB
+    : [];
 
   function copyList() {
     navigator.clipboard?.writeText(list.join("\n"));
   }
 
   return (
-    <div style={{ maxWidth: 980, margin: "0 auto", padding: 16, display: "grid", gap: 12 }}>
-      <h2 style={{ margin: 0 }}>Instagram compare (upload files)</h2>
+    <div
+      className="bg-bg font-inter"
+      style={{
+        maxWidth: 980,
+        margin: "0 auto",
+        padding: 16,
+        display: "grid",
+        gap: 12,
+      }}
+    >
+      <h2 className="text-primary" style={{ margin: 0 }}>
+        Instagram compare (upload files)
+      </h2>
+
+      <div>
+        <h1>Heading 1</h1>
+
+        <label className="l2-b text-base">Email</label>
+        <span className="l3-r text-base">Helper text</span>
+
+        <p className="p1-r text-base">Paragraph 1 regular (16px)</p>
+
+        <p className="p1-b text-base">Paragraph 1 medium (16px)</p>
+
+        <p className="p2-r text-base">Paragraph 2 regular (14px)</p>
+
+        <p className="p2-b text-base">Paragraph 2 bold (14px)</p>
+
+        <p className="p3-r text-base">Paragraph 3 regular (12px)</p>
+
+        <p className="p3-b text-base">Paragraph 3 medium (12px)</p>
+
+        <Icon name="checkCircle" className="w-6 h-6 text-primary" />
+        <Icon name="checkCircleOutline" className="w-6 h-6 text-primary" />
+        <Icon name="chevronDoubleRight" className="w-6 h-6 text-primary" />
+        <Icon name="chevronDoubleLeft" className="w-6 h-6 text-primary" />
+        <Icon name="help" className="w-6 h-6 text-primary" />
+        <Icon name="trash" className="w-6 h-6 text-accent" />
+        <Icon name="warning" className="w-6 h-6 text-accent" />
+      </div>
+
       <div style={{ opacity: 0.8 }}>
-        Upload <b>followers.json</b> as List A and <b>following.json</b> as List B. Then check{" "}
-        <b>Only in list B</b>.
+        Upload <b className="text-primary">followers.json</b> as List A and{" "}
+        <b className="text-accent">following.json</b> as List B. Then check{" "}
+        <b className="text-primary">Only in list B</b>.
       </div>
 
       <div style={{ display: "grid", gap: 12, gridTemplateColumns: "1fr 1fr" }}>
@@ -157,7 +203,11 @@ export default function App() {
               setFollowersJson(null);
             }}
           />
-          {followersFile && <span style={{ opacity: 0.7, fontSize: 12 }}>{followersFile.name}</span>}
+          {followersFile && (
+            <span style={{ opacity: 0.7, fontSize: 12 }}>
+              {followersFile.name}
+            </span>
+          )}
         </label>
 
         <label style={{ display: "grid", gap: 6 }}>
@@ -170,11 +220,18 @@ export default function App() {
               setFollowingJson(null);
             }}
           />
-          {followingFile && <span style={{ opacity: 0.7, fontSize: 12 }}>{followingFile.name}</span>}
+          {followingFile && (
+            <span style={{ opacity: 0.7, fontSize: 12 }}>
+              {followingFile.name}
+            </span>
+          )}
         </label>
       </div>
 
-      <button onClick={handleCompare} disabled={loading || !followersFile || !followingFile}>
+      <button
+        onClick={handleCompare}
+        disabled={loading || !followersFile || !followingFile}
+      >
         {loading ? "Comparing..." : "Compare"}
       </button>
 
@@ -207,7 +264,11 @@ export default function App() {
               Only in list B ({result.onlyB.length})
             </button>
 
-            <button onClick={copyList} disabled={!list.length} style={{ marginLeft: "auto" }}>
+            <button
+              onClick={copyList}
+              disabled={!list.length}
+              style={{ marginLeft: "auto" }}
+            >
               Copy
             </button>
           </div>
@@ -215,14 +276,20 @@ export default function App() {
           <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.7 }}>
             {list.slice(0, 300).map((u) => (
               <li key={u}>
-                <a href={`https://www.instagram.com/${u}/`} target="_blank" rel="noreferrer">
+                <a
+                  href={`https://www.instagram.com/${u}/`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   {u}
                 </a>
               </li>
             ))}
           </ul>
 
-          {list.length > 300 && <div style={{ opacity: 0.7 }}>Showing first 300 results…</div>}
+          {list.length > 300 && (
+            <div style={{ opacity: 0.7 }}>Showing first 300 results…</div>
+          )}
         </div>
       )}
     </div>
