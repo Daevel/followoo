@@ -1,5 +1,7 @@
-import React, { useMemo, useState } from "react";
-import { Icon } from "./components/Icon";
+import { useMemo, useState } from "react";
+import { FooterSignature } from "./components/ui/FooterSignature";
+import { Button } from "./components/ui/Button";
+import { Link, useNavigate } from "react-router-dom";
 
 function safeJsonParse(text) {
   try {
@@ -86,6 +88,8 @@ function compareLists(followersJson, followingJson) {
 }
 
 export default function App() {
+  const navigate = useNavigate();
+
   const [followersFile, setFollowersFile] = useState(null);
   const [followingFile, setFollowingFile] = useState(null);
 
@@ -145,153 +149,31 @@ export default function App() {
   }
 
   return (
-    <div
-      className="bg-bg font-inter"
-      style={{
-        maxWidth: 980,
-        margin: "0 auto",
-        padding: 16,
-        display: "grid",
-        gap: 12,
-      }}
-    >
-      <h2 className="text-primary" style={{ margin: 0 }}>
-        Instagram compare (upload files)
-      </h2>
+    <section className="min-h-svh bg-(--color-bg)">
+      <div className="mx-auto flex min-h-svh w-full max-w-100 flex-col items-center px-5 pt-20 gap-10 pb-6 text-center">
+        <h1 className="text-4xl font-semibold leading-headers text-white">
+          Followoo
+        </h1>
 
-      <div>
-        <h1>Heading 1</h1>
+        <p className="max-w-70 text-sm text-white/90">
+          Welcome to follow/unfollow instagram compare app
+        </p>
 
-        <label className="l2-b text-base">Email</label>
-        <span className="l3-r text-base">Helper text</span>
+        <Link to="/instructions-to-start" className="text-base underline">
+          Don't know how to start?
+        </Link>
 
-        <p className="p1-r text-base">Paragraph 1 regular (16px)</p>
+        <Button color="primary" onClick={() => navigate("/get-started")}>
+          Get started →
+        </Button>
 
-        <p className="p1-b text-base">Paragraph 1 medium (16px)</p>
-
-        <p className="p2-r text-base">Paragraph 2 regular (14px)</p>
-
-        <p className="p2-b text-base">Paragraph 2 bold (14px)</p>
-
-        <p className="p3-r text-base">Paragraph 3 regular (12px)</p>
-
-        <p className="p3-b text-base">Paragraph 3 medium (12px)</p>
-
-        <Icon name="checkCircle" className="w-6 h-6 text-primary" />
-        <Icon name="checkCircleOutline" className="w-6 h-6 text-primary" />
-        <Icon name="chevronDoubleRight" className="w-6 h-6 text-primary" />
-        <Icon name="chevronDoubleLeft" className="w-6 h-6 text-primary" />
-        <Icon name="help" className="w-6 h-6 text-primary" />
-        <Icon name="trash" className="w-6 h-6 text-accent" />
-        <Icon name="warning" className="w-6 h-6 text-accent" />
+        <img
+          src="/images/illustration-body-female-concerned-home.svg"
+          alt="illustration-hero-section"
+          className="w-[min(220px,70%)]"
+        />
+        <FooterSignature />
       </div>
-
-      <div style={{ opacity: 0.8 }}>
-        Upload <b className="text-primary">followers.json</b> as List A and{" "}
-        <b className="text-accent">following.json</b> as List B. Then check{" "}
-        <b className="text-primary">Only in list B</b>.
-      </div>
-
-      <div style={{ display: "grid", gap: 12, gridTemplateColumns: "1fr 1fr" }}>
-        <label style={{ display: "grid", gap: 6 }}>
-          <b>List A (Followers)</b>
-          <input
-            type="file"
-            accept="application/json,.json"
-            onChange={(e) => {
-              setFollowersFile(e.target.files?.[0] ?? null);
-              setFollowersJson(null);
-            }}
-          />
-          {followersFile && (
-            <span style={{ opacity: 0.7, fontSize: 12 }}>
-              {followersFile.name}
-            </span>
-          )}
-        </label>
-
-        <label style={{ display: "grid", gap: 6 }}>
-          <b>List B (Following)</b>
-          <input
-            type="file"
-            accept="application/json,.json"
-            onChange={(e) => {
-              setFollowingFile(e.target.files?.[0] ?? null);
-              setFollowingJson(null);
-            }}
-          />
-          {followingFile && (
-            <span style={{ opacity: 0.7, fontSize: 12 }}>
-              {followingFile.name}
-            </span>
-          )}
-        </label>
-      </div>
-
-      <button
-        onClick={handleCompare}
-        disabled={loading || !followersFile || !followingFile}
-      >
-        {loading ? "Comparing..." : "Compare"}
-      </button>
-
-      {err && <div style={{ color: "crimson" }}>{err}</div>}
-
-      {result && (
-        <div style={{ display: "grid", gap: 10 }}>
-          <div style={{ opacity: 0.85 }}>
-            Parsed followers: <b>{result.followersCount}</b> · Parsed following:{" "}
-            <b>{result.followingCount}</b>
-          </div>
-
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <button
-              onClick={() => setActiveTab("onlyA")}
-              style={{ fontWeight: activeTab === "onlyA" ? 700 : 400 }}
-            >
-              Only in list A ({result.onlyA.length})
-            </button>
-            <button
-              onClick={() => setActiveTab("both")}
-              style={{ fontWeight: activeTab === "both" ? 700 : 400 }}
-            >
-              In both ({result.both.length})
-            </button>
-            <button
-              onClick={() => setActiveTab("onlyB")}
-              style={{ fontWeight: activeTab === "onlyB" ? 700 : 400 }}
-            >
-              Only in list B ({result.onlyB.length})
-            </button>
-
-            <button
-              onClick={copyList}
-              disabled={!list.length}
-              style={{ marginLeft: "auto" }}
-            >
-              Copy
-            </button>
-          </div>
-
-          <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.7 }}>
-            {list.slice(0, 300).map((u) => (
-              <li key={u}>
-                <a
-                  href={`https://www.instagram.com/${u}/`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {u}
-                </a>
-              </li>
-            ))}
-          </ul>
-
-          {list.length > 300 && (
-            <div style={{ opacity: 0.7 }}>Showing first 300 results…</div>
-          )}
-        </div>
-      )}
-    </div>
+    </section>
   );
 }
