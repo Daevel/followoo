@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { FooterSignature } from "./components/ui/FooterSignature";
 import { Button } from "./components/ui/Button";
 import { Link, useNavigate } from "react-router-dom";
+import { Container } from "./components/ui/Container";
+import { HeroIllustrations } from "./components/ui/HeroIllustrations";
 
 function safeJsonParse(text) {
   try {
@@ -149,31 +151,37 @@ export default function App() {
   }
 
   return (
-    <section className="min-h-svh bg-(--color-bg)">
-      <div className="mx-auto flex min-h-svh w-full max-w-100 flex-col items-center px-5 pt-20 gap-10 pb-6 text-center">
-        <h1 className="text-4xl font-semibold leading-headers text-white">
-          Followoo
-        </h1>
+    <section className="min-h-svh">
+      <Container>
+        <div className="flex flex-col items-center pt-16 pb-6">
+          <div className="flex flex-col items-center text-center">
+            <h1 className="text-4xl font-semibold leading-headers text-base md:text-5xl">
+              Followoo
+            </h1>
 
-        <p className="max-w-70 text-sm text-white/90">
-          Welcome to follow/unfollow instagram compare app
-        </p>
+            <p className="mt-4 max-w-[18rem] text-sm text-base/90 md:max-w-[24rem] md:text-base">
+              Welcome to follow/unfollow instagram compare app
+            </p>
 
-        <Link to="/instructions-to-start" className="text-base underline">
-          Don't know how to start?
-        </Link>
+            <Link
+              to="/instructions-to-start"
+              className="mt-8 text-base underline"
+            >
+              Don't know how to start?
+            </Link>
 
-        <Button color="primary" onClick={() => navigate("/get-started")}>
-          Get started →
-        </Button>
+            <Button color="primary" onClick={() => navigate("/get-started")}>
+              Get started →
+            </Button>
 
-        <img
-          src="/images/illustration-body-female-concerned-home.svg"
-          alt="illustration-hero-section"
-          className="w-[min(220px,70%)]"
-        />
-        <FooterSignature />
-      </div>
+            <div className="mt-auto w-full pt-12">
+              <HeroIllustrations/>
+            </div>
+
+            <FooterSignature />
+          </div>
+        </div>
+      </Container>
     </section>
   );
 }

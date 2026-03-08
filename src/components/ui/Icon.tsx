@@ -20,12 +20,22 @@ const icons = {
 
 export type IconName = keyof typeof icons;
 
+type IconColor = "primary" | "accent" | "background" | "base";
+
+const colorClasses: Record<IconColor, string> = {
+  primary: "text-primary",
+  accent: "text-accent",
+  background: "text-background",
+  base: "text-base",
+};
+
 type Props = {
   name: IconName;
   title?: string;
+  color?: IconColor;
 } & Omit<SVGProps<SVGSVGElement>, "children">;
 
-export function Icon({ name, title, className, ...props }: Props) {
+export function Icon({ name, title, color="base", className, ...props }: Props) {
   const Svg = icons[name];
 
   const a11yProps: ComponentProps<"svg"> = title
@@ -33,7 +43,7 @@ export function Icon({ name, title, className, ...props }: Props) {
     : { "aria-hidden": true };
 
   return (
-    <Svg {...a11yProps} {...props} className={className}>
+    <Svg {...a11yProps} {...props} className={`${colorClasses[color]} ${className ?? ""}`}>
       {title ? <title>{title}</title> : null}
     </Svg>
   );
