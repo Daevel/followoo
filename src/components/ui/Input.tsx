@@ -1,19 +1,26 @@
-import { useState } from "react";
 import clsx from "clsx";
 
 interface InputProps {
   placeholder?: string;
   variant?: "input" | "textarea";
   maxLength?: number;
+  type?: "text" | "email" | "number";
+  name?: string;
+  value?: string;
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 }
 
 export function Input({
   placeholder,
   variant = "input",
+  type = "text",
+  name,
+  value = "",
+  onChange,
   maxLength = 500,
 }: InputProps) {
-  const [value, setValue] = useState("");
-
   const baseClasses =
     "w-full text-black bg-gray-200 border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent";
 
@@ -21,9 +28,10 @@ export function Input({
     return (
       <div className="w-full flex flex-col gap-1">
         <textarea
+          name={name}
           value={value}
           maxLength={maxLength}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={onChange}
           placeholder={placeholder}
           className={clsx(baseClasses, "min-h-[140px] resize-none py-3")}
         />
@@ -36,11 +44,12 @@ export function Input({
 
   return (
     <input
-      type="text"
+      type={type}
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={onChange}
       placeholder={placeholder}
       className={baseClasses}
+      name={name}
     />
   );
 }

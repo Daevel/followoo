@@ -6,6 +6,7 @@ interface ButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   className?: string;
+  type?: "button" | "submit" | "reset";
 }
 
 export function Button({
@@ -14,6 +15,7 @@ export function Button({
   onClick,
   disabled = false,
   className,
+  type = "button",
 }: ButtonProps) {
   const colorClasses = {
     primary: "bg-primary",
@@ -23,6 +25,7 @@ export function Button({
 
   return (
     <button
+      type={type}
       onClick={onClick}
       disabled={disabled}
       className={clsx(
