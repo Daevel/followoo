@@ -4,8 +4,8 @@ import { NavBar } from "../ui/NavBar";
 
 export function TermsAndConditions() {
   return (
-    <section className="min-h-svh">
-      <Container>
+    <section className="min-h-svh flex flex-col">
+      <Container  className="min-h-svh flex flex-col">
         <NavBar showHelp={false} />
         <div className="flex flex-col items-start pt-16 pb-6">
           <h2 className="text-4xl font-semibold leading-headers text-base md:text-5xl">
@@ -119,9 +119,10 @@ export function TermsAndConditions() {
               </div>
             </div>
 
-            <FooterSignature />
+            
           </div>
         </div>
+        <FooterSignature />
       </Container>
     </section>
   );

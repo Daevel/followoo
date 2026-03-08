@@ -75,12 +75,12 @@ export function HelpSection() {
   };
 
   return (
-    <section className="min-h-svh">
-      <Container>
+    <section className="min-h-svh flex flex-col">
+      <Container className="min-h-svh flex flex-col">
         <NavBar showHelp={false} />
-        <div className="flex flex-col items-start pt-16 pb-6 text-base">
+        <div className="flex flex-col items-start pt-15 pb-6 text-center text-base flex-1">
           <div className="flex flex-col items-start text-start mb-10">
-            <h2 className="text-4xl font-semibold leading-headers text-base md:text-5xl">
+            <h2 className="text-4xl font-semibold leading-headers md:text-5xl">
               Help section
             </h2>
             <p className="p1-r">
@@ -141,10 +141,9 @@ export function HelpSection() {
                 </form>
               </div>
             </div>
-
-            <FooterSignature />
           </div>
         </div>
+        <FooterSignature />
       </Container>
     </section>
   );

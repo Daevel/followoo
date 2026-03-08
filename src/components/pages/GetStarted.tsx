@@ -4,21 +4,45 @@ import { FooterSignature } from "../ui/FooterSignature";
 import { Button } from "../ui/Button";
 import { NavBar } from "../ui/NavBar";
 import { Icon } from "../ui/Icon";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Loading } from "../ui/Loading";
 
 export function GetStarted() {
-
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [selectedZipFile, setSelectedZipFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [termsAndConditionsAccepted, setTermsAndConditionsAccepted] = useState<boolean>(false);
+  const [termsAndConditionsAccepted, setTermsAndConditionsAccepted] =
+    useState<boolean>(false);
 
-  async function onSelectZipFile() {
-    return null;
+  function onSelectZipFile() {
+    fileInputRef.current?.click();
+  }
+
+  function onZipFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    const isZip =
+      file.type === "application/zip" ||
+      file.name.toLowerCase().endsWith(".zip");
+
+    if (!isZip) {
+      alert("Please select a .zip file");
+      event.target.value = "";
+      return;
+    }
+
+    setSelectedZipFile(file);
   }
 
   async function onElaborateFile() {
-    //simulate loading phase
+    if (!selectedZipFile) {
+      alert("Select a .zip file first");
+      return;
+    }
+
     setLoading(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -28,8 +52,12 @@ export function GetStarted() {
     }
   }
 
-  async function onDeleteZipFile() {
-    return null;
+  function onDeleteZipFile() {
+    setSelectedZipFile(null);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   }
 
   if (loading) {
@@ -37,27 +65,42 @@ export function GetStarted() {
   }
 
   return (
-    <section className="min-h-svh">
-      <Container>
+    <section className="min-h-svh flex flex-col">
+      <Container className="min-h-svh flex flex-col">
         <NavBar />
-        <div className="flex flex-col items-start pt-16 pb-6">
+        <div className="flex flex-col items-start pt-15 pb-6 text-center flex-1">
           <h2 className="text-4xl font-semibold leading-headers text-base md:text-5xl">
             Select your zip file
           </h2>
 
           <div className="flex flex-col items-center text-start">
             <div className="w-auto pt-10 flex flex-col items-center gap-10">
-              <Button color="primary" onClick={onSelectZipFile} className="w-full ">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".zip,application/zip"
+                onChange={onZipFileChange}
+                className="hidden"
+              />
+
+              <Button
+                color="primary"
+                type="button"
+                onClick={onSelectZipFile}
+                className="w-full cursor-pointer"
+              >
                 Select your zip here
               </Button>
 
               <div className="w-full flex flex-row items-center gap-4 mt-auto text-base justify-between">
-                <p className="p1-r">Placeholder nome file</p>
+                <p className="p1-r">
+                  {selectedZipFile ? selectedZipFile.name : "No file selected"}
+                </p>
                 <Icon
                   name="trash"
                   color="accent"
                   onClick={onDeleteZipFile}
-                  className="sm:h-8 sm:w-8 lg:h-11 lg:w-11"
+                  className="sm:h-8 sm:w-8 lg:h-11 lg:w-11 cursor-pointer"
                 />
               </div>
 
@@ -107,17 +150,23 @@ export function GetStarted() {
                 name="terms and conditions"
                 id="terms-and-conditions"
                 checked={termsAndConditionsAccepted}
-                onChange={(e) => setTermsAndConditionsAccepted(e.target.checked)}
+                onChange={(e) =>
+                  setTermsAndConditionsAccepted(e.target.checked)
+                }
               />
             </div>
 
-            <Button color="accent" disabled={!termsAndConditionsAccepted} onClick={onElaborateFile}>
+            <Button
+              color="accent"
+              disabled={!termsAndConditionsAccepted || !selectedZipFile}
+              onClick={onElaborateFile}
+            >
               Elaborate
             </Button>
-
-            <FooterSignature />
           </div>
         </div>
+
+        <FooterSignature />
       </Container>
     </section>
   );

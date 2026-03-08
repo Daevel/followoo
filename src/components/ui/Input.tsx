@@ -4,7 +4,7 @@ interface InputProps {
   placeholder?: string;
   variant?: "input" | "textarea";
   maxLength?: number;
-  type?: "text" | "email" | "number";
+  type?: "text" | "email" | "number" | "file";
   name?: string;
   value?: string;
   onChange?: (

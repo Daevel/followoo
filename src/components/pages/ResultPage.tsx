@@ -17,13 +17,10 @@ function TabButton({ children, active, onClick }: TabButtonProps) {
   return (
     <Button
       onClick={onClick}
-      className={clsx(
-        "transition-colors",
-        {
-          "bg-accent text-base": active,
-          "bg-primary text-base/90": !active,
-        }
-      )}
+      className={clsx("transition-colors", {
+        "bg-accent text-base": active,
+        "bg-primary text-base/90": !active,
+      })}
     >
       {children}
     </Button>
@@ -79,13 +76,13 @@ export function ResultPage() {
         : "Follow back List";
 
   return (
-    <section className="min-h-svh">
-      <Container>
+    <section className="min-h-svh flex flex-col">
+      <Container className="min-h-svh flex flex-col">
         <NavBar />
 
-        <div className="flex flex-col items-center pt-16 pb-6">
+        <div className="flex flex-col items-center pt-15 pb-6 text-center flex-1">
           <h2 className="text-3xl font-semibold leading-headers text-base md:text-4xl">
-            Here's what I've found
+            Here's what I've found!
           </h2>
 
           <div className="flex flex-row gap-3 align-middle items-center text-center">
@@ -128,11 +125,8 @@ export function ResultPage() {
               ))}
             </div>
           </div>
-
-          <div className="mt-auto pt-50">
-            <FooterSignature />
-          </div>
         </div>
+        <FooterSignature />
       </Container>
     </section>
   );

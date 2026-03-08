@@ -151,9 +151,9 @@ export default function App() {
   }
 
   return (
-    <section className="min-h-svh">
-      <Container>
-        <div className="flex flex-col items-center pt-16 pb-6">
+    <section className="min-h-svh flex flex-col">
+      <Container className="min-h-svh flex flex-col">
+        <div className="flex flex-col items-center pt-30 pb-6 text-center flex-1">
           <div className="flex flex-col items-center text-center">
             <h1 className="text-4xl font-semibold leading-headers text-base md:text-5xl">
               Followoo
@@ -175,12 +175,11 @@ export default function App() {
             </Button>
 
             <div className="mt-auto w-full pt-12">
-              <HeroIllustrations/>
+              <HeroIllustrations />
             </div>
-
-            <FooterSignature />
           </div>
         </div>
+        <FooterSignature />
       </Container>
     </section>
   );
