@@ -1,26 +1,43 @@
 import { clsx } from "clsx";
+import { Icon, type IconName } from "./Icon";
+
+type ButtonBackground = "primary" | "accent" | "bg";
+type ButtonForeground = "primary" | "accent" | "bg" | "foreground";
 
 interface ButtonProps {
   children: React.ReactNode;
-  color?: "primary" | "accent" | "bg";
+  background?: ButtonBackground;
+  foreground?: ButtonForeground;
   onClick?: () => void;
   disabled?: boolean;
   className?: string;
   type?: "button" | "submit" | "reset";
+  icon?: IconName;
+  iconPosition?: "left" | "right";
 }
 
 export function Button({
   children,
-  color,
+  background = "primary",
+  foreground = "foreground",
   onClick,
   disabled = false,
   className,
   type = "button",
+  icon,
+  iconPosition = "left",
 }: ButtonProps) {
-  const colorClasses = {
+  const backgroundClasses: Record<ButtonBackground, string> = {
     primary: "bg-primary",
     accent: "bg-accent",
     bg: "bg-bg",
+  };
+
+  const foregroundClasses: Record<ButtonForeground, string> = {
+    primary: "text-primary",
+    accent: "text-accent",
+    bg: "text-bg",
+    foreground: "text-foreground",
   };
 
   return (
@@ -29,13 +46,36 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        "inline-flex min-w-36.25 min-h-10 items-center justify-center text-base px-5 p1-b mt-10",
-        color && colorClasses[color],
-        disabled && color === "accent" && "opacity-60 cursor-not-allowed",
+        "inline-flex min-w-36.25 min-h-10 items-center justify-center gap-4 px-5 p1-b",
+        backgroundClasses[background],
+        foregroundClasses[foreground],
+        disabled && "opacity-60 cursor-not-allowed",
         className,
       )}
     >
-      {children}
+      {icon && iconPosition === "left" && (
+        <Icon
+          name={icon}
+          color={foreground}
+          className="shrink-0"
+          width={18}
+          height={18}
+          aria-hidden="true"
+        />
+      )}
+
+      <span>{children}</span>
+
+      {icon && iconPosition === "right" && (
+        <Icon
+          name={icon}
+          color={foreground}
+          className="shrink-0"
+          width={18}
+          height={18}
+          aria-hidden="true"
+        />
+      )}
     </button>
   );
 }

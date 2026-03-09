@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Container } from "../ui/Container";
 import { FooterSignature } from "../ui/FooterSignature";
 import { NavBar } from "../ui/NavBar";
 import { Button } from "../ui/Button";
-import { clsx } from "clsx";
+import { Pagination } from "../ui/Paginator";
 
 type TabKey = "mutual" | "unfollowed" | "followBack";
 
@@ -16,11 +16,11 @@ type TabButtonProps = {
 function TabButton({ children, active, onClick }: TabButtonProps) {
   return (
     <Button
+      type="button"
       onClick={onClick}
-      className={clsx("transition-colors", {
-        "bg-accent text-base": active,
-        "bg-primary text-base/90": !active,
-      })}
+      background={active ? "accent" : "primary"}
+      foreground="foreground"
+      className="mt-0 transition-colors"
     >
       {children}
     </Button>
@@ -44,6 +44,33 @@ const mockData = {
     "user13",
     "user14",
     "user15",
+    "user16",
+    "user17",
+    "user18",
+    "user19",
+    "user20",
+    "user21",
+        "elle.evel",
+    "user2",
+    "user3",
+    "user4",
+    "user5",
+    "user6",
+    "user7",
+    "user8",
+    "user9",
+    "user10",
+    "user11",
+    "user12",
+    "user13",
+    "user14",
+    "user15",
+    "user16",
+    "user17",
+    "user18",
+    "user19",
+    "user20",
+    "user21"
   ],
   unfollowed: [
     "anna_01",
@@ -51,6 +78,24 @@ const mockData = {
     "stella.art",
     "travelguy",
     "coding.daily",
+    "foodie_lover",
+    "fitness_fan",
+    "nature_photos",
+    "music_junkie",
+    "bookworm",
+    "fashionista",
+    "gamer_girl",
+    "sports_fanatic",
+    "movie_buff",
+    "tech_geek",
+    "art_enthusiast",
+    "photography_lover",
+    "coffee_addict",
+    "cat_person",
+    "dog_person",
+    "fitness_freak",
+    "travel_bug",
+    "food_critic",
   ],
   followBack: [
     "newfriend_1",
@@ -58,14 +103,45 @@ const mockData = {
     "newfriend_3",
     "newfriend_4",
     "newfriend_5",
+    "newfriend_6",
+    "newfriend_7",
+    "newfriend_8",
+    "newfriend_9",
+    "newfriend_10",
+    "newfriend_11",
+    "newfriend_12",
+    "newfriend_13",
+    "newfriend_14",
+    "newfriend_15",
+    "newfriend_16",
+    "newfriend_17",
+    "newfriend_18",
+    "newfriend_19",
+    "newfriend_20",
+    "newfriend_21",
   ],
 };
 
 export function ResultPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("mutual");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const users = useMemo(() => {
-    return mockData[activeTab];
+  const itemsPerPage = 20;
+
+  const users = useMemo(() => mockData[activeTab], [activeTab]);
+
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    return users.slice(startIndex, endIndex);
+  }, [users, currentPage]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrentPage(1);
   }, [activeTab]);
 
   const sectionTitle =
@@ -81,11 +157,11 @@ export function ResultPage() {
         <NavBar />
 
         <div className="flex flex-col items-center pt-15 pb-6 text-center flex-1">
-          <h2 className="text-3xl font-semibold leading-headers text-base md:text-4xl">
+          <h1 className="text-3xl font-semibold leading-headers text-foreground md:text-4xl">
             Here's what I've found!
-          </h2>
+          </h1>
 
-          <div className="flex flex-row gap-3 align-middle items-center text-center">
+          <div className="mt-6 flex flex-row flex-wrap gap-3 items-center justify-center">
             <TabButton
               active={activeTab === "mutual"}
               onClick={() => setActiveTab("mutual")}
@@ -108,11 +184,11 @@ export function ResultPage() {
             </TabButton>
           </div>
 
-          <div className="mt-8">
-            <h3 className="text-base font-medium">{sectionTitle}</h3>
+          <div className="mt-8 w-full">
+            <h3 className="text-foreground font-medium">{sectionTitle}</h3>
 
-            <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
-              {users.map((username) => (
+            <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-30">
+              {paginatedUsers.map((username) => (
                 <a
                   key={username}
                   href={`https://instagram.com/${username}`}
@@ -124,8 +200,17 @@ export function ResultPage() {
                 </a>
               ))}
             </div>
+
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
           </div>
         </div>
+
         <FooterSignature />
       </Container>
     </section>

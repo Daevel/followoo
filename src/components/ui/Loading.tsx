@@ -6,11 +6,11 @@ export function Loading() {
       <Container className="min-h-svh flex flex-col">
         <div className="flex flex-1 flex-col items-center justify-center pt-16 pb-6">
           <div className="flex flex-col items-center text-center">
-            <h2 className="text-4xl text-base font-semibold leading-headers md:text-5xl">
+            <h2 className="text-4xl text-foreground font-semibold leading-headers md:text-5xl">
               Loading...
             </h2>
 
-            <p className="p1-r mt-4 max-w-[18rem] text-sm text-base/90 md:max-w-[24rem] md:text-base">
+            <p className="p1-r mt-4 max-w-[18rem] text-sm text-foreground/90 md:max-w-[24rem] md:text-foreground">
               This may take a while...
             </p>
 

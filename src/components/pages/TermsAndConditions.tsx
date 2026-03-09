@@ -8,12 +8,12 @@ export function TermsAndConditions() {
       <Container  className="min-h-svh flex flex-col">
         <NavBar showHelp={false} />
         <div className="flex flex-col items-start pt-16 pb-6">
-          <h2 className="text-4xl font-semibold leading-headers text-base md:text-5xl">
+          <h1 className="text-4xl font-semibold leading-headers text-foreground md:text-5xl">
             Terms and conditions
-          </h2>
+          </h1>
           <div className="flex flex-col items-center text-start">
             <div className="w-auto pt-10 flex flex-col items-start gap-10">
-              <div className="mt-auto text-base">
+              <div className="mt-auto text-foreground">
                 <label className="l1-b">1. Introduction</label>
                 <p className="p1-r">
                   This platform allows users to view and analyze data related to
@@ -26,7 +26,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-base">
+              <div className="mt-auto text-foreground">
                 <label className="l1-b">2. Source of Data</label>
                 <p className="p1-r">
                   To use the platform's features, users must obtain their
@@ -38,7 +38,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-base">
+              <div className="mt-auto text-foreground">
                 <label className="l1-b">3. Service Functionality</label>
                 <p className="p1-r">
                   The platform allows users to: - View certain metrics related
@@ -50,7 +50,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-base">
+              <div className="mt-auto text-foreground">
                 <label className="l1-b">4. File and Data Handling</label>
                 <p className="p1-r">
                   The platform does not store, save, or archive any files or
@@ -65,7 +65,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-base">
+              <div className="mt-auto text-foreground">
                 <label className="l1-b">5. Data Updates</label>
                 <p className="p1-r">
                   The platform does not automatically update user data. If the
@@ -76,7 +76,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-base">
+              <div className="mt-auto text-foreground">
                 <label className="l1-b">6. Limitation of Liability</label>
                 <p className="p1-r">
                   The service is provided as a support tool for analyzing data
@@ -89,7 +89,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-base">
+              <div className="mt-auto text-foreground">
                 <label className="l1-b">
                   7. Independence from Instagram and Meta
                 </label>
@@ -101,7 +101,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-base">
+              <div className="mt-auto text-foreground">
                 <label className="l1-b">8. Changes to the Terms</label>
                 <p className="p1-r">
                   The platform owner reserves the right to modify these Terms
@@ -110,7 +110,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-base">
+              <div className="mt-auto text-foreground">
                 <label className="l1-b">9. Acceptance of Terms</label>
                 <p className="p1-r">
                   By using this platform, the user confirms that they have read,

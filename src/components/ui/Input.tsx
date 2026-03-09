@@ -1,55 +1,77 @@
 import clsx from "clsx";
+import { forwardRef } from "react";
 
-interface InputProps {
+type BaseProps = {
   placeholder?: string;
   variant?: "input" | "textarea";
   maxLength?: number;
-  type?: "text" | "email" | "number" | "file";
-  name?: string;
-  value?: string;
-  onChange?: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-}
+  hasError?: boolean;
+};
 
-export function Input({
-  placeholder,
-  variant = "input",
-  type = "text",
-  name,
-  value = "",
-  onChange,
-  maxLength = 500,
-}: InputProps) {
+type InputVariantProps = BaseProps &
+  React.InputHTMLAttributes<HTMLInputElement> & {
+    variant?: "input";
+  };
+
+type TextareaVariantProps = BaseProps &
+  React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+    variant: "textarea";
+  };
+
+type InputProps = InputVariantProps | TextareaVariantProps;
+
+export const Input = forwardRef<
+  HTMLInputElement | HTMLTextAreaElement,
+  InputProps
+>(function Input(props, ref) {
+  const {
+    placeholder,
+    variant = "input",
+    maxLength = 500,
+    className,
+    hasError = false,
+    ...rest
+  } = props;
+
   const baseClasses =
-    "w-full text-black bg-gray-200 border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent";
+    "w-full bg-gray-200 px-4 py-2 focus:outline-none focus:ring-2 focus:border-transparent text-[#000000]";
+
+  const stateClasses = hasError
+    ? "border border-accent focus:ring-accent"
+    : "border border-gray-300 focus:ring-primary";
 
   if (variant === "textarea") {
+    const textareaProps =
+      rest as React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+
     return (
-      <div className="w-full flex flex-col gap-1">
+      <div className="w-full flex flex-col gap-1 text-[#000000]">
         <textarea
-          name={name}
-          value={value}
+          ref={ref as React.Ref<HTMLTextAreaElement>}
           maxLength={maxLength}
-          onChange={onChange}
           placeholder={placeholder}
-          className={clsx(baseClasses, "min-h-[140px] resize-none py-3")}
+          aria-invalid={hasError}
+          className={clsx(
+            baseClasses,
+            stateClasses,
+            "min-h-[140px] resize-none py-3",
+            className,
+          )}
+          {...textareaProps}
         />
-        <span className="self-end text-xs text-base/70">
-          {value.length}/{maxLength}
-        </span>
       </div>
     );
   }
 
+  const inputProps = rest as React.InputHTMLAttributes<HTMLInputElement>;
+
   return (
     <input
-      type={type}
-      value={value}
-      onChange={onChange}
+      ref={ref as React.Ref<HTMLInputElement>}
       placeholder={placeholder}
-      className={baseClasses}
-      name={name}
+      aria-invalid={hasError}
+      className={clsx(baseClasses, stateClasses, className)}
+      {...inputProps}
     />
   );
-}
+});
