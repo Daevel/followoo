@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Container } from "../ui/Container";
 import { FooterSignature } from "../ui/FooterSignature";
 import { NavBar } from "../ui/NavBar";
 import { Button } from "../ui/Button";
 import { Pagination } from "../ui/Paginator";
+import { gsap } from "gsap";
 
 type TabKey = "mutual" | "unfollowed" | "followBack";
 
@@ -50,7 +51,7 @@ const mockData = {
     "user19",
     "user20",
     "user21",
-        "elle.evel",
+    "elle.evel",
     "user2",
     "user3",
     "user4",
@@ -70,7 +71,7 @@ const mockData = {
     "user18",
     "user19",
     "user20",
-    "user21"
+    "user21",
   ],
   unfollowed: [
     "anna_01",
@@ -151,17 +152,64 @@ export function ResultPage() {
         ? "Unfollowed List"
         : "Follow back List";
 
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        "[data-animate='hero-item']",
+        {
+          opacity: 0,
+          y: 24,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          stagger: 0.12,
+        },
+      );
+
+      gsap.fromTo(
+        "[data-animate='hero-illustration']",
+        {
+          opacity: 0,
+          y: 32,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          delay: 0.3,
+        },
+      );
+    }, rootRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section className="min-h-svh flex flex-col">
       <Container className="min-h-svh flex flex-col">
         <NavBar />
 
-        <div className="flex flex-col items-center pt-15 pb-6 text-center flex-1">
-          <h1 className="text-3xl font-semibold leading-headers text-foreground md:text-4xl">
+        <div
+          ref={rootRef}
+          className="flex flex-col items-center pt-15 pb-6 text-center flex-1"
+        >
+          <h1
+            data-animate="hero-item"
+            className="text-3xl font-semibold leading-headers text-foreground md:text-4xl"
+          >
             Here's what I've found!
           </h1>
 
-          <div className="mt-6 flex flex-row flex-wrap gap-3 items-center justify-center">
+          <div
+            data-animate="hero-item"
+            className="mt-6 flex flex-row flex-wrap gap-3 items-center justify-center"
+          >
             <TabButton
               active={activeTab === "mutual"}
               onClick={() => setActiveTab("mutual")}
@@ -185,9 +233,17 @@ export function ResultPage() {
           </div>
 
           <div className="mt-8 w-full">
-            <h3 className="text-foreground font-medium">{sectionTitle}</h3>
+            <h3
+              data-animate="hero-item"
+              className="text-foreground font-medium"
+            >
+              {sectionTitle}
+            </h3>
 
-            <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-30">
+            <div
+              data-animate="hero-item"
+              className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-30"
+            >
               {paginatedUsers.map((username) => (
                 <a
                   key={username}
@@ -202,11 +258,13 @@ export function ResultPage() {
             </div>
 
             {totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
+              <div data-animate="hero-item">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
             )}
           </div>
         </div>

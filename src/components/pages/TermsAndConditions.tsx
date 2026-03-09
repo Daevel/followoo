@@ -1,19 +1,62 @@
+import { useRef, useLayoutEffect } from "react";
 import { Container } from "../ui/Container";
 import { FooterSignature } from "../ui/FooterSignature";
 import { NavBar } from "../ui/NavBar";
+import { gsap } from "gsap";
 
 export function TermsAndConditions() {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        "[data-animate='hero-item']",
+        {
+          opacity: 0,
+          y: 24,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          stagger: 0.12,
+        },
+      );
+
+      gsap.fromTo(
+        "[data-animate='hero-illustration']",
+        {
+          opacity: 0,
+          y: 32,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          delay: 0.3,
+        },
+      );
+    }, rootRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section className="min-h-svh flex flex-col">
-      <Container  className="min-h-svh flex flex-col">
+      <Container className="min-h-svh flex flex-col">
         <NavBar showHelp={false} />
-        <div className="flex flex-col items-start pt-16 pb-6">
-          <h1 className="text-4xl font-semibold leading-headers text-foreground md:text-5xl">
+        <div ref={rootRef} className="flex flex-col items-start pt-16 pb-6">
+          <h1
+            data-animate="hero-item"
+            className="text-4xl font-semibold leading-headers text-foreground md:text-5xl"
+          >
             Terms and conditions
           </h1>
           <div className="flex flex-col items-center text-start">
             <div className="w-auto pt-10 flex flex-col items-start gap-10">
-              <div className="mt-auto text-foreground">
+              <div data-animate="hero-item" className="mt-auto text-foreground">
                 <label className="l1-b">1. Introduction</label>
                 <p className="p1-r">
                   This platform allows users to view and analyze data related to
@@ -26,7 +69,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-foreground">
+              <div data-animate="hero-item" className="mt-auto text-foreground">
                 <label className="l1-b">2. Source of Data</label>
                 <p className="p1-r">
                   To use the platform's features, users must obtain their
@@ -38,7 +81,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-foreground">
+              <div data-animate="hero-item" className="mt-auto text-foreground">
                 <label className="l1-b">3. Service Functionality</label>
                 <p className="p1-r">
                   The platform allows users to: - View certain metrics related
@@ -50,7 +93,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-foreground">
+              <div data-animate="hero-item" className="mt-auto text-foreground">
                 <label className="l1-b">4. File and Data Handling</label>
                 <p className="p1-r">
                   The platform does not store, save, or archive any files or
@@ -65,7 +108,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-foreground">
+              <div data-animate="hero-item" className="mt-auto text-foreground">
                 <label className="l1-b">5. Data Updates</label>
                 <p className="p1-r">
                   The platform does not automatically update user data. If the
@@ -76,7 +119,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-foreground">
+              <div data-animate="hero-item" className="mt-auto text-foreground">
                 <label className="l1-b">6. Limitation of Liability</label>
                 <p className="p1-r">
                   The service is provided as a support tool for analyzing data
@@ -89,7 +132,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-foreground">
+              <div data-animate="hero-item" className="mt-auto text-foreground">
                 <label className="l1-b">
                   7. Independence from Instagram and Meta
                 </label>
@@ -101,7 +144,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-foreground">
+              <div data-animate="hero-item" className="mt-auto text-foreground">
                 <label className="l1-b">8. Changes to the Terms</label>
                 <p className="p1-r">
                   The platform owner reserves the right to modify these Terms
@@ -110,7 +153,7 @@ export function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="mt-auto text-foreground">
+              <div data-animate="hero-item" className="mt-auto text-foreground">
                 <label className="l1-b">9. Acceptance of Terms</label>
                 <p className="p1-r">
                   By using this platform, the user confirms that they have read,
@@ -118,8 +161,6 @@ export function TermsAndConditions() {
                 </p>
               </div>
             </div>
-
-            
           </div>
         </div>
         <FooterSignature />
