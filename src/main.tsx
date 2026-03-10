@@ -9,10 +9,13 @@ import { InstructionsToStart } from "./components/pages/InstructionsToStart.tsx"
 import { TermsAndConditions } from "./components/pages/TermsAndConditions.tsx";
 import { HelpSection } from "./components/pages/HelpSection.tsx";
 import { ResultPage } from "./components/pages/ResultPage.tsx";
+import { ScrollToTop } from "./components/ui/ScrollToTop";
+
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/" element={<App />} />

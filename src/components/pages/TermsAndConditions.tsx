@@ -3,6 +3,21 @@ import { Container } from "../ui/Container";
 import { FooterSignature } from "../ui/FooterSignature";
 import { NavBar } from "../ui/NavBar";
 import { gsap } from "gsap";
+import { Callout } from "../ui/Callout";
+
+type SectionProps = {
+  title: string;
+  children: React.ReactNode;
+};
+
+function TermsSection({ title, children }: SectionProps) {
+  return (
+    <section className="w-full text-foreground">
+      <h2 className="l1-b">{title}</h2>
+      <p className="p1-r mt-2">{children}</p>
+    </section>
+  );
+}
 
 export function TermsAndConditions() {
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -23,21 +38,6 @@ export function TermsAndConditions() {
           stagger: 0.12,
         },
       );
-
-      gsap.fromTo(
-        "[data-animate='hero-illustration']",
-        {
-          opacity: 0,
-          y: 32,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power3.out",
-          delay: 0.3,
-        },
-      );
     }, rootRef);
 
     return () => ctx.revert();
@@ -47,122 +47,152 @@ export function TermsAndConditions() {
     <section className="min-h-svh flex flex-col">
       <Container className="min-h-svh flex flex-col">
         <NavBar showHelp={false} />
-        <div ref={rootRef} className="flex flex-col items-start pt-16 pb-6">
+
+        <div
+          ref={rootRef}
+          className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10"
+        >
           <h1
             data-animate="hero-item"
             className="text-4xl font-semibold leading-headers text-foreground md:text-5xl"
           >
-            Terms and conditions
+            Terms and Conditions
           </h1>
-          <div className="flex flex-col items-center text-start">
-            <div className="w-auto pt-10 flex flex-col items-start gap-10">
-              <div data-animate="hero-item" className="mt-auto text-foreground">
-                <label className="l1-b">1. Introduction</label>
-                <p className="p1-r">
-                  This platform allows users to view and analyze data related to
-                  their Instagram account using files exported directly through
-                  the official tools provided by Meta. By accessing or using
-                  this service, the user agrees to comply with and be bound by
-                  these Terms and Conditions. The service operates exclusively
-                  on files voluntarily provided by the user and does not require
-                  direct access to the user's Instagram account.
-                </p>
-              </div>
 
-              <div data-animate="hero-item" className="mt-auto text-foreground">
-                <label className="l1-b">2. Source of Data</label>
-                <p className="p1-r">
-                  To use the platform's features, users must obtain their
-                  Instagram data through the official export tools provided by
-                  Meta, such as the Meta Accounts Center. The platform does not
-                  provide or facilitate unauthorized access to third-party data.
-                  All files used within the service must originate from
-                  legitimate and official data export procedures.
-                </p>
-              </div>
+          <p
+            data-animate="hero-item"
+            className="mt-3 text-sm text-foreground/70"
+          >
+            Last updated: March 2026
+          </p>
 
-              <div data-animate="hero-item" className="mt-auto text-foreground">
-                <label className="l1-b">3. Service Functionality</label>
-                <p className="p1-r">
-                  The platform allows users to: - View certain metrics related
-                  to their Instagram account - Analyze the data exported by the
-                  user - Compare multiple exported datasets in order to identify
-                  changes, such as accounts that have recently unfollowed the
-                  user. The “unfollow detection” functionality is based solely
-                  on a comparison between files manually uploaded by the user.
-                </p>
-              </div>
+          <div data-animate="hero-item" className="mt-8 w-full">
+            <Callout variant="info" title="Privacy notice">
+              This application runs entirely in the user&apos;s browser and does
+              not transmit personal data to external servers. Uploaded Instagram
+              export files are processed locally and are not stored by the
+              platform.
+            </Callout>
+          </div>
 
-              <div data-animate="hero-item" className="mt-auto text-foreground">
-                <label className="l1-b">4. File and Data Handling</label>
-                <p className="p1-r">
-                  The platform does not store, save, or archive any files or
-                  personal information uploaded by the user. All analysis and
-                  comparison operations are performed temporarily for the sole
-                  purpose of generating the requested results. Once the
-                  operation is completed, the data is not retained or stored by
-                  the system. Therefore: each new analysis requires the user to
-                  upload the files again each comparison is treated as an
-                  independent operation the platform does not maintain any
-                  history of previous analyses
-                </p>
-              </div>
+          <div className="mt-10 flex w-full flex-col gap-8">
+            <div data-animate="hero-item">
+              <TermsSection title="1. Introduction">
+                This platform allows users to view and analyze data related to
+                their Instagram account using files exported through the
+                official tools provided by Meta. By accessing or using this
+                service, the user agrees to comply with and be bound by these
+                Terms and Conditions. The service operates exclusively on files
+                voluntarily provided by the user and does not require direct
+                access to the user&apos;s Instagram account.
+              </TermsSection>
+            </div>
 
-              <div data-animate="hero-item" className="mt-auto text-foreground">
-                <label className="l1-b">5. Data Updates</label>
-                <p className="p1-r">
-                  The platform does not automatically update user data. If the
-                  user wishes to obtain updated results, they must download a
-                  new dataset using the official Meta data export process and
-                  upload it again to the platform. Maintaining updated datasets
-                  is entirely the responsibility of the user.
-                </p>
-              </div>
+            <div data-animate="hero-item">
+              <TermsSection title="2. Source of Data">
+                To use the platform&apos;s features, users must obtain their
+                Instagram data through the official export tools provided by
+                Meta, such as the Meta Accounts Center. The platform does not
+                provide or facilitate unauthorized access to third-party data.
+                All files used within the service must originate from
+                legitimate and official data export procedures.
+              </TermsSection>
+            </div>
 
-              <div data-animate="hero-item" className="mt-auto text-foreground">
-                <label className="l1-b">6. Limitation of Liability</label>
-                <p className="p1-r">
-                  The service is provided as a support tool for analyzing data
-                  exported by the user. The results generated depend entirely on
-                  the files uploaded and on their accuracy or completeness. The
-                  platform does not guarantee absolute accuracy of the results
-                  produced through file comparisons and shall not be held
-                  responsible for any incorrect interpretation or use of the
-                  generated data.
-                </p>
-              </div>
+            <div data-animate="hero-item">
+              <TermsSection title="3. Service Functionality">
+                The platform allows users to analyze Instagram export files,
+                view relationship-based metrics such as mutuals, followers,
+                unfollowers, recent unfollowers, and blocked accounts, and
+                generate results based solely on the files uploaded by the
+                user. Any result depends entirely on the completeness and
+                accuracy of the exported files.
+              </TermsSection>
+            </div>
 
-              <div data-animate="hero-item" className="mt-auto text-foreground">
-                <label className="l1-b">
-                  7. Independence from Instagram and Meta
-                </label>
-                <p className="p1-r">
-                  This service is an independent tool and is not affiliated
-                  with, endorsed by, or associated with Instagram or Meta
-                  Platforms, Inc. All trademarks and brand names mentioned
-                  belong to their respective owners.
-                </p>
-              </div>
+            <div data-animate="hero-item">
+              <TermsSection title="4. File and Data Handling">
+                The platform does not store, save, or archive uploaded files or
+                personal information. All analysis operations are performed
+                temporarily for the sole purpose of generating the requested
+                results. Once the operation is completed, the platform does not
+                retain any history of previous analyses, and each new analysis
+                requires the user to upload the relevant files again.
+              </TermsSection>
+            </div>
 
-              <div data-animate="hero-item" className="mt-auto text-foreground">
-                <label className="l1-b">8. Changes to the Terms</label>
-                <p className="p1-r">
-                  The platform owner reserves the right to modify these Terms
-                  and Conditions at any time. Any changes will become effective
-                  upon publication on the platform.
-                </p>
-              </div>
+            <div data-animate="hero-item">
+              <TermsSection title="5. Data Processing and Privacy">
+                All uploaded files are processed locally within the user&apos;s
+                browser. The platform does not upload, store, or transmit any
+                personal data to external servers. All analysis is performed
+                temporarily during the user session, and the files are discarded
+                once the analysis is completed or the session is closed. Users
+                remain fully responsible for the files they upload and for
+                ensuring they do not process data belonging to third parties
+                without authorization.
+              </TermsSection>
+            </div>
 
-              <div data-animate="hero-item" className="mt-auto text-foreground">
-                <label className="l1-b">9. Acceptance of Terms</label>
-                <p className="p1-r">
-                  By using this platform, the user confirms that they have read,
-                  understood, and agreed to these Terms and Conditions.
-                </p>
-              </div>
+            <div data-animate="hero-item">
+              <TermsSection title="6. Data Updates">
+                The platform does not automatically update user data. If the
+                user wants updated results, they must download a new dataset
+                using the official Meta export process and upload it again to
+                the platform. Maintaining up-to-date datasets is entirely the
+                responsibility of the user.
+              </TermsSection>
+            </div>
+
+            <div data-animate="hero-item">
+              <TermsSection title="7. User Responsibility">
+                Users are solely responsible for the files they upload to the
+                platform. The service is intended only for analyzing personal
+                data exported from the user&apos;s own Instagram account through
+                official export tools. The platform must not be used to process
+                data obtained without authorization.
+              </TermsSection>
+            </div>
+
+            <div data-animate="hero-item">
+              <TermsSection title="8. Limitation of Liability">
+                This service is provided as a support tool for analyzing data
+                exported by the user. The results generated depend entirely on
+                the files uploaded and on their accuracy or completeness. The
+                platform does not guarantee absolute accuracy of the generated
+                results and shall not be held responsible for any incorrect
+                interpretation, decision, or use of the data produced by the
+                service.
+              </TermsSection>
+            </div>
+
+            <div data-animate="hero-item">
+              <TermsSection title="9. Independence from Instagram and Meta">
+                This service is an independent tool and is not affiliated with,
+                endorsed by, or associated with Instagram, Meta Platforms Inc.,
+                or any of their subsidiaries. Instagram and Meta are registered
+                trademarks of Meta Platforms Inc. All trademarks, logos, and
+                brand names mentioned belong to their respective owners.
+              </TermsSection>
+            </div>
+
+            <div data-animate="hero-item">
+              <TermsSection title="10. Changes to the Terms">
+                The platform owner reserves the right to modify these Terms and
+                Conditions at any time. Any changes will become effective upon
+                publication on the platform.
+              </TermsSection>
+            </div>
+
+            <div data-animate="hero-item">
+              <TermsSection title="11. Acceptance of Terms">
+                By using this platform, the user confirms that they have read,
+                understood, and agreed to these Terms and Conditions.
+              </TermsSection>
             </div>
           </div>
         </div>
+
         <FooterSignature />
       </Container>
     </section>

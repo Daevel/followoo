@@ -38,21 +38,6 @@ export function GetStarted() {
           stagger: 0.12,
         },
       );
-
-      gsap.fromTo(
-        "[data-animate='hero-illustration']",
-        {
-          opacity: 0,
-          y: 32,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power3.out",
-          delay: 0.3,
-        },
-      );
     }, rootRef);
 
     return () => ctx.revert();
@@ -120,16 +105,38 @@ export function GetStarted() {
               )}
 
               <div className="text-foreground items-start flex flex-col gap-10">
-                <div className="w-auto text-foreground items-start">
+                <div className="w-auto text-foreground items-start flex flex-col gap-4">
                   <label data-animate="hero-item" className="l1-b">
                     What's going to happen?
                   </label>
-                  <p data-animate="hero-item" className="p1-r">
-                    Lorem ipsum dolor sit amet consectetur. Facilisi nunc lectus
-                    integer donec. Luctus nulla gravida placerat neque nibh
-                    scelerisque aenean eget. Sociis feugiat amet euismod
-                    bibendum magna arcu sed proin orci.
-                  </p>
+
+                  <div
+                    data-animate="hero-item"
+                    className="p1-r flex flex-col gap-3"
+                  >
+                    <p>
+                      Your Instagram export will be analyzed directly in your
+                      browser.
+                    </p>
+
+                    <p>The application will:</p>
+
+                    <ul className="list-disc pl-5 flex flex-col gap-1">
+                      <li>
+                        Extract followers and following lists from the ZIP file
+                      </li>
+                      <li>Compare the relationships between accounts</li>
+                      <li>
+                        Show mutual connections, followers, unfollowers, and
+                        recently unfollowed accounts
+                      </li>
+                    </ul>
+
+                    <p className="text-foreground/80 font-medium">
+                      The file is processed locally and is never uploaded to any
+                      server.
+                    </p>
+                  </div>
                 </div>
 
                 <div
@@ -137,9 +144,10 @@ export function GetStarted() {
                   className="text-foreground items-start w-full"
                 >
                   <Callout title="Important: Data usage" variant="warning">
-                    <b>Followoo</b> will{" "}
-                    <b className="text-accent">never store</b> your data in the
-                    platform to track and perform metrics.
+                    Your <b>data</b> is processed locally in your browser. No
+                    files are <b className="text-accent">uploaded</b>,{" "}
+                    <b className="text-accent">stored</b>, or{" "}
+                    <b className="text-accent">shared</b> with external servers.
                   </Callout>
                 </div>
               </div>
@@ -182,7 +190,7 @@ export function GetStarted() {
                 }
                 onClick={onElaborateFile}
               >
-                Analyze followers
+                Start analysis
               </Button>
             </div>
           </div>
