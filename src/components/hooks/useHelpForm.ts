@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { helpSchema, type HelpFormValues } from "../schemas/help.schema";
-import { sendHelpMessage } from "../services/help.service";
+import { sendHelpMessage } from "../services/helpService";
 
 type SubmitState = {
   success: boolean;

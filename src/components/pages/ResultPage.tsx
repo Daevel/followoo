@@ -1,12 +1,25 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 import { Container } from "../ui/Container";
 import { FooterSignature } from "../ui/FooterSignature";
 import { NavBar } from "../ui/NavBar";
 import { Button } from "../ui/Button";
 import { Pagination } from "../ui/Paginator";
 import { gsap } from "gsap";
+import type { InstagramAnalysisResult } from "../../types/instagram.types";
 
-type TabKey = "mutual" | "unfollowed" | "followBack";
+type SortKey =
+  | "alphabeticalAsc"
+  | "alphabeticalDesc"
+  | "recentDesc"
+  | "recentAsc";
+
+type TabKey =
+  | "mutual"
+  | "followersOnly"
+  | "unfollowers"
+  | "recentUnfollowers"
+  | "blocked";
 
 type TabButtonProps = {
   children: React.ReactNode;
@@ -28,129 +41,101 @@ function TabButton({ children, active, onClick }: TabButtonProps) {
   );
 }
 
-const mockData = {
-  mutual: [
-    "elle.evel",
-    "user2",
-    "user3",
-    "user4",
-    "user5",
-    "user6",
-    "user7",
-    "user8",
-    "user9",
-    "user10",
-    "user11",
-    "user12",
-    "user13",
-    "user14",
-    "user15",
-    "user16",
-    "user17",
-    "user18",
-    "user19",
-    "user20",
-    "user21",
-    "elle.evel",
-    "user2",
-    "user3",
-    "user4",
-    "user5",
-    "user6",
-    "user7",
-    "user8",
-    "user9",
-    "user10",
-    "user11",
-    "user12",
-    "user13",
-    "user14",
-    "user15",
-    "user16",
-    "user17",
-    "user18",
-    "user19",
-    "user20",
-    "user21",
-  ],
-  unfollowed: [
-    "anna_01",
-    "mike_dev",
-    "stella.art",
-    "travelguy",
-    "coding.daily",
-    "foodie_lover",
-    "fitness_fan",
-    "nature_photos",
-    "music_junkie",
-    "bookworm",
-    "fashionista",
-    "gamer_girl",
-    "sports_fanatic",
-    "movie_buff",
-    "tech_geek",
-    "art_enthusiast",
-    "photography_lover",
-    "coffee_addict",
-    "cat_person",
-    "dog_person",
-    "fitness_freak",
-    "travel_bug",
-    "food_critic",
-  ],
-  followBack: [
-    "newfriend_1",
-    "newfriend_2",
-    "newfriend_3",
-    "newfriend_4",
-    "newfriend_5",
-    "newfriend_6",
-    "newfriend_7",
-    "newfriend_8",
-    "newfriend_9",
-    "newfriend_10",
-    "newfriend_11",
-    "newfriend_12",
-    "newfriend_13",
-    "newfriend_14",
-    "newfriend_15",
-    "newfriend_16",
-    "newfriend_17",
-    "newfriend_18",
-    "newfriend_19",
-    "newfriend_20",
-    "newfriend_21",
-  ],
-};
-
 export function ResultPage() {
+  const location = useLocation();
+  const analysis = location.state as InstagramAnalysisResult | undefined;
+
+  const [sortBy, setSortBy] = useState<SortKey>("alphabeticalAsc");
   const [activeTab, setActiveTab] = useState<TabKey>("mutual");
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 20;
 
-  const users = useMemo(() => mockData[activeTab], [activeTab]);
+  if (!analysis) {
+    return <Navigate to="/get-started" replace />;
+  }
 
-  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const users = useMemo(() => {
+    switch (activeTab) {
+      case "mutual":
+        return analysis.mutual;
+
+      case "followersOnly":
+        return analysis.followersOnly;
+
+      case "unfollowers":
+        return analysis.unfollowers;
+
+      case "recentUnfollowers":
+        return analysis.recentUnfollowers;
+
+      case "blocked":
+        return analysis.blocked;
+
+      default:
+        return [];
+    }
+  }, [activeTab, analysis]);
+
+  const sortedUsers = useMemo(() => {
+    const nextUsers = [...users];
+
+    switch (sortBy) {
+      case "alphabeticalAsc":
+        return nextUsers.sort((a, b) => a.username.localeCompare(b.username));
+
+      case "alphabeticalDesc":
+        return nextUsers.sort((a, b) => b.username.localeCompare(a.username));
+
+      case "recentDesc":
+        return nextUsers.sort(
+          (a, b) => (b.timestamp ?? 0) - (a.timestamp ?? 0),
+        );
+
+      case "recentAsc":
+        return nextUsers.sort(
+          (a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0),
+        );
+
+      default:
+        return nextUsers;
+    }
+  }, [users, sortBy]);
+
+  const totalPages = Math.ceil(sortedUsers.length / itemsPerPage);
 
   const paginatedUsers = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
 
-    return users.slice(startIndex, endIndex);
-  }, [users, currentPage]);
+    return sortedUsers.slice(startIndex, endIndex);
+  }, [sortedUsers, currentPage]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentPage(1);
-  }, [activeTab]);
+  }, [activeTab, sortBy]);
 
-  const sectionTitle =
-    activeTab === "mutual"
-      ? "Mutual Friends List"
-      : activeTab === "unfollowed"
-        ? "Unfollowed List"
-        : "Follow back List";
+  const sectionTitle = useMemo(() => {
+    switch (activeTab) {
+      case "mutual":
+        return "Mutual (you follow each other)";
+
+      case "followersOnly":
+        return "Followers (they follow you, you don't follow them)";
+
+      case "unfollowers":
+        return "Unfollowers (you follow them, they don't follow you)";
+
+      case "recentUnfollowers":
+        return "Recent Unfollowers (someone who has recently unfollowed you)";
+
+      case "blocked":
+        return "Blocked (people who you blocked)";
+
+      default:
+        return "";
+    }
+  }, [activeTab]);
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
@@ -168,21 +153,6 @@ export function ResultPage() {
           duration: 0.8,
           ease: "power3.out",
           stagger: 0.12,
-        },
-      );
-
-      gsap.fromTo(
-        "[data-animate='hero-illustration']",
-        {
-          opacity: 0,
-          y: 32,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power3.out",
-          delay: 0.3,
         },
       );
     }, rootRef);
@@ -214,21 +184,35 @@ export function ResultPage() {
               active={activeTab === "mutual"}
               onClick={() => setActiveTab("mutual")}
             >
-              Mutual
+              Mutual ({analysis.mutual.length})
             </TabButton>
 
             <TabButton
-              active={activeTab === "unfollowed"}
-              onClick={() => setActiveTab("unfollowed")}
+              active={activeTab === "followersOnly"}
+              onClick={() => setActiveTab("followersOnly")}
             >
-              Unfollowed
+              Followers ({analysis.followersOnly.length})
             </TabButton>
 
             <TabButton
-              active={activeTab === "followBack"}
-              onClick={() => setActiveTab("followBack")}
+              active={activeTab === "blocked"}
+              onClick={() => setActiveTab("blocked")}
             >
-              Follow back
+              Blocked ({analysis.blocked.length})
+            </TabButton>
+
+            <TabButton
+              active={activeTab === "unfollowers"}
+              onClick={() => setActiveTab("unfollowers")}
+            >
+              Unfollowers ({analysis.unfollowers.length})
+            </TabButton>
+
+            <TabButton
+              active={activeTab === "recentUnfollowers"}
+              onClick={() => setActiveTab("recentUnfollowers")}
+            >
+              Recent Unfollowers ({analysis.recentUnfollowers.length})
             </TabButton>
           </div>
 
@@ -240,19 +224,37 @@ export function ResultPage() {
               {sectionTitle}
             </h3>
 
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <label htmlFor="sort-users" className="text-foreground">
+                Sort by
+              </label>
+
+              <select
+                id="sort-users"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortKey)}
+                className="bg-primary text-foreground px-3 py-2 border border-primary"
+              >
+                <option value="alphabeticalAsc">A-Z</option>
+                <option value="alphabeticalDesc">Z-A</option>
+                <option value="recentDesc">Most recent</option>
+                <option value="recentAsc">Oldest</option>
+              </select>
+            </div>
+
             <div
               data-animate="hero-item"
               className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-30"
             >
-              {paginatedUsers.map((username) => (
+              {paginatedUsers.map((user) => (
                 <a
-                  key={username}
-                  href={`https://instagram.com/${username}`}
+                  key={user.username}
+                  href={user.href ?? `https://instagram.com/${user.username}`}
                   target="_blank"
                   rel="noreferrer"
                   className="p2-b text-primary transition hover:underline"
                 >
-                  {username}
+                  {user.username}
                 </a>
               ))}
             </div>

@@ -9,6 +9,8 @@ import { ZipDropzone } from "../ui/ZipDropzone";
 import { Callout } from "../ui/Callout";
 import { Checkbox } from "../ui/Checkbox";
 import { gsap } from "gsap";
+import { parseInstagramExport } from "../services/instagramExportService";
+import { analyzeInstagramExport } from "../services/instagramAnalisysService";
 
 export function GetStarted() {
   const navigate = useNavigate();
@@ -65,8 +67,17 @@ export function GetStarted() {
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      navigate("/results");
+      const exportData = await parseInstagramExport(selectedZipFile, {
+        debug: true,
+      });
+      const analysis = analyzeInstagramExport(exportData);
+
+      navigate("/results", {
+        state: analysis,
+      });
+    } catch (error) {
+      console.error("Failed to parse Instagram export:", error);
+      alert("Failed to read the ZIP file.");
     } finally {
       setLoading(false);
     }
