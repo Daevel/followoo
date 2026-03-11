@@ -1,6 +1,10 @@
 // parsers/parseWrappedRelationshipUsers.ts
 import type { InstagramUser } from "../../types/instagram.types";
 
+function isNonNull<T>(value: T | null): value is T {
+  return value !== null;
+}
+
 export function parseWrappedRelationshipUsers(
   json: unknown,
   key: string,
@@ -65,5 +69,5 @@ export function parseWrappedRelationshipUsers(
             : undefined,
       };
     })
-    .filter((user): user is InstagramUser => user !== null);
+    .filter(isNonNull);
 }

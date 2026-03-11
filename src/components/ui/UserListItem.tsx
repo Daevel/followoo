@@ -14,11 +14,12 @@ function formatDate(timestamp?: number) {
 
 type UserListItemProps = {
   user: InstagramUser;
+  formatDate: (timestamp?: number) => string | null;
 };
 
 export function UserListItem({ user }: UserListItemProps) {
   const href = user.href ?? `https://instagram.com/${user.username}`;
-  const initial = extractFirstNameLetter(user.username.toUpperCase())
+  const initial = extractFirstNameLetter(user.username.toUpperCase());
   const formattedDate = formatDate(user.timestamp);
 
   return (

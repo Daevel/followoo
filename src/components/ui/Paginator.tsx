@@ -52,7 +52,7 @@ export function Pagination({
             <button
               key={page}
               type="button"
-              onClick={() => onPageChange(page)}
+              onClick={() => typeof page === "number" && onPageChange(page)}
               aria-current={isActive ? "page" : undefined}
               className={clsx(
                 "inline-flex h-10 min-w-10 items-center justify-center px-3 transition-colors",

@@ -1,4 +1,4 @@
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
 import { FooterSignature } from "../ui/FooterSignature";
@@ -33,7 +33,6 @@ function StepCard({ step, title, description }: StepCardProps) {
 }
 
 export function InstructionsToStart() {
-  const navigate = useNavigate();
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
