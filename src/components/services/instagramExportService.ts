@@ -16,10 +16,6 @@ import {
   isRestrictedFile,
 } from "./../utils/instagramExportMatchers";
 
-type ParseInstagramExportOptions = {
-  debug?: boolean;
-};
-
 function safeJsonParse(content: string): unknown | null {
   try {
     return JSON.parse(content);
@@ -30,7 +26,6 @@ function safeJsonParse(content: string): unknown | null {
 
 export async function parseInstagramExport(
   file: File,
-  options: ParseInstagramExportOptions = {},
 ): Promise<InstagramExportData> {
 
   const zip = await JSZip.loadAsync(file);

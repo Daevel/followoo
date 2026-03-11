@@ -55,9 +55,7 @@ export function GetStarted() {
     const start = Date.now();
 
     try {
-      const exportData = await parseInstagramExport(selectedZipFile, {
-        debug: true,
-      });
+      const exportData = await parseInstagramExport(selectedZipFile);
 
       const hasAnyData =
         exportData.followers.length > 0 ||
