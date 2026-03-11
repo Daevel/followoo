@@ -33,6 +33,12 @@ export function Button({
     bg: "bg-bg",
   };
 
+  const backgroundHoverClasses: Record<ButtonBackground, string> = {
+    primary: "hover:bg-primary/90 transition-colors",
+    accent: "hover:bg-accent/90 transition-colors",
+    bg: "",
+  };
+
   const foregroundClasses: Record<ButtonForeground, string> = {
     primary: "text-primary",
     accent: "text-accent",
@@ -49,7 +55,8 @@ export function Button({
         "inline-flex min-w-36.25 min-h-10 items-center justify-center gap-4 px-5 p1-b",
         backgroundClasses[background],
         foregroundClasses[foreground],
-        disabled && "opacity-60 cursor-not-allowed",
+        !disabled && backgroundHoverClasses[background],
+        disabled && "cursor-not-allowed opacity-60",
         className,
       )}
     >

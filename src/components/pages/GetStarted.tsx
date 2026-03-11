@@ -51,11 +51,20 @@ export function GetStarted() {
 
     setLoading(true);
 
+    const MIN_LOADING_TIME = 2500;
+    const start = Date.now();
+
     try {
       const exportData = await parseInstagramExport(selectedZipFile, {
         debug: true,
       });
       const analysis = analyzeInstagramExport(exportData);
+
+      const elapsed = Date.now() - start;
+      const remaining = Math.max(0, MIN_LOADING_TIME - elapsed);
+      if (remaining > 0) {
+        await new Promise((resolve) => setTimeout(resolve, remaining));
+      }
 
       navigate("/results", {
         state: analysis,
@@ -69,9 +78,8 @@ export function GetStarted() {
   }
 
   if (loading) {
-    return <Loading />;
+    return <Loading loading={loading} />;
   }
-
   return (
     <section className="min-h-svh flex flex-col">
       <Container className="min-h-svh flex flex-col">

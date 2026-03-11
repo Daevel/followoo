@@ -57,6 +57,9 @@ export function ResultPage() {
 
   const itemsPerPage = 20;
 
+  // MOMENTANEO
+  
+
   if (!analysis) {
     return <Navigate to="/get-started" replace />;
   }
@@ -92,6 +95,55 @@ export function ResultPage() {
       user.username.toLowerCase().includes(normalizedQuery),
     );
   }, [users, searchQuery]);
+
+  const hasUsersInCurrentTab = users.length > 0;
+  const hasSearchQuery = searchQuery.trim().length > 0;
+  const hasFilteredUsers = filteredUsers.length > 0;
+
+  const emptyState = useMemo(() => {
+    if (!hasUsersInCurrentTab) {
+      switch (activeTab) {
+        case "mutual":
+          return {
+            title: "No mutual followers yet",
+            description:
+              "We couldn't find any users who follow you back in this export.",
+          };
+        case "followersOnly":
+          return {
+            title: "No followers found",
+            description:
+              "There are no users in this export who follow you without being followed back.",
+          };
+        case "unfollowers":
+          return {
+            title: "No unfollowers found",
+            description:
+              "Good news — everyone you follow appears to follow you back.",
+          };
+        case "recentUnfollowers":
+          return {
+            title: "No recent unfollowers found",
+            description:
+              "We couldn't find any recent unfollow activity in this export.",
+          };
+        case "blocked":
+          return {
+            title: "No blocked users found",
+            description: "There are no blocked users available in this export.",
+          };
+      }
+    }
+
+    if (hasSearchQuery && !hasFilteredUsers) {
+      return {
+        title: "No users match your search",
+        description: `We couldn't find any username matching`,
+      };
+    }
+
+    return null;
+  }, [activeTab, hasUsersInCurrentTab, hasSearchQuery, hasFilteredUsers]);
 
   const sortedUsers = useMemo(() => {
     const nextUsers = [...filteredUsers];
@@ -295,20 +347,31 @@ export function ResultPage() {
               </div>
             </div>
 
-            <div
-              data-animate="hero-item"
-              className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2"
-            >
-              {paginatedUsers.map((user) => (
-                <UserListItem
-                  key={user.username}
-                  user={user}
-                  formatDate={formatDate}
-                />
-              ))}
+            <div data-animate="hero-item" className="mt-8">
+              {emptyState ? (
+                <div className="flex min-h-56 w-full flex-col items-center justify-center border border-foreground/10 bg-foreground/5 px-6 py-10 text-center">
+                  <h4 className="text-lg font-medium text-foreground">
+                    {emptyState.title}
+                  </h4>
+
+                  <p className="mt-3 max-w-md text-sm text-foreground/80">
+                    {emptyState.description}
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {paginatedUsers.map((user) => (
+                    <UserListItem
+                      key={user.username}
+                      user={user}
+                      formatDate={formatDate}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
-            {totalPages > 1 && (
+            {!emptyState && totalPages > 1 && (
               <div data-animate="hero-item">
                 <Pagination
                   currentPage={currentPage}

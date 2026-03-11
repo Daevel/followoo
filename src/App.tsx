@@ -51,51 +51,84 @@ export default function App() {
       <Container className="min-h-svh flex flex-col">
         <div
           ref={rootRef}
-          className="flex flex-col items-center pt-30 pb-6 text-center flex-1"
+          className="flex flex-1 flex-col items-center pt-24 pb-6 text-center md:pt-28"
         >
-          <div className="flex flex-col items-center text-center">
+          <div className="flex w-full max-w-180 flex-col items-center text-center">
             <h1
               data-animate="hero-item"
-              className="text-4xl font-semibold leading-headers text-foreground md:text-5xl"
+              className="text-5xl font-semibold leading-headers text-foreground md:text-6xl"
             >
               Followoo
             </h1>
 
             <p
               data-animate="hero-item"
-              className="mt-4 max-w-[18rem] text-sm text-foreground/90 md:max-w-[24rem] md:text-foreground"
+              className="mt-5 max-w-[20rem] text-sm text-foreground/90 md:max-w-[34rem] md:text-lg md:leading-relaxed"
             >
-              Welcome to follow/unfollow instagram compare app
+              Analyze your Instagram followers privately using your official
+              Instagram data export.
+            </p>
+
+            <p
+              data-animate="hero-item"
+              className="mt-4 max-w-[22rem] text-sm text-foreground/90 md:max-w-[36rem] md:text-base"
+            >
+              No login required · No API access · 100% local analysis
+            </p>
+
+            <p
+              data-animate="hero-item"
+              className="mt-3 text-sm text-foreground/70 md:text-base"
+            >
+              Your Instagram data never leaves your browser.
             </p>
 
             <Link
               data-animate="hero-item"
               to="/instructions-to-start"
-              className="mt-8 text-foreground underline"
+              className="mt-8 text-foreground underline transition-colors hover:text-primary"
             >
-              Don't know how to start?
+              How to download your Instagram data →
             </Link>
 
-            <div data-animate="hero-item" className="mt-10">
+            <div data-animate="hero-item" className="mt-8">
               <Button
                 background="primary"
                 foreground="foreground"
                 icon="arrowRight"
                 iconPosition="right"
                 onClick={() => navigate("/get-started")}
+                className="min-w-52 px-8"
               >
-                Get started
+                Analyze my followers
               </Button>
+            </div>
+
+            <p
+              data-animate="hero-item"
+              className="mt-3 text-xs text-foreground/60 md:text-sm"
+            >
+              Works with the official Instagram export (.zip)
+            </p>
+
+            <div
+              data-animate="hero-item"
+              className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-foreground/80"
+            >
+              <span>✓ Mutual followers</span>
+              <span>✓ Unfollowers</span>
+              <span>✓ Recent unfollowers</span>
             </div>
 
             <div
               data-animate="hero-illustration"
-              className="mt-auto w-full pt-12"
+              className="mt-10 w-full pt-4 md:mt-12"
             >
               <HeroIllustrations />
             </div>
           </div>
         </div>
+
         <FooterSignature />
       </Container>
     </section>
