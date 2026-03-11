@@ -10,17 +10,12 @@ export function parseWrappedRelationshipUsers(
   key: string,
 ): InstagramUser[] {
   if (!json || typeof json !== "object") {
-    console.warn("parseWrappedRelationshipUsers: invalid json", json);
     return [];
   }
 
   const list = (json as Record<string, unknown>)[key];
 
   if (!Array.isArray(list)) {
-    console.warn(
-      `parseWrappedRelationshipUsers: key "${key}" is not an array`,
-      json,
-    );
     return [];
   }
 

@@ -6,7 +6,6 @@ function isInstagramUser(user: InstagramUser | null): user is InstagramUser {
 
 export function parseFollowers(json: unknown): InstagramUser[] {
   if (!Array.isArray(json)) {
-    console.warn("parseFollowers: expected array, received:", json);
     return [];
   }
 

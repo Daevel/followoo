@@ -4,7 +4,7 @@ export function FooterSignature() {
   return (
     <footer className="mt-auto flex flex-col items-center justify-center gap-2 py-6 text-primary">
       <p className="p3-b">
-        followoo.track - made by{" "}
+        followoo.app - made by{" "}
         <Link to="https://github.com/Daevel" target="_blank">
           <b>daevel</b>
         </Link>

@@ -58,6 +58,23 @@ export function GetStarted() {
       const exportData = await parseInstagramExport(selectedZipFile, {
         debug: true,
       });
+
+      const hasAnyData =
+        exportData.followers.length > 0 ||
+        exportData.following.length > 0 ||
+        exportData.recentlyUnfollowed.length > 0 ||
+        exportData.pendingFollowRequests.length > 0 ||
+        exportData.recentFollowRequests.length > 0 ||
+        exportData.blocked.length > 0 ||
+        exportData.restricted.length > 0;
+
+      if (!hasAnyData) {
+        alert(
+          "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
+        );
+        return;
+      }
+
       const analysis = analyzeInstagramExport(exportData);
 
       const elapsed = Date.now() - start;

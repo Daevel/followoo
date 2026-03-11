@@ -6,7 +6,6 @@ function isInstagramUser(user: InstagramUser | null): user is InstagramUser {
 
 export function parseFollowing(json: unknown): InstagramUser[] {
   if (!json || typeof json !== "object") {
-    console.warn("parseFollowing: invalid json", json);
     return [];
   }
 
@@ -14,12 +13,8 @@ export function parseFollowing(json: unknown): InstagramUser[] {
     .relationships_following;
 
   if (!Array.isArray(list)) {
-    console.warn("parseFollowing: relationships_following is not an array", list);
     return [];
   }
-
-  console.log("parseFollowing list length:", list.length);
-  console.log("parseFollowing first item:", list[0]);
 
   const parsed: (InstagramUser | null)[] = list.map((entry) => {
     if (!entry || typeof entry !== "object") return null;
@@ -68,9 +63,5 @@ export function parseFollowing(json: unknown): InstagramUser[] {
     };
   });
 
-  const result = parsed.filter(isInstagramUser);
-
-  console.log("parseFollowing parsed length:", result.length);
-
-  return result;
+  return parsed.filter(isInstagramUser);
 }
