@@ -12,6 +12,8 @@ import SendMail from "../../icons/send-mail.svg?react";
 import ArrowRight from "../../icons/arrow-right.svg?react"
 import ArrowLeft from "../../icons/arrow-left.svg?react";
 import Check from "../../icons/check.svg?react";
+import SingleArrowRight from "../../icons/single-arrow-right.svg?react";
+import SingleArrowLeft from "../../icons/single-arrow-left.svg?react";
 
 const icons = {
   checkCircle: CheckCircle,
@@ -23,6 +25,8 @@ const icons = {
   help: Help,
   upload: Upload,
   sendMail: SendMail,
+  singleArrowRight: SingleArrowRight,
+  singleArrowLeft: SingleArrowLeft,
   arrowRight: ArrowRight,
   arrowLeft: ArrowLeft,
   check: Check,

@@ -7,6 +7,10 @@ import { Button } from "../ui/Button";
 import { Pagination } from "../ui/Paginator";
 import { gsap } from "gsap";
 import type { InstagramAnalysisResult } from "../../types/instagram.types";
+import { formatDate } from "../utils/utils";
+import { UserListItem } from "../ui/UserListItem";
+import { SortSelect } from "../ui/SortSelect";
+import { Input } from "../ui/Input";
 
 type SortKey =
   | "alphabeticalAsc"
@@ -34,7 +38,7 @@ function TabButton({ children, active, onClick }: TabButtonProps) {
       onClick={onClick}
       background={active ? "accent" : "primary"}
       foreground="foreground"
-      className="mt-0 transition-colors"
+      className="mt-0 shrink-0 whitespace-nowrap transition-colors px-4 py-2"
     >
       {children}
     </Button>
@@ -48,6 +52,8 @@ export function ResultPage() {
   const [sortBy, setSortBy] = useState<SortKey>("alphabeticalAsc");
   const [activeTab, setActiveTab] = useState<TabKey>("mutual");
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [searchQuery, setSearchQuery] = useState("");
 
   const itemsPerPage = 20;
 
@@ -77,8 +83,18 @@ export function ResultPage() {
     }
   }, [activeTab, analysis]);
 
+  const filteredUsers = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+
+    if (!normalizedQuery) return users;
+
+    return users.filter((user) =>
+      user.username.toLowerCase().includes(normalizedQuery),
+    );
+  }, [users, searchQuery]);
+
   const sortedUsers = useMemo(() => {
-    const nextUsers = [...users];
+    const nextUsers = [...filteredUsers];
 
     switch (sortBy) {
       case "alphabeticalAsc":
@@ -100,7 +116,7 @@ export function ResultPage() {
       default:
         return nextUsers;
     }
-  }, [users, sortBy]);
+  }, [filteredUsers, sortBy]);
 
   const totalPages = Math.ceil(sortedUsers.length / itemsPerPage);
 
@@ -113,29 +129,42 @@ export function ResultPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeTab, sortBy]);
+  }, [activeTab, sortBy, searchQuery]);
 
-  const sectionTitle = useMemo(() => {
-    switch (activeTab) {
-      case "mutual":
-        return "Mutual (you follow each other)";
-
-      case "followersOnly":
-        return "Followers (they follow you, you don't follow them)";
-
-      case "unfollowers":
-        return "Unfollowers (you follow them, they don't follow you)";
-
-      case "recentUnfollowers":
-        return "Recent Unfollowers (someone who has recently unfollowed you)";
-
-      case "blocked":
-        return "Blocked (people who you blocked)";
-
-      default:
-        return "";
-    }
-  }, [activeTab]);
+  const tabInfos: { sectionTitle: string; description: string } =
+    useMemo(() => {
+      switch (activeTab) {
+        case "mutual":
+          return {
+            sectionTitle: "Mutual",
+            description:
+              "These are the users that you follow and who also follow you back.",
+          };
+        case "followersOnly":
+          return {
+            sectionTitle: "Followers",
+            description:
+              "These are the users that follow you, but you don't follow them back.",
+          };
+        case "unfollowers":
+          return {
+            sectionTitle: "Unfollowers",
+            description:
+              "These are the users that you follow, but they don't follow you back.",
+          };
+        case "recentUnfollowers":
+          return {
+            sectionTitle: "Recent Unfollowers",
+            description:
+              "These are the users that have recently unfollowed you.",
+          };
+        case "blocked":
+          return {
+            sectionTitle: "Blocked",
+            description: "These are the users that you have blocked.",
+          };
+      }
+    }, [activeTab]);
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
@@ -178,84 +207,104 @@ export function ResultPage() {
 
           <div
             data-animate="hero-item"
-            className="mt-6 flex flex-row flex-wrap gap-3 items-center justify-center"
+            className="mt-6 w-full overflow-x-auto custom-scrollbar pt-2 pb-3"
           >
-            <TabButton
-              active={activeTab === "mutual"}
-              onClick={() => setActiveTab("mutual")}
-            >
-              Mutual ({analysis.mutual.length})
-            </TabButton>
+            <div className="flex min-w-max gap-3 px-1">
+              <TabButton
+                active={activeTab === "mutual"}
+                onClick={() => setActiveTab("mutual")}
+              >
+                Mutual ({analysis.mutual.length})
+              </TabButton>
 
-            <TabButton
-              active={activeTab === "followersOnly"}
-              onClick={() => setActiveTab("followersOnly")}
-            >
-              Followers ({analysis.followersOnly.length})
-            </TabButton>
+              <TabButton
+                active={activeTab === "followersOnly"}
+                onClick={() => setActiveTab("followersOnly")}
+              >
+                Followers ({analysis.followersOnly.length})
+              </TabButton>
 
-            <TabButton
-              active={activeTab === "blocked"}
-              onClick={() => setActiveTab("blocked")}
-            >
-              Blocked ({analysis.blocked.length})
-            </TabButton>
+              <TabButton
+                active={activeTab === "blocked"}
+                onClick={() => setActiveTab("blocked")}
+              >
+                Blocked ({analysis.blocked.length})
+              </TabButton>
 
-            <TabButton
-              active={activeTab === "unfollowers"}
-              onClick={() => setActiveTab("unfollowers")}
-            >
-              Unfollowers ({analysis.unfollowers.length})
-            </TabButton>
+              <TabButton
+                active={activeTab === "unfollowers"}
+                onClick={() => setActiveTab("unfollowers")}
+              >
+                Unfollowers ({analysis.unfollowers.length})
+              </TabButton>
 
-            <TabButton
-              active={activeTab === "recentUnfollowers"}
-              onClick={() => setActiveTab("recentUnfollowers")}
-            >
-              Recent Unfollowers ({analysis.recentUnfollowers.length})
-            </TabButton>
+              <TabButton
+                active={activeTab === "recentUnfollowers"}
+                onClick={() => setActiveTab("recentUnfollowers")}
+              >
+                Recent Unfollowers ({analysis.recentUnfollowers.length})
+              </TabButton>
+            </div>
           </div>
 
           <div className="mt-8 w-full">
-            <h3
-              data-animate="hero-item"
-              className="text-foreground font-medium"
-            >
-              {sectionTitle}
-            </h3>
-
-            <div className="mt-6 flex items-center justify-center gap-3">
-              <label htmlFor="sort-users" className="text-foreground">
-                Sort by
-              </label>
-
-              <select
-                id="sort-users"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortKey)}
-                className="bg-primary text-foreground px-3 py-2 border border-primary"
-              >
-                <option value="alphabeticalAsc">A-Z</option>
-                <option value="alphabeticalDesc">Z-A</option>
-                <option value="recentDesc">Most recent</option>
-                <option value="recentAsc">Oldest</option>
-              </select>
+            <div className="flex flex-col mt-3 w-full items-center gap-y-3 max-sm:text-start">
+              <h3 data-animate="hero-item" className="text-foreground">
+                {tabInfos.sectionTitle}
+              </h3>
+              <p data-animate="hero-item" className="text-foreground">
+                {tabInfos.description}
+              </p>
             </div>
 
             <div
               data-animate="hero-item"
-              className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-30"
+              className="mt-8 flex w-full flex-col gap-4 sm:gap-5 md:flex-row md:items-end md:justify-between"
+            >
+              <div className="w-full md:max-w-md">
+                <label
+                  htmlFor="search-users"
+                  className="mb-2 block text-start l2-r text-foreground/80"
+                >
+                  Search user
+                </label>
+
+                <Input
+                  id="search-users"
+                  type="text"
+                  placeholder="Type a username..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+
+              <div className="w-full md:w-auto">
+                <SortSelect
+                  label="Sort by"
+                  value={sortBy}
+                  onChange={setSortBy}
+                  options={[
+                    { label: "A-Z", value: "alphabeticalAsc" },
+                    { label: "Z-A", value: "alphabeticalDesc" },
+                    { label: "Most recent", value: "recentDesc" },
+                    { label: "Oldest", value: "recentAsc" },
+                  ]}
+                  className="w-full md:w-auto"
+                />
+              </div>
+            </div>
+
+            <div
+              data-animate="hero-item"
+              className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2"
             >
               {paginatedUsers.map((user) => (
-                <a
+                <UserListItem
                   key={user.username}
-                  href={user.href ?? `https://instagram.com/${user.username}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="p2-b text-primary transition hover:underline"
-                >
-                  {user.username}
-                </a>
+                  user={user}
+                  formatDate={formatDate}
+                />
               ))}
             </div>
 
