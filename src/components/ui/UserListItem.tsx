@@ -1,5 +1,5 @@
 import type { InstagramUser } from "../../types/instagram.types";
-import { extractFirstNameLetter } from "../utils/utils";
+import { extractFirstNameLetter, getInstagramProfileUrl } from "../utils/utils";
 
 function formatDate(timestamp?: number) {
   if (!timestamp) return null;
@@ -18,7 +18,7 @@ type UserListItemProps = {
 };
 
 export function UserListItem({ user }: UserListItemProps) {
-  const href = user.href ?? `https://instagram.com/${user.username}`;
+  const href = getInstagramProfileUrl(user);
   const initial = extractFirstNameLetter(user.username.toUpperCase());
   const formattedDate = formatDate(user.timestamp);
 

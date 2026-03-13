@@ -1,8 +1,8 @@
 import JSZip from "jszip";
 
 import type { InstagramExportData } from "../../types/instagram.types";
+import { InstagramObjectArrayKeys } from "../../types/enums";
 import { parseFollowers } from "../parsers/parseFollowers";
-import { parseFollowing } from "../parsers/parseFollowing";
 import { parseWrappedRelationshipUsers } from "../parsers/parseWrappedRelationshipUsers";
 
 import {
@@ -24,13 +24,8 @@ function safeJsonParse(content: string): unknown | null {
   }
 }
 
-export async function parseInstagramExport(
-  file: File,
-): Promise<InstagramExportData> {
-
-  const zip = await JSZip.loadAsync(file);
-
-  const result: InstagramExportData = {
+function createEmptyInstagramExportData(): InstagramExportData {
+  return {
     followers: [],
     following: [],
     recentlyUnfollowed: [],
@@ -39,68 +34,82 @@ export async function parseInstagramExport(
     blocked: [],
     restricted: [],
   };
+}
 
-  const paths = Object.keys(zip.files);
+export async function parseInstagramExport(
+  file: File,
+): Promise<InstagramExportData> {
+  const zip = await JSZip.loadAsync(file);
+  const result = createEmptyInstagramExportData();
 
-  for (const path of paths) {
+  for (const path of Object.keys(zip.files)) {
     const entry = zip.files[path];
 
-    if (entry.dir) continue;
-    if (!isJsonFile(path)) continue;
+    if (!entry || entry.dir || !isJsonFile(path)) continue;
 
     const content = await entry.async("string");
     const json = safeJsonParse(content);
 
-    if (json === null) {
-      continue;
-    }
+    if (json === null) continue;
 
     if (isFollowersFile(path)) {
-      const parsed = parseFollowers(json);
-      result.followers.push(...parsed);
+      result.followers.push(...parseFollowers(json));
       continue;
     }
 
     if (isFollowingFile(path)) {
-      const parsed = parseFollowing(json);
-      result.following.push(...parsed);
+      result.following.push(
+        ...parseWrappedRelationshipUsers(
+          json,
+          InstagramObjectArrayKeys.FOLLOWING,
+        ),
+      );
       continue;
     }
 
     if (isRecentlyUnfollowedFile(path)) {
-      const parsed = parseWrappedRelationshipUsers(
-        json,
-        "relationships_unfollowed_users",
+      result.recentlyUnfollowed.push(
+        ...parseWrappedRelationshipUsers(
+          json,
+          InstagramObjectArrayKeys.UNFOLLOWED_USERS,
+        ),
       );
-      result.recentlyUnfollowed.push(...parsed);
-      continue;
-    }
 
-    if (isPendingFollowRequestsFile(path)) {
-      const parsed = parseFollowers(json);
-      result.pendingFollowRequests.push(...parsed);
-      continue;
-    }
-
-    if (isRecentFollowRequestsFile(path)) {
-      const parsed = parseFollowers(json);
-      result.recentFollowRequests.push(...parsed);
       continue;
     }
 
     if (isBlockedFile(path)) {
-      const parsed = parseWrappedRelationshipUsers(
-        json,
-        "relationships_blocked_users",
+      result.blocked.push(
+        ...parseWrappedRelationshipUsers(
+          json,
+          InstagramObjectArrayKeys.BLOCKED_USERS,
+        ),
       );
-      result.blocked.push(...parsed);
       continue;
     }
 
     if (isRestrictedFile(path)) {
-      const parsed = parseFollowers(json);
-      result.restricted.push(...parsed);
+      result.restricted.push(
+        ...parseWrappedRelationshipUsers(
+          json,
+          InstagramObjectArrayKeys.RESTRICTED_USERS,
+        ),
+      );
       continue;
+    }
+
+    if (isPendingFollowRequestsFile(path)) {
+      result.pendingFollowRequests.push(
+        ...parseWrappedRelationshipUsers(
+          json,
+          InstagramObjectArrayKeys.PERMANENT_FOLLOW_REQUESTS,
+        ),
+      );
+      continue;
+    }
+
+    if (isRecentFollowRequestsFile(path)) {
+      result.recentFollowRequests.push(...parseFollowers(json));
     }
   }
 

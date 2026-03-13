@@ -1,68 +1,56 @@
-// parsers/parseWrappedRelationshipUsers.ts
+import type { InstagramObjectArrayKeys } from "../../types/enums";
 import type { InstagramUser } from "../../types/instagram.types";
-
-function isNonNull<T>(value: T | null): value is T {
-  return value !== null;
-}
+import { isRelationshipObject } from "../utils/instagramGuards";
+import { isArray, isObject } from "../utils/typeGuards";
 
 export function parseWrappedRelationshipUsers(
   json: unknown,
-  key: string,
+  key: InstagramObjectArrayKeys,
 ): InstagramUser[] {
-  if (!json || typeof json !== "object") {
-    return [];
-  }
+  if (!isObject(json)) return [];
 
-  const list = (json as Record<string, unknown>)[key];
+  const list = json[key];
 
-  if (!Array.isArray(list)) {
-    return [];
-  }
+  if (!isArray(list)) return [];
 
-  return list
-    .map((entry) => {
-      if (!entry || typeof entry !== "object") return null;
+  return list.flatMap((entry): InstagramUser[] => {
+    if (!isRelationshipObject(entry)) return [];
 
-      const typedEntry = entry as {
-        title?: unknown;
-        string_list_data?: unknown;
-      };
+    const stringListData = entry.string_list_data;
 
-      const stringListData = typedEntry.string_list_data;
-      const firstItem =
-        Array.isArray(stringListData) && stringListData.length > 0
-          ? stringListData[0]
+    if (!isArray(stringListData) || stringListData.length === 0) {
+      return [];
+    }
+
+    const firstItem = stringListData[0];
+
+    if (!isObject(firstItem)) {
+      return [];
+    }
+
+    const username =
+      typeof firstItem.value === "string" && firstItem.value.trim() !== ""
+        ? firstItem.value
+        : typeof entry.title === "string" && entry.title.trim() !== ""
+          ? entry.title
           : null;
 
-      const typedFirstItem =
-        firstItem && typeof firstItem === "object"
-          ? (firstItem as {
-              value?: unknown;
-              href?: unknown;
-              timestamp?: unknown;
-            })
-          : null;
+    if (!username) {
+      return [];
+    }
 
-      const username =
-        typeof typedEntry.title === "string" && typedEntry.title.trim() !== ""
-          ? typedEntry.title
-          : typeof typedFirstItem?.value === "string"
-            ? typedFirstItem.value
-            : null;
-
-      if (!username) return null;
-
-      return {
+    return [
+      {
         username,
         href:
-          typeof typedFirstItem?.href === "string"
-            ? typedFirstItem.href
+          typeof firstItem.href === "string"
+            ? firstItem.href
             : `https://instagram.com/${username}`,
         timestamp:
-          typeof typedFirstItem?.timestamp === "number"
-            ? typedFirstItem.timestamp
+          typeof firstItem.timestamp === "number"
+            ? firstItem.timestamp
             : undefined,
-      };
-    })
-    .filter(isNonNull);
+      },
+    ];
+  });
 }

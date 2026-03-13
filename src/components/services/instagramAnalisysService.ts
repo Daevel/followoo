@@ -1,54 +1,62 @@
 import type {
+  InstagramAnalysisResult,
   InstagramExportData,
   InstagramUser,
 } from "../../types/instagram.types";
 
-export type InstagramAnalysisResult = {
-  mutual: InstagramUser[];
-  followersOnly: InstagramUser[];
-  unfollowers: InstagramUser[];
-  recentUnfollowers: InstagramUser[];
-  blocked: InstagramUser[];
-};
-
-function normalize(username: string) {
+function normalizeUsername(username: string): string {
   return username.trim().toLowerCase();
+}
+
+function dedupeUsers(users: InstagramUser[]): InstagramUser[] {
+  const map = new Map<string, InstagramUser>();
+
+  for (const user of users) {
+    const key = normalizeUsername(user.username);
+
+    if (!map.has(key)) {
+      map.set(key, user);
+    }
+  }
+
+  return Array.from(map.values());
 }
 
 export function analyzeInstagramExport(
   data: InstagramExportData,
 ): InstagramAnalysisResult {
-  const followers = data.followers;
-  const following = data.following;
+  const followers = dedupeUsers(data.followers);
+  const following = dedupeUsers(data.following);
+  const recentUnfollowers = dedupeUsers(data.recentlyUnfollowed);
+  const blocked = dedupeUsers(data.blocked);
+  const restricted = dedupeUsers(data.restricted);
 
-  const followersSet = new Set(
-    followers.map((user) => normalize(user.username)),
+  const followerMap = new Map(
+    followers.map((user) => [normalizeUsername(user.username), user]),
   );
 
-  const followingSet = new Set(
-    following.map((user) => normalize(user.username)),
+  const followingMap = new Map(
+    following.map((user) => [normalizeUsername(user.username), user]),
   );
 
-  // X segue Y e Y segue X
   const mutual = followers.filter((user) =>
-    followingSet.has(normalize(user.username)),
+    followingMap.has(normalizeUsername(user.username)),
   );
 
-  // Y segue X ma X non segue Y
   const followersOnly = followers.filter(
-    (user) => !followingSet.has(normalize(user.username)),
+    (user) => !followingMap.has(normalizeUsername(user.username)),
   );
 
-  // X segue Y ma Y non segue X
   const unfollowers = following.filter(
-    (user) => !followersSet.has(normalize(user.username)),
+    (user) => !followerMap.has(normalizeUsername(user.username)),
   );
 
   return {
     mutual,
     followersOnly,
     unfollowers,
-    recentUnfollowers: data.recentlyUnfollowed,
-    blocked: data.blocked,
+    recentUnfollowers,
+    blocked,
+    restricted,
   };
 }

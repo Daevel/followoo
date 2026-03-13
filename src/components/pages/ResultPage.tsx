@@ -23,7 +23,8 @@ type TabKey =
   | "followersOnly"
   | "unfollowers"
   | "recentUnfollowers"
-  | "blocked";
+  | "blocked"
+  | "restricted";
 
 type TabButtonProps = {
   children: React.ReactNode;
@@ -58,7 +59,6 @@ export function ResultPage() {
   const itemsPerPage = 20;
 
   // MOMENTANEO
-  
 
   if (!analysis) {
     return <Navigate to="/get-started" replace />;
@@ -80,6 +80,9 @@ export function ResultPage() {
 
       case "blocked":
         return analysis.blocked;
+
+      case "restricted":
+        return analysis.restricted;
 
       default:
         return [];
@@ -131,6 +134,12 @@ export function ResultPage() {
           return {
             title: "No blocked users found",
             description: "There are no blocked users available in this export.",
+          };
+        case "restricted":
+          return {
+            title: "No restricted users found",
+            description:
+              "There are no restricted users available in this export.",
           };
       }
     }
@@ -215,6 +224,12 @@ export function ResultPage() {
             sectionTitle: "Blocked",
             description: "These are the users that you have blocked.",
           };
+        case "restricted":
+          return {
+            sectionTitle: "Restricted",
+            description:
+              "These are the users that you have restricted. Restricted users can still follow you and see your posts, but they won't be able to see when you're online or if you've read their messages.",
+          };
       }
     }, [activeTab]);
 
@@ -281,6 +296,13 @@ export function ResultPage() {
                 onClick={() => setActiveTab("blocked")}
               >
                 Blocked ({analysis.blocked.length})
+              </TabButton>
+
+              <TabButton
+                active={activeTab === "restricted"}
+                onClick={() => setActiveTab("restricted")}
+              >
+                Restricted ({analysis.restricted.length})
               </TabButton>
 
               <TabButton

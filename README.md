@@ -1,4 +1,4 @@
-# Followoo
+# Followoo ![Followoo Favicon](./public/favicon.svg) 
 
 ![React](https://img.shields.io/badge/React-18-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)

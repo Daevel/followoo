@@ -1,45 +1,26 @@
 import type { InstagramUser } from "../../types/instagram.types";
-
-function isInstagramUser(user: InstagramUser | null): user is InstagramUser {
-  return user !== null;
-}
+import { isRawInstagramUser, isRelationshipObject } from "../utils/instagramGuards";
+import { isArray } from "../utils/typeGuards";
+import { normalizeInstagramUser } from "../utils/utils";
 
 export function parseFollowers(json: unknown): InstagramUser[] {
-  if (!Array.isArray(json)) {
-    return [];
-  }
+  if (!isArray(json)) return [];
 
-  const parsed: (InstagramUser | null)[] = json.map((entry) => {
-    if (!entry || typeof entry !== "object") return null;
+  return json.flatMap((entry): InstagramUser[] => {
+    if (!isRelationshipObject(entry)) return [];
 
-    const stringListData = (entry as { string_list_data?: unknown }).string_list_data;
+    const { string_list_data } = entry;
 
-    if (!Array.isArray(stringListData) || stringListData.length === 0) {
-      return null;
+    if (!isArray(string_list_data) || string_list_data.length === 0) {
+      return [];
     }
 
-    const firstItem = stringListData[0];
+    const firstItem = string_list_data[0];
 
-    if (!firstItem || typeof firstItem !== "object") {
-      return null;
+    if (!isRawInstagramUser(firstItem)) {
+      return [];
     }
 
-    const data = firstItem as {
-      value?: unknown;
-      href?: unknown;
-      timestamp?: unknown;
-    };
-
-    if (typeof data.value !== "string") {
-      return null;
-    }
-
-    return {
-      username: data.value,
-      href: typeof data.href === "string" ? data.href : undefined,
-      timestamp: typeof data.timestamp === "number" ? data.timestamp : undefined,
-    };
+    return [normalizeInstagramUser(firstItem)];
   });
-
-  return parsed.filter(isInstagramUser);
 }
