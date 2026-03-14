@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toastService, type ToastPayload } from "../services/toastService";
+import { toastService } from "../services/toastService";
 import { Toast, type ToastItem } from "../ui/Toast";
 
 type InternalToast = ToastItem & {

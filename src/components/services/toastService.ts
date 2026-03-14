@@ -24,7 +24,10 @@ function emit(toast: ToastPayload) {
 export const toastService = {
   subscribe(listener: ToastListener) {
     listeners.add(listener);
-    return () => listeners.delete(listener);
+
+    return () => {
+      listeners.delete(listener);
+    };
   },
 
   info(payload: Omit<ToastPayload, "variant">) {
