@@ -11,6 +11,7 @@ import { Checkbox } from "../ui/Checkbox";
 import { gsap } from "gsap";
 import { parseInstagramExport } from "../services/instagramExportService";
 import { analyzeInstagramExport } from "../services/instagramAnalisysService";
+import { toastService } from "../services/toastService";
 
 export function GetStarted() {
   const navigate = useNavigate();
@@ -64,12 +65,25 @@ export function GetStarted() {
         exportData.pendingFollowRequests.length > 0 ||
         exportData.recentFollowRequests.length > 0 ||
         exportData.blocked.length > 0 ||
-        exportData.restricted.length > 0;
+        exportData.restricted.length > 0 ||
+        exportData.closeFriends.length > 0 ||
+        exportData.hideStoriesFrom.length > 0;
 
       if (!hasAnyData) {
-        alert(
-          "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
-        );
+        toastService.warning({
+          title: "Invalid file",
+          description: "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
+        })
+
+                toastService.info({
+          title: "Invalid file",
+          description: "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
+        })
+
+                toastService.success({
+          title: "Invalid file",
+          description: "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
+        })
         return;
       }
 

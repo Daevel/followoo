@@ -10,11 +10,13 @@ import { TermsAndConditions } from "./components/pages/TermsAndConditions.tsx";
 import { HelpSection } from "./components/pages/HelpSection.tsx";
 import { ResultPage } from "./components/pages/ResultPage.tsx";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
+import { ToastProvider } from "./components/providers/ToastProvider.tsx";
 
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
+    <ToastProvider>
       <ScrollToTop />
       <Routes>
         <Route path="*" element={<Navigate to="/" />} />
@@ -28,6 +30,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/help" element={<HelpSection />} />
         <Route path="/results" element={<ResultPage />} />
       </Routes>
+    </ToastProvider>
     </BrowserRouter>
   </StrictMode>,
 );

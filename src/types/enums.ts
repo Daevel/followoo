@@ -1,12 +1,13 @@
 export const InstagramObjectArrayKeys = {
-  FOLLOWING: "FOLLOWING",
-  HIDE_STORIES_FROM: "HIDE_STORIES_FROM",
-  FOLLOW_REQUESTS_SENT: "FOLLOW_REQUESTS_SENT",
-  PERMANENT_FOLLOW_REQUESTS: "PERMANENT_FOLLOW_REQUESTS",
-  UNFOLLOWED_USERS: "UNFOLLOWED_USERS",
-  DISMISSED_SUGGESTED_USERS: "DISMISSED_SUGGESTED_USERS",
-  RESTRICTED_USERS: "RESTRICTED_USERS",
-  BLOCKED_USERS: "BLOCKED_USERS",
+  FOLLOWING: "relationships_following",
+  HIDE_STORIES_FROM: "relationships_hide_stories_from",
+  FOLLOW_REQUESTS_SENT: "relationships_follow_requests_sent",
+  PERMANENT_FOLLOW_REQUESTS: "relationships_following_permanent_follow_requests",
+  UNFOLLOWED_USERS: "relationships_unfollowed_users",
+  DISMISSED_SUGGESTED_USERS: "relationships_dismissed_suggested_users",
+  RESTRICTED_USERS: "relationships_restricted_users",
+  BLOCKED_USERS: "relationships_blocked_users",
+  CLOSE_FRIENDS: "relationships_close_friends",
 } as const;
 
 export type InstagramObjectArrayKeys =

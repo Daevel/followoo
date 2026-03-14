@@ -14,6 +14,8 @@ import {
   isRecentFollowRequestsFile,
   isRecentlyUnfollowedFile,
   isRestrictedFile,
+  isCloseFriendsFile,
+  isHideStoriesFromFile
 } from "./../utils/instagramExportMatchers";
 
 function safeJsonParse(content: string): unknown | null {
@@ -33,6 +35,8 @@ function createEmptyInstagramExportData(): InstagramExportData {
     recentFollowRequests: [],
     blocked: [],
     restricted: [],
+    closeFriends: [],
+    hideStoriesFrom: [],
   };
 }
 
@@ -58,13 +62,13 @@ export async function parseInstagramExport(
     }
 
     if (isFollowingFile(path)) {
-      result.following.push(
-        ...parseWrappedRelationshipUsers(
-          json,
-          InstagramObjectArrayKeys.FOLLOWING,
-        ),
-      );
-      continue;
+     result.following.push(
+      ...parseWrappedRelationshipUsers(
+        json,
+        InstagramObjectArrayKeys.FOLLOWING
+      )
+     )
+     continue;
     }
 
     if (isRecentlyUnfollowedFile(path)) {
@@ -74,7 +78,6 @@ export async function parseInstagramExport(
           InstagramObjectArrayKeys.UNFOLLOWED_USERS,
         ),
       );
-
       continue;
     }
 
@@ -93,6 +96,26 @@ export async function parseInstagramExport(
         ...parseWrappedRelationshipUsers(
           json,
           InstagramObjectArrayKeys.RESTRICTED_USERS,
+        ),
+      );
+      continue;
+    }
+
+        if (isCloseFriendsFile(path)) {
+      result.closeFriends.push(
+        ...parseWrappedRelationshipUsers(
+          json,
+          InstagramObjectArrayKeys.CLOSE_FRIENDS,
+        ),
+      );
+      continue;
+    }
+
+            if (isHideStoriesFromFile(path)) {
+      result.hideStoriesFrom.push(
+        ...parseWrappedRelationshipUsers(
+          json,
+          InstagramObjectArrayKeys.HIDE_STORIES_FROM,
         ),
       );
       continue;

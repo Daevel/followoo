@@ -30,6 +30,8 @@ export function analyzeInstagramExport(
   const recentUnfollowers = dedupeUsers(data.recentlyUnfollowed);
   const blocked = dedupeUsers(data.blocked);
   const restricted = dedupeUsers(data.restricted);
+  const closeFriends = dedupeUsers(data.closeFriends);
+  const hideStoriesFrom = dedupeUsers(data.hideStoriesFrom);
 
   const followerMap = new Map(
     followers.map((user) => [normalizeUsername(user.username), user]),
@@ -58,5 +60,7 @@ export function analyzeInstagramExport(
     recentUnfollowers,
     blocked,
     restricted,
+    closeFriends,
+    hideStoriesFrom
   };
 }

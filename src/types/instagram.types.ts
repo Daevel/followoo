@@ -36,6 +36,8 @@ export type InstagramExportData = {
   pendingFollowRequests: InstagramUser[];
   recentFollowRequests: InstagramUser[];
   restricted: InstagramUser[];
+  closeFriends: InstagramUser[];
+  hideStoriesFrom: InstagramUser[];
 };
 
 export type InstagramAnalysisResult = {
@@ -45,4 +47,6 @@ export type InstagramAnalysisResult = {
   recentUnfollowers: InstagramUser[];
   blocked: InstagramUser[];
   restricted: InstagramUser[];
+  closeFriends: InstagramUser[];
+  hideStoriesFrom: InstagramUser[];
 };

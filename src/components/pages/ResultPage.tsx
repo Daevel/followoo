@@ -24,7 +24,9 @@ type TabKey =
   | "unfollowers"
   | "recentUnfollowers"
   | "blocked"
-  | "restricted";
+  | "restricted"
+  | "closeFriends"
+  | "hideStoriesFrom";
 
 type TabButtonProps = {
   children: React.ReactNode;
@@ -84,6 +86,12 @@ export function ResultPage() {
       case "restricted":
         return analysis.restricted;
 
+      case "closeFriends":
+        return analysis.closeFriends;
+
+      case "hideStoriesFrom":
+        return analysis.hideStoriesFrom;
+
       default:
         return [];
     }
@@ -140,6 +148,17 @@ export function ResultPage() {
             title: "No restricted users found",
             description:
               "There are no restricted users available in this export.",
+          };
+        case "closeFriends":
+          return {
+            title: "No close friends users found",
+            description: "There are no close friends available in this export."
+          };
+
+        case "hideStoriesFrom":
+          return {
+            title: "You don't hide your stories to none for now",
+            description: "There are no story hiders available in this export."
           };
       }
     }
@@ -230,6 +249,18 @@ export function ResultPage() {
             description:
               "These are the users that you have restricted. Restricted users can still follow you and see your posts, but they won't be able to see when you're online or if you've read their messages.",
           };
+        case "closeFriends":
+          return {
+            sectionTitle: "Close Friends",
+            description:
+              "These are the users that you can see their stories in a private mode. The Instagram's ring is colored in green instead of orange.",
+          };
+        case "hideStoriesFrom":
+          return {
+            sectionTitle: "Hide Story",
+            description:
+              "These are the users that you hide stories from.",
+          };
       }
     }, [activeTab]);
 
@@ -317,6 +348,20 @@ export function ResultPage() {
                 onClick={() => setActiveTab("recentUnfollowers")}
               >
                 Recent Unfollowers ({analysis.recentUnfollowers.length})
+              </TabButton>
+
+              <TabButton
+                active={activeTab === "closeFriends"}
+                onClick={() => setActiveTab("closeFriends")}
+              >
+                Close Friends ({analysis.closeFriends.length})
+              </TabButton>
+
+              <TabButton
+                active={activeTab === "hideStoriesFrom"}
+                onClick={() => setActiveTab("hideStoriesFrom")}
+              >
+                Hide Stories ({analysis.hideStoriesFrom.length})
               </TabButton>
             </div>
           </div>
