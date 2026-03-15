@@ -14,6 +14,7 @@ import ArrowLeft from "../../icons/arrow-left.svg?react";
 import Check from "../../icons/check.svg?react";
 import SingleArrowRight from "../../icons/single-arrow-right.svg?react";
 import SingleArrowLeft from "../../icons/single-arrow-left.svg?react";
+import Close from "../../icons/close.svg?react";
 
 const icons = {
   checkCircle: CheckCircle,
@@ -30,6 +31,7 @@ const icons = {
   arrowRight: ArrowRight,
   arrowLeft: ArrowLeft,
   check: Check,
+  close: Close,
 } as const;
 
 export type IconName = keyof typeof icons;

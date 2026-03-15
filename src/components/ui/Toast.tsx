@@ -1,4 +1,6 @@
 import clsx from "clsx";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
 import { Icon, type IconName } from "./Icon";
 
 export type ToastVariant = "info" | "success" | "warning";
@@ -13,6 +15,7 @@ export type ToastItem = {
 type ToastProps = {
   toast: ToastItem;
   onClose: (id: string) => void;
+  duration?: number;
 };
 
 const variantStyles: Record<
@@ -48,11 +51,76 @@ const variantStyles: Record<
   },
 };
 
-export function Toast({ toast, onClose }: ToastProps) {
+export function Toast({
+  toast,
+  onClose,
+  duration = 4000,
+}: ToastProps) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const closeTimeoutRef = useRef<number | null>(null);
+  const isClosingRef = useRef(false);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        rootRef.current,
+        {
+          opacity: 0,
+          y: 16,
+          scale: 0.98,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.35,
+          ease: "power3.out",
+        },
+      );
+    }, rootRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const handleClose = () => {
+    if (!rootRef.current || isClosingRef.current) return;
+
+    isClosingRef.current = true;
+
+    if (closeTimeoutRef.current !== null) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+
+    gsap.to(rootRef.current, {
+      opacity: 0,
+      y: 12,
+      scale: 0.98,
+      duration: 0.22,
+      ease: "power2.in",
+      onComplete: () => {
+        onClose(toast.id);
+      },
+    });
+  };
+
+  useEffect(() => {
+    closeTimeoutRef.current = window.setTimeout(() => {
+      handleClose();
+    }, duration);
+
+    return () => {
+      if (closeTimeoutRef.current !== null) {
+        window.clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, [duration, toast.id]);
+
   const styles = variantStyles[toast.variant];
 
   return (
     <div
+      ref={rootRef}
       role="status"
       aria-live="polite"
       className={clsx(
@@ -84,11 +152,17 @@ export function Toast({ toast, onClose }: ToastProps) {
 
         <button
           type="button"
-          onClick={() => onClose(toast.id)}
-          className="text-foreground/60 transition hover:text-foreground"
+          onClick={handleClose}
+          className="text-foreground/60 transition hover:text-foreground cursor-pointer"
           aria-label="Dismiss notification"
         >
-          ×
+          <Icon
+          name="close"
+          color="foreground"
+          width={24}
+          height={24}
+          aria-hidden="true"
+          />
         </button>
       </div>
     </div>

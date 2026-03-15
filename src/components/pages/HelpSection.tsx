@@ -5,8 +5,9 @@ import { Input } from "../ui/Input";
 import { NavBar } from "../ui/NavBar";
 
 import { useHelpForm } from "../hooks/useHelpForm";
-import { useRef, useLayoutEffect } from "react";
+import { useRef, useLayoutEffect, useEffect } from "react";
 import { gsap } from "gsap";
+import { toastService } from "../services/toastService";
 
 export function HelpSection() {
   const { form, onSubmit, submitState, isSubmitting } = useHelpForm();
@@ -19,6 +20,19 @@ export function HelpSection() {
   const messageValue = form.watch("message") ?? "";
 
   const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (submitState.success)
+      return toastService.success({
+        title: "Success",
+        description: "Email sent successfully.",
+      });
+    if (submitState.error)
+      return toastService.warning({
+        title: "Warning",
+        description: "An error has occurred: " + submitState.message.toString(),
+      });
+  }, [submitState]);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -79,7 +93,10 @@ export function HelpSection() {
 
           <div className="w-full flex flex-col items-center">
             <div className="w-full pt-5 flex flex-col items-center gap-10">
-              <div data-animate="hero-item" className="w-full flex flex-col items-center text-start">
+              <div
+                data-animate="hero-item"
+                className="w-full flex flex-col items-center text-start"
+              >
                 <form
                   onSubmit={onSubmit}
                   className="w-full flex flex-col gap-6"
@@ -161,13 +178,6 @@ export function HelpSection() {
                   >
                     {isSubmitting ? "Sending..." : "Send"}
                   </Button>
-
-                  {submitState.success && (
-                    <p className="text-foreground">{submitState.message}</p>
-                  )}
-                  {submitState.error && (
-                    <p className="text-accent">{submitState.message}</p>
-                  )}
                 </form>
               </div>
             </div>
