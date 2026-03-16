@@ -11,26 +11,30 @@ import { HelpSection } from "./components/pages/HelpSection.tsx";
 import { ResultPage } from "./components/pages/ResultPage.tsx";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
 import { ToastProvider } from "./components/providers/ToastProvider.tsx";
-
+import { Updates } from "./components/pages/Updates.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-    <ToastProvider>
-      <ScrollToTop />
-      <Routes>
-        <Route path="*" element={<Navigate to="/" />} />
-        <Route path="/" element={<App />} />
-        <Route path="/get-started" element={<GetStarted />} />
-        <Route
-          path="/instructions-to-start"
-          element={<InstructionsToStart />}
-        />
-        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-        <Route path="/help" element={<HelpSection />} />
-        <Route path="/results" element={<ResultPage />} />
-      </Routes>
-    </ToastProvider>
+      <ToastProvider>
+        <ScrollToTop />
+        <Routes>
+          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/" element={<App />} />
+          <Route path="/get-started" element={<GetStarted />} />
+          <Route
+            path="/instructions-to-start"
+            element={<InstructionsToStart />}
+          />
+          <Route
+            path="/terms-and-conditions"
+            element={<TermsAndConditions />}
+          />
+          <Route path="/help" element={<HelpSection />} />
+          <Route path="/results" element={<ResultPage />} />
+          <Route path="/updates" element={<Updates />} />
+        </Routes>
+      </ToastProvider>
     </BrowserRouter>
   </StrictMode>,
 );

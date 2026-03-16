@@ -72,18 +72,9 @@ export function GetStarted() {
       if (!hasAnyData) {
         toastService.warning({
           title: "Invalid file",
-          description: "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
-        })
-
-                toastService.info({
-          title: "Invalid file",
-          description: "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
-        })
-
-                toastService.success({
-          title: "Invalid file",
-          description: "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
-        })
+          description:
+            "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
+        });
         return;
       }
 

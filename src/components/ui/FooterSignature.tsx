@@ -9,6 +9,21 @@ export function FooterSignature() {
           <b>daevel</b>
         </Link>
       </p>
+      <div className="p3-r flex flex-row underline gap-5">
+        <Link
+          className=" hover:text-accent transition-colors"
+          to="https://github.com/Daevel"
+          target="_blank"
+        >
+          <p>Github</p>
+        </Link>
+        <Link
+          className=" hover:text-accent transition-colors"
+          to="/updates"
+        >
+          <p>Updates</p>
+        </Link>
+      </div>
       <p className="p3-r">All rights reserved</p>
     </footer>
   );
