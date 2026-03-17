@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import clsx from "clsx";
 import { Icon } from "../ui/Icon";
+import { toastService } from "../services/toastService";
 
 type ZipDropzoneProps = {
   file: File | null;
@@ -9,11 +10,7 @@ type ZipDropzoneProps = {
   onError?: (message: string) => void;
 };
 
-export function ZipDropzone({
-  file,
-  onFileChange,
-  onError,
-}: ZipDropzoneProps) {
+export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: FileRejection[]) => {
       if (fileRejections.length > 0) {
@@ -21,15 +18,27 @@ export function ZipDropzone({
 
         if (firstError?.code === "file-invalid-type") {
           onError?.("Please upload a valid ZIP file.");
+          toastService.warning({
+            title: "Invalid file",
+            description: "Please upload a valid ZIP file.",
+          });
           return;
         }
 
         if (firstError?.code === "too-many-files") {
           onError?.("You can upload only one ZIP file.");
+          toastService.warning({
+            title: "Too many files",
+            description: "You can upload only one ZIP file.",
+          });
           return;
         }
 
         onError?.("File upload failed. Please try again.");
+        toastService.warning({
+          title: "File upload failed",
+          description: "Please try again.",
+        });
         return;
       }
 
@@ -84,9 +93,7 @@ export function ZipDropzone({
       </div>
 
       <div className="flex items-center justify-between gap-4">
-        <p className="text-base">
-          {file ? file.name : "No ZIP file selected"}
-        </p>
+        <p className="text-base">{file ? file.name : "No ZIP file selected"}</p>
 
         {file && (
           <button

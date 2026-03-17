@@ -31,7 +31,7 @@ function UpdateSection({
         <span className="text-sm text-foreground/80 mt-3">{releaseDate}</span>
       </div>
       <div className="flex">
-        <p className="p1-r mt-5">{children}</p>
+        <div className="p1-r mt-5">{children}</div>
       </div>
     </section>
   );
