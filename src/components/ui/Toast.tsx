@@ -61,12 +61,18 @@ export function Toast({
   const isClosingRef = useRef(false);
 
   useLayoutEffect(() => {
+    if (!rootRef.current) return;
+
+    const isMobile = window.matchMedia("(max-width: 639px)").matches;
+    const enterFromY = isMobile ? 24 : -16;
+    //const exitToY = isMobile ? 16 : -12;
+
     const ctx = gsap.context(() => {
       gsap.fromTo(
         rootRef.current,
         {
           opacity: 0,
-          y: 16,
+          y: enterFromY,
           scale: 0.98,
         },
         {
@@ -92,9 +98,12 @@ export function Toast({
       closeTimeoutRef.current = null;
     }
 
+    const isMobile = window.matchMedia("(max-width: 639px)").matches;
+    const exitToY = isMobile ? 16 : -12;
+
     gsap.to(rootRef.current, {
       opacity: 0,
-      y: 12,
+      y: exitToY,
       scale: 0.98,
       duration: 0.22,
       ease: "power2.in",
@@ -124,11 +133,11 @@ export function Toast({
       role="status"
       aria-live="polite"
       className={clsx(
-        "pointer-events-auto w-full p-4 shadow-lg backdrop-blur-sm",
+        "pointer-events-auto box-border w-full p-4 shadow-lg backdrop-blur-sm",
         styles.container,
       )}
     >
-      <div className="flex items-start gap-3">
+      <div className="grid grid-cols-[auto_1fr_auto] items-start gap-3">
         <Icon
           name={styles.defaultIcon}
           color={styles.iconColor}
@@ -138,13 +147,18 @@ export function Toast({
           aria-hidden="true"
         />
 
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0">
           <p className={clsx("text-sm font-semibold", styles.title)}>
             {toast.title}
           </p>
 
           {toast.description ? (
-            <p className={clsx("mt-1 text-sm leading-5", styles.body)}>
+            <p
+              className={clsx(
+                "mt-1 break-words text-sm leading-5",
+                styles.body,
+              )}
+            >
               {toast.description}
             </p>
           ) : null}
@@ -153,15 +167,15 @@ export function Toast({
         <button
           type="button"
           onClick={handleClose}
-          className="text-foreground/60 transition hover:text-foreground cursor-pointer"
+          className="shrink-0 cursor-pointer text-foreground/60 transition hover:text-foreground"
           aria-label="Dismiss notification"
         >
           <Icon
-          name="close"
-          color="foreground"
-          width={24}
-          height={24}
-          aria-hidden="true"
+            name="close"
+            color="foreground"
+            width={24}
+            height={24}
+            aria-hidden="true"
           />
         </button>
       </div>

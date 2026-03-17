@@ -32,7 +32,16 @@ export function ToastProvider({ children }: ToastProviderProps) {
     <>
       {children}
 
-      <div className="pointer-events-none fixed right-4 top-4 z-50 flex w-full max-w-sm flex-col gap-3">
+      <div
+        className="
+          pointer-events-none fixed z-50 flex flex-col gap-3
+          top-4 right-4 w-[calc(100vw-2rem)] max-w-sm
+          sm:top-4 sm:right-4 sm:w-full sm:max-w-sm
+          max-sm:left-1/2 max-sm:right-auto max-sm:top-auto
+          max-sm:bottom-[calc(1rem+env(safe-area-inset-bottom))]
+          max-sm:-translate-x-1/2
+        "
+      >
         {toasts.map((toast) => (
           <Toast
             key={toast.id}
