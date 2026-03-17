@@ -4,6 +4,7 @@ import { Container } from "../ui/Container";
 import { NavBar } from "../ui/NavBar";
 import { FooterSignature } from "../ui/FooterSignature";
 import { BadgeVersion } from "../ui/BadgeVersion";
+import { Separator } from "../ui/Separator";
 
 function UpdateSection({
   title,
@@ -87,7 +88,7 @@ export function Updates() {
                 title="Followoo"
                 badgeVersion="1.0.0"
                 badgeBackgroundColor="accent"
-                releaseDate="March 2026"
+                releaseDate="March 17, 2026"
               >
                 <p>
                   Version 1.0.0 marks the evolution of the initial experimental
@@ -99,26 +100,37 @@ export function Updates() {
                 <p className="font-medium mt-4 text-accent/80">New</p>
 
                 <ul className="list-disc pl-5 space-y-2 mt-2">
-                  <li>Added Close Friends category</li>
-                  <li>Added Restricted Users category</li>
-                  <li>Introduced a dedicated changelog page</li>
+                  <li>Added a responsive toast notification system</li>
+                  <li>Added new sections for Close Friends, Restricted Users, and Hidden Stories</li>
+                  <li>Added an Updates page to track product changes</li>
                 </ul>
 
                 <p className="font-medium mt-4 text-accent/80">Improvements</p>
 
                 <ul className="list-disc pl-5 space-y-2 mt-2">
-                  <li>Improved data typing and export validation</li>
-                  <li>New UI components including toast messages</li>
+                  <li>Improved Instagram export parsing with stronger TypeScript typing</li>
+                  <li>Improved support for wrapped relationship files such as following and recently unfollowed users</li>
+                  <li>Improved mobile UX for notifications and feedback messages</li>
+                </ul>
+
+                <p className="font-medium mt-4 text-primary/80">Fixed</p>
+
+                <ul className="list-disc pl-5 space-y-2 mt-2">
+                  <li>Fixed client-side routing issues on Vercel</li>
+                  <li>Fixed edge cases in username extraction from Instagram exports</li>
+                  <li>Fixed duplicate user handling in parsed results</li>
                 </ul>
               </UpdateSection>
             </div>
+
+            <Separator variant="foreground"/>
 
             <div data-animate="hero-item">
               <UpdateSection
                 title="Followoo"
                 badgeVersion="0.0.1"
                 badgeBackgroundColor="accent"
-                releaseDate="February 2026"
+                releaseDate="March 12, 2026"
               >
                 <p>
                   First experimental beta release of Followoo. This version
