@@ -5,7 +5,11 @@ export function FooterSignature() {
     <footer className="mt-auto flex flex-col items-center justify-center gap-2 py-6 text-primary">
       <p className="p3-b">
         followoo.app - made by{" "}
-        <Link to="https://github.com/Daevel" target="_blank">
+        <Link
+          className="hover:text-accent transition-colors"
+          to="https://github.com/Daevel"
+          target="_blank"
+        >
           <b>daevel</b>
         </Link>
       </p>
@@ -17,10 +21,7 @@ export function FooterSignature() {
         >
           <p>Github</p>
         </Link>
-        <Link
-          className=" hover:text-accent transition-colors"
-          to="/updates"
-        >
+        <Link className=" hover:text-accent transition-colors" to="/updates">
           <p>Updates</p>
         </Link>
       </div>

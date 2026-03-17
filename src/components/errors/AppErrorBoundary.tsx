@@ -6,6 +6,7 @@ import { FooterSignature } from "../ui/FooterSignature";
 
 type AppErrorBoundaryProps = {
   children: React.ReactNode;
+  resetKey?: string;
 };
 
 type AppErrorBoundaryState = {
@@ -34,6 +35,12 @@ export class AppErrorBoundary extends React.Component<
     console.error("[AppErrorBoundary]", error, errorInfo);
   }
 
+  componentDidUpdate(prevProps: AppErrorBoundaryProps) {
+    if (this.props.resetKey !== prevProps.resetKey && this.state.hasError) {
+      this.setState({ hasError: false });
+    }
+  }
+
   handleReload = () => {
     window.location.reload();
   };
@@ -56,7 +63,7 @@ export class AppErrorBoundary extends React.Component<
                   Please refresh and try again.
                 </p>
 
-                <div className="mt-8 flex justify-center">
+                <div className="mt-8 flex justify-center gap-3">
                   <Button
                     type="button"
                     background="accent"
@@ -64,6 +71,17 @@ export class AppErrorBoundary extends React.Component<
                     onClick={this.handleReload}
                   >
                     Reload page
+                  </Button>
+
+                  <Button
+                    type="button"
+                    background="primary"
+                    foreground="foreground"
+                    onClick={() => {
+                      window.location.href = "/";
+                    }}
+                  >
+                    Go home
                   </Button>
                 </div>
               </div>

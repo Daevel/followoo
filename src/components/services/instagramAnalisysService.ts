@@ -12,10 +12,12 @@ function dedupeUsers(users: InstagramUser[]): InstagramUser[] {
   const map = new Map<string, InstagramUser>();
 
   for (const user of users) {
-    const key = normalizeUsername(user.username);
+    const normalized = normalizeUsername(user.username);
 
-    if (!map.has(key)) {
-      map.set(key, user);
+    if (!normalized) continue;
+
+    if (!map.has(normalized)) {
+      map.set(normalized, user);
     }
   }
 

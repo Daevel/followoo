@@ -12,13 +12,13 @@ import { ResultPage } from "./components/pages/ResultPage.tsx";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
 import { ToastProvider } from "./components/providers/ToastProvider.tsx";
 import { Updates } from "./components/pages/Updates.tsx";
-import { AppErrorBoundary } from "./components/errors/AppErrorBoundary.tsx";
+import { RouteAwareErrorBoundary } from "./components/errors/RouteAwareErrorBoundary.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <ToastProvider>
-        <AppErrorBoundary>
+        <RouteAwareErrorBoundary>
           <ScrollToTop />
           <Routes>
             <Route path="*" element={<Navigate to="/" />} />
@@ -36,7 +36,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/results" element={<ResultPage />} />
             <Route path="/updates" element={<Updates />} />
           </Routes>
-        </AppErrorBoundary>
+        </RouteAwareErrorBoundary>
       </ToastProvider>
     </BrowserRouter>
   </StrictMode>,

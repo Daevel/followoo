@@ -152,13 +152,13 @@ export function ResultPage() {
         case "closeFriends":
           return {
             title: "No close friends users found",
-            description: "There are no close friends available in this export."
+            description: "There are no close friends available in this export.",
           };
 
         case "hideStoriesFrom":
           return {
             title: "You don't hide your stories to none for now",
-            description: "There are no story hiders available in this export."
+            description: "There are no story hiders available in this export.",
           };
       }
     }
@@ -217,49 +217,44 @@ export function ResultPage() {
         case "mutual":
           return {
             sectionTitle: "Mutual",
-            description:
-              "These are the users that you follow and who also follow you back.",
+            description: "People you follow who also follow you back.",
           };
         case "followersOnly":
           return {
             sectionTitle: "Followers",
-            description:
-              "These are the users that follow you, but you don't follow them back.",
+            description: "People who follow you, but you don't follow back.",
           };
         case "unfollowers":
           return {
             sectionTitle: "Unfollowers",
-            description:
-              "These are the users that you follow, but they don't follow you back.",
+            description: "People you follow, but who don't follow you back.",
           };
         case "recentUnfollowers":
           return {
             sectionTitle: "Recent Unfollowers",
-            description:
-              "These are the users that have recently unfollowed you.",
+            description: "People who recently unfollowed you.",
           };
         case "blocked":
           return {
             sectionTitle: "Blocked",
-            description: "These are the users that you have blocked.",
+            description: "People you have blocked on Instagram.",
           };
         case "restricted":
           return {
             sectionTitle: "Restricted",
             description:
-              "These are the users that you have restricted. Restricted users can still follow you and see your posts, but they won't be able to see when you're online or if you've read their messages.",
+              "People you have restricted. They can still see your content, but their activity is limited (e.g. message read status and online visibility).",
           };
         case "closeFriends":
           return {
             sectionTitle: "Close Friends",
             description:
-              "These are the users that you can see their stories in a private mode. The Instagram's ring is colored in green instead of orange.",
+              "People in your Close Friends list who can see your private stories.",
           };
         case "hideStoriesFrom":
           return {
             sectionTitle: "Hide Story",
-            description:
-              "These are the users that you hide stories from.",
+            description: "People you have hidden your stories from.",
           };
       }
     }, [activeTab]);

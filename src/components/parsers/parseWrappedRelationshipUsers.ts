@@ -3,6 +3,13 @@ import type { InstagramUser } from "../../types/instagram.types";
 import { isRelationshipObject } from "../utils/instagramGuards";
 import { isArray, isObject } from "../utils/typeGuards";
 
+function normalizeUsernameCandidate(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
 export function parseWrappedRelationshipUsers(
   json: unknown,
   key: InstagramObjectArrayKeys,
@@ -29,11 +36,8 @@ export function parseWrappedRelationshipUsers(
     }
 
     const username =
-      typeof firstItem.value === "string" && firstItem.value.trim() !== ""
-        ? firstItem.value
-        : typeof entry.title === "string" && entry.title.trim() !== ""
-          ? entry.title
-          : null;
+      normalizeUsernameCandidate(firstItem.value) ??
+      normalizeUsernameCandidate(entry.title);
 
     if (!username) {
       return [];
@@ -45,7 +49,7 @@ export function parseWrappedRelationshipUsers(
         href:
           typeof firstItem.href === "string"
             ? firstItem.href
-            : `https://instagram.com/${username}`,
+            : `https://www.instagram.com/${username}/`,
         timestamp:
           typeof firstItem.timestamp === "number"
             ? firstItem.timestamp
