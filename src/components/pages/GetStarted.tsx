@@ -11,7 +11,7 @@ import { Checkbox } from "../ui/Checkbox";
 import { gsap } from "gsap";
 import { parseInstagramExport } from "../services/instagramExportService";
 import { analyzeInstagramExport } from "../services/instagramAnalisysService";
-import { toastService } from "../services/toastService";
+import { handleAppError } from "../../errors";
 
 export function GetStarted() {
   const navigate = useNavigate();
@@ -46,10 +46,10 @@ export function GetStarted() {
 
   async function onElaborateFile() {
     if (!selectedZipFile) {
-      alert("Select a .zip file first");
       return;
     }
 
+    setUploadError("");
     setLoading(true);
 
     const MIN_LOADING_TIME = 2500;
@@ -57,27 +57,6 @@ export function GetStarted() {
 
     try {
       const exportData = await parseInstagramExport(selectedZipFile);
-
-      const hasAnyData =
-        exportData.followers.length > 0 ||
-        exportData.following.length > 0 ||
-        exportData.recentlyUnfollowed.length > 0 ||
-        exportData.pendingFollowRequests.length > 0 ||
-        exportData.recentFollowRequests.length > 0 ||
-        exportData.blocked.length > 0 ||
-        exportData.restricted.length > 0 ||
-        exportData.closeFriends.length > 0 ||
-        exportData.hideStoriesFrom.length > 0;
-
-      if (!hasAnyData) {
-        toastService.warning({
-          title: "Invalid file",
-          description:
-            "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
-        });
-        return;
-      }
-
       const analysis = analyzeInstagramExport(exportData);
 
       const elapsed = Date.now() - start;
@@ -90,8 +69,9 @@ export function GetStarted() {
         state: analysis,
       });
     } catch (error) {
-      console.error("Failed to parse Instagram export:", error);
-      alert("Failed to read the ZIP file.");
+      handleAppError(error, {
+        fallbackTitle: "Invalid file",
+      })
     } finally {
       setLoading(false);
     }

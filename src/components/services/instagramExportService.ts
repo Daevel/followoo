@@ -15,8 +15,9 @@ import {
   isRecentlyUnfollowedFile,
   isRestrictedFile,
   isCloseFriendsFile,
-  isHideStoriesFromFile
+  isHideStoriesFromFile,
 } from "./../utils/instagramExportMatchers";
+import { AppError, ERROR_CODES } from "../../errors";
 
 function safeJsonParse(content: string): unknown | null {
   try {
@@ -24,6 +25,20 @@ function safeJsonParse(content: string): unknown | null {
   } catch {
     return null;
   }
+}
+
+function hasAnyParsedData(data: InstagramExportData): boolean {
+  return (
+    data.followers.length > 0 ||
+    data.following.length > 0 ||
+    data.recentlyUnfollowed.length > 0 ||
+    data.pendingFollowRequests.length > 0 ||
+    data.recentFollowRequests.length > 0 ||
+    data.blocked.length > 0 ||
+    data.restricted.length > 0 ||
+    data.closeFriends.length > 0 ||
+    data.hideStoriesFrom.length > 0
+  );
 }
 
 function createEmptyInstagramExportData(): InstagramExportData {
@@ -43,10 +58,23 @@ function createEmptyInstagramExportData(): InstagramExportData {
 export async function parseInstagramExport(
   file: File,
 ): Promise<InstagramExportData> {
-  const zip = await JSZip.loadAsync(file);
-  const result = createEmptyInstagramExportData();
+  let zip: JSZip;
 
-  for (const path of Object.keys(zip.files)) {
+  try {
+    zip = await JSZip.loadAsync(file);
+  } catch (error) {
+    throw new AppError({
+      code: ERROR_CODES.INVALID_ZIP_FILE,
+      message: "Failed to load ZIP file",
+      userMessage: "The uploaded file is not a valid ZIP file.",
+      details: error,
+    });
+  }
+
+  const result = createEmptyInstagramExportData();
+  const paths = Object.keys(zip.files);
+
+  for (const path of paths) {
     const entry = zip.files[path];
 
     if (!entry || entry.dir || !isJsonFile(path)) continue;
@@ -62,13 +90,13 @@ export async function parseInstagramExport(
     }
 
     if (isFollowingFile(path)) {
-     result.following.push(
-      ...parseWrappedRelationshipUsers(
-        json,
-        InstagramObjectArrayKeys.FOLLOWING
-      )
-     )
-     continue;
+      result.following.push(
+        ...parseWrappedRelationshipUsers(
+          json,
+          InstagramObjectArrayKeys.FOLLOWING,
+        ),
+      );
+      continue;
     }
 
     if (isRecentlyUnfollowedFile(path)) {
@@ -101,7 +129,7 @@ export async function parseInstagramExport(
       continue;
     }
 
-        if (isCloseFriendsFile(path)) {
+    if (isCloseFriendsFile(path)) {
       result.closeFriends.push(
         ...parseWrappedRelationshipUsers(
           json,
@@ -111,7 +139,7 @@ export async function parseInstagramExport(
       continue;
     }
 
-            if (isHideStoriesFromFile(path)) {
+    if (isHideStoriesFromFile(path)) {
       result.hideStoriesFrom.push(
         ...parseWrappedRelationshipUsers(
           json,
@@ -134,6 +162,16 @@ export async function parseInstagramExport(
     if (isRecentFollowRequestsFile(path)) {
       result.recentFollowRequests.push(...parseFollowers(json));
     }
+  }
+
+  if (!hasAnyParsedData(result)) {
+    throw new AppError({
+      code: ERROR_CODES.INVALID_INSTAGRAM_EXPORT,
+      message: "No supported Instagram relationship data found",
+      userMessage:
+        "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
+      details: { fileName: file.name },
+    });
   }
 
   return result;
