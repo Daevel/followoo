@@ -83,6 +83,29 @@ export function Updates() {
           </p>
 
           <div className="mt-10 flex w-full flex-col gap-8">
+
+            <div data-animate="hero-item">
+              <UpdateSection
+                title="Followoo"
+                badgeVersion="1.1.0"
+                badgeBackgroundColor="accent"
+                releaseDate="March 19, 2026"
+              >
+                <p>
+                  Version 1.1.0 introduces an analytics system to track user interactions and errors, providing valuable insights for future improvements.
+                  The user privacy and security remain a top priority, with all analytics data being anonymized and used solely for improving the user experience.
+                </p>
+
+                <p className="font-medium mt-4 text-accent/80">New</p>
+
+                <ul className="list-disc pl-5 space-y-2 mt-2">
+                  <li>Added a new analytics system to track user interactions and errors</li>
+                </ul>
+              </UpdateSection>
+            </div>
+
+            <Separator variant="foreground" />
+
             <div data-animate="hero-item">
               <UpdateSection
                 title="Followoo"
@@ -123,7 +146,7 @@ export function Updates() {
               </UpdateSection>
             </div>
 
-            <Separator variant="foreground"/>
+            <Separator variant="foreground" />
 
             <div data-animate="hero-item">
               <UpdateSection
