@@ -3,6 +3,7 @@ import { useDropzone, type FileRejection } from "react-dropzone";
 import clsx from "clsx";
 import { Icon } from "../ui/Icon";
 import { toastService } from "../services/toastService";
+import { analyticsService, ANALYTICS_EVENTS } from "@/analytics";
 
 type ZipDropzoneProps = {
   file: File | null;
@@ -13,6 +14,16 @@ type ZipDropzoneProps = {
 export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: FileRejection[]) => {
+
+      const nextFile = acceptedFiles[0] ?? null;
+
+      if (nextFile) {
+        analyticsService.track(ANALYTICS_EVENTS.ZIP_UPLOADED, {
+          file_size_mb: Number((nextFile.size / 1024 / 1024).toFixed(2)),
+          extension: "zip",
+        });
+      }
+
       if (fileRejections.length > 0) {
         const firstError = fileRejections[0]?.errors[0];
 
@@ -42,7 +53,6 @@ export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
         return;
       }
 
-      const nextFile = acceptedFiles[0] ?? null;
       onFileChange(nextFile);
       onError?.("");
     },

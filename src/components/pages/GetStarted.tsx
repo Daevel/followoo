@@ -12,6 +12,7 @@ import { gsap } from "gsap";
 import { parseInstagramExport } from "../services/instagramExportService";
 import { analyzeInstagramExport } from "../services/instagramAnalisysService";
 import { handleAppError } from "../../errors";
+import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 
 export function GetStarted() {
   const navigate = useNavigate();
@@ -45,6 +46,12 @@ export function GetStarted() {
   }, []);
 
   async function onElaborateFile() {
+
+    analyticsService.track(ANALYTICS_EVENTS.ANALYSIS_STARTED, {
+      has_file: Boolean(selectedZipFile),
+      terms_accepted: termsAndConditionsAccepted,
+    });
+
     if (!selectedZipFile) {
       return;
     }
@@ -58,6 +65,17 @@ export function GetStarted() {
     try {
       const exportData = await parseInstagramExport(selectedZipFile);
       const analysis = analyzeInstagramExport(exportData);
+
+      analyticsService.track(ANALYTICS_EVENTS.ANALYSIS_COMPLETED, {
+        followers_count: exportData.followers.length,
+        following_count: exportData.following.length,
+        mutual_count: analysis.mutual.length,
+        unfollowers_count: analysis.unfollowers.length,
+        recent_unfollowers_count: analysis.recentUnfollowers.length,
+        blocked_count: analysis.blocked.length,
+        restricted_count: analysis.restricted.length,
+        close_friends_count: analysis.closeFriends.length,
+      });
 
       const elapsed = Date.now() - start;
       const remaining = Math.max(0, MIN_LOADING_TIME - elapsed);

@@ -1,6 +1,8 @@
+import { ANALYTICS_EVENTS } from "@/analytics/analyticsEvents";
 import { toastService } from "../components/services/toastService";
 import { AppError } from "./AppError";
 import { toAppError } from "./toAppError";
+import { analyticsService } from "@/analytics/analyticsService";
 
 type HandleAppErrorOptions = {
   showToast?: boolean;
@@ -19,6 +21,11 @@ export function handleAppError(
   } = options;
 
   const appError = toAppError(error);
+
+  analyticsService.track(ANALYTICS_EVENTS.APP_ERROR, {
+    code: appError.code,
+    context: "global_handler",
+  });
 
   if (log) {
     console.error("[AppError]", {

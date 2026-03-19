@@ -11,6 +11,7 @@ import { formatDate } from "../utils/utils";
 import { UserListItem } from "../ui/UserListItem";
 import { SortSelect } from "../ui/SortSelect";
 import { Input } from "../ui/Input";
+import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 
 type SortKey =
   | "alphabeticalAsc"
@@ -206,6 +207,24 @@ export function ResultPage() {
 
     return sortedUsers.slice(startIndex, endIndex);
   }, [sortedUsers, currentPage]);
+
+  useEffect(() => {
+    analyticsService.track(ANALYTICS_EVENTS.RESULTS_TAB_CHANGED, {
+      tab: activeTab,
+      count: users.length,
+    })
+  }, [activeTab, users.length])
+
+  useEffect(() => {
+    const normalizedQuery = searchQuery.trim();
+
+    if (!normalizedQuery) return;
+
+    analyticsService.track(ANALYTICS_EVENTS.RESULTS_SEARCH_USED, {
+      tab: activeTab,
+      query_length: normalizedQuery.length,
+    });
+  }, [searchQuery, activeTab]);
 
   useEffect(() => {
     setCurrentPage(1);
