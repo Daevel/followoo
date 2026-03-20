@@ -271,6 +271,11 @@ LinkedIn: https://www.linkedin.com/in/luigi-avitabile/
 
 ---
 
+## 🎨 Design (Figma)
+View-only link: https://www.figma.com/design/sNzmsQh8G1S1nyZo3lLJai/Followoo?node-id=87-93&t=ypPeZKvWGvPeGkQM-1
+
+---
+
 ## ⭐ Support the Project
 
 If you find this project useful, consider giving it a star on GitHub.
