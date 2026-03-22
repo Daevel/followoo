@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
-import { NavBar } from "../ui/NavBar";
+import { ProcessNavBar } from "../ui/ProcessNavBar";
 import { FooterSignature } from "../ui/FooterSignature";
 
 type AppErrorBoundaryProps = {
@@ -50,7 +50,7 @@ export class AppErrorBoundary extends React.Component<
       return (
         <section className="min-h-svh flex flex-col">
           <Container className="min-h-svh flex flex-col">
-            <NavBar />
+            <ProcessNavBar />
 
             <div className="flex flex-1 flex-col items-center justify-center text-center">
               <div className="max-w-md">
@@ -87,7 +87,6 @@ export class AppErrorBoundary extends React.Component<
               </div>
             </div>
 
-            <FooterSignature />
           </Container>
         </section>
       );

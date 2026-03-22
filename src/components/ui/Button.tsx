@@ -52,7 +52,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        "inline-flex min-w-36.25 min-h-10 items-center justify-center gap-4 px-5 p1-b",
+        "inline-flex min-w-36.25 min-h-10 items-center rounded-[20px] justify-center gap-4 px-5 p1-b",
         backgroundClasses[background],
         foregroundClasses[foreground],
         !disabled && backgroundHoverClasses[background],

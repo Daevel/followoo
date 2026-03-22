@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { Container } from "../ui/Container";
 import { FooterSignature } from "../ui/FooterSignature";
-import { NavBar } from "../ui/NavBar";
+import { ProcessNavBar } from "../ui/ProcessNavBar";
 import { Button } from "../ui/Button";
 import { Pagination } from "../ui/Paginator";
 import { gsap } from "gsap";
@@ -304,7 +304,7 @@ export function ResultPage() {
   return (
     <section className="min-h-svh flex flex-col">
       <Container className="min-h-svh flex flex-col">
-        <NavBar />
+        <ProcessNavBar />
 
         <div
           ref={rootRef}
@@ -464,7 +464,6 @@ export function ResultPage() {
           </div>
         </div>
 
-        <FooterSignature />
       </Container>
     </section>
   );

@@ -1,7 +1,7 @@
 import { useRef, useLayoutEffect } from "react";
 import { Container } from "../ui/Container";
 import { FooterSignature } from "../ui/FooterSignature";
-import { NavBar } from "../ui/NavBar";
+import { ProcessNavBar } from "../ui/ProcessNavBar";
 import { gsap } from "gsap";
 import { Callout } from "../ui/Callout";
 
@@ -46,7 +46,7 @@ export function TermsAndConditions() {
   return (
     <section className="min-h-svh flex flex-col">
       <Container className="min-h-svh flex flex-col">
-        <NavBar showHelp={false} />
+        <ProcessNavBar showHelp={false} />
 
         <div
           ref={rootRef}
@@ -193,7 +193,6 @@ export function TermsAndConditions() {
           </div>
         </div>
 
-        <FooterSignature />
       </Container>
     </section>
   );

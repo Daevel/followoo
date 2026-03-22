@@ -1,13 +1,13 @@
-import { FooterSignature } from "./components/ui/FooterSignature";
-import { Button } from "./components/ui/Button";
-import { Link, useNavigate } from "react-router-dom";
-import { Container } from "./components/ui/Container";
-import { HeroIllustrations } from "./components/ui/HeroIllustrations";
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { NavBar } from "./components/ui/NavBar";
+import { FeaturesSection } from "./components/ui/FeatureSection";
+import { HeroSection } from "./components/ui/HeroSection";
+import { PrivacySection } from "./components/ui/PrivacySection";
+import { Questions } from "./components/ui/Questions";
+import { FooterSignature } from "./components/ui/FooterSignature";
 
 export default function App() {
-  const navigate = useNavigate();
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
@@ -47,90 +47,26 @@ export default function App() {
   }, []);
 
   return (
-    <section className="min-h-svh flex flex-col">
-      <Container className="min-h-svh flex flex-col">
-        <div
-          ref={rootRef}
-          className="flex flex-1 flex-col items-center pt-24 pb-6 text-center md:pt-28"
-        >
-          <div className="flex w-full max-w-180 flex-col items-center text-center">
-            <h1
-              data-animate="hero-item"
-              className="text-5xl font-semibold leading-headers text-foreground md:text-6xl"
-            >
-              Followoo
-            </h1>
+    <div className="min-h-screen bg-background">
+      <NavBar />
 
-            <p
-              data-animate="hero-item"
-              className="mt-5 max-w-[20rem] text-sm text-foreground/90 md:max-w-[34rem] md:text-lg md:leading-relaxed"
-            >
-              Analyze your Instagram followers privately using your official
-              Instagram data export.
-            </p>
+      <section className="px-18 text-foreground">
+        <HeroSection />
+        <FeaturesSection />
+      </section>
 
-            <p
-              data-animate="hero-item"
-              className="mt-4 max-w-[22rem] text-sm text-foreground/90 md:max-w-[36rem] md:text-base"
-            >
-              No login required · No API access · 100% local analysis
-            </p>
+      <PrivacySection />
+      <Questions />
 
-            <p
-              data-animate="hero-item"
-              className="mt-3 text-sm text-foreground/70 md:text-base"
-            >
-              Your Instagram data never leaves your browser.
-            </p>
+      <section className="relative overflow-hidden bg-background px-18 pt-10 h-130 text-foreground">
+        <FooterSignature />
 
-            <Link
-              data-animate="hero-item"
-              to="/instructions-to-start"
-              className="mt-8 text-foreground underline transition-colors hover:text-primary"
-            >
-              How to download your Instagram data →
-            </Link>
-
-            <div data-animate="hero-item" className="mt-8">
-              <Button
-                background="primary"
-                foreground="foreground"
-                icon="arrowRight"
-                iconPosition="right"
-                onClick={() => navigate("/get-started")}
-                className="min-w-52 px-8"
-              >
-                Analyze my followers
-              </Button>
-            </div>
-
-            <p
-              data-animate="hero-item"
-              className="mt-3 text-xs text-foreground/60 md:text-sm"
-            >
-              Works with the official Instagram export (.zip)
-            </p>
-
-            <div
-              data-animate="hero-item"
-              className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-foreground/80"
-            >
-              <span>✓ Mutual followers</span>
-              <span>✓ Unfollowers</span>
-              <span>✓ Recent unfollowers</span>
-            </div>
-
-            <div
-              data-animate="hero-illustration"
-              className="mt-10 w-full pt-4 md:mt-12"
-            >
-              <HeroIllustrations />
-            </div>
+        <div className="pointer-events-none absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[38%]">
+          <div className="text-[220px] font-semibold leading-none text-foreground whitespace-nowrap">
+            Followoo
           </div>
         </div>
-
-        <FooterSignature />
-      </Container>
-    </section>
+      </section>
+    </div>
   );
 }

@@ -1,63 +1,42 @@
-import { useNavigate } from "react-router";
-import { Icon } from "./Icon";
+import { Link } from "react-router";
 
-interface NavBarProps {
-  title?: string;
-  showBack?: boolean;
-  showHelp?: boolean;
-}
-
-export function NavBar({
-  title,
-  showBack = true,
-  showHelp = true,
-}: NavBarProps) {
-  
-  const navigate = useNavigate();
-
+export function NavBar() {
   return (
-    <header className="w-full">
-      <div className="mx-auto py-4 w-full max-w-7xl">
-        <div className="grid min-h-14 grid-cols-[44px_1fr_44px] items-center">
-          <div className="flex justify-start">
-            {showBack ? (
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                aria-label="Go back"
-                className="inline-flex items-center justify-center rounded-md text-foreground transition hover:bg-white/10"
-              >
-                <Icon name="arrowLeft" className="max-sm:h-8 max-sm:w-8 h-6 w-6" />
-              </button>
-            ) : (
-              <div className="h-11 w-11" />
-            )}
-          </div>
-
-          <div className="px-2 text-center">
-            {title ? (
-              <h2 className="truncate text-sm font-medium text-foreground sm:text-foreground">
-                {title}
-              </h2>
-            ) : null}
-          </div>
-
-          <div className="flex justify-end">
-            {showHelp ? (
-              <button
-                type="button"
-                onClick={() => navigate("/help")}
-                aria-label="Open help"
-                className="inline-flex items-center justify-center rounded-md text-foreground transition hover:bg-white/10"
-              >
-                <Icon name="help" className="max-sm:h-8 max-sm:w-8 h-6 w-6" />
-              </button>
-            ) : (
-              <div className="h-11 w-11" />
-            )}
-          </div>
+    <div className="flex flex-row text-foreground align-middle justify-between px-18">
+      <nav className="w-full flex flex-row h-25 align-middle items-center text-center justify-between">
+        <div className="flex flex-row gap-4 align-middle items-center">
+          <img src="./favicon.svg" alt="app icon" width={32} height={32} />
+          <h3>Followoo</h3>
         </div>
-      </div>
-    </header>
+        <div className="flex flex-row gap-12 align-middle items-center">
+          <Link
+            to="/get-started"
+            className=" text-foreground transition-colors hover:text-primary font-semibold"
+          >
+            How to start
+          </Link>
+          <Link
+            to="/get-started"
+            className=" text-foreground transition-colors hover:text-primary font-semibold"
+          >
+            Analyze your export
+          </Link>
+          <Link
+            to="/terms-of-service"
+            className=" text-foreground transition-colors hover:text-primary font-semibold"
+          >
+            Terms of service
+          </Link>
+        </div>
+        <div className="flex flex-row">
+          <Link
+            to="/updates"
+            className=" text-foreground transition-colors hover:text-primary font-semibold"
+          >
+            Updates
+          </Link>
+        </div>
+      </nav>
+    </div>
   );
 }

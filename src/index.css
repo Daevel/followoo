@@ -20,6 +20,8 @@
   --w-medium: 500;
   --w-semibold: 600;
 
+  --h1-128: 128px;
+  --h1-60: 60px;
   --h1: 40px;
   --h2: 32px;
   --h3: 24px;
@@ -61,6 +63,14 @@ h5 {
   font-family: var(--font-inter);
   font-weight: var(--w-semibold); /* semibold */
   line-height: var(--lh-headers); /* 125% */
+}
+
+.h1-128 {
+  font-size: var(--h1-128);
+}
+
+.h1-60 {
+  font-size: var(--h1-60);
 }
 
 h1 {

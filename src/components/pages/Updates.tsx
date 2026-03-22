@@ -1,7 +1,7 @@
 import { useRef, useLayoutEffect } from "react";
 import { gsap } from "gsap";
 import { Container } from "../ui/Container";
-import { NavBar } from "../ui/NavBar";
+import { ProcessNavBar } from "../ui/ProcessNavBar";
 import { FooterSignature } from "../ui/FooterSignature";
 import { BadgeVersion } from "../ui/BadgeVersion";
 import { Separator } from "../ui/Separator";
@@ -65,7 +65,7 @@ export function Updates() {
   return (
     <section className="min-h-svh flex flex-col">
       <Container className="min-h-svh flex flex-col">
-        <NavBar showHelp={true} />
+        <ProcessNavBar showHelp={true} />
         <div
           ref={rootRef}
           className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10"
@@ -167,7 +167,6 @@ export function Updates() {
           </div>
         </div>
 
-        <FooterSignature />
       </Container>
     </section>
   );

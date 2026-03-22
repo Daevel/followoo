@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
 import { FooterSignature } from "../ui/FooterSignature";
-import { NavBar } from "../ui/NavBar";
+import { ProcessNavBar } from "../ui/ProcessNavBar";
 import { Callout } from "../ui/Callout";
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
@@ -60,7 +60,7 @@ export function InstructionsToStart() {
   return (
     <section className="min-h-svh flex flex-col">
       <Container className="min-h-svh flex flex-col">
-        <NavBar />
+        <ProcessNavBar />
 
         <div
           ref={rootRef}
@@ -229,7 +229,6 @@ export function InstructionsToStart() {
           </div>
         </div>
 
-        <FooterSignature />
       </Container>
     </section>
   );

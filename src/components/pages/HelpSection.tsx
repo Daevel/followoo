@@ -2,7 +2,7 @@ import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
 import { FooterSignature } from "../ui/FooterSignature";
 import { Input } from "../ui/Input";
-import { NavBar } from "../ui/NavBar";
+import { ProcessNavBar } from "../ui/ProcessNavBar";
 
 import { useHelpForm } from "../hooks/useHelpForm";
 import { useRef, useLayoutEffect, useEffect } from "react";
@@ -73,7 +73,7 @@ export function HelpSection() {
   return (
     <section className="min-h-svh flex flex-col">
       <Container className="min-h-svh flex flex-col">
-        <NavBar showHelp={false} />
+        <ProcessNavBar showHelp={false} />
         <div
           ref={rootRef}
           className="flex flex-col items-start pt-15 pb-6 text-center text-foreground flex-1"
@@ -183,7 +183,6 @@ export function HelpSection() {
             </div>
           </div>
         </div>
-        <FooterSignature />
       </Container>
     </section>
   );

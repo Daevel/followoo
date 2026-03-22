@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router";
 import { Container } from "../ui/Container";
 import { FooterSignature } from "../ui/FooterSignature";
 import { Button } from "../ui/Button";
-import { NavBar } from "../ui/NavBar";
+import { ProcessNavBar } from "../ui/ProcessNavBar";
 import { useLayoutEffect, useRef, useState } from "react";
 import { Loading } from "../ui/Loading";
 import { ZipDropzone } from "../ui/ZipDropzone";
@@ -101,7 +101,7 @@ export function GetStarted() {
   return (
     <section className="min-h-svh flex flex-col">
       <Container className="min-h-svh flex flex-col">
-        <NavBar />
+        <ProcessNavBar />
         <div
           ref={rootRef}
           className="flex flex-col items-start pt-15 pb-6 text-center flex-1"
@@ -221,7 +221,6 @@ export function GetStarted() {
             </div>
           </div>
         </div>
-        <FooterSignature />
       </Container>
     </section>
   );
