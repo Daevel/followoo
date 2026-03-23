@@ -1,11 +1,10 @@
+import { gsap } from "gsap";
+import { useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/Button";
-import { Container } from "../ui/Container";
-import { FooterSignature } from "../ui/FooterSignature";
-import { ProcessNavBar } from "../ui/ProcessNavBar";
 import { Callout } from "../ui/Callout";
-import { useLayoutEffect, useRef } from "react";
-import { gsap } from "gsap";
+import { Container } from "../ui/Container";
+import { ProcessNavBar } from "../ui/ProcessNavBar";
 
 type StepCardProps = {
   step: number;

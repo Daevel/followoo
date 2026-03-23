@@ -2,7 +2,6 @@ import React from "react";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
 import { ProcessNavBar } from "../ui/ProcessNavBar";
-import { FooterSignature } from "../ui/FooterSignature";
 
 type AppErrorBoundaryProps = {
   children: React.ReactNode;

@@ -1,17 +1,16 @@
+import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
+import { gsap } from "gsap";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { Container } from "../ui/Container";
-import { FooterSignature } from "../ui/FooterSignature";
-import { ProcessNavBar } from "../ui/ProcessNavBar";
-import { Button } from "../ui/Button";
-import { Pagination } from "../ui/Paginator";
-import { gsap } from "gsap";
 import type { InstagramAnalysisResult } from "../../types/instagram.types";
-import { formatDate } from "../utils/utils";
-import { UserListItem } from "../ui/UserListItem";
-import { SortSelect } from "../ui/SortSelect";
+import { Button } from "../ui/Button";
+import { Container } from "../ui/Container";
 import { Input } from "../ui/Input";
-import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
+import { Pagination } from "../ui/Paginator";
+import { ProcessNavBar } from "../ui/ProcessNavBar";
+import { SortSelect } from "../ui/SortSelect";
+import { UserListItem } from "../ui/UserListItem";
+import { formatDate } from "../utils/utils";
 
 type SortKey =
   | "alphabeticalAsc"

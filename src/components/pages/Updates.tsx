@@ -1,9 +1,8 @@
-import { useRef, useLayoutEffect } from "react";
 import { gsap } from "gsap";
+import { useLayoutEffect, useRef } from "react";
+import { BadgeVersion } from "../ui/BadgeVersion";
 import { Container } from "../ui/Container";
 import { ProcessNavBar } from "../ui/ProcessNavBar";
-import { FooterSignature } from "../ui/FooterSignature";
-import { BadgeVersion } from "../ui/BadgeVersion";
 import { Separator } from "../ui/Separator";
 
 function UpdateSection({

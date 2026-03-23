@@ -1,7 +1,7 @@
-import {useNavigate} from "react-router-dom";
-import {Button} from "../../components/ui/Button";
-import {Container} from "../../components/ui/Container";
-import {Icon} from "../../components/ui/Icon";
+import { useNavigate } from "react-router-dom";
+import { Button } from "../../components/ui/Button";
+import { Container } from "../../components/ui/Container";
+import { Icon } from "../../components/ui/Icon";
 
 export function HeroSection() {
   const navigate = useNavigate();

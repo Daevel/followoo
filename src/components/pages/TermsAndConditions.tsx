@@ -1,9 +1,8 @@
-import { useRef, useLayoutEffect } from "react";
-import { Container } from "../ui/Container";
-import { FooterSignature } from "../ui/FooterSignature";
-import { ProcessNavBar } from "../ui/ProcessNavBar";
 import { gsap } from "gsap";
+import { useLayoutEffect, useRef } from "react";
 import { Callout } from "../ui/Callout";
+import { Container } from "../ui/Container";
+import { ProcessNavBar } from "../ui/ProcessNavBar";
 
 type SectionProps = {
   title: string;

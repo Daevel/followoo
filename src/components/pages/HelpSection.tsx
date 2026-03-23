@@ -1,13 +1,11 @@
+import { gsap } from "gsap";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { useHelpForm } from "../hooks/useHelpForm";
+import { toastService } from "../services/toastService";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
-import { FooterSignature } from "../ui/FooterSignature";
 import { Input } from "../ui/Input";
 import { ProcessNavBar } from "../ui/ProcessNavBar";
-
-import { useHelpForm } from "../hooks/useHelpForm";
-import { useRef, useLayoutEffect, useEffect } from "react";
-import { gsap } from "gsap";
-import { toastService } from "../services/toastService";
 
 export function HelpSection() {
   const { form, onSubmit, submitState, isSubmitting } = useHelpForm();

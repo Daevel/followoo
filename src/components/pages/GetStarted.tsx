@@ -1,18 +1,17 @@
-import { Link, useNavigate } from "react-router";
-import { Container } from "../ui/Container";
-import { FooterSignature } from "../ui/FooterSignature";
-import { Button } from "../ui/Button";
-import { ProcessNavBar } from "../ui/ProcessNavBar";
+import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
+import { gsap } from "gsap";
 import { useLayoutEffect, useRef, useState } from "react";
-import { Loading } from "../ui/Loading";
-import { ZipDropzone } from "../ui/ZipDropzone";
+import { Link, useNavigate } from "react-router";
+import { handleAppError } from "../../errors";
+import { analyzeInstagramExport } from "../services/instagramAnalisysService";
+import { parseInstagramExport } from "../services/instagramExportService";
+import { Button } from "../ui/Button";
 import { Callout } from "../ui/Callout";
 import { Checkbox } from "../ui/Checkbox";
-import { gsap } from "gsap";
-import { parseInstagramExport } from "../services/instagramExportService";
-import { analyzeInstagramExport } from "../services/instagramAnalisysService";
-import { handleAppError } from "../../errors";
-import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
+import { Container } from "../ui/Container";
+import { Loading } from "../ui/Loading";
+import { ProcessNavBar } from "../ui/ProcessNavBar";
+import { ZipDropzone } from "../ui/ZipDropzone";
 
 export function GetStarted() {
   const navigate = useNavigate();
