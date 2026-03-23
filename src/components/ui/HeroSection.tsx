@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "../../components/ui/Button";
-import { Container } from "../../components/ui/Container";
-import { Icon } from "../../components/ui/Icon";
+import {useNavigate} from "react-router-dom";
+import {Button} from "../../components/ui/Button";
+import {Container} from "../../components/ui/Container";
+import {Icon} from "../../components/ui/Icon";
 
 export function HeroSection() {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ export function HeroSection() {
       <Container>
         <div className="mx-auto flex max-w-6xl flex-col items-center text-center">
           <div className="max-w-4xl">
-            <h1 className="text-5xl font-semibold leading-tight md:text-6xl">
+            <h1 className="h1-60 font-semibold leading-tight md:text-6xl">
               Discover who doesn't follow you back on Instagram
             </h1>
 
@@ -33,9 +33,9 @@ export function HeroSection() {
 
           <div className="mt-12 w-full max-w-3xl">
             <img
-              src="images/double-phone-landing-page.png"
+              src="images/double-phone-hero-landing-page.svg"
               alt="double phone landing page"
-              className="w-full object-contain"
+              className="w-full object-none"
             />
           </div>
 

@@ -48,7 +48,7 @@ export function Callout({
   const iconName = icon ?? styles.defaultIcon;
 
   return (
-    <div className={clsx("w-full p-4", styles.container, className)}>
+    <div className={clsx("w-full p-4 rounded-[20px]", styles.container, className)}>
       <div className="flex items-start gap-3">
         <Icon
           name={iconName}

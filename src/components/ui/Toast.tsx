@@ -133,7 +133,7 @@ export function Toast({
       role="status"
       aria-live="polite"
       className={clsx(
-        "pointer-events-auto box-border w-full p-4 shadow-lg backdrop-blur-sm",
+        "pointer-events-auto box-border rounded-[20px] w-full p-4 shadow-lg backdrop-blur-sm",
         styles.container,
       )}
     >

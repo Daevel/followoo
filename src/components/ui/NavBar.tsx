@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import {Link} from "react-router";
 
 export function NavBar() {
   return (
@@ -10,7 +10,7 @@ export function NavBar() {
         </div>
         <div className="flex flex-row gap-12 align-middle items-center">
           <Link
-            to="/get-started"
+            to="/instructions-to-start"
             className=" text-foreground transition-colors hover:text-primary font-semibold"
           >
             How to start
@@ -22,10 +22,10 @@ export function NavBar() {
             Analyze your export
           </Link>
           <Link
-            to="/terms-of-service"
+            to="/terms-and-conditions"
             className=" text-foreground transition-colors hover:text-primary font-semibold"
           >
-            Terms of service
+            Terms and conditions
           </Link>
         </div>
         <div className="flex flex-row">

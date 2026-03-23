@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 export function FooterSignature() {
   return (
@@ -26,15 +26,15 @@ export function FooterSignature() {
           <div className="flex flex-col gap-6">
             <h4 className="text-lg font-medium">Rules & Privacy</h4>
             <div className="flex flex-col gap-4">
-              <Link to="/terms-of-service">Terms of service</Link>
+              <Link to="/terms-and-conditions">Terms and conditions</Link>
             </div>
           </div>
 
           <div className="flex flex-col gap-6">
             <h4 className="text-lg font-medium">Social</h4>
             <div className="flex flex-col gap-4">
-              <Link to="/">Github</Link>
-              <Link to="/get-started">LinkedIn</Link>
+              <Link to="https://github.com/Daevel/followoo" target={"_blank"}>Github</Link>
+              <Link to="https://www.linkedin.com/in/luigi-avitabile" target={"_blank"}>LinkedIn</Link>
             </div>
           </div>
         </div>

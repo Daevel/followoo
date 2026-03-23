@@ -1,4 +1,4 @@
-import type { ComponentProps, SVGProps } from "react";
+import type {ComponentProps, SVGProps} from "react";
 
 import CheckCircle from "../../icons/check-circle.svg?react";
 import CheckCircleOutline from "../../icons/check-circle-outline.svg?react";
@@ -14,6 +14,8 @@ import ArrowLeft from "../../icons/arrow-left.svg?react";
 import Check from "../../icons/check.svg?react";
 import SingleArrowRight from "../../icons/single-arrow-right.svg?react";
 import SingleArrowLeft from "../../icons/single-arrow-left.svg?react";
+import SingleArrowUp from "../../icons/single-arrow-up.svg?react";
+import SingleArrowDown from "../../icons/single-arrow-down.svg?react";
 import Close from "../../icons/close.svg?react";
 import Shield from "../../icons/shield.svg?react";
 
@@ -29,6 +31,8 @@ const icons = {
   sendMail: SendMail,
   singleArrowRight: SingleArrowRight,
   singleArrowLeft: SingleArrowLeft,
+  singleArrowUp: SingleArrowUp,
+  singleArrowDown: SingleArrowDown,
   arrowRight: ArrowRight,
   arrowLeft: ArrowLeft,
   check: Check,

@@ -1,4 +1,4 @@
-import { Icon } from "../../components/ui/Icon";
+import {Icon} from "../../components/ui/Icon";
 
 const cards = [
   {
@@ -17,23 +17,18 @@ const cards = [
 
 export function PrivacySection() {
   return (
-    <section className="w-full bg-accent rounded-t-[60px] mt-16">
+    <section className="w-full bg-accent/90 rounded-t-[60px] mt-16">
       <div className="px-18 py-16">
         <div className="max-w-5xl mx-auto text-center text-foreground">
           <div className="flex justify-center">
-            <div className="flex h-15 w-15 items-center justify-center rounded-full border border-foreground/20 bg-accent">
+            <div className="flex h-15 w-15 items-center justify-center rounded-full border border-foreground/90 bg-accent">
               <Icon name="shield" color="foreground" width={30} height={30} />
             </div>
           </div>
 
-          <h2 className="mt-6 text-4xl font-semibold">
-            Your privacy? Glad you asked.
-          </h2>
-
-
-          <p className="mt-4">
-            Everything runs locally. Your data stays on your device.
-          </p>
+          <h1 className="mt-6 h1-60 font-semibold">
+            Your privacy? <br/> Glad you asked.
+          </h1>
 
           <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
             {cards.map((card) => (

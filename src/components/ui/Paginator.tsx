@@ -21,7 +21,7 @@ export function Pagination({
   return (
     <nav
       aria-label="Pagination"
-      className="mt-10 flex items-center justify-center gap-3"
+      className="mt-10 flex items-center  justify-center gap-3"
     >
       <FabIcon
         icon="chevronDoubleLeft"

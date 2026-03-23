@@ -34,7 +34,7 @@ export const Input = forwardRef<
   } = props;
 
   const baseClasses =
-    "w-full bg-gray-200 px-4 py-2 focus:outline-none focus:ring-2 focus:border-transparent text-[#000000]";
+    "w-full bg-gray-200 rounded-[20px] px-4 py-2 focus:outline-none focus:ring-2 focus:border-transparent text-[#000000]";
 
   const stateClasses = hasError
     ? "border border-accent focus:ring-accent"
