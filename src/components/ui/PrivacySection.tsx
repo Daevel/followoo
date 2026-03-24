@@ -1,4 +1,4 @@
-import {Icon} from "../../components/ui/Icon";
+import { Icon } from "../../components/ui/Icon";
 
 const cards = [
   {
@@ -26,23 +26,23 @@ export function PrivacySection() {
             </div>
           </div>
 
-          <h1 className="mt-6 h1-60 font-semibold">
+          <h1 className="mt-6 hero-h1 font-semibold">
             Your privacy? <br/> Glad you asked.
           </h1>
 
-          <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((card) => (
               <div
                 key={card.title}
-                className="rounded-[20px] bg-primary px-10 py-10 text-center text-foreground"
+                className="rounded-[20px] bg-primary px-6 py-8 text-center text-foreground sm:px-8 sm:py-10"
               >
-                <div className="mx-auto flex h-[200px] w-[200px] items-center justify-center rounded-[20px] bg-foreground">
-                  <Icon name="shield" color="bg" width={92} height={92} />
+                <div className="mx-auto flex aspect-square w-24 sm:w-28 md:w-32 items-center justify-center rounded-[20px] bg-foreground">
+                  <Icon name="shield" color="bg" className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14" />
                 </div>
 
-                <div className="mt-10 flex flex-col items-center gap-y-6">
+                <div className="mt-8 flex flex-col items-center gap-y-4">
                   <h3>{card.title}</h3>
-                  <p>{card.text}</p>
+                  <p className="max-w-xs">{card.text}</p>
                 </div>
               </div>
             ))}

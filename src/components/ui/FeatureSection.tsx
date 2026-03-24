@@ -1,4 +1,3 @@
-import { Container } from "../../components/ui/Container";
 import { Icon } from "../../components/ui/Icon";
 
 const cards = [
@@ -19,7 +18,6 @@ const cards = [
 export function FeaturesSection() {
   return (
     <section className="pt-20 pb-10">
-      <Container>
         <div className="mx-auto max-w-6xl text-center">
           <div className="mx-auto max-w-2xl text-foreground">
             <h2 className="text-4xl font-semibold">
@@ -52,7 +50,6 @@ export function FeaturesSection() {
             ))}
           </div>
         </div>
-      </Container>
     </section>
   );
 }

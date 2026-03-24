@@ -1,6 +1,6 @@
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import clsx from "clsx";
 import { Icon } from "./Icon";
 
 const navLinks = [
@@ -85,7 +85,7 @@ export function NavBar() {
           onClick={() => setIsMenuOpen((prev) => !prev)}
         >
           <Icon
-            name={isMenuOpen ? "trash" : "help"}
+            name={isMenuOpen ? "close" : "menu"}
             color="foreground"
             width={24}
             height={24}

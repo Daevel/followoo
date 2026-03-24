@@ -1,23 +1,24 @@
-import type {ComponentProps, SVGProps} from "react";
+import type { ComponentProps, SVGProps } from "react";
 
-import CheckCircle from "../../icons/check-circle.svg?react";
-import CheckCircleOutline from "../../icons/check-circle-outline.svg?react";
-import ChevronDoubleRight from "../../icons/keyboard-double-arrow-right.svg?react";
-import ChevronDoubleLeft from "../../icons/keyboard-double-arrow-left.svg?react";
-import Warning from "../../icons/warning.svg?react";
-import Trash from "../../icons/delete.svg?react";
-import Help from "../../icons/question-mark.svg?react";
-import Upload from "../../icons/upload.svg?react";
-import SendMail from "../../icons/send-mail.svg?react";
-import ArrowRight from "../../icons/arrow-right.svg?react"
 import ArrowLeft from "../../icons/arrow-left.svg?react";
+import ArrowRight from "../../icons/arrow-right.svg?react";
+import CheckCircleOutline from "../../icons/check-circle-outline.svg?react";
+import CheckCircle from "../../icons/check-circle.svg?react";
 import Check from "../../icons/check.svg?react";
-import SingleArrowRight from "../../icons/single-arrow-right.svg?react";
-import SingleArrowLeft from "../../icons/single-arrow-left.svg?react";
-import SingleArrowUp from "../../icons/single-arrow-up.svg?react";
-import SingleArrowDown from "../../icons/single-arrow-down.svg?react";
 import Close from "../../icons/close.svg?react";
+import Trash from "../../icons/delete.svg?react";
+import ChevronDoubleLeft from "../../icons/keyboard-double-arrow-left.svg?react";
+import ChevronDoubleRight from "../../icons/keyboard-double-arrow-right.svg?react";
+import Menu from "../../icons/menu.svg?react";
+import Help from "../../icons/question-mark.svg?react";
+import SendMail from "../../icons/send-mail.svg?react";
 import Shield from "../../icons/shield.svg?react";
+import SingleArrowDown from "../../icons/single-arrow-down.svg?react";
+import SingleArrowLeft from "../../icons/single-arrow-left.svg?react";
+import SingleArrowRight from "../../icons/single-arrow-right.svg?react";
+import SingleArrowUp from "../../icons/single-arrow-up.svg?react";
+import Upload from "../../icons/upload.svg?react";
+import Warning from "../../icons/warning.svg?react";
 
 const icons = {
   checkCircle: CheckCircle,
@@ -38,6 +39,7 @@ const icons = {
   check: Check,
   close: Close,
   shield: Shield,
+  menu: Menu,
 } as const;
 
 export type IconName = keyof typeof icons;
