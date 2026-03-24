@@ -11,7 +11,7 @@ export function HeroSection() {
       <Container>
         <div className="mx-auto flex max-w-6xl flex-col items-center text-center">
           <div className="max-w-4xl">
-            <h1 className="h1-60 font-semibold leading-tight md:text-6xl">
+            <h1 className="hero-h1 font-semibold">
               Discover who doesn't follow you back on Instagram
             </h1>
 
@@ -20,7 +20,14 @@ export function HeroSection() {
               <h3>Your data never leaves your device</h3>
             </div>
 
-            <div className="mt-8">
+            <div className="flex flex-row justify-center gap-2 mt-8 max-sm:flex-col max-sm:gap-y-2">
+              <Button
+                background="accent"
+                foreground="foreground"
+                onClick={() => navigate("/get-started")}
+              >
+                Analyze your data
+              </Button>
               <Button
                 background="primary"
                 foreground="foreground"
@@ -34,8 +41,8 @@ export function HeroSection() {
           <div className="mt-12 w-full max-w-3xl">
             <img
               src="images/double-phone-hero-landing-page.svg"
-              alt="double phone landing page"
-              className="w-full object-none"
+              alt="Preview of Followoo results on mobile"
+              className="mx-auto block h-auto w-full max-w-2xl sm:max-w-3xl"
             />
           </div>
 
