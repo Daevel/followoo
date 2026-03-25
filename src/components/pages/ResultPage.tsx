@@ -7,10 +7,10 @@ import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
 import { Input } from "../ui/Input";
 import { Pagination } from "../ui/Paginator";
-import { ProcessNavBar } from "../ui/ProcessNavBar";
 import { SortSelect } from "../ui/SortSelect";
 import { UserListItem } from "../ui/UserListItem";
 import { formatDate } from "../utils/utils";
+import { NavBar } from "../ui/NavBar";
 
 type SortKey =
   | "alphabeticalAsc"
@@ -41,7 +41,7 @@ function TabButton({ children, active, onClick }: TabButtonProps) {
       onClick={onClick}
       background={active ? "accent" : "primary"}
       foreground="foreground"
-      className="mt-0 shrink-0 whitespace-nowrap transition-colors px-4 py-2"
+      className="mt-0 shrink-0 px-4 py-2 whitespace-nowrap transition-colors"
     >
       {children}
     </Button>
@@ -211,8 +211,8 @@ export function ResultPage() {
     analyticsService.track(ANALYTICS_EVENTS.RESULTS_TAB_CHANGED, {
       tab: activeTab,
       count: users.length,
-    })
-  }, [activeTab, users.length])
+    });
+  }, [activeTab, users.length]);
 
   useEffect(() => {
     const normalizedQuery = searchQuery.trim();
@@ -301,24 +301,23 @@ export function ResultPage() {
   }, []);
 
   return (
-    <section className="min-h-svh flex flex-col">
-      <Container className="min-h-svh flex flex-col">
-        <ProcessNavBar />
-
+    <section className="flex min-h-svh flex-col">
+      <NavBar />
+      <Container className="flex min-h-svh flex-col">
         <div
           ref={rootRef}
-          className="flex flex-col items-center pt-15 pb-6 text-center flex-1"
+          className="flex flex-1 flex-col items-center pt-15 pb-6 text-center"
         >
           <h1
             data-animate="hero-item"
-            className="text-3xl font-semibold leading-headers text-foreground md:text-4xl"
+            className="leading-headers text-foreground text-3xl font-semibold md:text-4xl"
           >
             Here's what I've found!
           </h1>
 
           <div
             data-animate="hero-item"
-            className="mt-6 w-full overflow-x-auto custom-scrollbar pt-2 pb-3"
+            className="custom-scrollbar mt-6 w-full overflow-x-auto pt-2 pb-3"
           >
             <div className="flex min-w-max gap-3 px-1">
               <TabButton
@@ -380,7 +379,7 @@ export function ResultPage() {
           </div>
 
           <div className="mt-8 w-full">
-            <div className="flex flex-col mt-3 w-full items-center gap-y-3 max-sm:text-start">
+            <div className="mt-3 flex w-full flex-col items-center gap-y-3 max-sm:text-start">
               <h3 data-animate="hero-item" className="text-foreground">
                 {tabInfos.sectionTitle}
               </h3>
@@ -396,7 +395,7 @@ export function ResultPage() {
               <div className="w-full md:max-w-md">
                 <label
                   htmlFor="search-users"
-                  className="mb-2 block text-start l2-r text-foreground/80"
+                  className="l2-r text-foreground/80 mb-2 block text-start"
                 >
                   Search user
                 </label>
@@ -429,12 +428,12 @@ export function ResultPage() {
 
             <div data-animate="hero-item" className="mt-8">
               {emptyState ? (
-                <div className="flex min-h-56 w-full flex-col items-center justify-center border border-foreground/10 bg-foreground/5 px-6 py-10 text-center">
-                  <h4 className="text-lg font-medium text-foreground">
+                <div className="border-foreground/10 bg-foreground/5 flex min-h-56 w-full flex-col items-center justify-center border px-6 py-10 text-center">
+                  <h4 className="text-foreground text-lg font-medium">
                     {emptyState.title}
                   </h4>
 
-                  <p className="mt-3 max-w-md text-sm text-foreground/80">
+                  <p className="text-foreground/80 mt-3 max-w-md text-sm">
                     {emptyState.description}
                   </p>
                 </div>
@@ -462,7 +461,6 @@ export function ResultPage() {
             )}
           </div>
         </div>
-
       </Container>
     </section>
   );

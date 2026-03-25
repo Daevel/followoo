@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Icon } from "./Icon";
 
 const navLinks = [
+  { to: "/", label: "Home" },
   { to: "/instructions-to-start", label: "How to start" },
   { to: "/get-started", label: "Analyze your export" },
   { to: "/terms-and-conditions", label: "Terms and conditions" },
@@ -18,55 +19,86 @@ export function NavBar() {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
+  const isActiveLink = (to: string) => location.pathname === to;
+
   return (
     <header className="px-5 md:px-10 lg:px-18">
-      <nav className="relative flex h-20 items-center justify-between text-foreground md:h-24">
-        <div className="hidden items-center w-full gap-8 lg:flex lg:justify-between align-center">
-          <div >
+      <nav
+        id="navbar-inner"
+        className="text-foreground relative flex h-20 items-center justify-between md:h-24"
+      >
+        <div
+          id="navbar-left"
+          className="align-center hidden w-full items-center gap-8 lg:flex"
+        >
+          <div>
             <Link
               to="/"
               className="flex items-center gap-3"
               aria-label="Go to homepage"
             >
-              <img src="/favicon.svg" alt="Followoo logo" width={32} height={32} />
+              <img
+                src="/favicon.svg"
+                alt="Followoo logo"
+                width={32}
+                height={32}
+              />
               <h3 className="font-semibold">Followoo</h3>
             </Link>
           </div>
+
           <div className="flex items-center gap-8">
-            <Link
-              to="/instructions-to-start"
-              className="font-semibold text-foreground transition-colors hover:text-primary"
-            >
-              How to start
-            </Link>
+            {navLinks
+              .filter((link) => link.to !== "/updates")
+              .map((link) => {
+                const isActive = isActiveLink(link.to);
 
-            <Link
-              to="/get-started"
-              className="font-semibold text-foreground transition-colors hover:text-primary"
-            >
-              Analyze your export
-            </Link>
-
-            <Link
-              to="/terms-and-conditions"
-              className="font-semibold text-foreground transition-colors hover:text-primary"
-            >
-              Terms and conditions
-            </Link>
+                return (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={clsx(
+                      "relative inline-flex items-center py-1 font-semibold transition-colors",
+                      isActive
+                        ? "text-foreground"
+                        : "text-foreground/50 hover:text-foreground",
+                    )}
+                  >
+                    {link.label}
+                    <span
+                      className={clsx(
+                        "bg-foreground absolute -bottom-1 left-0 h-px w-full rounded-full transition-opacity",
+                        isActive ? "opacity-100" : "opacity-0",
+                      )}
+                    />
+                  </Link>
+                );
+              })}
           </div>
-
-          <div className="flex flex-row items-center">
-            <Link
-              to="/updates"
-              className="font-semibold text-foreground transition-colors hover:text-primary"
-            >
-              Updates
-            </Link>
-          </div>
-
         </div>
 
-        {/* Mobile menu button */}
+        <div
+          id="navbar-right"
+          className="align-center hidden flex-row items-center lg:flex"
+        >
+          <Link
+            to="/updates"
+            className={clsx(
+              "relative inline-flex items-center py-1 font-semibold transition-colors",
+              isActiveLink("/updates")
+                ? "text-foreground"
+                : "text-foreground/50 hover:text-foreground",
+            )}
+          >
+            Updates
+            <span
+              className={clsx(
+                "bg-foreground absolute -bottom-1 left-0 h-px w-full rounded-full transition-opacity",
+                isActiveLink("/updates") ? "opacity-100" : "opacity-0",
+              )}
+            />
+          </Link>
+        </div>
 
         <Link
           to="/"
@@ -78,8 +110,10 @@ export function NavBar() {
 
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-md p-2 text-foreground transition-colors hover:bg-white/5 lg:hidden"
-          aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          className="bg-bg border-primary text-foreground/50 inline-flex items-center justify-center rounded-md border p-2 transition-colors hover:bg-white/5 lg:hidden"
+          aria-label={
+            isMenuOpen ? "Close navigation menu" : "Open navigation menu"
+          }
           aria-expanded={isMenuOpen}
           aria-controls="mobile-navigation"
           onClick={() => setIsMenuOpen((prev) => !prev)}
@@ -95,22 +129,31 @@ export function NavBar() {
         <div
           id="mobile-navigation"
           className={clsx(
-            "absolute left-0 top-full z-50 w-full overflow-hidden rounded-2xl border border-white/10 bg-background/95 shadow-lg backdrop-blur-md transition-all duration-300 lg:hidden",
+            "bg-background/95 absolute top-full left-0 z-50 w-full overflow-hidden rounded-2xl border border-white/10 shadow-lg backdrop-blur-md transition-all duration-300 lg:hidden",
             isMenuOpen
               ? "pointer-events-auto mt-2 opacity-100"
               : "pointer-events-none mt-0 opacity-0",
           )}
         >
           <div className="flex flex-col p-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="rounded-xl px-4 py-3 font-semibold text-foreground transition-colors hover:bg-white/5 hover:text-primary"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = isActiveLink(link.to);
+
+              return (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={clsx(
+                    "rounded-xl px-4 py-3 font-semibold transition-colors hover:bg-white/5",
+                    isActive
+                      ? "text-foreground"
+                      : "text-foreground/50 hover:text-foreground",
+                  )}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </nav>

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "../../components/ui/Button";
-import { Icon } from "../../components/ui/Icon";
+import { Button } from "../../../components/ui/Button";
+import { Icon } from "../../../components/ui/Icon";
 
 export function HeroSection() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export function HeroSection() {
 
           <div className="mt-6 flex items-center justify-center gap-3 text-accent">
             <Icon name="shield" color="accent" width={32} height={32} />
-            <h3>Your data never leaves your device</h3>
+            <h3 className="hero-h3">Your data never leaves your device</h3>
           </div>
 
           <div className="flex flex-row justify-center gap-2 mt-8 max-sm:flex-col max-sm:gap-y-2">

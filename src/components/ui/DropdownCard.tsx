@@ -12,7 +12,7 @@ export function DropdownCard({ title, description }: DropdownCardProps) {
     return (
         <div
             className="
-        w-full max-w-[760px]
+        w-full max-w-190
         rounded-[20px] bg-foreground text-bg
         px-8 py-7
         transition-all duration-300 ease-out
@@ -24,7 +24,7 @@ export function DropdownCard({ title, description }: DropdownCardProps) {
                 className="flex w-full justify-between gap-6 items-center"
                 aria-expanded={isOpen}
             >
-                <h4 className="pr-4">{title}</h4>
+                <h4 className="pr-4 text-start">{title}</h4>
 
                 <div
                     className="

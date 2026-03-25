@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
-import { ProcessNavBar } from "../ui/ProcessNavBar";
 
 type AppErrorBoundaryProps = {
   children: React.ReactNode;
@@ -47,19 +46,17 @@ export class AppErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <section className="min-h-svh flex flex-col">
-          <Container className="min-h-svh flex flex-col">
-            <ProcessNavBar />
-
+        <section className="flex min-h-svh flex-col">
+          <Container className="flex min-h-svh flex-col">
             <div className="flex flex-1 flex-col items-center justify-center text-center">
               <div className="max-w-md">
-                <h1 className="text-3xl font-semibold leading-headers text-foreground md:text-4xl">
+                <h1 className="leading-headers text-foreground text-3xl font-semibold md:text-4xl">
                   Something went wrong
                 </h1>
 
-                <p className="mt-4 text-foreground/80">
-                  An unexpected error occurred while rendering the page.
-                  Please refresh and try again.
+                <p className="text-foreground/80 mt-4">
+                  An unexpected error occurred while rendering the page. Please
+                  refresh and try again.
                 </p>
 
                 <div className="mt-8 flex justify-center gap-3">
@@ -85,7 +82,6 @@ export class AppErrorBoundary extends React.Component<
                 </div>
               </div>
             </div>
-
           </Container>
         </section>
       );

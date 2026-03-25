@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { Callout } from "../ui/Callout";
 import { Container } from "../ui/Container";
-import { ProcessNavBar } from "../ui/ProcessNavBar";
+import { NavBar } from "../ui/NavBar";
 
 type StepCardProps = {
   step: number;
@@ -14,15 +14,18 @@ type StepCardProps = {
 
 function StepCard({ step, title, description }: StepCardProps) {
   return (
-    <div data-animate="hero-item" className="w-full border border-primary bg-primary/10 p-4 md:p-5">
+    <div
+      data-animate="hero-item"
+      className="border-primary bg-primary/10 w-full border p-4 md:p-5"
+    >
       <div className="flex items-start gap-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-primary text-foreground font-semibold">
+        <div className="bg-primary text-foreground flex h-8 w-8 shrink-0 items-center justify-center font-semibold">
           {step}
         </div>
 
         <div className="flex flex-col gap-2 text-left">
-          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-          <div className="text-sm leading-6 text-foreground/90">
+          <h3 className="text-foreground text-lg font-semibold">{title}</h3>
+          <div className="text-foreground/90 text-sm leading-6">
             {description}
           </div>
         </div>
@@ -32,7 +35,6 @@ function StepCard({ step, title, description }: StepCardProps) {
 }
 
 export function InstructionsToStart() {
-
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
@@ -57,22 +59,24 @@ export function InstructionsToStart() {
   }, []);
 
   return (
-    <section className="min-h-svh flex flex-col">
-      <Container className="min-h-svh flex flex-col">
-        <ProcessNavBar />
-
+    <section className="flex min-h-svh flex-col">
+      <NavBar />
+      <Container className="flex min-h-svh flex-col">
         <div
           ref={rootRef}
           className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center pt-15 pb-10 text-center"
         >
           <h1
             data-animate="hero-item"
-            className="text-4xl text-start font-semibold leading-headers text-foreground md:text-5xl"
+            className="leading-headers text-foreground text-start text-4xl font-semibold md:text-5xl"
           >
             How to download your Instagram ZIP
           </h1>
 
-          <p data-animate="hero-item" className="mt-4 max-w-2xl text-base text-start text-foreground/90">
+          <p
+            data-animate="hero-item"
+            className="text-foreground/90 mt-4 max-w-2xl text-start text-base"
+          >
             To analyze your profile correctly, you need the official Instagram
             export with the right options selected.
           </p>
@@ -173,7 +177,7 @@ export function InstructionsToStart() {
                   Press <b>Create export</b> or the equivalent confirmation
                   button. Instagram will prepare the ZIP and send you an email
                   when it is ready to download. Official and secondary guides
-                  describe this final export step. 
+                  describe this final export step.
                 </>
               }
             />
@@ -208,7 +212,10 @@ export function InstructionsToStart() {
             </Callout>
           </div>
 
-          <div data-animate="hero-item" className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <div
+            data-animate="hero-item"
+            className="mt-10 flex flex-wrap items-center justify-center gap-4"
+          >
             <Link to="/get-started">
               <Button
                 background="accent"
@@ -227,7 +234,6 @@ export function InstructionsToStart() {
             </Link>
           </div>
         </div>
-
       </Container>
     </section>
   );

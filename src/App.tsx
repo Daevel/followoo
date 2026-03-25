@@ -1,11 +1,11 @@
 import { gsap } from "gsap";
 import { useLayoutEffect, useRef } from "react";
-import { FeaturesSection } from "./components/ui/FeatureSection";
+import { FeaturesSection } from "./components/ui/hero-subsection/FeatureSection";
 import { FooterSignature } from "./components/ui/FooterSignature";
-import { HeroSection } from "./components/ui/HeroSection";
+import { HeroSection } from "./components/ui/hero-subsection/HeroSection";
 import { NavBar } from "./components/ui/NavBar";
-import { PrivacySection } from "./components/ui/PrivacySection";
-import { Questions } from "./components/ui/Questions";
+import { PrivacySection } from "./components/ui/hero-subsection/PrivacySection";
+import { Questions } from "./components/ui/hero-subsection/Questions";
 
 export default function App() {
   const rootRef = useRef<HTMLDivElement | null>(null);

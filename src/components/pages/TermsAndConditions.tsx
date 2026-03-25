@@ -2,7 +2,7 @@ import { gsap } from "gsap";
 import { useLayoutEffect, useRef } from "react";
 import { Callout } from "../ui/Callout";
 import { Container } from "../ui/Container";
-import { ProcessNavBar } from "../ui/ProcessNavBar";
+import { NavBar } from "../ui/NavBar";
 
 type SectionProps = {
   title: string;
@@ -11,7 +11,7 @@ type SectionProps = {
 
 function TermsSection({ title, children }: SectionProps) {
   return (
-    <section className="w-full text-foreground">
+    <section className="text-foreground w-full">
       <h2 className="l1-b">{title}</h2>
       <p className="p1-r mt-2">{children}</p>
     </section>
@@ -43,24 +43,23 @@ export function TermsAndConditions() {
   }, []);
 
   return (
-    <section className="min-h-svh flex flex-col">
-      <Container className="min-h-svh flex flex-col">
-        <ProcessNavBar showHelp={false} />
-
+    <section className="flex min-h-svh flex-col">
+      <NavBar />
+      <Container className="flex min-h-svh flex-col">
         <div
           ref={rootRef}
           className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10"
         >
           <h1
             data-animate="hero-item"
-            className="text-4xl font-semibold leading-headers text-foreground md:text-5xl"
+            className="leading-headers text-foreground text-4xl font-semibold md:text-5xl"
           >
             Terms and Conditions
           </h1>
 
           <p
             data-animate="hero-item"
-            className="mt-3 text-sm text-foreground/70"
+            className="text-foreground/70 mt-3 text-sm"
           >
             Last updated: March 2026
           </p>
@@ -93,8 +92,8 @@ export function TermsAndConditions() {
                 Instagram data through the official export tools provided by
                 Meta, such as the Meta Accounts Center. The platform does not
                 provide or facilitate unauthorized access to third-party data.
-                All files used within the service must originate from
-                legitimate and official data export procedures.
+                All files used within the service must originate from legitimate
+                and official data export procedures.
               </TermsSection>
             </div>
 
@@ -103,9 +102,9 @@ export function TermsAndConditions() {
                 The platform allows users to analyze Instagram export files,
                 view relationship-based metrics such as mutuals, followers,
                 unfollowers, recent unfollowers, and blocked accounts, and
-                generate results based solely on the files uploaded by the
-                user. Any result depends entirely on the completeness and
-                accuracy of the exported files.
+                generate results based solely on the files uploaded by the user.
+                Any result depends entirely on the completeness and accuracy of
+                the exported files.
               </TermsSection>
             </div>
 
@@ -191,7 +190,6 @@ export function TermsAndConditions() {
             </div>
           </div>
         </div>
-
       </Container>
     </section>
   );

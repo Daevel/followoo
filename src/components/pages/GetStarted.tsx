@@ -10,8 +10,8 @@ import { Callout } from "../ui/Callout";
 import { Checkbox } from "../ui/Checkbox";
 import { Container } from "../ui/Container";
 import { Loading } from "../ui/Loading";
-import { ProcessNavBar } from "../ui/ProcessNavBar";
 import { ZipDropzone } from "../ui/ZipDropzone";
+import { NavBar } from "../ui/NavBar";
 
 export function GetStarted() {
   const navigate = useNavigate();
@@ -45,7 +45,6 @@ export function GetStarted() {
   }, []);
 
   async function onElaborateFile() {
-
     analyticsService.track(ANALYTICS_EVENTS.ANALYSIS_STARTED, {
       has_file: Boolean(selectedZipFile),
       terms_accepted: termsAndConditionsAccepted,
@@ -88,7 +87,7 @@ export function GetStarted() {
     } catch (error) {
       handleAppError(error, {
         fallbackTitle: "Invalid file",
-      })
+      });
     } finally {
       setLoading(false);
     }
@@ -98,16 +97,16 @@ export function GetStarted() {
     return <Loading loading={loading} />;
   }
   return (
-    <section className="min-h-svh flex flex-col">
-      <Container className="min-h-svh flex flex-col">
-        <ProcessNavBar />
+    <section className="flex min-h-svh flex-col">
+      <NavBar />
+      <Container className="flex min-h-svh flex-col">
         <div
           ref={rootRef}
-          className="flex flex-col items-start pt-15 pb-6 text-center flex-1"
+          className="flex flex-1 flex-col items-start pt-15 pb-6 text-center"
         >
           <h1
             data-animate="hero-item"
-            className="text-4xl font-semibold leading-headers text-foreground md:text-5xl"
+            className="leading-headers text-foreground text-4xl font-semibold md:text-5xl"
           >
             Select your zip file
           </h1>
@@ -115,7 +114,7 @@ export function GetStarted() {
           <div className="flex flex-col items-center text-start">
             <div
               data-animate="hero-item"
-              className=" w-auto py-12 flex flex-col items-center gap-10"
+              className="flex w-auto flex-col items-center gap-10 py-12"
             >
               <ZipDropzone
                 file={selectedZipFile}
@@ -124,13 +123,13 @@ export function GetStarted() {
               />
 
               {uploadError && (
-                <p data-animate="hero-item" className="w-full p1-r text-accent">
+                <p data-animate="hero-item" className="p1-r text-accent w-full">
                   {uploadError}
                 </p>
               )}
 
-              <div className="text-foreground items-start flex flex-col gap-10">
-                <div className="w-auto text-foreground items-start flex flex-col gap-4">
+              <div className="text-foreground flex flex-col items-start gap-10">
+                <div className="text-foreground flex w-auto flex-col items-start gap-4">
                   <label data-animate="hero-item" className="l1-b">
                     What's going to happen?
                   </label>
@@ -146,7 +145,7 @@ export function GetStarted() {
 
                     <p>The application will:</p>
 
-                    <ul className="list-disc pl-5 flex flex-col gap-1">
+                    <ul className="flex list-disc flex-col gap-1 pl-5">
                       <li>
                         Extract followers and following lists from the ZIP file
                       </li>
@@ -166,7 +165,7 @@ export function GetStarted() {
 
                 <div
                   data-animate="hero-item"
-                  className="text-foreground items-start w-full"
+                  className="text-foreground w-full items-start"
                 >
                   <Callout title="Important: Data usage" variant="warning">
                     Your <b>data</b> is processed locally in your browser. No
@@ -180,7 +179,7 @@ export function GetStarted() {
 
             <div
               data-animate="hero-item"
-              className="w-auto flex flex-row gap-4 items-center mt-20"
+              className="mt-20 flex w-auto flex-row items-center gap-4"
             >
               <Checkbox
                 id="terms-and-conditions"
@@ -193,7 +192,7 @@ export function GetStarted() {
                   <>
                     I agree with{" "}
                     <Link to="/terms-and-conditions">
-                      <b className="underline text-foreground">
+                      <b className="text-foreground underline">
                         terms and conditions
                       </b>
                     </Link>

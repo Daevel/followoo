@@ -2,7 +2,7 @@ import { gsap } from "gsap";
 import { useLayoutEffect, useRef } from "react";
 import { BadgeVersion } from "../ui/BadgeVersion";
 import { Container } from "../ui/Container";
-import { ProcessNavBar } from "../ui/ProcessNavBar";
+import { NavBar } from "../ui/NavBar";
 import { Separator } from "../ui/Separator";
 
 function UpdateSection({
@@ -19,8 +19,8 @@ function UpdateSection({
   releaseDate: string;
 }) {
   return (
-    <section className="w-full text-foreground">
-      <div className="flex flex-row gap-3 items-center">
+    <section className="text-foreground w-full">
+      <div className="flex flex-row items-center gap-3">
         <h2 className="l1-b">{title}</h2>
         <BadgeVersion
           version={badgeVersion}
@@ -28,7 +28,7 @@ function UpdateSection({
         />
       </div>
       <div className="flex">
-        <span className="text-sm text-foreground/80 mt-3">{releaseDate}</span>
+        <span className="text-foreground/80 mt-3 text-sm">{releaseDate}</span>
       </div>
       <div className="flex">
         <div className="p1-r mt-5">{children}</div>
@@ -62,27 +62,26 @@ export function Updates() {
   }, []);
 
   return (
-    <section className="min-h-svh flex flex-col">
-      <Container className="min-h-svh flex flex-col">
-        <ProcessNavBar showHelp={true} />
+    <section className="flex min-h-svh flex-col">
+      <NavBar />
+      <Container className="flex min-h-svh flex-col">
         <div
           ref={rootRef}
           className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10"
         >
           <h1
             data-animate="hero-item"
-            className="text-4xl font-semibold leading-headers text-foreground md:text-5xl"
+            className="leading-headers text-foreground text-4xl font-semibold md:text-5xl"
           >
             Followoo updates
           </h1>
 
-          <p data-animate="hero-item" className="mt-3 text-foreground/70">
+          <p data-animate="hero-item" className="text-foreground/70 mt-3">
             Here you can find the latest improvements and features added to
             Followoo.
           </p>
 
           <div className="mt-10 flex w-full flex-col gap-8">
-
             <div data-animate="hero-item">
               <UpdateSection
                 title="Followoo"
@@ -91,14 +90,20 @@ export function Updates() {
                 releaseDate="March 19, 2026"
               >
                 <p>
-                  Version 1.1.0 introduces an analytics system to track user interactions and errors, providing valuable insights for future improvements.
-                  The user privacy and security remain a top priority, with all analytics data being anonymized and used solely for improving the user experience.
+                  Version 1.1.0 introduces an analytics system to track user
+                  interactions and errors, providing valuable insights for
+                  future improvements. The user privacy and security remain a
+                  top priority, with all analytics data being anonymized and
+                  used solely for improving the user experience.
                 </p>
 
-                <p className="font-medium mt-4 text-accent/80">New</p>
+                <p className="text-accent/80 mt-4 font-medium">New</p>
 
-                <ul className="list-disc pl-5 space-y-2 mt-2">
-                  <li>Added a new analytics system to track user interactions and errors</li>
+                <ul className="mt-2 list-disc space-y-2 pl-5">
+                  <li>
+                    Added a new analytics system to track user interactions and
+                    errors
+                  </li>
                 </ul>
               </UpdateSection>
             </div>
@@ -119,27 +124,41 @@ export function Updates() {
                   and feature-rich.
                 </p>
 
-                <p className="font-medium mt-4 text-accent/80">New</p>
+                <p className="text-accent/80 mt-4 font-medium">New</p>
 
-                <ul className="list-disc pl-5 space-y-2 mt-2">
+                <ul className="mt-2 list-disc space-y-2 pl-5">
                   <li>Added a responsive toast notification system</li>
-                  <li>Added new sections for Close Friends, Restricted Users, and Hidden Stories</li>
+                  <li>
+                    Added new sections for Close Friends, Restricted Users, and
+                    Hidden Stories
+                  </li>
                   <li>Added an Updates page to track product changes</li>
                 </ul>
 
-                <p className="font-medium mt-4 text-accent/80">Improvements</p>
+                <p className="text-accent/80 mt-4 font-medium">Improvements</p>
 
-                <ul className="list-disc pl-5 space-y-2 mt-2">
-                  <li>Improved Instagram export parsing with stronger TypeScript typing</li>
-                  <li>Improved support for wrapped relationship files such as following and recently unfollowed users</li>
-                  <li>Improved mobile UX for notifications and feedback messages</li>
+                <ul className="mt-2 list-disc space-y-2 pl-5">
+                  <li>
+                    Improved Instagram export parsing with stronger TypeScript
+                    typing
+                  </li>
+                  <li>
+                    Improved support for wrapped relationship files such as
+                    following and recently unfollowed users
+                  </li>
+                  <li>
+                    Improved mobile UX for notifications and feedback messages
+                  </li>
                 </ul>
 
-                <p className="font-medium mt-4 text-primary/80">Fixed</p>
+                <p className="text-primary/80 mt-4 font-medium">Fixed</p>
 
-                <ul className="list-disc pl-5 space-y-2 mt-2">
+                <ul className="mt-2 list-disc space-y-2 pl-5">
                   <li>Fixed client-side routing issues on Vercel</li>
-                  <li>Fixed edge cases in username extraction from Instagram exports</li>
+                  <li>
+                    Fixed edge cases in username extraction from Instagram
+                    exports
+                  </li>
                   <li>Fixed duplicate user handling in parsed results</li>
                 </ul>
               </UpdateSection>
@@ -165,7 +184,6 @@ export function Updates() {
             </div>
           </div>
         </div>
-
       </Container>
     </section>
   );

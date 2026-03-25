@@ -5,7 +5,7 @@ import { toastService } from "../services/toastService";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
 import { Input } from "../ui/Input";
-import { ProcessNavBar } from "../ui/ProcessNavBar";
+import { NavBar } from "../ui/NavBar";
 
 export function HelpSection() {
   const { form, onSubmit, submitState, isSubmitting } = useHelpForm();
@@ -69,17 +69,17 @@ export function HelpSection() {
   }, []);
 
   return (
-    <section className="min-h-svh flex flex-col">
-      <Container className="min-h-svh flex flex-col">
-        <ProcessNavBar showHelp={false} />
+    <section className="flex min-h-svh flex-col">
+      <NavBar />
+      <Container className="flex min-h-svh flex-col">
         <div
           ref={rootRef}
-          className="flex flex-col items-start pt-15 pb-6 text-center text-foreground flex-1"
+          className="text-foreground flex flex-1 flex-col items-start pt-15 pb-6 text-center"
         >
-          <div className="flex flex-col items-start text-start mb-10">
+          <div className="mb-10 flex flex-col items-start text-start">
             <h1
               data-animate="hero-item"
-              className="text-4xl font-semibold leading-headers md:text-5xl"
+              className="leading-headers text-4xl font-semibold md:text-5xl"
             >
               Help section
             </h1>
@@ -89,15 +89,15 @@ export function HelpSection() {
             </p>
           </div>
 
-          <div className="w-full flex flex-col items-center">
-            <div className="w-full pt-5 flex flex-col items-center gap-10">
+          <div className="flex w-full flex-col items-center">
+            <div className="flex w-full flex-col items-center gap-10 pt-5">
               <div
                 data-animate="hero-item"
-                className="w-full flex flex-col items-center text-start"
+                className="flex w-full flex-col items-center text-start"
               >
                 <form
                   onSubmit={onSubmit}
-                  className="w-full flex flex-col gap-6"
+                  className="flex w-full flex-col gap-6"
                   noValidate
                 >
                   <label
@@ -115,7 +115,7 @@ export function HelpSection() {
                     {...register("fullName")}
                   />
                   {errors.fullName && (
-                    <p className="text-sm text-accent">
+                    <p className="text-accent text-sm">
                       {errors.fullName.message}
                     </p>
                   )}
@@ -135,7 +135,7 @@ export function HelpSection() {
                     {...register("email")}
                   />
                   {errors.email && (
-                    <p className="text-sm text-accent">
+                    <p className="text-accent text-sm">
                       {errors.email.message}
                     </p>
                   )}
@@ -154,12 +154,12 @@ export function HelpSection() {
                       hasError={!!errors.message}
                       {...register("message")}
                     />
-                    <span className="self-end text-xs text-foreground/70">
+                    <span className="text-foreground/70 self-end text-xs">
                       {messageValue.length}/500
                     </span>
                     <div data-animate="hero-item" className="text-start">
                       {errors.message && (
-                        <p className="text-sm text-accent">
+                        <p className="text-accent text-sm">
                           {errors.message.message}
                         </p>
                       )}
