@@ -1,5 +1,5 @@
-import { Icon } from "../../../components/ui/Icon";
 import { DropdownCard } from "@/components/ui/DropdownCard.tsx";
+import { Icon } from "../../../components/ui/Icon";
 
 const cards = [
   {
@@ -26,7 +26,7 @@ const cards = [
 
 export function Questions() {
   return (
-    <section className="bg-accent/90 w-full rounded-b-[60px]">
+    <section className="bg-accent/90 from-primary to-accent/90 w-full rounded-b-[60px] bg-linear-to-b">
       <div className="px-18 py-16">
         <div className="text-foreground mx-auto max-w-5xl text-center">
           <div className="flex justify-center">

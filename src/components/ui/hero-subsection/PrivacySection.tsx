@@ -31,7 +31,7 @@ export function PrivacySection() {
   return (
     <section
       ref={sectionRef}
-      className="bg-accent/90 mt-16 w-full rounded-t-[60px]"
+      className="bg-accent/90 from-accent/90 to-primary mt-16 w-full rounded-t-[60px] bg-linear-to-b"
     >
       <div className="px-18 py-16">
         <div className="text-foreground mx-auto max-w-5xl text-center">

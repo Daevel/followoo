@@ -1,11 +1,11 @@
 import { gsap } from "gsap";
 import { useLayoutEffect, useRef } from "react";
-import { FeaturesSection } from "./components/ui/hero-subsection/FeatureSection";
 import { FooterSignature } from "./components/ui/FooterSignature";
+import { FeaturesSection } from "./components/ui/hero-subsection/FeatureSection";
 import { HeroSection } from "./components/ui/hero-subsection/HeroSection";
-import { NavBar } from "./components/ui/NavBar";
 import { PrivacySection } from "./components/ui/hero-subsection/PrivacySection";
 import { Questions } from "./components/ui/hero-subsection/Questions";
+import { NavBar } from "./components/ui/NavBar";
 
 export default function App() {
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -47,10 +47,10 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <NavBar />
 
-      <section className="px-18 text-foreground">
+      <section className="text-foreground px-18">
         <HeroSection />
         <FeaturesSection />
       </section>
@@ -58,11 +58,11 @@ export default function App() {
       <PrivacySection />
       <Questions />
 
-      <section className="relative overflow-hidden bg-background px-18 pt-10 h-180 lg:h-130 text-foreground">
+      <section className="bg-background text-foreground relative h-180 overflow-hidden px-18 pt-10 lg:h-130">
         <FooterSignature />
 
-        <div className="pointer-events-none absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[38%]">
-          <div className="text-[120px] md:text-[180px] lg:text-[220px] font-semibold leading-none text-foreground whitespace-nowrap">
+        <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[38%]">
+          <div className="text-foreground text-[120px] leading-none font-semibold whitespace-nowrap md:text-[180px] lg:text-[220px]">
             Followoo
           </div>
         </div>

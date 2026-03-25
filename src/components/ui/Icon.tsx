@@ -6,6 +6,7 @@ import CheckCircleOutline from "../../icons/check-circle-outline.svg?react";
 import CheckCircle from "../../icons/check-circle.svg?react";
 import Check from "../../icons/check.svg?react";
 import Close from "../../icons/close.svg?react";
+import Code from "../../icons/code.svg?react";
 import Trash from "../../icons/delete.svg?react";
 import Download from "../../icons/download.svg?react";
 import Eye from "../../icons/eye.svg?react";
@@ -52,6 +53,7 @@ const icons = {
   laptop: Laptop,
   userCheck: UserCheck,
   linkOff: LinkOff,
+  code: Code,
 } as const;
 
 export type IconName = keyof typeof icons;
