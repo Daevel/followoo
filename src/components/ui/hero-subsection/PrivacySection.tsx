@@ -1,23 +1,38 @@
-import { Icon } from "../Icon";
+import { useSectionReveal } from "@/lib/useSectionReveal";
+import { useRef } from "react";
+import { Card } from "../Card";
+import { Icon, type IconName } from "../Icon";
 
 const cards = [
   {
-    title: "Simple",
-    text: "Download your Instagram data following my guide here",
+    title: "100% local",
+    text: "Everything runs directly in your browser. Your data never leaves your device.",
+    iconName: "laptop" as IconName,
   },
   {
-    title: "Safe",
-    text: "Use your export inside the getting started page and start to analyze your data.",
+    title: "No API access",
+    text: "Followoo does not connect to your Instagram account or use any external APIs.",
+    iconName: "linkOff" as IconName,
   },
   {
-    title: "Fast",
-    text: "See who unfollowed your using by filtering your friends between your tabs.",
+    title: "You stay in control",
+    text: "You decide what to upload and when. Nothing is stored or tracked.",
+    iconName: "userCheck" as IconName,
   },
 ];
 
 export function PrivacySection() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  useSectionReveal(sectionRef, {
+    triggerStart: "top 70%",
+  });
+
   return (
-    <section className="bg-accent/90 mt-16 w-full rounded-t-[60px]">
+    <section
+      ref={sectionRef}
+      className="bg-accent/90 mt-16 w-full rounded-t-[60px]"
+    >
       <div className="px-18 py-16">
         <div className="text-foreground mx-auto max-w-5xl text-center">
           <div className="flex justify-center">
@@ -32,23 +47,11 @@ export function PrivacySection() {
 
           <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((card) => (
-              <div
-                key={card.title}
-                className="bg-primary text-foreground rounded-[20px] px-6 py-8 text-center sm:px-8 sm:py-10"
-              >
-                <div className="bg-foreground mx-auto flex aspect-square w-24 items-center justify-center rounded-[20px] sm:w-28 md:w-32">
-                  <Icon
-                    name="shield"
-                    color="bg"
-                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14"
-                  />
-                </div>
-
-                <div className="mt-8 flex flex-col items-center gap-y-4">
-                  <h3>{card.title}</h3>
-                  <p className="max-w-xs">{card.text}</p>
-                </div>
-              </div>
+              <Card
+                title={card.title}
+                description={card.text}
+                iconName={card.iconName}
+              />
             ))}
           </div>
 

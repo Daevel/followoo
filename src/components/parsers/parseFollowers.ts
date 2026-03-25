@@ -1,5 +1,8 @@
 import type { InstagramUser } from "../../types/instagram.types";
-import { isRawInstagramUser, isRelationshipObject } from "../utils/instagramGuards";
+import {
+  isRawInstagramUser,
+  isRelationshipObject,
+} from "../utils/instagramGuards";
 import { isArray } from "../utils/typeGuards";
 import { normalizeInstagramUser } from "../utils/utils";
 
