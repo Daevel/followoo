@@ -1,5 +1,5 @@
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { handleAppError } from "../../errors";
 import { analyzeInstagramExport } from "../services/instagramAnalisysService";
@@ -26,10 +26,6 @@ export function GetStarted() {
   const isDemo: boolean = location.state?.isDemo ?? false;
   const isTermsAccepted = isDemo || termsAndConditionsAccepted;
   const hasValidFile = isDemo || Boolean(selectedZipFile);
-
-  useEffect(() => {
-    console.log("isDemo:", isDemo);
-  }, [isDemo]);
 
   async function loadDemoZipFile() {
     const response = await fetch("/demo/demo-followoo-export-usage.zip");

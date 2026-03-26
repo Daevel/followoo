@@ -1,16 +1,18 @@
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
-import { gsap } from "gsap";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import type { InstagramAnalysisResult } from "../../types/instagram.types";
+import { calculateRelationshipHealthScore } from "../services/relationshipHealthService";
 import { Button } from "../ui/Button";
+import { ResultsPieChart } from "../ui/charts/ResultPieChart";
 import { Container } from "../ui/Container";
 import { Input } from "../ui/Input";
+import { NavBar } from "../ui/NavBar";
 import { Pagination } from "../ui/Paginator";
+import { RelationshipHealthInsight } from "../ui/RelationshipHealthInsight";
 import { SortSelect } from "../ui/SortSelect";
 import { UserListItem } from "../ui/UserListItem";
 import { formatDate } from "../utils/utils";
-import { NavBar } from "../ui/NavBar";
 
 type SortKey =
   | "alphabeticalAsc"
@@ -207,6 +209,25 @@ export function ResultPage() {
     return sortedUsers.slice(startIndex, endIndex);
   }, [sortedUsers, currentPage]);
 
+  const chartData = useMemo(
+    () => [
+      { name: "Mutual", value: analysis.mutual.length },
+      { name: "Followers only", value: analysis.followersOnly.length },
+      { name: "Unfollowers", value: analysis.unfollowers.length },
+      { name: "Recent unfollowers", value: analysis.recentUnfollowers.length },
+      { name: "Blocked", value: analysis.blocked.length },
+      { name: "Restricted", value: analysis.restricted.length },
+      { name: "Close friends", value: analysis.closeFriends.length },
+      { name: "Hide stories", value: analysis.hideStoriesFrom.length },
+    ],
+    [analysis],
+  );
+
+  const relationshipHealthInsight = useMemo(
+    () => calculateRelationshipHealthScore(analysis),
+    [analysis],
+  );
+
   useEffect(() => {
     analyticsService.track(ANALYTICS_EVENTS.RESULTS_TAB_CHANGED, {
       tab: activeTab,
@@ -279,27 +300,6 @@ export function ResultPage() {
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        "[data-animate='hero-item']",
-        {
-          opacity: 0,
-          y: 24,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.12,
-        },
-      );
-    }, rootRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
     <section className="flex min-h-svh flex-col">
       <NavBar />
@@ -314,6 +314,14 @@ export function ResultPage() {
           >
             Here's what I've found!
           </h1>
+
+          <div data-animate="hero-item" className="mt-8 w-full">
+            <RelationshipHealthInsight insight={relationshipHealthInsight} />
+          </div>
+
+          <div className="mt-8 w-full">
+            <ResultsPieChart data={chartData} title="Results overview" />
+          </div>
 
           <div
             data-animate="hero-item"

@@ -10,14 +10,17 @@ import Code from "../../icons/code.svg?react";
 import Trash from "../../icons/delete.svg?react";
 import Download from "../../icons/download.svg?react";
 import Eye from "../../icons/eye.svg?react";
+import HappyFace from "../../icons/happy-face.svg?react";
 import ChevronDoubleLeft from "../../icons/keyboard-double-arrow-left.svg?react";
 import ChevronDoubleRight from "../../icons/keyboard-double-arrow-right.svg?react";
 import Laptop from "../../icons/laptop.svg?react";
 import LinkOff from "../../icons/link-off.svg?react";
 import Locker from "../../icons/lock.svg?react";
 import Menu from "../../icons/menu.svg?react";
+import NeutralFace from "../../icons/neutral-face.svg?react";
 import UserCheck from "../../icons/person-check.svg?react";
 import Help from "../../icons/question-mark.svg?react";
+import SadFace from "../../icons/sad-face.svg?react";
 import SendMail from "../../icons/send-mail.svg?react";
 import Shield from "../../icons/shield.svg?react";
 import SingleArrowDown from "../../icons/single-arrow-down.svg?react";
@@ -54,6 +57,9 @@ const icons = {
   userCheck: UserCheck,
   linkOff: LinkOff,
   code: Code,
+  happyFace: HappyFace,
+  neutralFace: NeutralFace,
+  sadFace: SadFace,
 } as const;
 
 export type IconName = keyof typeof icons;
