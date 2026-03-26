@@ -158,7 +158,7 @@ type StepMediaProps = {
   poster?: string;
 };
 
-function StepMedia({ src, alt, poster }: StepMediaProps) {
+function StepMedia({ src, poster }: StepMediaProps) {
   return (
     <div className="border-primary bg-primary/10 overflow-hidden rounded-3xl border">
       <div className="relative aspect-video w-full">
