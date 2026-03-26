@@ -1,34 +1,205 @@
-import { gsap } from "gsap";
-import { useLayoutEffect, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/Button";
-import { Callout } from "../ui/Callout";
 import { Container } from "../ui/Container";
 import { NavBar } from "../ui/NavBar";
 
-type StepCardProps = {
-  step: number;
+type InstructionStep = {
+  id: number;
   title: string;
   description: React.ReactNode;
+  mediaSrc: string;
+  mediaAlt: string;
 };
 
-function StepCard({ step, title, description }: StepCardProps) {
-  return (
-    <div
-      data-animate="hero-item"
-      className="border-primary bg-primary/10 w-full border p-4 md:p-5"
-    >
-      <div className="flex items-start gap-4">
-        <div className="bg-primary text-foreground flex h-8 w-8 shrink-0 items-center justify-center font-semibold">
-          {step}
-        </div>
+const instructionSteps: InstructionStep[] = [
+  {
+    id: 1,
+    title: "Open Instagram Settings",
+    description: (
+      <>
+        Open Instagram, go to your profile, then open <b>Settings</b> and enter{" "}
+        <b>Accounts Center</b>.
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-1.jpg",
+    mediaAlt: "Instagram settings screen",
+  },
+  {
+    id: 2,
+    title: "Open Your information and permissions",
+    description: (
+      <>
+        Inside Accounts Center, open <b>Your information and permissions</b>,
+        then choose <b>Download your information</b>.
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-2.jpg",
+    mediaAlt: "Your information and permissions section",
+  },
+  {
+    id: 3,
+    title: "Choose Download or transfer information",
+    description: (
+      <>
+        Select <b>Download or transfer information</b>, then choose your{" "}
+        <b>Instagram account</b> if you have multiple Meta accounts.
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-3.jpg",
+    mediaAlt: "Download or transfer information flow",
+  },
+  {
+    id: 4,
+    title: "Choose Some of your information",
+    description: (
+      <>
+        Select <b>Some of your information</b> instead of exporting everything.
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-4.jpg",
+    mediaAlt: "Some of your information option",
+  },
+  {
+    id: 5,
+    title: "Select Followers and following",
+    description: (
+      <>
+        In the <b>Connections</b> section, select only{" "}
+        <b>Followers and following</b>.
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-5.jpg",
+    mediaAlt: "Followers and following category selected",
+  },
+  {
+    id: 6,
+    title: "Set the correct export options",
+    description: (
+      <>
+        Use these settings:
+        <br />
+        <b>Format:</b> JSON
+        <br />
+        <b>Date range:</b> All time
+        <br />
+        <b>Media quality:</b> any value is fine
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-6.jpg",
+    mediaAlt: "Export options configuration",
+  },
+  {
+    id: 7,
+    title: "Create the file and wait for the email",
+    description: (
+      <>
+        Press <b>Create export</b>. Instagram will prepare the ZIP and send you
+        an email when it is ready.
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-7.jpg",
+    mediaAlt: "Create export confirmation",
+  },
+  {
+    id: 8,
+    title: "Upload the ZIP directly into this app",
+    description: (
+      <>
+        Once downloaded, upload the <b>.zip</b> file directly here.{" "}
+        <b>Do not extract it.</b>
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-8.jpg",
+    mediaAlt: "ZIP upload inside the app",
+  },
+];
 
-        <div className="flex flex-col gap-2 text-left">
-          <h3 className="text-foreground text-lg font-semibold">{title}</h3>
-          <div className="text-foreground/90 text-sm leading-6">
-            {description}
-          </div>
+type StepperProps = {
+  steps: InstructionStep[];
+  currentStep: number;
+  onStepClick: (stepId: number) => void;
+};
+
+function Stepper({ steps, currentStep, onStepClick }: StepperProps) {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+      {steps.map((step) => {
+        const isActive = step.id === currentStep;
+        const isCompleted = step.id < currentStep;
+
+        return (
+          <button
+            key={step.id}
+            type="button"
+            onClick={() => onStepClick(step.id)}
+            aria-label={`Go to step ${step.id}`}
+            aria-current={isActive ? "step" : undefined}
+            className={[
+              "flex h-12 w-12 items-center justify-center rounded-full border text-sm font-semibold transition-all duration-200",
+              isActive
+                ? "border-accent bg-accent text-foreground shadow-[0_0_0_4px_rgba(255,255,255,0.04)]"
+                : isCompleted
+                  ? "border-primary bg-primary text-foreground"
+                  : "border-foreground/40 text-foreground/80 hover:border-foreground/70 hover:text-foreground",
+            ].join(" ")}
+          >
+            {String(step.id).padStart(2, "0")}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+type StepMediaProps = {
+  src: string;
+  alt: string;
+  poster?: string;
+};
+
+function StepMedia({ src, alt, poster }: StepMediaProps) {
+  return (
+    <div className="border-primary bg-primary/10 overflow-hidden rounded-3xl border">
+      <div className="relative aspect-video w-full">
+        <video
+          src={src}
+          poster={poster}
+          className="h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+
+        {/* subtle gradient overlay */}
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+
+        {/* label microvideo */}
+        <div className="absolute right-4 bottom-4 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs text-white backdrop-blur-sm">
+          8s demo
         </div>
+      </div>
+    </div>
+  );
+}
+type ActiveStepContentProps = {
+  step: InstructionStep;
+};
+
+function ActiveStepContent({ step }: ActiveStepContentProps) {
+  return (
+    <div className="w-full max-w-3xl text-left">
+      <p className="text-foreground/60 text-sm font-medium tracking-wide uppercase">
+        Step {String(step.id).padStart(2, "0")}
+      </p>
+
+      <h2 className="text-foreground mt-2 text-2xl font-semibold md:text-3xl">
+        {step.title}
+      </h2>
+
+      <div className="text-foreground/85 mt-4 max-w-2xl text-base leading-7">
+        {step.description}
       </div>
     </div>
   );
@@ -36,202 +207,100 @@ function StepCard({ step, title, description }: StepCardProps) {
 
 export function InstructionsToStart() {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const [currentStep, setCurrentStep] = useState(1);
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        "[data-animate='hero-item']",
-        {
-          opacity: 0,
-          y: 24,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.12,
-        },
-      );
-    }, rootRef);
+  const totalSteps = instructionSteps.length;
 
-    return () => ctx.revert();
-  }, []);
+  const activeStep = useMemo(
+    () =>
+      instructionSteps.find((step) => step.id === currentStep) ??
+      instructionSteps[0],
+    [currentStep],
+  );
+
+  const goToPreviousStep = () => {
+    setCurrentStep((prev) => Math.max(1, prev - 1));
+  };
+
+  const goToNextStep = () => {
+    setCurrentStep((prev) => Math.min(totalSteps, prev + 1));
+  };
 
   return (
     <section className="flex min-h-svh flex-col">
       <NavBar />
+
       <Container className="flex min-h-svh flex-col">
         <div
           ref={rootRef}
-          className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center pt-15 pb-10 text-center"
+          className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-4 pt-16 pb-12 text-center md:px-6 md:pt-20"
         >
+          <p
+            data-animate="hero-item"
+            className="text-foreground/60 text-sm font-medium tracking-wide uppercase"
+          >
+            Instructions to start
+          </p>
+
           <h1
             data-animate="hero-item"
-            className="leading-headers text-foreground text-start text-4xl font-semibold md:text-5xl"
+            className="text-foreground mt-4 max-w-4xl text-4xl font-semibold md:text-6xl"
           >
-            How to download your Instagram ZIP
+            Get Started In Minutes
           </h1>
 
           <p
             data-animate="hero-item"
-            className="text-foreground/90 mt-4 max-w-2xl text-start text-base"
+            className="text-foreground/80 mt-5 max-w-2xl text-lg leading-8"
           >
-            To analyze your profile correctly, you need the official Instagram
-            export with the right options selected.
+            Follow the guided tutorial step by step to download the correct ZIP
+            file.
           </p>
 
-          <div data-animate="hero-item" className="mt-8 w-full text-start">
-            <Callout title="Important" variant="warning">
-              Download the file in <b>JSON</b> format, set the date range to{" "}
-              <b>All time</b>, and upload the ZIP exactly as downloaded. Do not
-              unzip it.
-            </Callout>
-          </div>
-
-          <div className="mt-10 flex w-full flex-col gap-4">
-            <StepCard
-              step={1}
-              title="Open Instagram Settings"
-              description={
-                <>
-                  Open Instagram, go to your profile, then open <b>Settings</b>{" "}
-                  and enter <b>Accounts Center</b>. Instagram’s official help
-                  routes data export through Accounts Center.
-                </>
-              }
-            />
-
-            <StepCard
-              step={2}
-              title="Open Your information and permissions"
-              description={
-                <>
-                  Inside Accounts Center, open{" "}
-                  <b>Your information and permissions</b>, then choose{" "}
-                  <b>Download your information</b>. This is the official export
-                </>
-              }
-            />
-
-            <StepCard
-              step={3}
-              title="Choose Download or transfer information"
-              description={
-                <>
-                  Select <b>Download or transfer information</b>, then choose
-                  your <b>Instagram account</b> if multiple Meta accounts are
-                </>
-              }
-            />
-
-            <StepCard
-              step={4}
-              title="Choose Some of your information"
-              description={
-                <>
-                  Select <b>Some of your information</b> rather than exporting
-                  everything. Instagram officially lets you choose either all
-                  available information or only specific categories.
-                </>
-              }
-            />
-
-            <StepCard
-              step={5}
-              title="Select Followers and following"
-              description={
-                <>
-                  In the <b>Connections</b> section, select only{" "}
-                  <b>Followers and following</b>. This is the only category your
-                  app needs. Third-party walkthroughs that follow the official
-                  flow describe this exact selection.
-                </>
-              }
-            />
-
-            <StepCard
-              step={6}
-              title="Set the correct export options"
-              description={
-                <>
-                  Use these settings:
-                  <br />
-                  <b>Format:</b> JSON
-                  <br />
-                  <b>Date range:</b> All time
-                  <br />
-                  <b>Media quality:</b> any value is fine
-                  <br />
-                  JSON is required for your parser, and Instagram supports
-                  choosing the export format and time range.
-                </>
-              }
-            />
-
-            <StepCard
-              step={7}
-              title="Create the file and wait for the email"
-              description={
-                <>
-                  Press <b>Create export</b> or the equivalent confirmation
-                  button. Instagram will prepare the ZIP and send you an email
-                  when it is ready to download. Official and secondary guides
-                  describe this final export step.
-                </>
-              }
-            />
-
-            <StepCard
-              step={8}
-              title="Upload the ZIP directly into this app"
-              description={
-                <>
-                  Once downloaded, upload the <b>.zip</b> file directly here.
-                  <b> Do not extract it.</b>
-                </>
-              }
+          <div data-animate="hero-item" className="mt-10">
+            <Stepper
+              steps={instructionSteps}
+              currentStep={currentStep}
+              onStepClick={setCurrentStep}
             />
           </div>
 
-          <div data-animate="hero-item" className="mt-10 w-full">
-            <Callout title="Expected ZIP structure" variant="info">
-              <div className="text-left font-mono text-sm leading-6">
-                connections/
-                <br />
-                └── followers_and_following/
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;├── followers_1.json
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;├── following.json
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;├── recently_unfollowed_profiles.json
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;└── blocked_profiles.json
-              </div>
-            </Callout>
+          <div className="mt-10 w-full max-w-4xl">
+            <StepMedia src={activeStep.mediaSrc} alt={activeStep.mediaAlt} />
+          </div>
+
+          <div className="mt-8 w-full">
+            <ActiveStepContent step={activeStep} />
           </div>
 
           <div
             data-animate="hero-item"
             className="mt-10 flex flex-wrap items-center justify-center gap-4"
           >
-            <Link to="/get-started">
+            <Button
+              background="primary"
+              foreground="foreground"
+              onClick={goToPreviousStep}
+              disabled={currentStep === 1}
+            >
+              Back
+            </Button>
+
+            {currentStep < totalSteps ? (
               <Button
                 background="accent"
                 foreground="foreground"
-                icon="arrowRight"
-                iconPosition="right"
+                onClick={goToNextStep}
               >
-                I have the ZIP
+                Next
               </Button>
-            </Link>
-
-            <Link to="/">
-              <Button background="primary" foreground="foreground">
-                Back home
-              </Button>
-            </Link>
+            ) : (
+              <Link to="/get-started">
+                <Button background="accent" foreground="foreground">
+                  Continue
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </Container>
