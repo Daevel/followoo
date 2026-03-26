@@ -1,7 +1,6 @@
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
-import { gsap } from "gsap";
-import { useLayoutEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
 import { handleAppError } from "../../errors";
 import { analyzeInstagramExport } from "../services/instagramAnalisysService";
 import { parseInstagramExport } from "../services/instagramExportService";
@@ -10,10 +9,11 @@ import { Callout } from "../ui/Callout";
 import { Checkbox } from "../ui/Checkbox";
 import { Container } from "../ui/Container";
 import { Loading } from "../ui/Loading";
-import { ZipDropzone } from "../ui/ZipDropzone";
 import { NavBar } from "../ui/NavBar";
+import { ZipDropzone } from "../ui/ZipDropzone";
 
 export function GetStarted() {
+  const location = useLocation();
   const navigate = useNavigate();
   const [selectedZipFile, setSelectedZipFile] = useState<File | null>(null);
   const [uploadError, setUploadError] = useState("");
@@ -23,36 +23,32 @@ export function GetStarted() {
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        "[data-animate='hero-item']",
-        {
-          opacity: 0,
-          y: 24,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.12,
-        },
-      );
-    }, rootRef);
+  const isDemo: boolean = location.state?.isDemo ?? false;
+  const isTermsAccepted = isDemo || termsAndConditionsAccepted;
+  const hasValidFile = isDemo || Boolean(selectedZipFile);
 
-    return () => ctx.revert();
-  }, []);
+  useEffect(() => {
+    console.log("isDemo:", isDemo);
+  }, [isDemo]);
+
+  async function loadDemoZipFile() {
+    const response = await fetch("/demo/demo-followoo-export-usage.zip");
+    if (!response.ok) {
+      handleAppError("error", {
+        fallbackTitle: "Invalid file",
+      });
+    }
+    const blob = await response.blob();
+    return new File([blob], "demo-followoo-export-usage.zip", {
+      type: "application/zip",
+    });
+  }
 
   async function onElaborateFile() {
     analyticsService.track(ANALYTICS_EVENTS.ANALYSIS_STARTED, {
       has_file: Boolean(selectedZipFile),
       terms_accepted: termsAndConditionsAccepted,
     });
-
-    if (!selectedZipFile) {
-      return;
-    }
 
     setUploadError("");
     setLoading(true);
@@ -61,7 +57,13 @@ export function GetStarted() {
     const start = Date.now();
 
     try {
-      const exportData = await parseInstagramExport(selectedZipFile);
+      const zipFile = isDemo ? await loadDemoZipFile() : selectedZipFile;
+      if (!zipFile) {
+        setUploadError("Failed to load the ZIP file. Please try again.");
+        return;
+      }
+
+      const exportData = await parseInstagramExport(zipFile);
       const analysis = analyzeInstagramExport(exportData);
 
       analyticsService.track(ANALYTICS_EVENTS.ANALYSIS_COMPLETED, {
@@ -116,11 +118,20 @@ export function GetStarted() {
               data-animate="hero-item"
               className="flex w-auto flex-col items-center gap-10 py-12"
             >
-              <ZipDropzone
-                file={selectedZipFile}
-                onFileChange={setSelectedZipFile}
-                onError={setUploadError}
-              />
+              {!isDemo && (
+                <ZipDropzone
+                  file={selectedZipFile}
+                  onFileChange={setSelectedZipFile}
+                  onError={setUploadError}
+                />
+              )}
+
+              {isDemo && (
+                <Callout title="Demo mode" variant="info">
+                  A sample Instagram export will be used automatically to show
+                  how the analysis works.
+                </Callout>
+              )}
 
               {uploadError && (
                 <p data-animate="hero-item" className="p1-r text-accent w-full">
@@ -184,7 +195,7 @@ export function GetStarted() {
               <Checkbox
                 id="terms-and-conditions"
                 name="terms and conditions"
-                checked={termsAndConditionsAccepted}
+                checked={isTermsAccepted}
                 onChange={(e) =>
                   setTermsAndConditionsAccepted(e.target.checked)
                 }
@@ -207,11 +218,7 @@ export function GetStarted() {
                 foreground="foreground"
                 icon="arrowRight"
                 iconPosition="right"
-                disabled={
-                  !termsAndConditionsAccepted ||
-                  !selectedZipFile ||
-                  !!uploadError
-                }
+                disabled={!isTermsAccepted || !hasValidFile || !!uploadError}
                 onClick={onElaborateFile}
               >
                 Start analysis

@@ -57,6 +57,9 @@ export function NavBar() {
                   <Link
                     key={link.to}
                     to={link.to}
+                    state={
+                      link.to === "/get-started" ? { isDemo: false } : undefined
+                    }
                     className={clsx(
                       "relative inline-flex items-center py-1 font-semibold transition-colors",
                       isActive

@@ -40,14 +40,18 @@ export function HeroSection() {
             <Button
               background="accent"
               foreground="foreground"
-              onClick={() => navigate("/get-started")}
+              onClick={() =>
+                navigate("/get-started", { state: { isDemo: false } })
+              }
             >
               Analyze your data
             </Button>
             <Button
               background="primary"
               foreground="foreground"
-              onClick={() => navigate("/get-started")}
+              onClick={() =>
+                navigate("/get-started", { state: { isDemo: true } })
+              }
             >
               Try demo
             </Button>
