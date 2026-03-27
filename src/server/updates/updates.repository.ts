@@ -1,5 +1,5 @@
-import type { PublicUpdateListItem } from "../../data/updates/updates.types";
-import { sql } from "../db/neon";
+import type { PublicUpdateListItem } from "../../data/updates/updates.types.js";
+import { sql } from "../db/neon.js";
 
 export async function getPublishedUpdates(): Promise<PublicUpdateListItem[]> {
   const rows = await sql`
