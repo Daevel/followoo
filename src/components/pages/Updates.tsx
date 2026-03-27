@@ -1,19 +1,41 @@
 import { gsap } from "gsap";
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BadgeVersion } from "../ui/BadgeVersion";
 import { Container } from "../ui/Container";
 import { NavBar } from "../ui/NavBar";
 import { Separator } from "../ui/Separator";
 
+type UpdateChangeGroup = {
+  label: string;
+  tone: "accent" | "primary";
+  items: string[];
+};
+
+type UpdateEntry = {
+  id: string;
+  productName: string;
+  version: string;
+  releaseDate: string;
+  description: string;
+  badgeBackgroundColor?: string;
+  groups: UpdateChangeGroup[];
+};
+
+type UpdatesApiResponse = {
+  data: UpdateEntry[];
+};
+
 function UpdateSection({
   title,
-  children,
+  description,
+  groups,
   badgeVersion,
   badgeBackgroundColor,
   releaseDate,
 }: {
   title: string;
-  children: React.ReactNode;
+  description: string;
+  groups: UpdateChangeGroup[];
   badgeVersion: string;
   badgeBackgroundColor?: string;
   releaseDate: string;
@@ -27,11 +49,32 @@ function UpdateSection({
           backgroundColor={badgeBackgroundColor}
         />
       </div>
+
       <div className="flex">
         <span className="text-foreground/80 mt-3 text-sm">{releaseDate}</span>
       </div>
+
       <div className="flex">
-        <div className="p1-r mt-5">{children}</div>
+        <div className="p1-r mt-5 w-full">
+          <p>{description}</p>
+
+          {groups.map((group) => {
+            const toneClass =
+              group.tone === "primary" ? "text-primary/80" : "text-accent/80";
+
+            return (
+              <div key={group.label}>
+                <p className={`${toneClass} mt-4 font-medium`}>{group.label}</p>
+
+                <ul className="mt-2 list-disc space-y-2 pl-5">
+                  {group.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -39,6 +82,9 @@ function UpdateSection({
 
 export function Updates() {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const [updates, setUpdates] = useState<UpdateEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -59,11 +105,55 @@ export function Updates() {
     }, rootRef);
 
     return () => ctx.revert();
+  }, [updates, isLoading, hasError]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function retrieveUpdates() {
+      try {
+        setIsLoading(true);
+        setHasError(false);
+
+        const response = await fetch("/api/updates");
+
+        if (!response.ok) {
+          throw new Error("Failed to retrieve updates");
+        }
+
+        const payload = (await response.json()) as UpdatesApiResponse;
+
+        if (!isMounted) {
+          return;
+        }
+
+        setUpdates(payload.data ?? []);
+      } catch (error) {
+        console.error("Failed to load updates", error);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setHasError(true);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void retrieveUpdates();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
     <section className="flex min-h-svh flex-col">
       <NavBar />
+
       <Container className="flex min-h-svh flex-col">
         <div
           ref={rootRef}
@@ -82,106 +172,45 @@ export function Updates() {
           </p>
 
           <div className="mt-10 flex w-full flex-col gap-8">
-            <div data-animate="hero-item">
-              <UpdateSection
-                title="Followoo"
-                badgeVersion="1.1.0"
-                badgeBackgroundColor="accent"
-                releaseDate="March 19, 2026"
+            {isLoading ? (
+              <div data-animate="hero-item" className="text-foreground/70">
+                Loading updates...
+              </div>
+            ) : hasError ? (
+              <div
+                data-animate="hero-item"
+                className="text-destructive text-foreground"
               >
-                <p>
-                  Version 1.1.0 introduces an analytics system to track user
-                  interactions and errors, providing valuable insights for
-                  future improvements. The user privacy and security remain a
-                  top priority, with all analytics data being anonymized and
-                  used solely for improving the user experience.
-                </p>
+                Unable to load updates right now.
+              </div>
+            ) : updates.length === 0 ? (
+              <div data-animate="hero-item" className="text-foreground/70">
+                No updates available yet.
+              </div>
+            ) : (
+              updates.map((update, index) => (
+                <div
+                  key={update.id}
+                  data-animate="hero-item"
+                  className="w-full"
+                >
+                  <UpdateSection
+                    title={update.productName}
+                    description={update.description}
+                    groups={update.groups}
+                    badgeVersion={update.version}
+                    badgeBackgroundColor={update.badgeBackgroundColor}
+                    releaseDate={update.releaseDate}
+                  />
 
-                <p className="text-accent/80 mt-4 font-medium">New</p>
-
-                <ul className="mt-2 list-disc space-y-2 pl-5">
-                  <li>
-                    Added a new analytics system to track user interactions and
-                    errors
-                  </li>
-                </ul>
-              </UpdateSection>
-            </div>
-
-            <Separator variant="foreground" />
-
-            <div data-animate="hero-item">
-              <UpdateSection
-                title="Followoo"
-                badgeVersion="1.0.0"
-                badgeBackgroundColor="accent"
-                releaseDate="March 17, 2026"
-              >
-                <p>
-                  Version 1.0.0 marks the evolution of the initial experimental
-                  beta of Followoo. This release introduces several improvements
-                  and new features aimed at making the platform more reliable
-                  and feature-rich.
-                </p>
-
-                <p className="text-accent/80 mt-4 font-medium">New</p>
-
-                <ul className="mt-2 list-disc space-y-2 pl-5">
-                  <li>Added a responsive toast notification system</li>
-                  <li>
-                    Added new sections for Close Friends, Restricted Users, and
-                    Hidden Stories
-                  </li>
-                  <li>Added an Updates page to track product changes</li>
-                </ul>
-
-                <p className="text-accent/80 mt-4 font-medium">Improvements</p>
-
-                <ul className="mt-2 list-disc space-y-2 pl-5">
-                  <li>
-                    Improved Instagram export parsing with stronger TypeScript
-                    typing
-                  </li>
-                  <li>
-                    Improved support for wrapped relationship files such as
-                    following and recently unfollowed users
-                  </li>
-                  <li>
-                    Improved mobile UX for notifications and feedback messages
-                  </li>
-                </ul>
-
-                <p className="text-primary/80 mt-4 font-medium">Fixed</p>
-
-                <ul className="mt-2 list-disc space-y-2 pl-5">
-                  <li>Fixed client-side routing issues on Vercel</li>
-                  <li>
-                    Fixed edge cases in username extraction from Instagram
-                    exports
-                  </li>
-                  <li>Fixed duplicate user handling in parsed results</li>
-                </ul>
-              </UpdateSection>
-            </div>
-
-            <Separator variant="foreground" />
-
-            <div data-animate="hero-item">
-              <UpdateSection
-                title="Followoo"
-                badgeVersion="0.0.1"
-                badgeBackgroundColor="accent"
-                releaseDate="March 12, 2026"
-              >
-                <p>
-                  First experimental beta release of Followoo. This version
-                  introduced the core functionality of the platform and allowed
-                  early testing of the system in real scenarios. Initial results
-                  confirmed the reliability of the core features and laid the
-                  foundation for future improvements.
-                </p>
-              </UpdateSection>
-            </div>
+                  {index < updates.length - 1 ? (
+                    <div className="mt-8">
+                      <Separator variant="foreground" />
+                    </div>
+                  ) : null}
+                </div>
+              ))
+            )}
           </div>
         </div>
       </Container>

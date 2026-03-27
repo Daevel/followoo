@@ -23,7 +23,7 @@ const instructionSteps: InstructionStep[] = [
         <b>Accounts Center</b>.
       </>
     ),
-    mediaSrc: vercelBlobStructure.desktop.step01,
+    mediaSrc: vercelBlobStructure.videos.desktop.step01,
     mediaAlt: "Instagram settings screen",
   },
   {

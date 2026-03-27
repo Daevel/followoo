@@ -1,6 +1,6 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { vercelBlobStructure } from "@/data/vercelBlobStructure";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Container } from "./Container";
-import { gsap } from "gsap";
 
 type LoadingProps = {
   loading: boolean;
@@ -17,27 +17,6 @@ const LOADING_STEPS = [
 export function Loading({ loading }: LoadingProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [progress, setProgress] = useState(0);
-
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        "[data-animate='hero-item']",
-        {
-          opacity: 0,
-          y: 24,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.12,
-        },
-      );
-    }, rootRef);
-
-    return () => ctx.revert();
-  }, []);
 
   useEffect(() => {
     if (!loading) {
@@ -73,7 +52,7 @@ export function Loading({ loading }: LoadingProps) {
 
   return (
     <section className="min-h-svh">
-      <Container className="min-h-svh flex flex-col">
+      <Container className="flex min-h-svh flex-col">
         <div
           ref={rootRef}
           className="flex flex-1 flex-col items-center justify-center pt-16 pb-6"
@@ -81,14 +60,14 @@ export function Loading({ loading }: LoadingProps) {
           <div className="flex flex-col items-center text-center">
             <h2
               data-animate="hero-item"
-              className="text-4xl text-foreground font-semibold leading-headers md:text-5xl"
+              className="text-foreground leading-headers text-4xl font-semibold md:text-5xl"
             >
               Loading...
             </h2>
 
             <p
               data-animate="hero-item"
-              className="p1-r mt-4 min-h-[24px] max-w-[18rem] text-sm text-foreground/90 md:max-w-[24rem] md:text-foreground"
+              className="p1-r text-foreground/90 md:text-foreground mt-4 min-h-[24px] max-w-[18rem] text-sm md:max-w-[24rem]"
             >
               {currentLabel}
             </p>
@@ -97,14 +76,14 @@ export function Loading({ loading }: LoadingProps) {
               data-animate="hero-item"
               className="mt-8 w-full max-w-[320px] md:max-w-[420px]"
             >
-              <div className="h-2 w-full bg-foreground/10">
+              <div className="bg-foreground/10 h-2 w-full">
                 <div
-                  className="h-full bg-primary transition-[width] duration-300 ease-out"
+                  className="bg-primary h-full transition-[width] duration-300 ease-out"
                   style={{ width: `${safeProgress}%` }}
                 />
               </div>
 
-              <div className="mt-2 text-xs text-foreground/60">
+              <div className="text-foreground/60 mt-2 text-xs">
                 {safeProgress}%
               </div>
             </div>
@@ -112,7 +91,7 @@ export function Loading({ loading }: LoadingProps) {
             {/* Mobile / Tablet */}
             <div data-animate="hero-item" className="w-full pt-12 lg:hidden">
               <img
-                src="./images/illustration-body-male-afro-2-phone.svg"
+                src={vercelBlobStructure.images.male01}
                 alt="Loading illustration"
                 className="mx-auto w-full max-w-[220px]"
               />
@@ -124,7 +103,7 @@ export function Loading({ loading }: LoadingProps) {
               className="hidden w-full pt-12 lg:block"
             >
               <img
-                src="./images/illustration-composition-loading-phase.svg"
+                src={vercelBlobStructure.images.femaleGroup01}
                 alt="Loading composition"
                 className="mx-auto w-full max-w-[720px]"
               />
