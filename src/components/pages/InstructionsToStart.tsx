@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from "react";
+import { instructionVideos } from "@/data/instructionVideos";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
@@ -22,7 +23,7 @@ const instructionSteps: InstructionStep[] = [
         <b>Accounts Center</b>.
       </>
     ),
-    mediaSrc: "/images/instructions/step-1.jpg",
+    mediaSrc: instructionVideos.desktop.step01,
     mediaAlt: "Instagram settings screen",
   },
   {
@@ -158,31 +159,158 @@ type StepMediaProps = {
   poster?: string;
 };
 
-function StepMedia({ src, poster }: StepMediaProps) {
+function isVideoFile(src: string) {
+  return /\.(mp4|webm|ogg)$/i.test(src);
+}
+
+function formatClock(seconds: number) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+
+  const totalSeconds = Math.ceil(seconds);
+  const minutes = Math.floor(totalSeconds / 60);
+  const remainingSeconds = totalSeconds % 60;
+
+  return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+}
+
+function StepMedia({ src, alt, poster }: StepMediaProps) {
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+
+  const isVideo = useMemo(() => isVideoFile(src), [src]);
+
+  useEffect(() => {
+    setDuration(0);
+    setCurrentTime(0);
+    setIsPlaying(true);
+
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+    }
+  }, [src]);
+
+  const progressPercentage =
+    duration > 0 ? Math.min((currentTime / duration) * 100, 100) : 0;
+
+  const remainingTime = Math.max(duration - currentTime, 0);
+
+  const togglePlayPause = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      void video.play();
+      setIsPlaying(true);
+    } else {
+      video.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const enterFullscreen = async () => {
+    const target = wrapperRef.current;
+    if (!target) return;
+
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+      return;
+    }
+
+    if (target.requestFullscreen) {
+      await target.requestFullscreen();
+    }
+  };
+
+  if (!isVideo) {
+    return (
+      <div
+        ref={wrapperRef}
+        className="border-primary bg-primary/10 overflow-hidden rounded-3xl border"
+      >
+        <div className="relative aspect-video w-full">
+          <img src={src} alt={alt} className="h-full w-full object-cover" />
+
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="border-primary bg-primary/10 overflow-hidden rounded-3xl border">
-      <div className="relative aspect-video w-full">
+    <div
+      ref={wrapperRef}
+      className="border-primary bg-primary/10 overflow-hidden rounded-3xl border"
+    >
+      <div className="group relative aspect-video w-full">
         <video
+          ref={videoRef}
           src={src}
           poster={poster}
-          className="h-full w-full object-cover"
+          preload="metadata"
+          className="h-full w-full cursor-pointer object-cover"
           autoPlay
           muted
-          loop
           playsInline
+          onClick={togglePlayPause}
+          onDoubleClick={enterFullscreen}
+          onLoadedMetadata={(event) => {
+            const video = event.currentTarget;
+            setDuration(video.duration);
+          }}
+          onTimeUpdate={(event) => {
+            setCurrentTime(event.currentTarget.currentTime);
+          }}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onEnded={(event) => {
+            const video = event.currentTarget;
+            video.currentTime = 0;
+            void video.play();
+            setCurrentTime(0);
+            setIsPlaying(true);
+          }}
         />
 
-        {/* subtle gradient overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/25 via-transparent to-transparent" />
 
-        {/* label microvideo */}
-        <div className="absolute right-4 bottom-4 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs text-white backdrop-blur-sm">
-          8s demo
+        {!isPlaying && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="rounded-full bg-black/45 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">
+              Paused
+            </div>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={enterFullscreen}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition hover:bg-black/60 md:top-4 md:right-4 md:left-auto md:translate-x-0 md:translate-y-0"
+          aria-label="Open video in fullscreen"
+        >
+          Full screen
+        </button>
+
+        <div className="absolute right-4 bottom-8 rounded-full border border-white/20 bg-black/50 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+          -{formatClock(remainingTime)}
+        </div>
+
+        <div className="absolute right-0 bottom-0 left-0 px-4 pb-4">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/20">
+            <div
+              className="bg-accent h-full rounded-full transition-[width] duration-150"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
 type ActiveStepContentProps = {
   step: InstructionStep;
 };
@@ -266,7 +394,11 @@ export function InstructionsToStart() {
           </div>
 
           <div className="mt-10 w-full max-w-4xl">
-            <StepMedia src={activeStep.mediaSrc} alt={activeStep.mediaAlt} />
+            <StepMedia
+              key={activeStep.id}
+              src={activeStep.mediaSrc}
+              alt={activeStep.mediaAlt}
+            />
           </div>
 
           <div className="mt-8 w-full">
