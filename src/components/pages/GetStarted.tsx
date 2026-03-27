@@ -1,4 +1,5 @@
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
+import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import { useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { handleAppError } from "../../errors";
@@ -28,14 +29,18 @@ export function GetStarted() {
   const hasValidFile = isDemo || Boolean(selectedZipFile);
 
   async function loadDemoZipFile() {
-    const response = await fetch("/demo/demo-followoo-export-usage.zip");
+    const response = await fetch(vercelBlobStructure.demoFile);
+
     if (!response.ok) {
       handleAppError("error", {
         fallbackTitle: "Invalid file",
       });
+      return;
     }
+
     const blob = await response.blob();
-    return new File([blob], "demo-followoo-export-usage.zip", {
+
+    return new File([blob], vercelBlobStructure.demoFile, {
       type: "application/zip",
     });
   }

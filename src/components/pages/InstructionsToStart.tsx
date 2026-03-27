@@ -1,4 +1,4 @@
-import { instructionVideos } from "@/data/instructionVideos";
+import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/Button";
@@ -23,7 +23,7 @@ const instructionSteps: InstructionStep[] = [
         <b>Accounts Center</b>.
       </>
     ),
-    mediaSrc: instructionVideos.desktop.step01,
+    mediaSrc: vercelBlobStructure.desktop.step01,
     mediaAlt: "Instagram settings screen",
   },
   {
