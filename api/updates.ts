@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { retrievePublishedUpdates } from "../src/services/updates/updates.service";
+import { retrievePublishedUpdates } from "../src/server/updates/updates.service";
 
 export default async function handler(
   _req: VercelRequest,
