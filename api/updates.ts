@@ -6,7 +6,15 @@ export default async function handler(
   res: VercelResponse,
 ) {
   try {
+    console.log(
+      "FOLLOWOO_DATABASE_URL exists:",
+      Boolean(process.env.FOLLOWOO_DATABASE_URL),
+    );
+
     const updates = await retrievePublishedUpdates();
+
+    console.log("Retrieved updates count:", updates.length);
+    console.log("Retrieved updates:", updates);
 
     return res.status(200).json({
       data: updates,
