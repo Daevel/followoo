@@ -34,7 +34,7 @@ const variantStyles: Record<
     body: "text-foreground",
     iconColor: "accent",
     defaultIcon: "warning",
-  }
+  },
 };
 
 export function Callout({
@@ -48,14 +48,16 @@ export function Callout({
   const iconName = icon ?? styles.defaultIcon;
 
   return (
-    <div className={clsx("w-full p-4 rounded-[20px]", styles.container, className)}>
+    <div
+      className={clsx("w-full rounded-[10px] p-4", styles.container, className)}
+    >
       <div className="flex items-start gap-3">
         <Icon
           name={iconName}
           color={styles.iconColor}
           width={24}
           height={24}
-          className="shrink-0 mt-0.5"
+          className="mt-0.5 shrink-0"
           aria-hidden="true"
         />
 

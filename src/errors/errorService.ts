@@ -1,8 +1,8 @@
 import { ANALYTICS_EVENTS } from "@/analytics/analyticsEvents";
+import { analyticsService } from "@/analytics/analyticsService";
 import { toastService } from "../components/services/toastService";
 import { AppError } from "./AppError";
 import { toAppError } from "./toAppError";
-import { analyticsService } from "@/analytics/analyticsService";
 
 type HandleAppErrorOptions = {
   showToast?: boolean;

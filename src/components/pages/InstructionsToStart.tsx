@@ -1,9 +1,13 @@
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
+import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
+import { Icon } from "../ui/Icon";
 import { NavBar } from "../ui/NavBar";
+
+type DeviceType = "laptop" | "smartPhone";
 
 type InstructionStep = {
   id: number;
@@ -13,7 +17,7 @@ type InstructionStep = {
   mediaAlt: string;
 };
 
-const instructionSteps: InstructionStep[] = [
+const desktopInstructionSteps: InstructionStep[] = [
   {
     id: 1,
     title: "Open Instagram Settings",
@@ -25,6 +29,109 @@ const instructionSteps: InstructionStep[] = [
     ),
     mediaSrc: vercelBlobStructure.videos.desktop.step01,
     mediaAlt: "Instagram settings screen",
+  },
+  {
+    id: 2,
+    title: "Open Your information and permissions",
+    description: (
+      <>
+        Inside Accounts Center, open <b>Your information and permissions</b>,
+        then choose <b>Download your information</b>.
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-2.jpg",
+    mediaAlt: "Your information and permissions section",
+  },
+  {
+    id: 3,
+    title: "Choose Download or transfer information",
+    description: (
+      <>
+        Select <b>Download or transfer information</b>, then choose your{" "}
+        <b>Instagram account</b> if you have multiple Meta accounts.
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-3.jpg",
+    mediaAlt: "Download or transfer information flow",
+  },
+  {
+    id: 4,
+    title: "Choose Some of your information",
+    description: (
+      <>
+        Select <b>Some of your information</b> instead of exporting everything.
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-4.jpg",
+    mediaAlt: "Some of your information option",
+  },
+  {
+    id: 5,
+    title: "Select Followers and following",
+    description: (
+      <>
+        In the <b>Connections</b> section, select only{" "}
+        <b>Followers and following</b>.
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-5.jpg",
+    mediaAlt: "Followers and following category selected",
+  },
+  {
+    id: 6,
+    title: "Set the correct export options",
+    description: (
+      <>
+        Use these settings:
+        <br />
+        <b>Format:</b> JSON
+        <br />
+        <b>Date range:</b> All time
+        <br />
+        <b>Media quality:</b> any value is fine
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-6.jpg",
+    mediaAlt: "Export options configuration",
+  },
+  {
+    id: 7,
+    title: "Create the file and wait for the email",
+    description: (
+      <>
+        Press <b>Create export</b>. Instagram will prepare the ZIP and send you
+        an email when it is ready.
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-7.jpg",
+    mediaAlt: "Create export confirmation",
+  },
+  {
+    id: 8,
+    title: "Upload the ZIP directly into this app",
+    description: (
+      <>
+        Once downloaded, upload the <b>.zip</b> file directly here.{" "}
+        <b>Do not extract it.</b>
+      </>
+    ),
+    mediaSrc: "/images/instructions/step-8.jpg",
+    mediaAlt: "ZIP upload inside the app",
+  },
+];
+
+const mobileInstructionSteps: InstructionStep[] = [
+  {
+    id: 1,
+    title: "Open Instagram Settings",
+    description: (
+      <>
+        Open Instagram, go to your profile, then open <b>Settings</b> and enter{" "}
+        <b>Accounts Center</b>.
+      </>
+    ),
+    mediaSrc: vercelBlobStructure.videos.mobile.step01,
+    mediaAlt: "Instagram settings screen on mobile",
   },
   {
     id: 2,
@@ -229,7 +336,7 @@ function StepMedia({ src, alt, poster }: StepMediaProps) {
     return (
       <div
         ref={wrapperRef}
-        className="border-primary bg-primary/10 overflow-hidden rounded-3xl border"
+        className="border-primary bg-primary/10 flex items-center overflow-hidden rounded-3xl border"
       >
         <div className="relative aspect-video w-full">
           <img src={src} alt={alt} className="h-full w-full object-cover" />
@@ -243,7 +350,7 @@ function StepMedia({ src, alt, poster }: StepMediaProps) {
   return (
     <div
       ref={wrapperRef}
-      className="border-primary bg-primary/10 overflow-hidden rounded-3xl border"
+      className="border-primary bg-primary/10 flex items-center overflow-hidden rounded-3xl border"
     >
       <div className="group relative aspect-video w-full">
         <video
@@ -326,16 +433,49 @@ function ActiveStepContent({ step }: ActiveStepContentProps) {
         {step.title}
       </h2>
 
-      <div className="text-foreground/85 mt-4 max-w-2xl text-base leading-7">
+      <div className="text-foreground/85 mt-4 h-30 max-w-2xl text-base leading-7">
         {step.description}
       </div>
     </div>
   );
 }
 
+type DeviceStepperContentProps = {
+  deviceIcon: DeviceType;
+  isActive: boolean;
+  onClick: () => void;
+};
+
+function DeviceStepperContent({
+  deviceIcon,
+  isActive,
+  onClick,
+}: DeviceStepperContentProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={isActive}
+      className={clsx(
+        "border-foreground flex h-15 w-15 items-center justify-center rounded-full border transition-colors duration-200",
+        isActive ? "bg-accent" : "bg-bg",
+      )}
+    >
+      <Icon name={deviceIcon} color="foreground" width={30} height={30} />
+    </button>
+  );
+}
+
 export function InstructionsToStart() {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
+  const [selectedDevice, setSelectedDevice] = useState<DeviceType>("laptop");
+
+  const instructionSteps = useMemo(() => {
+    return selectedDevice === "laptop"
+      ? desktopInstructionSteps
+      : mobileInstructionSteps;
+  }, [selectedDevice]);
 
   const totalSteps = instructionSteps.length;
 
@@ -343,8 +483,12 @@ export function InstructionsToStart() {
     () =>
       instructionSteps.find((step) => step.id === currentStep) ??
       instructionSteps[0],
-    [currentStep],
+    [currentStep, instructionSteps],
   );
+
+  useEffect(() => {
+    setCurrentStep(1);
+  }, [selectedDevice]);
 
   const goToPreviousStep = () => {
     setCurrentStep((prev) => Math.max(1, prev - 1));
@@ -363,13 +507,6 @@ export function InstructionsToStart() {
           ref={rootRef}
           className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-4 pt-16 pb-12 text-center md:px-6 md:pt-20"
         >
-          <p
-            data-animate="hero-item"
-            className="text-foreground/60 text-sm font-medium tracking-wide uppercase"
-          >
-            Instructions to start
-          </p>
-
           <h1
             data-animate="hero-item"
             className="text-foreground mt-4 max-w-4xl text-4xl font-semibold md:text-6xl"
@@ -395,44 +532,58 @@ export function InstructionsToStart() {
 
           <div className="mt-10 w-full max-w-4xl">
             <StepMedia
-              key={activeStep.id}
+              key={`${selectedDevice}-${activeStep.id}`}
               src={activeStep.mediaSrc}
               alt={activeStep.mediaAlt}
             />
           </div>
 
-          <div className="mt-8 w-full">
-            <ActiveStepContent step={activeStep} />
+          <div className="mt-10 flex flex-row gap-3">
+            <DeviceStepperContent
+              deviceIcon="laptop"
+              isActive={selectedDevice === "laptop"}
+              onClick={() => setSelectedDevice("laptop")}
+            />
+
+            <DeviceStepperContent
+              deviceIcon="smartPhone"
+              isActive={selectedDevice === "smartPhone"}
+              onClick={() => setSelectedDevice("smartPhone")}
+            />
           </div>
 
           <div
             data-animate="hero-item"
-            className="mt-10 flex flex-wrap items-center justify-center gap-4"
+            className="mt-10 flex w-full flex-col items-center justify-center gap-4"
           >
-            <Button
-              background="primary"
-              foreground="foreground"
-              onClick={goToPreviousStep}
-              disabled={currentStep === 1}
-            >
-              Back
-            </Button>
+            <ActiveStepContent step={activeStep} />
 
-            {currentStep < totalSteps ? (
+            <div className="mt-5 flex flex-row items-center gap-4">
               <Button
-                background="accent"
+                background="primary"
                 foreground="foreground"
-                onClick={goToNextStep}
+                onClick={goToPreviousStep}
+                disabled={currentStep === 1}
               >
-                Next
+                Back
               </Button>
-            ) : (
-              <Link to="/get-started">
-                <Button background="accent" foreground="foreground">
-                  Continue
+
+              {currentStep < totalSteps ? (
+                <Button
+                  background="accent"
+                  foreground="foreground"
+                  onClick={goToNextStep}
+                >
+                  Next
                 </Button>
-              </Link>
-            )}
+              ) : (
+                <Link to="/get-started">
+                  <Button background="accent" foreground="foreground">
+                    Continue
+                  </Button>
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </Container>

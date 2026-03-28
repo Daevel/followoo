@@ -1,9 +1,9 @@
+import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
+import clsx from "clsx";
 import { useCallback } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
-import clsx from "clsx";
-import { Icon } from "../ui/Icon";
 import { toastService } from "../services/toastService";
-import { analyticsService, ANALYTICS_EVENTS } from "@/analytics";
+import { Icon } from "../ui/Icon";
 
 type ZipDropzoneProps = {
   file: File | null;
@@ -14,7 +14,6 @@ type ZipDropzoneProps = {
 export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: FileRejection[]) => {
-
       const nextFile = acceptedFiles[0] ?? null;
 
       if (nextFile) {
@@ -69,11 +68,11 @@ export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
     });
 
   return (
-    <div className="w-full flex flex-col gap-3 text-foreground">
+    <div className="text-foreground flex w-full flex-col gap-3">
       <div
         {...getRootProps()}
         className={clsx(
-          "w-full cursor-pointer border-2 border-dashed px-6 py-5 transition-colors text-foreground",
+          "text-foreground w-full cursor-pointer rounded-[10px] border-2 border-dashed px-6 py-5 transition-colors",
           "flex flex-col items-center justify-center gap-2",
           {
             "border-primary bg-primary/15": !isDragActive && !isDragReject,
@@ -97,7 +96,7 @@ export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
           </span>
         </div>
 
-        <span className="text-sm text-foreground/80">
+        <span className="text-foreground/80 text-sm">
           Drag & drop or click to upload
         </span>
       </div>
@@ -109,7 +108,7 @@ export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
           <button
             type="button"
             onClick={() => onFileChange(null)}
-            className="inline-flex items-center gap-2 text-accent hover:opacity-80"
+            className="text-accent inline-flex items-center gap-2 hover:opacity-80"
           >
             <Icon
               name="trash"

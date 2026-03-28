@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import { useEffect, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { Icon, type IconName } from "./Icon";
 
 export type ToastVariant = "info" | "success" | "warning";
@@ -51,11 +51,7 @@ const variantStyles: Record<
   },
 };
 
-export function Toast({
-  toast,
-  onClose,
-  duration = 4000,
-}: ToastProps) {
+export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
   const isClosingRef = useRef(false);
@@ -133,7 +129,7 @@ export function Toast({
       role="status"
       aria-live="polite"
       className={clsx(
-        "pointer-events-auto box-border rounded-[20px] w-full p-4 shadow-lg backdrop-blur-sm",
+        "pointer-events-auto box-border w-full rounded-[10px] p-4 shadow-lg backdrop-blur-sm",
         styles.container,
       )}
     >
@@ -155,7 +151,7 @@ export function Toast({
           {toast.description ? (
             <p
               className={clsx(
-                "mt-1 break-words text-sm leading-5",
+                "mt-1 text-sm leading-5 break-words",
                 styles.body,
               )}
             >
@@ -167,7 +163,7 @@ export function Toast({
         <button
           type="button"
           onClick={handleClose}
-          className="shrink-0 cursor-pointer text-foreground/60 transition hover:text-foreground"
+          className="text-foreground/60 hover:text-foreground shrink-0 cursor-pointer transition"
           aria-label="Dismiss notification"
         >
           <Icon

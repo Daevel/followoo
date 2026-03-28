@@ -10,7 +10,7 @@ export function DropdownCard({ title, description }: DropdownCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="bg-foreground text-bg w-full max-w-190 rounded-[20px] px-8 py-7 transition-all duration-300 ease-out">
+    <div className="bg-foreground text-bg w-full max-w-190 rounded-[10px] px-8 py-7 transition-all duration-300 ease-out">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}

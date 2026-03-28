@@ -27,6 +27,7 @@ import SingleArrowDown from "../../icons/single-arrow-down.svg?react";
 import SingleArrowLeft from "../../icons/single-arrow-left.svg?react";
 import SingleArrowRight from "../../icons/single-arrow-right.svg?react";
 import SingleArrowUp from "../../icons/single-arrow-up.svg?react";
+import Smartphone from "../../icons/smarthphone.svg?react";
 import Upload from "../../icons/upload.svg?react";
 import Warning from "../../icons/warning.svg?react";
 
@@ -60,6 +61,7 @@ const icons = {
   happyFace: HappyFace,
   neutralFace: NeutralFace,
   sadFace: SadFace,
+  smartPhone: Smartphone,
 } as const;
 
 export type IconName = keyof typeof icons;

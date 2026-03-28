@@ -1,5 +1,7 @@
+import { handleAppError } from "@/errors";
 import { gsap } from "gsap";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { UnknownErrorPage } from "../errors/UnknownErrorPage";
 import { BadgeVersion } from "../ui/BadgeVersion";
 import { Container } from "../ui/Container";
 import { NavBar } from "../ui/NavBar";
@@ -118,7 +120,10 @@ export function Updates() {
         const response = await fetch("/api/updates");
 
         if (!response.ok) {
-          throw new Error("Failed to retrieve updates");
+          handleAppError("error", {
+            fallbackTitle: "There was a generic error.",
+          });
+          return;
         }
 
         const payload = (await response.json()) as UpdatesApiResponse;
@@ -129,7 +134,9 @@ export function Updates() {
 
         setUpdates(payload.data ?? []);
       } catch (error) {
-        console.error("Failed to load updates", error);
+        handleAppError(error, {
+          fallbackTitle: "Unable to load updates right now.",
+        });
 
         if (!isMounted) {
           return;
@@ -179,9 +186,9 @@ export function Updates() {
             ) : hasError ? (
               <div
                 data-animate="hero-item"
-                className="text-destructive text-foreground"
+                className="flex h-full w-full flex-col items-center justify-center"
               >
-                Unable to load updates right now.
+                <UnknownErrorPage />
               </div>
             ) : updates.length === 0 ? (
               <div data-animate="hero-item" className="text-foreground/70">

@@ -1,6 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { gsap } from "gsap";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "./Icon";
 
@@ -121,7 +121,7 @@ export function SortSelect<T extends string>({
           className,
         )}
       >
-        <label className="text-start l2-r text-foreground/80">{label}</label>
+        <label className="l2-r text-foreground/80 text-start">{label}</label>
 
         <div className="relative w-full min-w-44 md:w-auto">
           <button
@@ -137,8 +137,8 @@ export function SortSelect<T extends string>({
               setIsOpen((prev) => !prev);
             }}
             className={clsx(
-              "flex w-full items-center justify-between gap-3 border border-primary bg-primary px-4 py-2 text-foreground transition-colors",
-              "hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-primary",
+              "border-primary bg-primary text-foreground flex w-full items-center justify-between gap-3 rounded-[10px] border px-4 py-2 transition-colors",
+              "focus:ring-primary hover:opacity-95 focus:ring-2 focus:outline-none",
             )}
           >
             <span>{selectedOption?.label ?? "Select"}</span>
@@ -171,7 +171,7 @@ export function SortSelect<T extends string>({
               width: menuPosition.width,
               zIndex: 9999,
             }}
-            className="origin-top border border-primary bg-bg shadow-lg"
+            className="border-primary bg-bg origin-top rounded-b-[10px] border shadow-lg"
           >
             <div className="flex flex-col py-1">
               {options.map((option) => {

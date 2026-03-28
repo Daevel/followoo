@@ -3,9 +3,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import type { InstagramAnalysisResult } from "../../types/instagram.types";
 import { calculateRelationshipHealthScore } from "../services/relationshipHealthService";
-import { Button } from "../ui/Button";
 import { ResultsPieChart } from "../ui/charts/ResultPieChart";
 import { Container } from "../ui/Container";
+import { DropdownTabButton } from "../ui/DropdownTabButton";
 import { Input } from "../ui/Input";
 import { NavBar } from "../ui/NavBar";
 import { Pagination } from "../ui/Paginator";
@@ -29,26 +29,6 @@ type TabKey =
   | "restricted"
   | "closeFriends"
   | "hideStoriesFrom";
-
-type TabButtonProps = {
-  children: React.ReactNode;
-  active: boolean;
-  onClick: () => void;
-};
-
-function TabButton({ children, active, onClick }: TabButtonProps) {
-  return (
-    <Button
-      type="button"
-      onClick={onClick}
-      background={active ? "accent" : "primary"}
-      foreground="foreground"
-      className="mt-0 shrink-0 px-4 py-2 whitespace-nowrap transition-colors"
-    >
-      {children}
-    </Button>
-  );
-}
 
 export function ResultPage() {
   const location = useLocation();
@@ -323,66 +303,14 @@ export function ResultPage() {
             <ResultsPieChart data={chartData} title="Results overview" />
           </div>
 
-          <div
-            data-animate="hero-item"
-            className="custom-scrollbar mt-6 w-full overflow-x-auto pt-2 pb-3"
-          >
-            <div className="flex min-w-max gap-3 px-1">
-              <TabButton
-                active={activeTab === "mutual"}
-                onClick={() => setActiveTab("mutual")}
-              >
-                Mutual ({analysis.mutual.length})
-              </TabButton>
-
-              <TabButton
-                active={activeTab === "followersOnly"}
-                onClick={() => setActiveTab("followersOnly")}
-              >
-                Followers ({analysis.followersOnly.length})
-              </TabButton>
-
-              <TabButton
-                active={activeTab === "blocked"}
-                onClick={() => setActiveTab("blocked")}
-              >
-                Blocked ({analysis.blocked.length})
-              </TabButton>
-
-              <TabButton
-                active={activeTab === "restricted"}
-                onClick={() => setActiveTab("restricted")}
-              >
-                Restricted ({analysis.restricted.length})
-              </TabButton>
-
-              <TabButton
-                active={activeTab === "unfollowers"}
-                onClick={() => setActiveTab("unfollowers")}
-              >
-                Unfollowers ({analysis.unfollowers.length})
-              </TabButton>
-
-              <TabButton
-                active={activeTab === "recentUnfollowers"}
-                onClick={() => setActiveTab("recentUnfollowers")}
-              >
-                Recent Unfollowers ({analysis.recentUnfollowers.length})
-              </TabButton>
-
-              <TabButton
-                active={activeTab === "closeFriends"}
-                onClick={() => setActiveTab("closeFriends")}
-              >
-                Close Friends ({analysis.closeFriends.length})
-              </TabButton>
-
-              <TabButton
-                active={activeTab === "hideStoriesFrom"}
-                onClick={() => setActiveTab("hideStoriesFrom")}
-              >
-                Hide Stories ({analysis.hideStoriesFrom.length})
-              </TabButton>
+          <div data-animate="hero-item" className="mt-6 w-full pt-2 pb-3">
+            <div className="flex gap-3 px-1">
+              <DropdownTabButton
+                title="Connections"
+                activeTab={activeTab}
+                analysis={analysis}
+                setActiveTab={setActiveTab}
+              />
             </div>
           </div>
 
