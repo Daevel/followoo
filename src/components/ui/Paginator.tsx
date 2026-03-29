@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useEffect, useState } from "react";
 import { generatePagination } from "../utils/utils";
 import { FabIcon } from "./FabIcon";
 
@@ -13,7 +14,24 @@ export function Pagination({
   totalPages,
   onPageChange,
 }: PaginationProps) {
-  const pages = generatePagination(currentPage, totalPages);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 640px)");
+
+    const updateIsMobile = () => {
+      setIsMobile(mediaQuery.matches);
+    };
+
+    updateIsMobile();
+    mediaQuery.addEventListener("change", updateIsMobile);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateIsMobile);
+    };
+  }, []);
+
+  const pages = generatePagination(currentPage, totalPages, isMobile ? 3 : 5);
 
   const canGoPrevious = currentPage > 1;
   const canGoNext = currentPage < totalPages;
@@ -21,7 +39,7 @@ export function Pagination({
   return (
     <nav
       aria-label="Pagination"
-      className="mt-10 flex items-center justify-center gap-3"
+      className="mt-10 flex items-center justify-center gap-2 sm:gap-3"
     >
       <FabIcon
         icon="chevronDoubleLeft"
@@ -31,7 +49,7 @@ export function Pagination({
         foreground="foreground"
       />
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {pages.map((page, index) => {
           const isEllipsis = page === "...";
 
@@ -39,7 +57,7 @@ export function Pagination({
             return (
               <span
                 key={`ellipsis-${index}`}
-                className="text-foreground inline-flex h-10 min-w-10 items-center justify-center"
+                className="text-foreground inline-flex h-9 min-w-8 items-center justify-center text-sm sm:h-10 sm:min-w-10"
               >
                 ...
               </span>
@@ -55,7 +73,7 @@ export function Pagination({
               onClick={() => typeof page === "number" && onPageChange(page)}
               aria-current={isActive ? "page" : undefined}
               className={clsx(
-                "inline-flex h-10 min-w-10 items-center justify-center rounded-[10px] px-3 transition-colors",
+                "inline-flex h-9 min-w-9 items-center justify-center rounded-[10px] px-2.5 text-sm transition-colors sm:h-10 sm:min-w-10 sm:px-3",
                 isActive
                   ? "bg-accent text-foreground"
                   : "bg-primary text-foreground hover:opacity-90",

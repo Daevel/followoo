@@ -40,7 +40,7 @@ export function GetStarted() {
 
     const blob = await response.blob();
 
-    return new File([blob], vercelBlobStructure.demoFile, {
+    return new File([blob], "demo-followoo-export.zip", {
       type: "application/zip",
     });
   }
@@ -99,100 +99,106 @@ export function GetStarted() {
   if (loading) {
     return <Loading loading={loading} />;
   }
+
   return (
     <section className="flex min-h-svh flex-col">
       <NavBar />
+
       <Container className="flex min-h-svh flex-col">
         <div
           ref={rootRef}
-          className="flex flex-1 flex-col items-start pt-15 pb-6 text-center"
+          className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start px-4 pt-16 pb-10 text-left md:px-0 md:pt-20"
         >
           <h1
             data-animate="hero-item"
             className="leading-headers text-foreground text-4xl font-semibold md:text-5xl"
           >
-            Select your zip file
+            Upload your Instagram ZIP
           </h1>
 
-          <div className="flex flex-col items-center text-start">
-            <div
-              data-animate="hero-item"
-              className="flex w-auto flex-col items-center gap-10 py-12"
-            >
-              {!isDemo && (
+          <p
+            data-animate="hero-item"
+            className="text-foreground/80 mt-4 max-w-2xl text-lg leading-8"
+          >
+            Your export will be analyzed directly in your browser. Nothing is
+            uploaded to our servers.
+          </p>
+
+          {isDemo && (
+            <div data-animate="hero-item" className="mt-6 w-full">
+              <Callout title="Demo mode" variant="info">
+                A sample Instagram export will be used automatically to show how
+                the analysis works.
+              </Callout>
+            </div>
+          )}
+
+          <div
+            data-animate="hero-item"
+            className="mt-8 flex w-full flex-col gap-5"
+          >
+            {!isDemo && (
+              <div className="w-full">
                 <ZipDropzone
                   file={selectedZipFile}
                   onFileChange={setSelectedZipFile}
                   onError={setUploadError}
                 />
-              )}
+              </div>
+            )}
 
-              {isDemo && (
-                <Callout title="Demo mode" variant="info">
-                  A sample Instagram export will be used automatically to show
-                  how the analysis works.
-                </Callout>
-              )}
+            {!isDemo && !selectedZipFile && !uploadError && (
+              <p className="text-foreground/60 text-sm">
+                No file selected yet. Only <b>.zip</b> files are supported.
+              </p>
+            )}
 
-              {uploadError && (
-                <p data-animate="hero-item" className="p1-r text-accent w-full">
-                  {uploadError}
+            {uploadError && (
+              <p className="text-accent w-full text-sm font-medium">
+                {uploadError}
+              </p>
+            )}
+          </div>
+
+          <div className="mt-10 flex w-full flex-col gap-8">
+            <div
+              data-animate="hero-item"
+              className="text-foreground flex w-full flex-col items-start gap-4"
+            >
+              <h2 className="text-foreground text-xl font-semibold">
+                What happens next?
+              </h2>
+
+              <div className="text-foreground/85 flex flex-col gap-4 text-base leading-7">
+                <ul className="flex list-disc flex-col gap-2 pl-5">
+                  <li>Extract followers and following lists from your ZIP</li>
+                  <li>Compare the relationships between accounts</li>
+                  <li>
+                    Show mutuals, followers, unfollowers, and recently
+                    unfollowed accounts
+                  </li>
+                </ul>
+
+                <p className="text-foreground font-medium">
+                  Everything is processed locally in your browser.
                 </p>
-              )}
-
-              <div className="text-foreground flex flex-col items-start gap-10">
-                <div className="text-foreground flex w-auto flex-col items-start gap-4">
-                  <label data-animate="hero-item" className="l1-b">
-                    What's going to happen?
-                  </label>
-
-                  <div
-                    data-animate="hero-item"
-                    className="p1-r flex flex-col gap-3"
-                  >
-                    <p>
-                      Your Instagram export will be analyzed directly in your
-                      browser.
-                    </p>
-
-                    <p>The application will:</p>
-
-                    <ul className="flex list-disc flex-col gap-1 pl-5">
-                      <li>
-                        Extract followers and following lists from the ZIP file
-                      </li>
-                      <li>Compare the relationships between accounts</li>
-                      <li>
-                        Show mutual connections, followers, unfollowers, and
-                        recently unfollowed accounts
-                      </li>
-                    </ul>
-
-                    <p className="text-foreground/80 font-medium">
-                      The file is processed locally and is never uploaded to any
-                      server.
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  data-animate="hero-item"
-                  className="text-foreground w-full items-start"
-                >
-                  <Callout title="Important: Data usage" variant="warning">
-                    Your <b>data</b> is processed locally in your browser. No
-                    files are <b className="text-accent">uploaded</b>,{" "}
-                    <b className="text-accent">stored</b>, or{" "}
-                    <b className="text-accent">shared</b> with external servers.
-                  </Callout>
-                </div>
               </div>
             </div>
 
-            <div
-              data-animate="hero-item"
-              className="mt-20 flex w-auto flex-row items-center gap-4"
-            >
+            <div data-animate="hero-item" className="w-full">
+              <Callout title="Your data stays on this device" variant="info">
+                Your <b>data</b> is processed locally in your browser. No files
+                are <b>uploaded</b>, <b>stored</b>, or <b>shared</b> with
+                external servers.
+              </Callout>
+            </div>
+          </div>
+
+          <div
+            data-animate="hero-item"
+            className="mt-8 flex w-full flex-col items-center gap-4"
+          >
+            <div className="flex w-full justify-center">
               <Checkbox
                 id="terms-and-conditions"
                 name="terms and conditions"
@@ -213,18 +219,22 @@ export function GetStarted() {
               />
             </div>
 
-            <div data-animate="hero-item" className="mt-5">
-              <Button
-                background="accent"
-                foreground="foreground"
-                icon="arrowRight"
-                iconPosition="right"
-                disabled={!isTermsAccepted || !hasValidFile || !!uploadError}
-                onClick={onElaborateFile}
-              >
-                Start analysis
-              </Button>
-            </div>
+            <Button
+              background="accent"
+              foreground="foreground"
+              icon="arrowRight"
+              iconPosition="right"
+              disabled={!isTermsAccepted || !hasValidFile || !!uploadError}
+              onClick={onElaborateFile}
+            >
+              Start analysis
+            </Button>
+
+            {!hasValidFile && !isDemo && (
+              <p className="text-foreground/50 text-xs">
+                Upload a ZIP file to continue.
+              </p>
+            )}
           </div>
         </div>
       </Container>

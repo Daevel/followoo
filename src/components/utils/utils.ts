@@ -1,38 +1,53 @@
 import { InstagramObjectArrayKeys } from "../../types/enums";
-import type { InstagramRawUser, InstagramUser } from "../../types/instagram.types";
+import type {
+  InstagramRawUser,
+  InstagramUser,
+} from "../../types/instagram.types";
 
-export const generatePagination = (currentPage: number, totalPages: number) => {
-  // If the total number of pages is 7 or less,
-  // display all pages without any ellipsis.
-  if (totalPages <= 7) {
+export function generatePagination(
+  currentPage: number,
+  totalPages: number,
+  maxVisiblePages: number,
+): Array<number | "..."> {
+  if (totalPages <= maxVisiblePages) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  // If the current page is among the first 3 pages,
-  // show the first 3, an ellipsis, and the last 2 pages.
-  if (currentPage <= 3) {
-    return [1, 2, 3, "...", totalPages - 1, totalPages];
+  const pages: Array<number | "..."> = [];
+  const innerVisibleCount = maxVisiblePages - 2; // first + last
+  const half = Math.floor(innerVisibleCount / 2);
+
+  let start = Math.max(2, currentPage - half);
+  let end = Math.min(totalPages - 1, currentPage + half);
+
+  if (currentPage <= half + 2) {
+    start = 2;
+    end = 1 + innerVisibleCount;
   }
 
-  // If the current page is among the last 3 pages,
-  // show the first 2, an ellipsis, and the last 3 pages.
-  if (currentPage >= totalPages - 2) {
-    return [1, 2, "...", totalPages - 2, totalPages - 1, totalPages];
+  if (currentPage >= totalPages - (half + 1)) {
+    end = totalPages - 1;
+    start = totalPages - innerVisibleCount;
   }
 
-  // If the current page is somewhere in the middle,
-  // show the first page, an ellipsis, the current page and its neighbors,
-  // another ellipsis, and the last page.
-  return [
-    1,
-    "...",
-    currentPage - 1,
-    currentPage,
-    currentPage + 1,
-    "...",
-    totalPages,
-  ];
-};
+  pages.push(1);
+
+  if (start > 2) {
+    pages.push("...");
+  }
+
+  for (let page = start; page <= end; page++) {
+    pages.push(page);
+  }
+
+  if (end < totalPages - 1) {
+    pages.push("...");
+  }
+
+  pages.push(totalPages);
+
+  return pages;
+}
 
 export function formatDate(timestamp?: number) {
   if (!timestamp) return null;
@@ -73,4 +88,16 @@ export function normalizeInstagramUser(raw: InstagramRawUser): InstagramUser {
 
 export function getInstagramProfileUrl(user: InstagramUser): string {
   return `https://www.instagram.com/${user.username}/`;
+}
+
+export async function ensureMinimumDelay(
+  startTime: number,
+  minimumDelay: number,
+) {
+  const elapsed = Date.now() - startTime;
+  const remaining = Math.max(0, minimumDelay - elapsed);
+
+  if (remaining > 0) {
+    await new Promise((resolve) => setTimeout(resolve, remaining));
+  }
 }

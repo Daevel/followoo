@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import type { InstagramAnalysisResult } from "../../types/instagram.types";
 import { calculateRelationshipHealthScore } from "../services/relationshipHealthService";
-import { ResultsPieChart } from "../ui/charts/ResultPieChart";
 import { Container } from "../ui/Container";
 import { DropdownTabButton } from "../ui/DropdownTabButton";
 import { Input } from "../ui/Input";
@@ -12,6 +11,7 @@ import { Pagination } from "../ui/Paginator";
 import { RelationshipHealthInsight } from "../ui/RelationshipHealthInsight";
 import { SortSelect } from "../ui/SortSelect";
 import { UserListItem } from "../ui/UserListItem";
+import { ResultsPieChart } from "../ui/charts/ResultPieChart";
 import { formatDate } from "../utils/utils";
 
 type SortKey =
@@ -37,12 +37,10 @@ export function ResultPage() {
   const [sortBy, setSortBy] = useState<SortKey>("alphabeticalAsc");
   const [activeTab, setActiveTab] = useState<TabKey>("mutual");
   const [currentPage, setCurrentPage] = useState(1);
-
   const [searchQuery, setSearchQuery] = useState("");
 
   const itemsPerPage = 20;
-
-  // MOMENTANEO
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   if (!analysis) {
     return <Navigate to="/get-started" replace />;
@@ -52,28 +50,20 @@ export function ResultPage() {
     switch (activeTab) {
       case "mutual":
         return analysis.mutual;
-
       case "followersOnly":
         return analysis.followersOnly;
-
       case "unfollowers":
         return analysis.unfollowers;
-
       case "recentUnfollowers":
         return analysis.recentUnfollowers;
-
       case "blocked":
         return analysis.blocked;
-
       case "restricted":
         return analysis.restricted;
-
       case "closeFriends":
         return analysis.closeFriends;
-
       case "hideStoriesFrom":
         return analysis.hideStoriesFrom;
-
       default:
         return [];
     }
@@ -82,7 +72,9 @@ export function ResultPage() {
   const filteredUsers = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
 
-    if (!normalizedQuery) return users;
+    if (!normalizedQuery) {
+      return users;
+    }
 
     return users.filter((user) =>
       user.username.toLowerCase().includes(normalizedQuery),
@@ -98,15 +90,15 @@ export function ResultPage() {
       switch (activeTab) {
         case "mutual":
           return {
-            title: "No mutual followers yet",
+            title: "No mutual connections yet",
             description:
-              "We couldn't find any users who follow you back in this export.",
+              "We couldn't find any people who follow you back in this export.",
           };
         case "followersOnly":
           return {
-            title: "No followers found",
+            title: "No followers-only users found",
             description:
-              "There are no users in this export who follow you without being followed back.",
+              "There are no people in this export who follow you without being followed back.",
           };
         case "unfollowers":
           return {
@@ -133,14 +125,14 @@ export function ResultPage() {
           };
         case "closeFriends":
           return {
-            title: "No close friends users found",
+            title: "No close friends found",
             description: "There are no close friends available in this export.",
           };
-
         case "hideStoriesFrom":
           return {
-            title: "You don't hide your stories to none for now",
-            description: "There are no story hiders available in this export.",
+            title: "No hidden stories users found",
+            description:
+              "There are no users hidden from your stories in this export.",
           };
       }
     }
@@ -148,7 +140,7 @@ export function ResultPage() {
     if (hasSearchQuery && !hasFilteredUsers) {
       return {
         title: "No users match your search",
-        description: `We couldn't find any username matching`,
+        description: "Try a different username or clear your search.",
       };
     }
 
@@ -161,20 +153,16 @@ export function ResultPage() {
     switch (sortBy) {
       case "alphabeticalAsc":
         return nextUsers.sort((a, b) => a.username.localeCompare(b.username));
-
       case "alphabeticalDesc":
         return nextUsers.sort((a, b) => b.username.localeCompare(a.username));
-
       case "recentDesc":
         return nextUsers.sort(
           (a, b) => (b.timestamp ?? 0) - (a.timestamp ?? 0),
         );
-
       case "recentAsc":
         return nextUsers.sort(
           (a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0),
         );
-
       default:
         return nextUsers;
     }
@@ -218,7 +206,9 @@ export function ResultPage() {
   useEffect(() => {
     const normalizedQuery = searchQuery.trim();
 
-    if (!normalizedQuery) return;
+    if (!normalizedQuery) {
+      return;
+    }
 
     analyticsService.track(ANALYTICS_EVENTS.RESULTS_SEARCH_USED, {
       tab: activeTab,
@@ -235,12 +225,12 @@ export function ResultPage() {
       switch (activeTab) {
         case "mutual":
           return {
-            sectionTitle: "Mutual",
+            sectionTitle: "Mutual connections",
             description: "People you follow who also follow you back.",
           };
         case "followersOnly":
           return {
-            sectionTitle: "Followers",
+            sectionTitle: "Followers only",
             description: "People who follow you, but you don't follow back.",
           };
         case "unfollowers":
@@ -250,75 +240,94 @@ export function ResultPage() {
           };
         case "recentUnfollowers":
           return {
-            sectionTitle: "Recent Unfollowers",
+            sectionTitle: "Recent unfollowers",
             description: "People who recently unfollowed you.",
           };
         case "blocked":
           return {
-            sectionTitle: "Blocked",
+            sectionTitle: "Blocked users",
             description: "People you have blocked on Instagram.",
           };
         case "restricted":
           return {
-            sectionTitle: "Restricted",
+            sectionTitle: "Restricted users",
             description:
-              "People you have restricted. They can still see your content, but their activity is limited (e.g. message read status and online visibility).",
+              "People you have restricted. They can still see your content, but their activity is limited.",
           };
         case "closeFriends":
           return {
-            sectionTitle: "Close Friends",
+            sectionTitle: "Close friends",
             description:
               "People in your Close Friends list who can see your private stories.",
           };
         case "hideStoriesFrom":
           return {
-            sectionTitle: "Hide Story",
+            sectionTitle: "Hidden stories",
             description: "People you have hidden your stories from.",
+          };
+        default:
+          return {
+            sectionTitle: "Connections",
+            description: "Browse your Instagram relationship groups.",
           };
       }
     }, [activeTab]);
 
-  const rootRef = useRef<HTMLDivElement | null>(null);
-
   return (
     <section className="flex min-h-svh flex-col">
       <NavBar />
+
       <Container className="flex min-h-svh flex-col">
         <div
           ref={rootRef}
-          className="flex flex-1 flex-col items-center pt-15 pb-6 text-center"
+          className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-4 pt-16 pb-8 text-center md:px-6 md:pt-20"
         >
           <h1
             data-animate="hero-item"
-            className="leading-headers text-foreground text-3xl font-semibold md:text-4xl"
+            className="leading-headers text-foreground text-3xl font-semibold md:text-5xl"
           >
-            Here's what I've found!
+            Your Instagram network analysis
           </h1>
 
-          <div data-animate="hero-item" className="mt-8 w-full">
+          <p
+            data-animate="hero-item"
+            className="text-foreground/70 mt-4 max-w-2xl text-base leading-7 md:text-lg"
+          >
+            A quick overview of your relationship groups, patterns, and account
+            insights.
+          </p>
+
+          <div data-animate="hero-item" className="mt-6 w-full">
             <RelationshipHealthInsight insight={relationshipHealthInsight} />
           </div>
 
-          <div className="mt-8 w-full">
-            <ResultsPieChart data={chartData} title="Results overview" />
+          <div className="mt-10 w-full">
+            <ResultsPieChart data={chartData} title="Relationship breakdown" />
           </div>
 
-          <div data-animate="hero-item" className="mt-6 w-full pt-2 pb-3">
+          <div data-animate="hero-item" className="mt-8 w-full">
             <DropdownTabButton
-              title="Connections"
+              title="Explore your connections"
               activeTab={activeTab}
               analysis={analysis}
               setActiveTab={setActiveTab}
             />
           </div>
 
-          <div className="border-foreground/10 bg-foreground/5 text-foreground ease-int-out mt-6 w-full rounded-[10px] border p-5 md:p-6">
-            <div className="mt-8 w-full">
-              <div className="mt-3 flex w-full flex-col items-center gap-y-3 max-sm:text-start">
-                <h3 data-animate="hero-item" className="text-foreground">
+          <div className="border-foreground/10 bg-foreground/5 text-foreground mt-6 w-full rounded-[10px] border p-5 md:p-8">
+            <div className="w-full">
+              <div className="flex w-full flex-col items-center gap-y-2 text-center max-sm:items-start max-sm:text-start">
+                <h3
+                  data-animate="hero-item"
+                  className="text-foreground text-2xl font-semibold"
+                >
                   {tabInfos.sectionTitle}
                 </h3>
-                <p data-animate="hero-item" className="text-foreground">
+
+                <p
+                  data-animate="hero-item"
+                  className="text-foreground/75 max-w-2xl text-sm leading-6 md:text-base"
+                >
                   {tabInfos.description}
                 </p>
               </div>
@@ -327,12 +336,12 @@ export function ResultPage() {
                 data-animate="hero-item"
                 className="mt-8 flex w-full flex-col gap-4 sm:gap-5 md:flex-row md:items-end md:justify-between"
               >
-                <div className="w-full md:max-w-md">
+                <div className="w-full md:max-w-lg">
                   <label
                     htmlFor="search-users"
                     className="l2-r text-foreground/80 mb-2 block text-start"
                   >
-                    Search user
+                    Search username
                   </label>
 
                   <Input
@@ -361,19 +370,27 @@ export function ResultPage() {
                 </div>
               </div>
 
-              <div data-animate="hero-item" className="mt-8">
+              <p
+                data-animate="hero-item"
+                className="text-foreground/60 mt-6 text-start text-sm"
+              >
+                {filteredUsers.length} result
+                {filteredUsers.length === 1 ? "" : "s"}
+              </p>
+
+              <div data-animate="hero-item" className="mt-6">
                 {emptyState ? (
-                  <div className="border-foreground/10 bg-foreground/5 flex min-h-56 w-full flex-col items-center justify-center border px-6 py-10 text-center">
-                    <h4 className="text-foreground text-lg font-medium">
+                  <div className="border-foreground/10 bg-foreground/5 flex min-h-56 w-full flex-col items-center justify-center rounded-[10px] border px-6 py-10 text-center">
+                    <h4 className="text-foreground text-xl font-semibold">
                       {emptyState.title}
                     </h4>
 
-                    <p className="text-foreground/80 mt-3 max-w-md text-sm">
+                    <p className="text-foreground/80 mt-3 max-w-md text-sm leading-6">
                       {emptyState.description}
                     </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     {paginatedUsers.map((user) => (
                       <UserListItem
                         key={user.username}
@@ -386,7 +403,7 @@ export function ResultPage() {
               </div>
 
               {!emptyState && totalPages > 1 && (
-                <div data-animate="hero-item">
+                <div data-animate="hero-item" className="mt-8">
                   <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}

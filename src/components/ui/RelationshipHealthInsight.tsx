@@ -77,7 +77,7 @@ export function RelationshipHealthInsight({
           </div>
         </div>
 
-        <div className="flex flex-col items-start gap-3 md:items-end">
+        <div className="flex flex-col items-start gap-3 max-md:flex-row max-md:items-center max-md:justify-between md:items-end">
           <div
             className={clsx(
               "rounded-[10px] border px-4 py-2 text-sm font-medium",
@@ -95,7 +95,7 @@ export function RelationshipHealthInsight({
             </p>
             <p
               className={clsx(
-                "text-3xl font-semibold md:text-5xl",
+                "text-3xl font-semibold max-md:text-5xl md:text-5xl",
                 accentClass,
               )}
             >
