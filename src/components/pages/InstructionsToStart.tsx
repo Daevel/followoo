@@ -336,7 +336,7 @@ function StepMedia({ src, alt, poster }: StepMediaProps) {
     return (
       <div
         ref={wrapperRef}
-        className="border-primary bg-primary/10 flex items-center overflow-hidden rounded-3xl border"
+        className="border-primary bg-primary/10 flex items-center overflow-hidden rounded-[10px] border"
       >
         <div className="relative aspect-video w-full">
           <img src={src} alt={alt} className="h-full w-full object-cover" />
@@ -350,7 +350,7 @@ function StepMedia({ src, alt, poster }: StepMediaProps) {
   return (
     <div
       ref={wrapperRef}
-      className="border-primary bg-primary/10 flex items-center overflow-hidden rounded-3xl border"
+      className="border-primary bg-primary/10 flex items-center overflow-hidden rounded-[10px] border"
     >
       <div className="group relative aspect-video w-full">
         <video

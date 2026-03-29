@@ -28,17 +28,17 @@ export function UserListItem({ user }: UserListItemProps) {
       target="_blank"
       rel="noreferrer"
       title={`Open @${user.username} on Instagram`}
-      className="flex items-center gap-4 border border-accent p-4 transition hover:bg-primary/10"
+      className="border-accent hover:bg-primary/10 flex items-center gap-4 rounded-[10px] border p-4 transition"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/30 text-sm font-bold text-foreground">
+      <div className="bg-primary/30 text-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold">
         {initial}
       </div>
 
       <div className="flex min-w-0 flex-col text-start">
-        <span className="truncate p2-b text-primary">{user.username}</span>
+        <span className="p2-b text-primary truncate">{user.username}</span>
 
         {formattedDate && (
-          <span className="mt-1 text-sm text-foreground/60">
+          <span className="text-foreground/60 mt-1 text-sm">
             {formattedDate}
           </span>
         )}

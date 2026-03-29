@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import { FabIcon } from "./FabIcon";
 import { generatePagination } from "../utils/utils";
+import { FabIcon } from "./FabIcon";
 
 type PaginationProps = {
   currentPage: number;
@@ -21,7 +21,7 @@ export function Pagination({
   return (
     <nav
       aria-label="Pagination"
-      className="mt-10 flex items-center  justify-center gap-3"
+      className="mt-10 flex items-center justify-center gap-3"
     >
       <FabIcon
         icon="chevronDoubleLeft"
@@ -39,7 +39,7 @@ export function Pagination({
             return (
               <span
                 key={`ellipsis-${index}`}
-                className="inline-flex h-10 min-w-10 items-center justify-center text-foreground"
+                className="text-foreground inline-flex h-10 min-w-10 items-center justify-center"
               >
                 ...
               </span>
@@ -55,7 +55,7 @@ export function Pagination({
               onClick={() => typeof page === "number" && onPageChange(page)}
               aria-current={isActive ? "page" : undefined}
               className={clsx(
-                "inline-flex h-10 min-w-10 items-center justify-center px-3 transition-colors",
+                "inline-flex h-10 min-w-10 items-center justify-center rounded-[10px] px-3 transition-colors",
                 isActive
                   ? "bg-accent text-foreground"
                   : "bg-primary text-foreground hover:opacity-90",

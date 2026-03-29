@@ -29,7 +29,7 @@ export function DropdownTabButton({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-foreground/10 bg-foreground/5 text-foreground ease-int-out w-full rounded-3xl border p-5 md:p-6">
+    <div className="border-foreground/10 bg-foreground/5 text-foreground ease-int-out w-full rounded-[10px] border p-5 md:p-6">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}

@@ -50,7 +50,7 @@ export function ResultsPieChart({
   }
 
   return (
-    <div className="border-foreground/10 w-full rounded-3xl border bg-white/5 p-5 md:p-6">
+    <div className="border-foreground/10 w-full rounded-[10px] border bg-white/5 p-5 md:p-6">
       <div className="mb-5 text-start">
         <h3 className="text-foreground text-xl font-semibold">{title}</h3>
         <p className="text-foreground/70 mt-1 text-sm">
@@ -121,7 +121,7 @@ export function ResultsPieChart({
             return (
               <div
                 key={item.name}
-                className="border-foreground/10 bg-foreground/5 flex items-center justify-between rounded-2xl border px-4 py-3"
+                className="border-foreground/10 bg-foreground/5 flex items-center justify-between rounded-[10px] border px-4 py-3"
               >
                 <div className="flex items-center gap-3">
                   <span

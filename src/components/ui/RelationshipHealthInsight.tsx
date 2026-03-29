@@ -57,7 +57,7 @@ export function RelationshipHealthInsight({
   }[insight.level];
 
   return (
-    <div className="border-foreground/10 bg-foreground/5 w-full rounded-3xl border p-5 md:p-6">
+    <div className="border-foreground/10 bg-foreground/5 w-full rounded-[10px] border p-5 md:p-6">
       <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-4">
           <HealthFace level={insight.level} />
@@ -80,7 +80,7 @@ export function RelationshipHealthInsight({
         <div className="flex flex-col items-start gap-3 md:items-end">
           <div
             className={clsx(
-              "rounded-2xl border px-4 py-2 text-sm font-medium",
+              "rounded-[10px] border px-4 py-2 text-sm font-medium",
               badgeClass,
             )}
           >

@@ -132,7 +132,7 @@ export function NavBar() {
         <div
           id="mobile-navigation"
           className={clsx(
-            "bg-background/95 absolute top-full left-0 z-50 w-full overflow-hidden rounded-2xl border border-white/10 shadow-lg backdrop-blur-md transition-all duration-300 lg:hidden",
+            "bg-background/95 absolute top-full left-0 z-50 w-full overflow-hidden rounded-[10px] border border-white/10 shadow-lg backdrop-blur-md transition-all duration-300 lg:hidden",
             isMenuOpen
               ? "pointer-events-auto mt-2 opacity-100"
               : "pointer-events-none mt-0 opacity-0",
@@ -147,7 +147,7 @@ export function NavBar() {
                   key={link.to}
                   to={link.to}
                   className={clsx(
-                    "rounded-xl px-4 py-3 font-semibold transition-colors hover:bg-white/5",
+                    "rounded-[10px] px-4 py-3 font-semibold transition-colors hover:bg-white/5",
                     isActive
                       ? "text-foreground"
                       : "text-foreground/50 hover:text-foreground",

@@ -304,97 +304,97 @@ export function ResultPage() {
           </div>
 
           <div data-animate="hero-item" className="mt-6 w-full pt-2 pb-3">
-            <div className="flex gap-3 px-1">
-              <DropdownTabButton
-                title="Connections"
-                activeTab={activeTab}
-                analysis={analysis}
-                setActiveTab={setActiveTab}
-              />
-            </div>
+            <DropdownTabButton
+              title="Connections"
+              activeTab={activeTab}
+              analysis={analysis}
+              setActiveTab={setActiveTab}
+            />
           </div>
 
-          <div className="mt-8 w-full">
-            <div className="mt-3 flex w-full flex-col items-center gap-y-3 max-sm:text-start">
-              <h3 data-animate="hero-item" className="text-foreground">
-                {tabInfos.sectionTitle}
-              </h3>
-              <p data-animate="hero-item" className="text-foreground">
-                {tabInfos.description}
-              </p>
-            </div>
-
-            <div
-              data-animate="hero-item"
-              className="mt-8 flex w-full flex-col gap-4 sm:gap-5 md:flex-row md:items-end md:justify-between"
-            >
-              <div className="w-full md:max-w-md">
-                <label
-                  htmlFor="search-users"
-                  className="l2-r text-foreground/80 mb-2 block text-start"
-                >
-                  Search user
-                </label>
-
-                <Input
-                  id="search-users"
-                  type="text"
-                  placeholder="Type a username..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full"
-                />
+          <div className="border-foreground/10 bg-foreground/5 text-foreground ease-int-out mt-6 w-full rounded-[10px] border p-5 md:p-6">
+            <div className="mt-8 w-full">
+              <div className="mt-3 flex w-full flex-col items-center gap-y-3 max-sm:text-start">
+                <h3 data-animate="hero-item" className="text-foreground">
+                  {tabInfos.sectionTitle}
+                </h3>
+                <p data-animate="hero-item" className="text-foreground">
+                  {tabInfos.description}
+                </p>
               </div>
 
-              <div className="w-full md:w-auto">
-                <SortSelect
-                  label="Sort by"
-                  value={sortBy}
-                  onChange={setSortBy}
-                  options={[
-                    { label: "A-Z", value: "alphabeticalAsc" },
-                    { label: "Z-A", value: "alphabeticalDesc" },
-                    { label: "Most recent", value: "recentDesc" },
-                    { label: "Oldest", value: "recentAsc" },
-                  ]}
-                  className="w-full md:w-auto"
-                />
-              </div>
-            </div>
+              <div
+                data-animate="hero-item"
+                className="mt-8 flex w-full flex-col gap-4 sm:gap-5 md:flex-row md:items-end md:justify-between"
+              >
+                <div className="w-full md:max-w-md">
+                  <label
+                    htmlFor="search-users"
+                    className="l2-r text-foreground/80 mb-2 block text-start"
+                  >
+                    Search user
+                  </label>
 
-            <div data-animate="hero-item" className="mt-8">
-              {emptyState ? (
-                <div className="border-foreground/10 bg-foreground/5 flex min-h-56 w-full flex-col items-center justify-center border px-6 py-10 text-center">
-                  <h4 className="text-foreground text-lg font-medium">
-                    {emptyState.title}
-                  </h4>
-
-                  <p className="text-foreground/80 mt-3 max-w-md text-sm">
-                    {emptyState.description}
-                  </p>
+                  <Input
+                    id="search-users"
+                    type="text"
+                    placeholder="Type a username..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full"
+                  />
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {paginatedUsers.map((user) => (
-                    <UserListItem
-                      key={user.username}
-                      user={user}
-                      formatDate={formatDate}
-                    />
-                  ))}
+
+                <div className="w-full md:w-auto">
+                  <SortSelect
+                    label="Sort by"
+                    value={sortBy}
+                    onChange={setSortBy}
+                    options={[
+                      { label: "A-Z", value: "alphabeticalAsc" },
+                      { label: "Z-A", value: "alphabeticalDesc" },
+                      { label: "Most recent", value: "recentDesc" },
+                      { label: "Oldest", value: "recentAsc" },
+                    ]}
+                    className="w-full md:w-auto"
+                  />
+                </div>
+              </div>
+
+              <div data-animate="hero-item" className="mt-8">
+                {emptyState ? (
+                  <div className="border-foreground/10 bg-foreground/5 flex min-h-56 w-full flex-col items-center justify-center border px-6 py-10 text-center">
+                    <h4 className="text-foreground text-lg font-medium">
+                      {emptyState.title}
+                    </h4>
+
+                    <p className="text-foreground/80 mt-3 max-w-md text-sm">
+                      {emptyState.description}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {paginatedUsers.map((user) => (
+                      <UserListItem
+                        key={user.username}
+                        user={user}
+                        formatDate={formatDate}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {!emptyState && totalPages > 1 && (
+                <div data-animate="hero-item">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
                 </div>
               )}
             </div>
-
-            {!emptyState && totalPages > 1 && (
-              <div data-animate="hero-item">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            )}
           </div>
         </div>
       </Container>
