@@ -420,20 +420,21 @@ function StepMedia({ src, alt, poster }: StepMediaProps) {
 
 type ActiveStepContentProps = {
   step: InstructionStep;
+  totalSteps: number;
 };
 
-function ActiveStepContent({ step }: ActiveStepContentProps) {
+function ActiveStepContent({ step, totalSteps }: ActiveStepContentProps) {
   return (
     <div className="w-full max-w-3xl text-left">
       <p className="text-foreground/60 text-sm font-medium tracking-wide uppercase">
-        Step {String(step.id).padStart(2, "0")}
+        Step {step.id} of {totalSteps}
       </p>
 
       <h2 className="text-foreground mt-2 text-2xl font-semibold md:text-3xl">
         {step.title}
       </h2>
 
-      <div className="text-foreground/85 mt-4 h-30 max-w-2xl text-base leading-7">
+      <div className="text-foreground/85 mt-4 max-w-xl text-base leading-7">
         {step.description}
       </div>
     </div>
@@ -457,8 +458,10 @@ function DeviceStepperContent({
       onClick={onClick}
       aria-pressed={isActive}
       className={clsx(
-        "border-foreground flex h-15 w-15 items-center justify-center rounded-full border transition-colors duration-200",
-        isActive ? "bg-accent" : "bg-bg",
+        "border-foreground flex h-15 w-15 items-center justify-center rounded-full border transition-all duration-200",
+        isActive
+          ? "bg-accent scale-105 shadow-[0_0_0_4px_rgba(255,255,255,0.04)]"
+          : "bg-bg hover:border-foreground/70",
       )}
     >
       <Icon name={deviceIcon} color="foreground" width={30} height={30} />
@@ -502,7 +505,7 @@ export function InstructionsToStart() {
     <section className="flex min-h-svh flex-col">
       <NavBar />
 
-      <Container className="flex min-h-svh flex-col">
+      <Container className="flex min-h-svh max-w-5xl flex-col">
         <div
           ref={rootRef}
           className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-4 pt-16 pb-12 text-center md:px-6 md:pt-20"
@@ -522,6 +525,26 @@ export function InstructionsToStart() {
             file.
           </p>
 
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <p className="text-foreground/60 text-xs font-medium tracking-wide uppercase">
+              Choose your device
+            </p>
+
+            <div className="flex flex-row gap-3">
+              <DeviceStepperContent
+                deviceIcon="laptop"
+                isActive={selectedDevice === "laptop"}
+                onClick={() => setSelectedDevice("laptop")}
+              />
+
+              <DeviceStepperContent
+                deviceIcon="smartPhone"
+                isActive={selectedDevice === "smartPhone"}
+                onClick={() => setSelectedDevice("smartPhone")}
+              />
+            </div>
+          </div>
+
           <div data-animate="hero-item" className="mt-10">
             <Stepper
               steps={instructionSteps}
@@ -530,7 +553,7 @@ export function InstructionsToStart() {
             />
           </div>
 
-          <div className="mt-10 w-full max-w-4xl">
+          <div className="mt-8 w-full max-w-220">
             <StepMedia
               key={`${selectedDevice}-${activeStep.id}`}
               src={activeStep.mediaSrc}
@@ -538,27 +561,20 @@ export function InstructionsToStart() {
             />
           </div>
 
-          <div className="mt-10 flex flex-row gap-3">
-            <DeviceStepperContent
-              deviceIcon="laptop"
-              isActive={selectedDevice === "laptop"}
-              onClick={() => setSelectedDevice("laptop")}
-            />
-
-            <DeviceStepperContent
-              deviceIcon="smartPhone"
-              isActive={selectedDevice === "smartPhone"}
-              onClick={() => setSelectedDevice("smartPhone")}
-            />
-          </div>
+          <p className="text-foreground/50 mt-3 text-xs">
+            Tap to pause • Double tap for fullscreen
+          </p>
 
           <div
             data-animate="hero-item"
-            className="mt-10 flex w-full flex-col items-center justify-center gap-4"
+            className="mt-8 flex w-full flex-col items-center justify-center gap-4"
           >
-            <ActiveStepContent step={activeStep} />
+            <ActiveStepContent
+              step={activeStep}
+              totalSteps={instructionSteps.length}
+            />
 
-            <div className="mt-5 flex flex-row items-center gap-4">
+            <div className="mt-3 flex flex-row items-center gap-4">
               <Button
                 background="primary"
                 foreground="foreground"
