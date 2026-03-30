@@ -72,7 +72,7 @@ export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
       <div
         {...getRootProps()}
         className={clsx(
-          "text-foreground w-full cursor-pointer rounded-[10px] border-2 border-dashed px-6 py-5 transition-colors",
+          "text-foreground h-50 w-full cursor-pointer rounded-[10px] border-2 border-dashed px-6 py-5 transition-colors",
           "flex flex-col items-center justify-center gap-2",
           {
             "border-primary bg-primary/15": !isDragActive && !isDragReject,
@@ -108,7 +108,7 @@ export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
           <button
             type="button"
             onClick={() => onFileChange(null)}
-            className="text-accent inline-flex items-center gap-2 hover:opacity-80"
+            className="text-accent inline-flex items-center gap-2 transition-colors hover:opacity-80"
           >
             <Icon
               name="trash"

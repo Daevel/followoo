@@ -1,7 +1,7 @@
 import { handleAppError } from "@/errors";
 import { gsap } from "gsap";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { UnknownErrorPage } from "../errors/UnknownErrorPage";
+import { UnknownErrorPage } from "../errors/ui/UnknownErrorPage";
 import { BadgeVersion } from "../ui/BadgeVersion";
 import { Container } from "../ui/Container";
 import { NavBar } from "../ui/NavBar";
