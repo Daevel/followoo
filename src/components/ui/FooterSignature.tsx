@@ -31,6 +31,12 @@ export function FooterSignature() {
               >
                 Support
               </Link>
+              <Link
+                to="/updates"
+                className="text-foreground/50 hover:text-foreground transition-colors"
+              >
+                Updates
+              </Link>
             </div>
           </div>
 
