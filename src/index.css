@@ -40,6 +40,41 @@
   --sm-mobile: 640px;
   --md-tablet: 768px;
   --lg-desktop: 1024px;
+
+  /* SHADOWS */
+  --shadow-primary:
+    0 8px 20px color-mix(in srgb, var(--color-primary) 28%, transparent),
+    0 2px 6px color-mix(in srgb, var(--color-primary) 18%, transparent);
+
+  --shadow-accent:
+    0 8px 20px color-mix(in srgb, var(--color-accent) 28%, transparent),
+    0 2px 6px color-mix(in srgb, var(--color-accent) 18%, transparent);
+}
+
+@layer utilities {
+  .shadow-primary-hover {
+    box-shadow: 0 0 0 transparent;
+    transition:
+      box-shadow 250ms ease,
+      transform 250ms ease;
+  }
+
+  .shadow-primary-hover:hover {
+    box-shadow: var(--shadow-primary);
+    transform: translateY(-2px);
+  }
+
+  .shadow-accent-hover {
+    box-shadow: 0 0 0 transparent;
+    transition:
+      box-shadow 250ms ease,
+      transform 250ms ease;
+  }
+
+  .shadow-accent-hover:hover {
+    box-shadow: var(--shadow-accent);
+    transform: translateY(-2px);
+  }
 }
 
 html {

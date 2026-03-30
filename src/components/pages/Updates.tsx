@@ -1,11 +1,11 @@
 import { handleAppError } from "@/errors";
-import { gsap } from "gsap";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { UnknownErrorPage } from "../errors/ui/UnknownErrorPage";
 import { BadgeVersion } from "../ui/BadgeVersion";
 import { Container } from "../ui/Container";
 import { NavBar } from "../ui/NavBar";
 import { Separator } from "../ui/Separator";
+import { SkeletonLoaderCircle } from "../ui/SkeletonLoaderCircle";
 
 type UpdateChangeGroup = {
   label: string;
@@ -83,31 +83,9 @@ function UpdateSection({
 }
 
 export function Updates() {
-  const rootRef = useRef<HTMLDivElement | null>(null);
   const [updates, setUpdates] = useState<UpdateEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        "[data-animate='hero-item']",
-        {
-          opacity: 0,
-          y: 24,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.12,
-        },
-      );
-    }, rootRef);
-
-    return () => ctx.revert();
-  }, [updates, isLoading, hasError]);
 
   useEffect(() => {
     let isMounted = true;
@@ -162,10 +140,7 @@ export function Updates() {
       <NavBar />
 
       <Container className="flex min-h-svh flex-col">
-        <div
-          ref={rootRef}
-          className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10"
-        >
+        <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10">
           <h1
             data-animate="hero-item"
             className="leading-headers text-foreground text-4xl font-semibold md:text-5xl"
@@ -180,8 +155,11 @@ export function Updates() {
 
           <div className="mt-10 flex w-full flex-col gap-8">
             {isLoading ? (
-              <div data-animate="hero-item" className="text-foreground/70">
-                Loading updates...
+              <div
+                data-animate="hero-item"
+                className="flex flex-row items-center justify-center p-20 align-middle"
+              >
+                <SkeletonLoaderCircle size="lg" color="primary" />
               </div>
             ) : hasError ? (
               <div

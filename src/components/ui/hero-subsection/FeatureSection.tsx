@@ -43,6 +43,7 @@ export function FeaturesSection() {
         <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map((card) => (
             <Card
+              className="shadow-primary"
               title={card.title}
               description={card.text}
               iconName={card.iconName}

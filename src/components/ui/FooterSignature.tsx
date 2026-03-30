@@ -5,7 +5,7 @@ export function FooterSignature() {
     <footer className="w-full py-12">
       <div className="flex flex-col gap-10 md:gap-12 lg:flex-row lg:items-start lg:justify-around">
         <div className="shrink-0">
-          <img src="/favicon.svg" alt="Followoo logo" width={30} height={30} />
+          <img src="/favicon.svg" alt="Followoo logo" width={32} height={32} />
         </div>
 
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-16">

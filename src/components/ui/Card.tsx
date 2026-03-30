@@ -5,12 +5,14 @@ import { Icon, type IconName } from "./Icon";
 type CardProps = {
   title: string;
   description: string;
+  className?: string;
   iconName: IconName;
 };
 
 export function Card({
   title = "",
   description = "",
+  className = "",
   iconName = "shield",
 }: CardProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -21,7 +23,7 @@ export function Card({
     <>
       <div
         key={title}
-        className="feature-card bg-primary text-foreground rounded-[10px] px-6 py-8 text-center sm:px-8 sm:py-10"
+        className={`feature-card bg-primary text-foreground rounded-[10px] px-6 py-8 text-center sm:px-8 sm:py-10 ${className}`}
       >
         <div className="feature-icon-wrapper bg-foreground mx-auto flex aspect-square w-24 items-center justify-center rounded-[10px] sm:w-28 md:w-32">
           <Icon
