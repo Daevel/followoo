@@ -13,8 +13,8 @@ type InstructionStep = {
   id: number;
   title: string;
   description: React.ReactNode;
-  mediaSrc: string;
-  mediaAlt: string;
+  mediaSrc?: string;
+  mediaAlt?: string;
 };
 
 const desktopInstructionSteps: InstructionStep[] = [
@@ -39,7 +39,7 @@ const desktopInstructionSteps: InstructionStep[] = [
         then choose <b>Download your information</b>.
       </>
     ),
-    mediaSrc: "/images/instructions/step-2.jpg",
+    mediaSrc: vercelBlobStructure.videos.desktop.step02,
     mediaAlt: "Your information and permissions section",
   },
   {
@@ -51,35 +51,12 @@ const desktopInstructionSteps: InstructionStep[] = [
         <b>Instagram account</b> if you have multiple Meta accounts.
       </>
     ),
-    mediaSrc: "/images/instructions/step-3.jpg",
+    mediaSrc: vercelBlobStructure.videos.desktop.step03,
     mediaAlt: "Download or transfer information flow",
   },
   {
     id: 4,
-    title: "Choose Some of your information",
-    description: (
-      <>
-        Select <b>Some of your information</b> instead of exporting everything.
-      </>
-    ),
-    mediaSrc: "/images/instructions/step-4.jpg",
-    mediaAlt: "Some of your information option",
-  },
-  {
-    id: 5,
-    title: "Select Followers and following",
-    description: (
-      <>
-        In the <b>Connections</b> section, select only{" "}
-        <b>Followers and following</b>.
-      </>
-    ),
-    mediaSrc: "/images/instructions/step-5.jpg",
-    mediaAlt: "Followers and following category selected",
-  },
-  {
-    id: 6,
-    title: "Set the correct export options",
+    title: "Setup export and some of its informations",
     description: (
       <>
         Use these settings:
@@ -89,25 +66,29 @@ const desktopInstructionSteps: InstructionStep[] = [
         <b>Date range:</b> All time
         <br />
         <b>Media quality:</b> any value is fine
+        <br />
+        Select only <b>Followers and Following</b> checkbox instead of exporting
+        everything.
+        <br />
+        Press Save export and then <b>Create export</b>.
       </>
     ),
-    mediaSrc: "/images/instructions/step-6.jpg",
-    mediaAlt: "Export options configuration",
+    mediaSrc: vercelBlobStructure.videos.desktop.step04,
+    mediaAlt: "Some of your information option",
   },
   {
-    id: 7,
-    title: "Create the file and wait for the email",
+    id: 5,
+    title: "Download the ZIP file from the Account Center",
     description: (
       <>
-        Press <b>Create export</b>. Instagram will prepare the ZIP and send you
-        an email when it is ready.
+        Press <b>Download file</b>. It will download a ZIP file.
       </>
     ),
-    mediaSrc: "/images/instructions/step-7.jpg",
+    mediaSrc: vercelBlobStructure.videos.desktop.step05,
     mediaAlt: "Create export confirmation",
   },
   {
-    id: 8,
+    id: 6,
     title: "Upload the ZIP directly into this app",
     description: (
       <>
@@ -115,7 +96,6 @@ const desktopInstructionSteps: InstructionStep[] = [
         <b>Do not extract it.</b>
       </>
     ),
-    mediaSrc: "/images/instructions/step-8.jpg",
     mediaAlt: "ZIP upload inside the app",
   },
 ];
@@ -142,7 +122,7 @@ const mobileInstructionSteps: InstructionStep[] = [
         then choose <b>Download your information</b>.
       </>
     ),
-    mediaSrc: "/images/instructions/step-2.jpg",
+    mediaSrc: vercelBlobStructure.videos.mobile.step02,
     mediaAlt: "Your information and permissions section",
   },
   {
@@ -154,63 +134,11 @@ const mobileInstructionSteps: InstructionStep[] = [
         <b>Instagram account</b> if you have multiple Meta accounts.
       </>
     ),
-    mediaSrc: "/images/instructions/step-3.jpg",
+    mediaSrc: vercelBlobStructure.videos.mobile.step03,
     mediaAlt: "Download or transfer information flow",
   },
   {
     id: 4,
-    title: "Choose Some of your information",
-    description: (
-      <>
-        Select <b>Some of your information</b> instead of exporting everything.
-      </>
-    ),
-    mediaSrc: "/images/instructions/step-4.jpg",
-    mediaAlt: "Some of your information option",
-  },
-  {
-    id: 5,
-    title: "Select Followers and following",
-    description: (
-      <>
-        In the <b>Connections</b> section, select only{" "}
-        <b>Followers and following</b>.
-      </>
-    ),
-    mediaSrc: "/images/instructions/step-5.jpg",
-    mediaAlt: "Followers and following category selected",
-  },
-  {
-    id: 6,
-    title: "Set the correct export options",
-    description: (
-      <>
-        Use these settings:
-        <br />
-        <b>Format:</b> JSON
-        <br />
-        <b>Date range:</b> All time
-        <br />
-        <b>Media quality:</b> any value is fine
-      </>
-    ),
-    mediaSrc: "/images/instructions/step-6.jpg",
-    mediaAlt: "Export options configuration",
-  },
-  {
-    id: 7,
-    title: "Create the file and wait for the email",
-    description: (
-      <>
-        Press <b>Create export</b>. Instagram will prepare the ZIP and send you
-        an email when it is ready.
-      </>
-    ),
-    mediaSrc: "/images/instructions/step-7.jpg",
-    mediaAlt: "Create export confirmation",
-  },
-  {
-    id: 8,
     title: "Upload the ZIP directly into this app",
     description: (
       <>
@@ -218,7 +146,6 @@ const mobileInstructionSteps: InstructionStep[] = [
         <b>Do not extract it.</b>
       </>
     ),
-    mediaSrc: "/images/instructions/step-8.jpg",
     mediaAlt: "ZIP upload inside the app",
   },
 ];
@@ -262,7 +189,7 @@ function Stepper({ steps, currentStep, onStepClick }: StepperProps) {
 
 type StepMediaProps = {
   src: string;
-  alt: string;
+  alt?: string;
   poster?: string;
 };
 
@@ -280,7 +207,7 @@ function formatClock(seconds: number) {
   return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
 }
 
-function StepMedia({ src, alt, poster }: StepMediaProps) {
+function StepMedia({ src, alt = "", poster }: StepMediaProps) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -340,7 +267,6 @@ function StepMedia({ src, alt, poster }: StepMediaProps) {
       >
         <div className="relative aspect-video w-full">
           <img src={src} alt={alt} className="h-full w-full object-cover" />
-
           <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
         </div>
       </div>
@@ -425,7 +351,7 @@ type ActiveStepContentProps = {
 
 function ActiveStepContent({ step, totalSteps }: ActiveStepContentProps) {
   return (
-    <div className="w-full max-w-3xl text-left">
+    <div className="w-full max-w-3xl text-left flex flex-col items-center">
       <p className="text-foreground/60 text-sm font-medium tracking-wide uppercase">
         Step {step.id} of {totalSteps}
       </p>
@@ -488,6 +414,8 @@ export function InstructionsToStart() {
       instructionSteps[0],
     [currentStep, instructionSteps],
   );
+
+  const hasMedia = Boolean(activeStep.mediaSrc?.trim());
 
   useEffect(() => {
     setCurrentStep(1);
@@ -553,17 +481,21 @@ export function InstructionsToStart() {
             />
           </div>
 
-          <div className="mt-8 w-full max-w-220">
-            <StepMedia
-              key={`${selectedDevice}-${activeStep.id}`}
-              src={activeStep.mediaSrc}
-              alt={activeStep.mediaAlt}
-            />
-          </div>
+          {hasMedia && activeStep.mediaSrc && (
+            <>
+              <div className="mt-8 w-full max-w-220">
+                <StepMedia
+                  key={`${selectedDevice}-${activeStep.id}`}
+                  src={activeStep.mediaSrc}
+                  alt={activeStep.mediaAlt}
+                />
+              </div>
 
-          <p className="text-foreground/50 mt-3 text-xs">
-            Tap to pause • Double tap for fullscreen
-          </p>
+              <p className="text-foreground/50 mt-3 text-xs">
+                Tap to pause • Double tap for fullscreen
+              </p>
+            </>
+          )}
 
           <div
             data-animate="hero-item"
