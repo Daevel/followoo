@@ -1,5 +1,5 @@
 import { handleAppError } from "@/errors";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { UnknownErrorPage } from "../errors/ui/UnknownErrorPage";
 import { BadgeVersion } from "../ui/BadgeVersion";
 import { Container } from "../ui/Container";
@@ -87,7 +87,7 @@ export function Updates() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  const sectionRef = useRef<HTMLElement | null>(null);
+  // const sectionRef = useRef<HTMLElement | null>(null);
 
   //TODO inserire animazione GSAP per pagina updates
 
