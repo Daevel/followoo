@@ -1,5 +1,6 @@
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { gsap } from "@/lib/gsap";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import type { InstagramAnalysisResult } from "../../types/instagram.types";
 import { calculateRelationshipHealthScore } from "../services/relationshipHealthService";
@@ -41,6 +42,53 @@ export function ResultPage() {
 
   const itemsPerPage = 20;
   const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    if (!rootRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const heroItems = rootRef.current?.querySelectorAll(
+        '[data-animate="hero-item"]',
+      );
+
+      const listItems = rootRef.current?.querySelectorAll(
+        '[data-animate="list-item"]',
+      );
+
+      const tl = gsap.timeline({
+        defaults: {
+          ease: "power3.out",
+        },
+      });
+
+      if (heroItems?.length) {
+        tl.from(heroItems, {
+          y: 20,
+          opacity: 0,
+          duration: 0.55,
+          stagger: 0.08,
+          clearProps: "all",
+        });
+      }
+
+      if (listItems?.length) {
+        tl.from(
+          listItems,
+          {
+            y: 16,
+            opacity: 0,
+            duration: 0.4,
+            stagger: 0.035,
+            ease: "power2.out",
+            clearProps: "all",
+          },
+          "-=0.2",
+        );
+      }
+    }, rootRef);
+
+    return () => ctx.revert();
+  }, []);
 
   if (!analysis) {
     return <Navigate to="/get-started" replace />;
@@ -392,11 +440,9 @@ export function ResultPage() {
                 ) : (
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     {paginatedUsers.map((user) => (
-                      <UserListItem
-                        key={user.username}
-                        user={user}
-                        formatDate={formatDate}
-                      />
+                      <div key={user.username} data-animate="list-item">
+                        <UserListItem user={user} formatDate={formatDate} />
+                      </div>
                     ))}
                   </div>
                 )}

@@ -1,5 +1,4 @@
-import { gsap } from "gsap";
-import { useLayoutEffect, useRef } from "react";
+import { useRef } from "react";
 import { Callout } from "../ui/Callout";
 import { Container } from "../ui/Container";
 import { NavBar } from "../ui/NavBar";
@@ -21,27 +20,6 @@ function TermsSection({ title, children }: SectionProps) {
 export function TermsAndConditions() {
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        "[data-animate='hero-item']",
-        {
-          opacity: 0,
-          y: 24,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.12,
-        },
-      );
-    }, rootRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
     <section className="flex min-h-svh flex-col">
       <NavBar />
@@ -50,21 +28,15 @@ export function TermsAndConditions() {
           ref={rootRef}
           className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10"
         >
-          <h1
-            data-animate="hero-item"
-            className="leading-headers text-foreground text-4xl font-semibold md:text-5xl"
-          >
+          <h1 className="leading-headers text-foreground text-4xl font-semibold md:text-5xl">
             Terms and Conditions
           </h1>
 
-          <p
-            data-animate="hero-item"
-            className="text-foreground/70 mt-3 text-sm"
-          >
+          <p className="text-foreground/70 mt-3 text-sm">
             Last updated: March 2026
           </p>
 
-          <div data-animate="hero-item" className="mt-8 w-full">
+          <div className="mt-8 w-full">
             <Callout variant="info" title="Privacy notice">
               This application runs entirely in the user&apos;s browser and does
               not transmit personal data to external servers. Uploaded Instagram
@@ -74,7 +46,7 @@ export function TermsAndConditions() {
           </div>
 
           <div className="mt-10 flex w-full flex-col gap-8">
-            <div data-animate="hero-item">
+            <div>
               <TermsSection title="1. Introduction">
                 This platform allows users to view and analyze data related to
                 their Instagram account using files exported through the
@@ -86,7 +58,7 @@ export function TermsAndConditions() {
               </TermsSection>
             </div>
 
-            <div data-animate="hero-item">
+            <div>
               <TermsSection title="2. Source of Data">
                 To use the platform&apos;s features, users must obtain their
                 Instagram data through the official export tools provided by
@@ -97,7 +69,7 @@ export function TermsAndConditions() {
               </TermsSection>
             </div>
 
-            <div data-animate="hero-item">
+            <div>
               <TermsSection title="3. Service Functionality">
                 The platform allows users to analyze Instagram export files,
                 view relationship-based metrics such as mutuals, followers,
@@ -108,7 +80,7 @@ export function TermsAndConditions() {
               </TermsSection>
             </div>
 
-            <div data-animate="hero-item">
+            <div>
               <TermsSection title="4. File and Data Handling">
                 The platform does not store, save, or archive uploaded files or
                 personal information. All analysis operations are performed
@@ -119,7 +91,7 @@ export function TermsAndConditions() {
               </TermsSection>
             </div>
 
-            <div data-animate="hero-item">
+            <div>
               <TermsSection title="5. Data Processing and Privacy">
                 All uploaded files are processed locally within the user&apos;s
                 browser. The platform does not upload, store, or transmit any
@@ -132,7 +104,7 @@ export function TermsAndConditions() {
               </TermsSection>
             </div>
 
-            <div data-animate="hero-item">
+            <div>
               <TermsSection title="6. Data Updates">
                 The platform does not automatically update user data. If the
                 user wants updated results, they must download a new dataset
@@ -142,7 +114,7 @@ export function TermsAndConditions() {
               </TermsSection>
             </div>
 
-            <div data-animate="hero-item">
+            <div>
               <TermsSection title="7. User Responsibility">
                 Users are solely responsible for the files they upload to the
                 platform. The service is intended only for analyzing personal
@@ -152,7 +124,7 @@ export function TermsAndConditions() {
               </TermsSection>
             </div>
 
-            <div data-animate="hero-item">
+            <div>
               <TermsSection title="8. Limitation of Liability">
                 This service is provided as a support tool for analyzing data
                 exported by the user. The results generated depend entirely on
@@ -164,7 +136,7 @@ export function TermsAndConditions() {
               </TermsSection>
             </div>
 
-            <div data-animate="hero-item">
+            <div>
               <TermsSection title="9. Independence from Instagram and Meta">
                 This service is an independent tool and is not affiliated with,
                 endorsed by, or associated with Instagram, Meta Platforms Inc.,
@@ -174,7 +146,7 @@ export function TermsAndConditions() {
               </TermsSection>
             </div>
 
-            <div data-animate="hero-item">
+            <div>
               <TermsSection title="10. Changes to the Terms">
                 The platform owner reserves the right to modify these Terms and
                 Conditions at any time. Any changes will become effective upon
@@ -182,7 +154,7 @@ export function TermsAndConditions() {
               </TermsSection>
             </div>
 
-            <div data-animate="hero-item">
+            <div>
               <TermsSection title="11. Acceptance of Terms">
                 By using this platform, the user confirms that they have read,
                 understood, and agreed to these Terms and Conditions.

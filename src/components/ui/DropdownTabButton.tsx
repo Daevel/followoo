@@ -29,7 +29,7 @@ export function DropdownTabButton({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-foreground/10 bg-foreground/5 text-foreground ease-int-out w-full rounded-[10px] border p-5 md:p-6">
+    <div className="border-foreground/10 bg-foreground/5 text-foreground w-full rounded-[10px] border p-5 md:p-6">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
@@ -38,13 +38,11 @@ export function DropdownTabButton({
       >
         <h4 className="pr-4 text-start">{title}</h4>
 
-        <div className="bg-primary ease-int-out flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-transform duration-300 ease-out">
+        <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-transform duration-300 ease-out">
           <div
-            className={
-              isOpen
-                ? "rotate-180 transition-transform duration-300 ease-out"
-                : "transition-transform duration-300 ease-out"
-            }
+            className={`transition-transform duration-300 ease-out ${
+              isOpen ? "rotate-180" : ""
+            }`}
           >
             <Icon
               name="singleArrowDown"
@@ -57,64 +55,70 @@ export function DropdownTabButton({
       </button>
 
       <div
-        className={`grid transition-all ease-in-out ${isOpen ? "mt-6 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+        className={`grid transition-all duration-300 ease-in-out ${
+          isOpen
+            ? "pointer-events-auto mt-6 grid-rows-[1fr] opacity-100"
+            : "pointer-events-none grid-rows-[0fr] opacity-0"
+        }`}
       >
-        <div className="grid min-h-0 gap-3 text-start md:grid-cols-2 lg:grid-cols-3">
-          <TabButton
-            active={activeTab === "mutual"}
-            onClick={() => setActiveTab("mutual")}
-          >
-            Mutual ({analysis.mutual.length})
-          </TabButton>
+        <div className="overflow-hidden">
+          <div className="grid gap-3 text-start md:grid-cols-2 lg:grid-cols-3">
+            <TabButton
+              active={activeTab === "mutual"}
+              onClick={() => setActiveTab("mutual")}
+            >
+              Mutual ({analysis.mutual.length})
+            </TabButton>
 
-          <TabButton
-            active={activeTab === "followersOnly"}
-            onClick={() => setActiveTab("followersOnly")}
-          >
-            Followers ({analysis.followersOnly.length})
-          </TabButton>
+            <TabButton
+              active={activeTab === "followersOnly"}
+              onClick={() => setActiveTab("followersOnly")}
+            >
+              Followers ({analysis.followersOnly.length})
+            </TabButton>
 
-          <TabButton
-            active={activeTab === "blocked"}
-            onClick={() => setActiveTab("blocked")}
-          >
-            Blocked ({analysis.blocked.length})
-          </TabButton>
+            <TabButton
+              active={activeTab === "blocked"}
+              onClick={() => setActiveTab("blocked")}
+            >
+              Blocked ({analysis.blocked.length})
+            </TabButton>
 
-          <TabButton
-            active={activeTab === "restricted"}
-            onClick={() => setActiveTab("restricted")}
-          >
-            Restricted ({analysis.restricted.length})
-          </TabButton>
+            <TabButton
+              active={activeTab === "restricted"}
+              onClick={() => setActiveTab("restricted")}
+            >
+              Restricted ({analysis.restricted.length})
+            </TabButton>
 
-          <TabButton
-            active={activeTab === "unfollowers"}
-            onClick={() => setActiveTab("unfollowers")}
-          >
-            Unfollowers ({analysis.unfollowers.length})
-          </TabButton>
+            <TabButton
+              active={activeTab === "unfollowers"}
+              onClick={() => setActiveTab("unfollowers")}
+            >
+              Unfollowers ({analysis.unfollowers.length})
+            </TabButton>
 
-          <TabButton
-            active={activeTab === "recentUnfollowers"}
-            onClick={() => setActiveTab("recentUnfollowers")}
-          >
-            Recent Unfollowers ({analysis.recentUnfollowers.length})
-          </TabButton>
+            <TabButton
+              active={activeTab === "recentUnfollowers"}
+              onClick={() => setActiveTab("recentUnfollowers")}
+            >
+              Recent Unfollowers ({analysis.recentUnfollowers.length})
+            </TabButton>
 
-          <TabButton
-            active={activeTab === "closeFriends"}
-            onClick={() => setActiveTab("closeFriends")}
-          >
-            Close Friends ({analysis.closeFriends.length})
-          </TabButton>
+            <TabButton
+              active={activeTab === "closeFriends"}
+              onClick={() => setActiveTab("closeFriends")}
+            >
+              Close Friends ({analysis.closeFriends.length})
+            </TabButton>
 
-          <TabButton
-            active={activeTab === "hideStoriesFrom"}
-            onClick={() => setActiveTab("hideStoriesFrom")}
-          >
-            Hide Stories ({analysis.hideStoriesFrom.length})
-          </TabButton>
+            <TabButton
+              active={activeTab === "hideStoriesFrom"}
+              onClick={() => setActiveTab("hideStoriesFrom")}
+            >
+              Hide Stories ({analysis.hideStoriesFrom.length})
+            </TabButton>
+          </div>
         </div>
       </div>
     </div>

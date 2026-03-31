@@ -1,5 +1,6 @@
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
+import { animateLoadingOut } from "@/lib/useAnimateLoadingOut";
 import { useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { handleAppError } from "../../errors";
@@ -24,6 +25,10 @@ export function GetStarted() {
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
+  // LOADING TRANSITION
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const loadingRef = useRef<HTMLDivElement | null>(null);
+
   const isDemo: boolean = location.state?.isDemo ?? false;
   const isTermsAccepted = isDemo || termsAndConditionsAccepted;
   const hasValidFile = isDemo || Boolean(selectedZipFile);
@@ -46,6 +51,8 @@ export function GetStarted() {
   }
 
   async function onElaborateFile() {
+    if (isTransitioning) return;
+
     analyticsService.track(ANALYTICS_EVENTS.ANALYSIS_STARTED, {
       has_file: Boolean(selectedZipFile),
       terms_accepted: termsAndConditionsAccepted,
@@ -59,8 +66,10 @@ export function GetStarted() {
 
     try {
       const zipFile = isDemo ? await loadDemoZipFile() : selectedZipFile;
+
       if (!zipFile) {
         setUploadError("Failed to load the ZIP file. Please try again.");
+        setLoading(false);
         return;
       }
 
@@ -80,8 +89,15 @@ export function GetStarted() {
 
       const elapsed = Date.now() - start;
       const remaining = Math.max(0, MIN_LOADING_TIME - elapsed);
+
       if (remaining > 0) {
         await new Promise((resolve) => setTimeout(resolve, remaining));
+      }
+
+      setIsTransitioning(true);
+
+      if (loadingRef.current) {
+        await animateLoadingOut(loadingRef.current);
       }
 
       navigate("/results", {
@@ -91,13 +107,14 @@ export function GetStarted() {
       handleAppError(error, {
         fallbackTitle: "Invalid file",
       });
-    } finally {
+
       setLoading(false);
+      setIsTransitioning(false);
     }
   }
 
   if (loading) {
-    return <Loading loading={loading} />;
+    return <Loading ref={loadingRef} loading={loading} />;
   }
 
   return (
