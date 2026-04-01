@@ -1,14 +1,13 @@
-import { gsap } from "gsap";
-import { useEffect, useLayoutEffect, useRef } from "react";
-import { useHelpForm } from "../hooks/useHelpForm";
+import { useEffect, useRef } from "react";
+import { useSupportForm } from "../hooks/useSupportForm";
 import { toastService } from "../services/toastService";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
 import { Input } from "../ui/Input";
 import { NavBar } from "../ui/NavBar";
 
-export function HelpSection() {
-  const { form, onSubmit, submitState, isSubmitting } = useHelpForm();
+export function SupportSection() {
+  const { form, onSubmit, submitState, isSubmitting } = useSupportForm();
   const {
     register,
     formState: { errors },
@@ -32,42 +31,6 @@ export function HelpSection() {
       });
   }, [submitState]);
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        "[data-animate='hero-item']",
-        {
-          opacity: 0,
-          y: 24,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.12,
-        },
-      );
-
-      gsap.fromTo(
-        "[data-animate='hero-illustration']",
-        {
-          opacity: 0,
-          y: 32,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power3.out",
-          delay: 0.3,
-        },
-      );
-    }, rootRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
     <section className="flex min-h-svh flex-col">
       <NavBar />
@@ -77,13 +40,10 @@ export function HelpSection() {
           className="text-foreground flex flex-1 flex-col items-start pt-15 pb-6 text-center"
         >
           <div className="mb-10 flex flex-col items-start text-start">
-            <h1
-              data-animate="hero-item"
-              className="leading-headers text-4xl font-semibold md:text-5xl"
-            >
-              Help section
+            <h1 className="leading-headers text-4xl font-semibold md:text-5xl">
+              Support section
             </h1>
-            <p data-animate="hero-item" className="p1-r mt-10">
+            <p className="p1-r mt-10">
               Found any bugs or suggestions for better implementation? Fill the
               form below with your informations and I'll be grateful to read it.
             </p>
@@ -91,24 +51,16 @@ export function HelpSection() {
 
           <div className="flex w-full flex-col items-center">
             <div className="flex w-full flex-col items-center gap-10 pt-5">
-              <div
-                data-animate="hero-item"
-                className="flex w-full flex-col items-center text-start"
-              >
+              <div className="flex w-full flex-col items-center text-start">
                 <form
                   onSubmit={onSubmit}
                   className="flex w-full flex-col gap-6"
                   noValidate
                 >
-                  <label
-                    data-animate="hero-item"
-                    className="l1-b"
-                    htmlFor="fullName"
-                  >
+                  <label className="l1-b" htmlFor="fullName">
                     Full name
                   </label>
                   <Input
-                    data-animate="hero-item"
                     id="fullName"
                     type="text"
                     hasError={!!errors.fullName}
@@ -120,15 +72,10 @@ export function HelpSection() {
                     </p>
                   )}
 
-                  <label
-                    data-animate="hero-item"
-                    className="l1-b"
-                    htmlFor="email"
-                  >
+                  <label className="l1-b" htmlFor="email">
                     Email
                   </label>
                   <Input
-                    data-animate="hero-item"
                     id="email"
                     type="email"
                     hasError={!!errors.email}
@@ -140,14 +87,10 @@ export function HelpSection() {
                     </p>
                   )}
 
-                  <label
-                    data-animate="hero-item"
-                    className="l1-b"
-                    htmlFor="message"
-                  >
+                  <label className="l1-b" htmlFor="message">
                     Message
                   </label>
-                  <div className="text-end" data-animate="hero-item">
+                  <div className="text-end">
                     <Input
                       id="message"
                       variant="textarea"
@@ -157,7 +100,7 @@ export function HelpSection() {
                     <span className="text-foreground/70 self-end text-xs">
                       {messageValue.length}/500
                     </span>
-                    <div data-animate="hero-item" className="text-start">
+                    <div className="text-start">
                       {errors.message && (
                         <p className="text-accent text-sm">
                           {errors.message.message}

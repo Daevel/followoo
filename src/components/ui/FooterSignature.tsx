@@ -26,7 +26,7 @@ export function FooterSignature() {
                 Get Started
               </Link>
               <Link
-                to="/help"
+                to="/support"
                 className="text-foreground/50 hover:text-foreground transition-colors"
               >
                 Support

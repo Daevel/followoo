@@ -1,8 +1,11 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { helpSchema, type HelpFormValues } from "../schemas/help.schema";
-import { sendHelpMessage } from "../services/helpService";
+import {
+  supportSchema,
+  type SupportFormValues,
+} from "../schemas/support.schema";
+import { sendSupportMessage } from "../services/supportService";
 
 type SubmitState = {
   success: boolean;
@@ -16,12 +19,12 @@ const initialSubmitState: SubmitState = {
   message: "",
 };
 
-export function useHelpForm() {
+export function useSupportForm() {
   const [submitState, setSubmitState] =
     useState<SubmitState>(initialSubmitState);
 
-  const form = useForm<HelpFormValues>({
-    resolver: zodResolver(helpSchema),
+  const form = useForm<SupportFormValues>({
+    resolver: zodResolver(supportSchema),
     mode: "onBlur",
     reValidateMode: "onChange",
     defaultValues: {
@@ -35,7 +38,7 @@ export function useHelpForm() {
     setSubmitState(initialSubmitState);
 
     try {
-      await sendHelpMessage(values);
+      await sendSupportMessage(values);
 
       setSubmitState({
         success: true,
