@@ -23,8 +23,9 @@ const desktopInstructionSteps: InstructionStep[] = [
     title: "Open Instagram Settings",
     description: (
       <>
-        Open Instagram, go to your profile, then open <b>Settings</b> and enter{" "}
-        <b>Accounts Center</b>.
+        Open Instagram and go to your <b>profile</b> (bottom-left corner).
+        <br />
+        Then tap <b>Settings</b> and open <b>Accounts Center</b>.
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.desktop.step01,
@@ -32,11 +33,15 @@ const desktopInstructionSteps: InstructionStep[] = [
   },
   {
     id: 2,
-    title: "Open Your information and permissions",
+    title: "Find your data settings",
     description: (
       <>
-        Inside Accounts Center, open <b>Your information and permissions</b>,
-        then choose <b>Download your information</b>.
+        Inside <b>Accounts Center</b>:
+        <br />
+        <br />
+        👉 Tap <b>Your information and permissions</b>
+        <br />
+        👉 Then select <b>Export your information</b>
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.desktop.step02,
@@ -44,33 +49,51 @@ const desktopInstructionSteps: InstructionStep[] = [
   },
   {
     id: 3,
-    title: "Choose Download or transfer information",
+    title: "Start a new export",
     description: (
       <>
-        Select <b>Download or transfer information</b>, then choose your{" "}
-        <b>Instagram account</b> if you have multiple Meta accounts.
+        Tap <b>Create export</b>.
+        <br />
+        <br />
+        If you have multiple accounts:
+        <br />
+        👉 Select your <b>Instagram account</b>
+        <br />
+        <br />
+        Then choose:
+        <br />• <b>Export to device</b> (recommended)
+        <br />• or <b>Export to external service</b>
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.desktop.step03,
-    mediaAlt: "Download or transfer information flow",
+    mediaAlt: "Create export flow",
   },
   {
     id: 4,
-    title: "Setup export and some of its informations",
+    title: "Choose what to export",
     description: (
       <>
-        Use these settings:
+        Now customize your export:
+        <br />
+        <br />
+        👉 Deselect everything
+        <br />
+        👉 Select only <b>Followers and Following</b>
+        <br />
+        <br />
+        Then set:
         <br />
         <b>Format:</b> JSON
         <br />
         <b>Date range:</b> All time
         <br />
-        <b>Media quality:</b> any value is fine
+        <b>Media quality:</b> Any option is fine
         <br />
-        Select only <b>Followers and Following</b> checkbox instead of exporting
-        everything.
         <br />
-        Press Save export and then <b>Create export</b>.
+        Tap <b>Save</b>, then <b>Create export</b>.
+        <br />
+        <br />
+        💡 Don’t worry: you can’t break anything here.
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.desktop.step04,
@@ -78,10 +101,18 @@ const desktopInstructionSteps: InstructionStep[] = [
   },
   {
     id: 5,
-    title: "Download the ZIP file from the Account Center",
+    title: "Download your file",
     description: (
       <>
-        Press <b>Download file</b>. It will download a ZIP file.
+        When Instagram notifies you:
+        <br />
+        <br />
+        👉 Go back to <b>Accounts Center</b>
+        <br />
+        👉 Tap <b>Download file</b>
+        <br />
+        <br />
+        This will download a <b>ZIP file</b> to your device.
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.desktop.step05,
@@ -89,11 +120,15 @@ const desktopInstructionSteps: InstructionStep[] = [
   },
   {
     id: 6,
-    title: "Upload the ZIP directly into this app",
+    title: "Upload the ZIP file",
     description: (
       <>
-        Once downloaded, upload the <b>.zip</b> file directly here.{" "}
-        <b>Do not extract it.</b>
+        Click the <b>Continue</b> button in this app.
+        <br />
+        Then upload the ZIP file you downloaded.
+        <br />
+        <br />
+        ⚠️ <b>Important:</b> Do NOT extract the ZIP file.
       </>
     ),
     mediaAlt: "ZIP upload inside the app",
@@ -103,47 +138,89 @@ const desktopInstructionSteps: InstructionStep[] = [
 const mobileInstructionSteps: InstructionStep[] = [
   {
     id: 1,
-    title: "Open Instagram Settings",
+    title: "Go to Export your information",
     description: (
       <>
-        Open Instagram, go to your profile, then open <b>Settings</b> and enter{" "}
-        <b>Accounts Center</b>.
+        Open Instagram and go to your <b>profile</b> (bottom-right corner).
+        <br />
+        <br />
+        Tap the <b>menu (☰)</b> → <b>Settings</b> → <b>Accounts Center</b>.
+        <br />
+        <br />
+        👉 Tap <b>Your information and permissions</b>
+        <br />
+        👉 Tap <b>Export your information</b>
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.mobile.step01,
-    mediaAlt: "Instagram settings screen on mobile",
+    mediaAlt: "Navigate to export your information",
   },
   {
     id: 2,
-    title: "Open Your information and permissions",
+    title: "Start the export",
     description: (
       <>
-        Inside Accounts Center, open <b>Your information and permissions</b>,
-        then choose <b>Download your information</b>.
+        Tap <b>Create export</b>.
+        <br />
+        <br />
+        If you have multiple accounts:
+        <br />
+        👉 Select your <b>Instagram account</b>
+        <br />
+        <br />
+        Choose how to export:
+        <br />• <b>Export to device</b> (recommended)
+        <br />• or <b>Export to external service</b>
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.mobile.step02,
-    mediaAlt: "Your information and permissions section",
+    mediaAlt: "Choose export method",
   },
   {
     id: 3,
-    title: "Choose Download or transfer information",
+    title: "Choose what to export",
     description: (
       <>
-        Select <b>Download or transfer information</b>, then choose your{" "}
-        <b>Instagram account</b> if you have multiple Meta accounts.
+        Customize your export:
+        <br />
+        <br />
+        👉 Deselect everything
+        <br />
+        👉 Select only <b>Followers and Following</b>
+        <br />
+        <br />
+        Then set:
+        <br />
+        <b>Format:</b> JSON
+        <br />
+        <b>Date range:</b> All time
+        <br />
+        <b>Media quality:</b> Any option is fine
+        <br />
+        <br />
+        Tap <b>Save</b>, then <b>Create export</b>.
+        <br />
+        <br />
+        💡 Don’t worry: you can’t break anything here.
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.mobile.step03,
-    mediaAlt: "Download or transfer information flow",
+    mediaAlt: "Customize export settings",
   },
   {
     id: 4,
-    title: "Upload the ZIP directly into this app",
+    title: "Upload the ZIP file",
     description: (
       <>
-        Once downloaded, upload the <b>.zip</b> file directly here.{" "}
-        <b>Do not extract it.</b>
+        When your file is ready:
+        <br />
+        <br />
+        👉 Download the <b>ZIP file</b>
+        <br />
+        👉 Upload it here
+        <br />
+        <br />
+        ⚠️ <b>Important:</b> Do NOT extract the file.
       </>
     ),
     mediaAlt: "ZIP upload inside the app",
@@ -207,9 +284,15 @@ function formatClock(seconds: number) {
   return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
 }
 
-function StepMedia({ src, alt = "", poster }: StepMediaProps) {
+type HTMLVideoElementWithWebkitFullscreen = HTMLVideoElement & {
+  webkitEnterFullscreen?: () => void;
+};
+
+export function StepMedia({ src, alt = "", poster }: StepMediaProps) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const lastTapRef = useRef(0);
+  const singleTapTimeoutRef = useRef<number | null>(null);
 
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -221,11 +304,25 @@ function StepMedia({ src, alt = "", poster }: StepMediaProps) {
     setDuration(0);
     setCurrentTime(0);
     setIsPlaying(true);
+    lastTapRef.current = 0;
+
+    if (singleTapTimeoutRef.current) {
+      window.clearTimeout(singleTapTimeoutRef.current);
+      singleTapTimeoutRef.current = null;
+    }
 
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
     }
   }, [src]);
+
+  useEffect(() => {
+    return () => {
+      if (singleTapTimeoutRef.current) {
+        window.clearTimeout(singleTapTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const progressPercentage =
     duration > 0 ? Math.min((currentTime / duration) * 100, 100) : 0;
@@ -246,17 +343,59 @@ function StepMedia({ src, alt = "", poster }: StepMediaProps) {
   };
 
   const enterFullscreen = async () => {
-    const target = wrapperRef.current;
-    if (!target) return;
+    const wrapper = wrapperRef.current;
+    const video = videoRef.current;
 
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
+    if (!video) return;
+
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+        return;
+      }
+
+      if (video.requestFullscreen) {
+        await video.requestFullscreen();
+        return;
+      }
+
+      if (wrapper?.requestFullscreen) {
+        await wrapper.requestFullscreen();
+        return;
+      }
+
+      const safariVideo = video as HTMLVideoElementWithWebkitFullscreen;
+
+      if (typeof safariVideo.webkitEnterFullscreen === "function") {
+        safariVideo.webkitEnterFullscreen();
+      }
+    } catch (error) {
+      console.error("Failed to toggle fullscreen:", error);
+    }
+  };
+
+  const handleVideoTap = () => {
+    const now = Date.now();
+    const timeSinceLastTap = now - lastTapRef.current;
+    const doubleTapDelay = 280;
+
+    if (timeSinceLastTap > 0 && timeSinceLastTap < doubleTapDelay) {
+      if (singleTapTimeoutRef.current) {
+        window.clearTimeout(singleTapTimeoutRef.current);
+        singleTapTimeoutRef.current = null;
+      }
+
+      lastTapRef.current = 0;
+      void enterFullscreen();
       return;
     }
 
-    if (target.requestFullscreen) {
-      await target.requestFullscreen();
-    }
+    lastTapRef.current = now;
+
+    singleTapTimeoutRef.current = window.setTimeout(() => {
+      togglePlayPause();
+      singleTapTimeoutRef.current = null;
+    }, doubleTapDelay);
   };
 
   if (!isVideo) {
@@ -288,8 +427,7 @@ function StepMedia({ src, alt = "", poster }: StepMediaProps) {
           autoPlay
           muted
           playsInline
-          onClick={togglePlayPause}
-          onDoubleClick={enterFullscreen}
+          onClick={handleVideoTap}
           onLoadedMetadata={(event) => {
             const video = event.currentTarget;
             setDuration(video.duration);
@@ -320,18 +458,18 @@ function StepMedia({ src, alt = "", poster }: StepMediaProps) {
 
         <button
           type="button"
-          onClick={enterFullscreen}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition hover:bg-black/60 md:top-4 md:right-4 md:left-auto md:translate-x-0 md:translate-y-0"
+          onClick={() => void enterFullscreen()}
+          className="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition hover:bg-black/60 md:top-4 md:right-4 md:left-auto md:translate-x-0 md:translate-y-0"
           aria-label="Open video in fullscreen"
         >
-          Full screen
+          Fullscreen
         </button>
 
-        <div className="absolute right-4 bottom-8 rounded-full border border-white/20 bg-black/50 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+        <div className="pointer-events-none absolute right-4 bottom-8 rounded-full border border-white/20 bg-black/50 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
           -{formatClock(remainingTime)}
         </div>
 
-        <div className="absolute right-0 bottom-0 left-0 px-4 pb-4">
+        <div className="pointer-events-none absolute right-0 bottom-0 left-0 px-4 pb-4">
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/20">
             <div
               className="bg-accent h-full rounded-full transition-[width] duration-150"
@@ -351,7 +489,7 @@ type ActiveStepContentProps = {
 
 function ActiveStepContent({ step, totalSteps }: ActiveStepContentProps) {
   return (
-    <div className="w-full max-w-3xl text-left flex flex-col items-center">
+    <div className="flex w-full max-w-3xl flex-col items-center text-left">
       <p className="text-foreground/60 text-sm font-medium tracking-wide uppercase">
         Step {step.id} of {totalSteps}
       </p>
