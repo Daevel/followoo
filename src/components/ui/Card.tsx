@@ -1,5 +1,3 @@
-import { useCardHoverAnimation } from "@/lib/useCardHoverAnimation";
-import { useRef } from "react";
 import { Icon, type IconName } from "./Icon";
 
 type CardProps = {
@@ -15,21 +13,17 @@ export function Card({
   className = "",
   iconName = "shield",
 }: CardProps) {
-  const cardRef = useRef<HTMLDivElement | null>(null);
-
-  useCardHoverAnimation(cardRef);
-
   return (
     <>
       <div
         key={title}
-        className={`feature-card bg-primary text-foreground rounded-[10px] px-6 py-8 text-center sm:px-8 sm:py-10 ${className}`}
+        className={`bg-primary text-foreground rounded-[10px] px-6 py-8 text-center sm:px-8 sm:py-10 ${className}`}
       >
-        <div className="feature-icon-wrapper bg-foreground mx-auto flex aspect-square w-24 items-center justify-center rounded-[10px] sm:w-28 md:w-32">
+        <div className="bg-foreground mx-auto flex aspect-square w-24 items-center justify-center rounded-[10px] sm:w-28 md:w-32">
           <Icon
             name={iconName}
             color="bg"
-            className="feature-icon h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14"
+            className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14"
           />
         </div>
 

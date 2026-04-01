@@ -1,7 +1,8 @@
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
+import { animateLoadingOut } from "@/animations/loading/useAnimateLoadingOut";
+import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
-import { animateLoadingOut } from "@/lib/useAnimateLoadingOut";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { handleAppError } from "../../errors";
 import { analyzeInstagramExport } from "../services/instagramAnalisysService";
@@ -14,14 +15,21 @@ import { Loading } from "../ui/Loading";
 import { NavBar } from "../ui/NavBar";
 import { ZipDropzone } from "../ui/ZipDropzone";
 
+type FileValidationState = "idle" | "checking" | "valid" | "invalid";
+
 export function GetStarted() {
   const location = useLocation();
   const navigate = useNavigate();
+
   const [selectedZipFile, setSelectedZipFile] = useState<File | null>(null);
   const [uploadError, setUploadError] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [termsAndConditionsAccepted, setTermsAndConditionsAccepted] =
     useState<boolean>(false);
+
+  const [fileValidationState, setFileValidationState] =
+    useState<FileValidationState>("idle");
+  const [fileValidationMessage, setFileValidationMessage] = useState("");
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
@@ -31,7 +39,56 @@ export function GetStarted() {
 
   const isDemo: boolean = location.state?.isDemo ?? false;
   const isTermsAccepted = isDemo || termsAndConditionsAccepted;
-  const hasValidFile = isDemo || Boolean(selectedZipFile);
+  const hasValidFile =
+    isDemo || (Boolean(selectedZipFile) && fileValidationState === "valid");
+
+  useStandardPageAnimation(rootRef);
+
+  useEffect(() => {
+    if (isDemo) {
+      setFileValidationState("valid");
+      setFileValidationMessage("Valid Instagram export detected.");
+      return;
+    }
+
+    if (!selectedZipFile) {
+      setFileValidationState("idle");
+      setFileValidationMessage("");
+      return;
+    }
+
+    let isCancelled = false;
+
+    async function validateSelectedZipFile() {
+      if (!selectedZipFile) return;
+
+      setUploadError("");
+      setFileValidationState("checking");
+      setFileValidationMessage("");
+
+      try {
+        await parseInstagramExport(selectedZipFile);
+
+        if (isCancelled) return;
+
+        setFileValidationState("valid");
+        setFileValidationMessage("Valid Instagram export detected.");
+      } catch {
+        if (isCancelled) return;
+
+        setFileValidationState("invalid");
+        setFileValidationMessage(
+          "Invalid file format. Please upload a valid Instagram export ZIP downloaded from the Meta Accounts Center.",
+        );
+      }
+    }
+
+    void validateSelectedZipFile();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedZipFile, isDemo]);
 
   async function loadDemoZipFile() {
     const response = await fetch(vercelBlobStructure.demoFile);
@@ -52,6 +109,7 @@ export function GetStarted() {
 
   async function onElaborateFile() {
     if (isTransitioning) return;
+    if (!hasValidFile) return;
 
     analyticsService.track(ANALYTICS_EVENTS.ANALYSIS_STARTED, {
       has_file: Boolean(selectedZipFile),
@@ -127,22 +185,22 @@ export function GetStarted() {
           className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start px-4 pt-16 pb-10 text-left md:px-0 md:pt-20"
         >
           <h1
-            data-animate="hero-item"
+            data-page-animate="heading"
             className="leading-headers text-foreground text-4xl font-semibold md:text-5xl"
           >
             Upload your Instagram ZIP
           </h1>
 
           <p
-            data-animate="hero-item"
+            data-page-animate="subheading"
             className="text-foreground/80 mt-4 max-w-2xl text-lg leading-8"
           >
             Your export will be analyzed directly in your browser. Nothing is
-            uploaded to our servers.
+            uploaded to external servers.
           </p>
 
           {isDemo && (
-            <div data-animate="hero-item" className="mt-6 w-full">
+            <div data-page-animate="callout" className="mt-6 w-full">
               <Callout title="Demo mode" variant="info">
                 A sample Instagram export will be used automatically to show how
                 the analysis works.
@@ -151,35 +209,65 @@ export function GetStarted() {
           )}
 
           <div
-            data-animate="hero-item"
+            data-page-animate="content"
             className="mt-8 flex w-full flex-col gap-5"
           >
             {!isDemo && (
-              <div className="w-full">
+              <div data-page-animate="item" className="w-full">
                 <ZipDropzone
                   file={selectedZipFile}
                   onFileChange={setSelectedZipFile}
-                  onError={setUploadError}
+                  onError={(errorMessage) => {
+                    setUploadError(errorMessage);
+                    setFileValidationState("invalid");
+                    setFileValidationMessage(errorMessage);
+                  }}
                 />
               </div>
             )}
 
             {!isDemo && !selectedZipFile && !uploadError && (
-              <p className="text-foreground/60 text-sm">
+              <p
+                data-page-animate="item"
+                className="text-foreground/60 text-sm"
+              >
                 No file selected yet. Only <b>.zip</b> files are supported.
               </p>
             )}
 
-            {uploadError && (
-              <p className="text-accent w-full text-sm font-medium">
-                {uploadError}
-              </p>
+            {!isDemo && fileValidationState === "checking" && (
+              <div data-page-animate="item" className="w-full">
+                <Callout title="Checking file" variant="info">
+                  Verifying the ZIP structure...
+                </Callout>
+              </div>
             )}
+
+            {!isDemo && fileValidationState === "valid" && (
+              <div data-page-animate="item" className="w-full">
+                <Callout title="File verified" variant="success">
+                  {fileValidationMessage}
+                </Callout>
+              </div>
+            )}
+
+            {!isDemo &&
+              (fileValidationState === "invalid" || uploadError) &&
+              fileValidationMessage && (
+                <div data-page-animate="item" className="w-full">
+                  <Callout title="Invalid file" variant="warning">
+                    {fileValidationMessage}
+                  </Callout>
+                </div>
+              )}
           </div>
 
-          <div className="mt-10 flex w-full flex-col gap-8">
+          <div
+            data-page-animate="content"
+            className="mt-10 flex w-full flex-col gap-8"
+          >
             <div
-              data-animate="hero-item"
+              data-page-animate="item"
               className="text-foreground flex w-full flex-col items-start gap-4"
             >
               <h2 className="text-foreground text-xl font-semibold">
@@ -188,21 +276,19 @@ export function GetStarted() {
 
               <div className="text-foreground/85 flex flex-col gap-4 text-base leading-7">
                 <ul className="flex list-disc flex-col gap-2 pl-5">
-                  <li>Extract followers and following lists from your ZIP</li>
-                  <li>Compare the relationships between accounts</li>
                   <li>
-                    Show mutuals, followers, unfollowers, and recently
-                    unfollowed accounts
+                    Your Instagram data is securely read from the ZIP file
+                  </li>
+                  <li>Your followers and following lists are analyzed</li>
+                  <li>
+                    You&apos;ll see who follows you back, who doesn&apos;t, and
+                    recent changes in your connections
                   </li>
                 </ul>
-
-                <p className="text-foreground font-medium">
-                  Everything is processed locally in your browser.
-                </p>
               </div>
             </div>
 
-            <div data-animate="hero-item" className="w-full">
+            <div data-page-animate="item" className="w-full">
               <Callout title="Your data stays on this device" variant="info">
                 Your <b>data</b> is processed locally in your browser. No files
                 are <b>uploaded</b>, <b>stored</b>, or <b>shared</b> with
@@ -212,10 +298,13 @@ export function GetStarted() {
           </div>
 
           <div
-            data-animate="hero-item"
+            data-page-animate="content"
             className="mt-8 flex w-full flex-col items-center gap-4"
           >
-            <div className="flex w-full justify-center">
+            <div
+              data-page-animate="item"
+              className="flex w-full justify-center"
+            >
               <Checkbox
                 id="terms-and-conditions"
                 name="terms and conditions"
@@ -236,22 +325,43 @@ export function GetStarted() {
               />
             </div>
 
-            <Button
-              background="accent"
-              foreground="foreground"
-              icon="arrowRight"
-              iconPosition="right"
-              disabled={!isTermsAccepted || !hasValidFile || !!uploadError}
-              onClick={onElaborateFile}
-            >
-              Start analysis
-            </Button>
+            <div data-page-animate="item">
+              <Button
+                background="accent"
+                foreground="foreground"
+                icon="arrowRight"
+                iconPosition="right"
+                disabled={
+                  !isTermsAccepted ||
+                  !hasValidFile ||
+                  !!uploadError ||
+                  fileValidationState === "checking"
+                }
+                onClick={onElaborateFile}
+              >
+                Start analysis
+              </Button>
+            </div>
 
-            {!hasValidFile && !isDemo && (
-              <p className="text-foreground/50 text-xs">
+            {!selectedZipFile && !isDemo && (
+              <p
+                data-page-animate="item"
+                className="text-foreground/50 text-xs"
+              >
                 Upload a ZIP file to continue.
               </p>
             )}
+
+            {selectedZipFile &&
+              !isDemo &&
+              fileValidationState === "invalid" && (
+                <p
+                  data-page-animate="item"
+                  className="text-foreground/50 text-xs"
+                >
+                  Upload a valid Instagram export ZIP to continue.
+                </p>
+              )}
           </div>
         </div>
       </Container>

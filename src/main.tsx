@@ -7,6 +7,7 @@ import "./index.css";
 import { RouteAwareErrorBoundary } from "./components/errors/RouteAwareErrorBoundary.tsx";
 import { GetStarted } from "./components/pages/GetStarted.tsx";
 import { InstructionsToStart } from "./components/pages/InstructionsToStart.tsx";
+import { PrivacyPolicy } from "./components/pages/PrivacyPolicy.tsx";
 import { ResultPage } from "./components/pages/ResultPage.tsx";
 import { SupportSection } from "./components/pages/SupportSection.tsx";
 import { TermsAndConditions } from "./components/pages/TermsAndConditions.tsx";
@@ -32,6 +33,7 @@ createRoot(document.getElementById("root")!).render(
               path="/terms-and-conditions"
               element={<TermsAndConditions />}
             />
+            <Route path="/privacy-and-policy" element={<PrivacyPolicy />} />
             <Route path="/support" element={<SupportSection />} />
             <Route path="/results" element={<ResultPage />} />
             <Route path="/updates" element={<Updates />} />

@@ -49,6 +49,12 @@ export function FooterSignature() {
               >
                 Terms and conditions
               </Link>
+              <Link
+                to="/privacy-and-policy"
+                className="text-foreground/50 hover:text-foreground transition-colors"
+              >
+                Privacy Policy
+              </Link>
             </div>
           </div>
 

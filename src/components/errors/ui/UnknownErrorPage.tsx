@@ -11,7 +11,7 @@ export function UnknownErrorPage() {
         id="error-container"
         className="text-foreground flex flex-col items-center justify-center px-4 text-center align-middle"
       >
-        <h2>We couldn’t load the latest updates</h2>
+        <h2>We couldn't load the latest updates</h2>
         <img
           src={vercelBlobStructure.images.female01}
           alt="woman concerned image"

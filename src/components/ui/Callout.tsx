@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { Icon, type IconName } from "./Icon";
 
-type CalloutVariant = "info" | "warning";
+type CalloutVariant = "info" | "success" | "warning";
 
 interface CalloutProps {
   title: string;
@@ -27,6 +27,13 @@ const variantStyles: Record<
     body: "text-foreground",
     iconColor: "primary",
     defaultIcon: "help",
+  },
+  success: {
+    container: "bg-primary/10 border border-primary ",
+    title: "text-primary",
+    body: "text-foreground",
+    iconColor: "primary",
+    defaultIcon: "check",
   },
   warning: {
     container: "bg-accent/10 border border-accent ",

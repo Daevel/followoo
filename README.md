@@ -1,4 +1,4 @@
-# Followoo ![Followoo Favicon](./public/favicon.svg) 
+# Followoo ![Followoo Favicon](./public/favicon.svg)
 
 ![React](https://img.shields.io/badge/React-18-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
@@ -11,7 +11,7 @@ Take a look: https://followoo.app
 
 ![Followoo Hero](./docs/hero.png)
 
-Followoo is a privacy-focused tool that allows you to analyze your Instagram relationships directly in the browser using the ZIP file provided by Instagram’s official data export.
+Followoo is a privacy-focused tool that allows you to analyze your Instagram relationships directly in the browser using the ZIP file provided by Instagram's official data export.
 
 No login. No API access. No data storage.
 
@@ -123,8 +123,8 @@ connections/
     ├── recently_unfollowed_profiles.json
     └── blocked_profiles.json
 ```
-These files are extracted from the ZIP and analyzed to determine relationship status.
 
+These files are extracted from the ZIP and analyzed to determine relationship status.
 
 ---
 
@@ -155,7 +155,6 @@ npm run dev
 Open the application at:
 http://localhost:5173
 ```
-
 
 ---
 
@@ -208,7 +207,6 @@ Y follows X but X does not follow Y
 Unfollowers
 X follows Y but Y does not follow X
 
-
 This logic is applied to the datasets extracted from the Instagram export.
 
 ---
@@ -219,7 +217,7 @@ The interface is fully responsive and optimized for:
 
 • Desktop  
 • Tablet  
-• Mobile devices  
+• Mobile devices
 
 Key UI features include:
 
@@ -244,7 +242,6 @@ Instagram and Meta are trademarks of their respective owners.
 
 See the in-app page: /terms-and-conditions
 
-
 ---
 
 ## 🎯 Future Improvements
@@ -255,7 +252,7 @@ Planned enhancements include:
 • Visual graphs of relationships  
 • Dataset comparison between exports  
 • Improved analytics  
-• Dark / light theme switch  
+• Dark / light theme switch
 
 ---
 
@@ -265,13 +262,14 @@ Planned enhancements include:
 
 Frontend Software Engineer
 
-GitHub: https://github.com/daevel   
+GitHub: https://github.com/daevel
 
 LinkedIn: https://www.linkedin.com/in/luigi-avitabile/
 
 ---
 
 ## 🎨 Design (Figma)
+
 View-only link: https://www.figma.com/design/sNzmsQh8G1S1nyZo3lLJai/Followoo?node-id=87-93&t=ypPeZKvWGvPeGkQM-1
 
 ---

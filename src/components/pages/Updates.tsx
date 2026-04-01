@@ -1,5 +1,5 @@
+import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { handleAppError } from "@/errors";
-import { useUpdatesReveal } from "@/lib/useUpdatesReveal";
 import { useEffect, useRef, useState } from "react";
 import { UnknownErrorPage } from "../errors/ui/UnknownErrorPage";
 import { BadgeVersion } from "../ui/BadgeVersion";
@@ -47,7 +47,7 @@ function UpdateSection({
   className?: string;
 }) {
   return (
-    <section className={`text-foreground w-full ${className}`}>
+    <section className={`text-foreground w-full ${className ?? ""}`}>
       <div className="flex flex-row items-center gap-3">
         <h2 className="l1-b">{title}</h2>
         <BadgeVersion
@@ -87,12 +87,15 @@ function UpdateSection({
 }
 
 export function Updates() {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
   const [updates, setUpdates] = useState<UpdateEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  const sectionRef = useRef<HTMLElement | null>(null);
-  useUpdatesReveal(sectionRef);
+  useStandardPageAnimation(rootRef, {
+    animateItems: !isLoading && !hasError && updates.length > 0,
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -143,21 +146,30 @@ export function Updates() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="flex min-h-svh flex-col">
+    <section className="flex min-h-svh flex-col">
       <NavBar />
 
       <Container className="flex min-h-svh flex-col">
-        <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10">
-          <h1 className="leading-headers text-foreground text-4xl font-semibold md:text-5xl">
+        <div
+          ref={rootRef}
+          className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10"
+        >
+          <h1
+            data-page-animate="heading"
+            className="leading-headers text-foreground text-4xl font-semibold md:text-5xl"
+          >
             Followoo updates
           </h1>
 
-          <p className="text-foreground/70 mt-3">
+          <p data-page-animate="subheading" className="text-foreground/70 mt-3">
             Here you can find the latest improvements and features added to
             Followoo.
           </p>
 
-          <div className="mt-10 flex w-full flex-col gap-8">
+          <div
+            data-page-animate="content"
+            className="mt-10 flex w-full flex-col gap-8"
+          >
             {isLoading ? (
               <div className="flex flex-row items-center justify-center p-20 align-middle">
                 <SkeletonLoaderCircle size="lg" color="primary" />
@@ -172,7 +184,11 @@ export function Updates() {
               </div>
             ) : (
               updates.map((update, index) => (
-                <div key={update.id} className="update-heading w-full">
+                <div
+                  key={update.id}
+                  data-page-animate="item"
+                  className="update-heading w-full"
+                >
                   <UpdateSection
                     className="update-card"
                     title={update.productName}

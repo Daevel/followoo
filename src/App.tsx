@@ -1,5 +1,6 @@
-import { gsap } from "gsap";
-import { useLayoutEffect, useRef } from "react";
+import { useRef } from "react";
+
+import { useLandingPageAnimations } from "./animations/pages/useLandingPageAnimations";
 import { FooterSignature } from "./components/ui/FooterSignature";
 import { FeaturesSection } from "./components/ui/hero-subsection/FeatureSection";
 import { HeroSection } from "./components/ui/hero-subsection/HeroSection";
@@ -10,44 +11,10 @@ import { NavBar } from "./components/ui/NavBar";
 export default function App() {
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        "[data-animate='hero-item']",
-        {
-          opacity: 0,
-          y: 24,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.12,
-        },
-      );
-
-      gsap.fromTo(
-        "[data-animate='hero-illustration']",
-        {
-          opacity: 0,
-          y: 32,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power3.out",
-          delay: 0.3,
-        },
-      );
-    }, rootRef);
-
-    return () => ctx.revert();
-  }, []);
+  useLandingPageAnimations(rootRef);
 
   return (
-    <div className="bg-background min-h-screen">
+    <div ref={rootRef} className="bg-background min-h-screen">
       <NavBar />
 
       <section className="text-foreground px-18">
@@ -58,11 +25,19 @@ export default function App() {
       <PrivacySection />
       <Questions />
 
-      <section className="bg-background text-foreground relative h-180 overflow-hidden px-18 pt-10 lg:h-130">
-        <FooterSignature />
+      <section
+        data-section="footer-signature"
+        className="bg-background text-foreground relative h-180 overflow-hidden px-18 pt-10 lg:h-130"
+      >
+        <div data-animate="footer-signature">
+          <FooterSignature />
+        </div>
 
         <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[38%]">
-          <div className="text-foreground text-[120px] leading-none font-semibold whitespace-nowrap md:text-[180px] lg:text-[220px]">
+          <div
+            data-animate="footer-brand"
+            className="text-foreground text-[120px] leading-none font-semibold whitespace-nowrap md:text-[180px] lg:text-[220px]"
+          >
             Followoo
           </div>
         </div>

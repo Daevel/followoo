@@ -1,3 +1,4 @@
+import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -93,7 +94,7 @@ const desktopInstructionSteps: InstructionStep[] = [
         Tap <b>Save</b>, then <b>Create export</b>.
         <br />
         <br />
-        💡 Don’t worry: you can’t break anything here.
+        💡 Don't worry: you can't break anything here.
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.desktop.step04,
@@ -201,7 +202,7 @@ const mobileInstructionSteps: InstructionStep[] = [
         Tap <b>Save</b>, then <b>Create export</b>.
         <br />
         <br />
-        💡 Don’t worry: you can’t break anything here.
+        💡 Don't worry: you can't break anything here.
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.mobile.step03,
@@ -555,6 +556,8 @@ export function InstructionsToStart() {
 
   const hasMedia = Boolean(activeStep.mediaSrc?.trim());
 
+  useStandardPageAnimation(rootRef);
+
   useEffect(() => {
     setCurrentStep(1);
   }, [selectedDevice]);
@@ -577,41 +580,48 @@ export function InstructionsToStart() {
           className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-4 pt-16 pb-12 text-center md:px-6 md:pt-20"
         >
           <h1
-            data-animate="hero-item"
+            data-page-animate="heading"
             className="text-foreground mt-4 max-w-4xl text-4xl font-semibold md:text-6xl"
           >
-            Get Started In Minutes
+            Get your Instagram data in a few steps
           </h1>
 
           <p
-            data-animate="hero-item"
+            data-page-animate="subheading"
             className="text-foreground/80 mt-5 max-w-2xl text-lg leading-8"
           >
-            Follow the guided tutorial step by step to download the correct ZIP
-            file.
+            Follow these simple steps to download your Instagram data and upload
+            the correct ZIP file.
           </p>
 
-          <div className="mt-8 flex flex-col items-center gap-3">
+          <div
+            data-page-animate="content"
+            className="mt-8 flex flex-col items-center gap-3"
+          >
             <p className="text-foreground/60 text-xs font-medium tracking-wide uppercase">
               Choose your device
             </p>
 
             <div className="flex flex-row gap-3">
-              <DeviceStepperContent
-                deviceIcon="laptop"
-                isActive={selectedDevice === "laptop"}
-                onClick={() => setSelectedDevice("laptop")}
-              />
+              <div data-page-animate="item">
+                <DeviceStepperContent
+                  deviceIcon="laptop"
+                  isActive={selectedDevice === "laptop"}
+                  onClick={() => setSelectedDevice("laptop")}
+                />
+              </div>
 
-              <DeviceStepperContent
-                deviceIcon="smartPhone"
-                isActive={selectedDevice === "smartPhone"}
-                onClick={() => setSelectedDevice("smartPhone")}
-              />
+              <div data-page-animate="item">
+                <DeviceStepperContent
+                  deviceIcon="smartPhone"
+                  isActive={selectedDevice === "smartPhone"}
+                  onClick={() => setSelectedDevice("smartPhone")}
+                />
+              </div>
             </div>
           </div>
 
-          <div data-animate="hero-item" className="mt-10">
+          <div data-page-animate="content" className="mt-10">
             <Stepper
               steps={instructionSteps}
               currentStep={currentStep}
@@ -621,7 +631,10 @@ export function InstructionsToStart() {
 
           {hasMedia && activeStep.mediaSrc && (
             <>
-              <div className="mt-8 w-full max-w-220">
+              <div
+                data-page-animate="content"
+                className="mt-8 w-full max-w-220"
+              >
                 <StepMedia
                   key={`${selectedDevice}-${activeStep.id}`}
                   src={activeStep.mediaSrc}
@@ -629,22 +642,30 @@ export function InstructionsToStart() {
                 />
               </div>
 
-              <p className="text-foreground/50 mt-3 text-xs">
-                Tap to pause • Double tap for fullscreen
+              <p
+                data-page-animate="item"
+                className="text-foreground/50 mt-3 text-xs"
+              >
+                Tap to pause • Double tap or use the button for fullscreen
               </p>
             </>
           )}
 
           <div
-            data-animate="hero-item"
+            data-page-animate="content"
             className="mt-8 flex w-full flex-col items-center justify-center gap-4"
           >
-            <ActiveStepContent
-              step={activeStep}
-              totalSteps={instructionSteps.length}
-            />
+            <div data-page-animate="item">
+              <ActiveStepContent
+                step={activeStep}
+                totalSteps={instructionSteps.length}
+              />
+            </div>
 
-            <div className="mt-3 flex flex-row items-center gap-4">
+            <div
+              data-page-animate="item"
+              className="mt-3 flex flex-row items-center gap-4"
+            >
               <Button
                 background="primary"
                 foreground="foreground"

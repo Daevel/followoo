@@ -1,5 +1,5 @@
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
-import { gsap } from "@/lib/gsap";
+import { gsap } from "@/animations/gsap";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import type { InstagramAnalysisResult } from "../../types/instagram.types";
