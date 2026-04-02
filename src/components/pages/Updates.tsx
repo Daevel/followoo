@@ -10,7 +10,7 @@ import { SkeletonLoaderCircle } from "../ui/SkeletonLoaderCircle";
 
 type UpdateChangeGroup = {
   label: string;
-  tone: "accent" | "primary";
+  tone: "accent" | "foreground" | "primary";
   items: string[];
 };
 
@@ -66,7 +66,11 @@ function UpdateSection({
 
           {groups.map((group) => {
             const toneClass =
-              group.tone === "primary" ? "text-primary/80" : "text-accent/80";
+              group.tone === "primary"
+                ? "text-primary/80"
+                : group.tone === "accent"
+                  ? "text-accent/80"
+                  : "text-foreground/80";
 
             return (
               <div key={group.label}>
