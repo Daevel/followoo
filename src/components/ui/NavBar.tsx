@@ -7,7 +7,7 @@ const navLinks = [
   { to: "/", label: "Home" },
   { to: "/instructions-to-start", label: "How to start" },
   { to: "/get-started", label: "Analyze your export" },
-  { to: "/terms-and-conditions", label: "Terms and conditions" },
+  { to: "/support", label: "Support" },
   { to: "/updates", label: "Updates" },
 ];
 

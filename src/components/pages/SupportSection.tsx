@@ -1,3 +1,4 @@
+import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { useEffect, useRef } from "react";
 import { useSupportForm } from "../hooks/useSupportForm";
 import { toastService } from "../services/toastService";
@@ -5,6 +6,7 @@ import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
 import { Input } from "../ui/Input";
 import { NavBar } from "../ui/NavBar";
+import { SkeletonLoaderCircle } from "../ui/SkeletonLoaderCircle";
 
 export function SupportSection() {
   const { form, onSubmit, submitState, isSubmitting } = useSupportForm();
@@ -17,6 +19,8 @@ export function SupportSection() {
   const messageValue = form.watch("message") ?? "";
 
   const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useStandardPageAnimation(rootRef);
 
   useEffect(() => {
     if (submitState.success)
@@ -40,18 +44,27 @@ export function SupportSection() {
           className="text-foreground flex flex-1 flex-col items-start pt-15 pb-6 text-center"
         >
           <div className="mb-10 flex flex-col items-start text-start">
-            <h1 className="leading-headers text-4xl font-semibold md:text-5xl">
+            <h1
+              data-page-animate="heading"
+              className="leading-headers text-4xl font-semibold md:text-5xl"
+            >
               Support section
             </h1>
-            <p className="p1-r mt-10">
-              Found any bugs or suggestions for better implementation? Fill the
-              form below with your informations and I'll be grateful to read it.
+            <p data-page-animate="subheading" className="p1-r mt-10">
+              Found a bug or have feedback about the app? Use the form below to
+              let me know.
             </p>
           </div>
 
           <div className="flex w-full flex-col items-center">
-            <div className="flex w-full flex-col items-center gap-10 pt-5">
-              <div className="flex w-full flex-col items-center text-start">
+            <div
+              data-page-animate="content"
+              className="flex w-full flex-col items-center gap-10 pt-5"
+            >
+              <div
+                data-page-animate="item"
+                className="flex w-full flex-col items-center text-start"
+              >
                 <form
                   onSubmit={onSubmit}
                   className="flex w-full flex-col gap-6"
@@ -112,12 +125,18 @@ export function SupportSection() {
                   <Button
                     background="primary"
                     foreground="foreground"
-                    icon="sendMail"
+                    icon={isSubmitting ? undefined : "sendMail"}
                     iconPosition="right"
                     type="submit"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Sending..." : "Send"}
+                    {isSubmitting ? (
+                      <div className="flex flex-row items-center text-center align-middle">
+                        <SkeletonLoaderCircle size="md" color="foreground" />
+                      </div>
+                    ) : (
+                      "Send message"
+                    )}
                   </Button>
                 </form>
               </div>

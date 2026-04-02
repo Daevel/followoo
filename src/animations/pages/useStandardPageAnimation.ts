@@ -26,31 +26,6 @@ export function useStandardPageAnimation(
           "[data-page-animate='heading']",
           {
             autoAlpha: 0,
-            y: 24,
-          },
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.75,
-          },
-        )
-        .fromTo(
-          "[data-page-animate='subheading']",
-          {
-            autoAlpha: 0,
-            y: 18,
-          },
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.6,
-          },
-          "-=0.45",
-        )
-        .fromTo(
-          "[data-page-animate='callout']",
-          {
-            autoAlpha: 0,
             y: 16,
           },
           {
@@ -58,20 +33,45 @@ export function useStandardPageAnimation(
             y: 0,
             duration: 0.55,
           },
-          "-=0.3",
+        )
+        .fromTo(
+          "[data-page-animate='subheading']",
+          {
+            autoAlpha: 0,
+            y: 14,
+          },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.45,
+          },
+          "-=0.35",
+        )
+        .fromTo(
+          "[data-page-animate='callout']",
+          {
+            autoAlpha: 0,
+            y: 12,
+          },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.4,
+          },
+          "-=0.25",
         )
         .fromTo(
           "[data-page-animate='content']",
           {
             autoAlpha: 0,
-            y: 20,
+            y: 14,
           },
           {
             autoAlpha: 1,
             y: 0,
-            duration: 0.65,
+            duration: 0.5,
           },
-          "-=0.25",
+          "-=0.2",
         );
 
       if (animateItems) {
@@ -79,15 +79,15 @@ export function useStandardPageAnimation(
           itemSelector,
           {
             autoAlpha: 0,
-            y: 20,
+            y: 14,
           },
           {
             autoAlpha: 1,
             y: 0,
-            duration: 0.55,
+            duration: 0.4,
             ease: "power3.out",
-            stagger: 0.08,
-            delay: 0.2,
+            stagger: 0.05,
+            delay: 0.1,
           },
         );
       }
