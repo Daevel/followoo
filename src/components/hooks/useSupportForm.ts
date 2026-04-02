@@ -25,7 +25,7 @@ export function useSupportForm() {
 
   const form = useForm<SupportFormValues>({
     resolver: zodResolver(supportSchema),
-    mode: "onBlur",
+    mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
       fullName: "",

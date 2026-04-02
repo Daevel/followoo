@@ -12,7 +12,7 @@ export function SupportSection() {
   const { form, onSubmit, submitState, isSubmitting } = useSupportForm();
   const {
     register,
-    formState: { errors },
+    formState: { errors, isValid },
   } = form;
 
   // Watch the message field to get its value for the character count
@@ -128,7 +128,7 @@ export function SupportSection() {
                     icon={isSubmitting ? undefined : "sendMail"}
                     iconPosition="right"
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={!isValid || isSubmitting}
                   >
                     {isSubmitting ? (
                       <div className="flex flex-row items-center text-center align-middle">

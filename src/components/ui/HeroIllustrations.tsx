@@ -5,14 +5,14 @@ export function HeroIllustrations() {
     <>
       <div className="flex justify-center lg:hidden">
         <img
-          src={vercelBlobStructure.images.female01}
+          src="images/illustration-body-female-concerned-home.svg"
           alt=""
           className="w-[200px]"
         />
       </div>
       <div className="hidden lg:grid lg:grid-cols-2 lg:items-end lg:gap-8">
         <img
-          src={vercelBlobStructure.images.female01}
+          src="images/illustration-body-female-concerned-home.svg"
           alt=""
           className="w-full max-w-[200px] justify-self-center"
         />

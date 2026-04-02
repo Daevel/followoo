@@ -1,4 +1,3 @@
-import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../ui/Button";
 
@@ -13,7 +12,7 @@ export function UnknownErrorPage() {
       >
         <h2>We couldn't load the latest updates</h2>
         <img
-          src={vercelBlobStructure.images.female01}
+          src="images/illustration-body-female-concerned-home.svg"
           alt="woman concerned image"
         />
         <div className="text-foreground flex flex-col items-center gap-8 px-4">

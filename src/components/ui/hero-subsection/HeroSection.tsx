@@ -1,4 +1,3 @@
-import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/Button";
@@ -89,7 +88,7 @@ export function HeroSection() {
           className="hero-visual mt-8 w-full max-w-3xl sm:mt-12"
         >
           <img
-            src={vercelBlobStructure.images.heroLandingPage}
+            src="images/double-phone-hero-landing-page.svg"
             alt="Preview of Followoo results on mobile"
             className="mx-auto block h-auto w-[88%] max-w-85 sm:w-full sm:max-w-2xl md:max-w-3xl"
           />
