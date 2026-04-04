@@ -1,5 +1,6 @@
 import type { InstagramUser } from "../../types/instagram.types";
-import { extractFirstNameLetter, getInstagramProfileUrl } from "../utils/utils";
+import { getInstagramProfileUrl } from "../utils/instagram";
+import { extractFirstNameLetter } from "../utils/searchUtils";
 
 function formatDate(timestamp?: number) {
   if (!timestamp) return null;

@@ -1,6 +1,6 @@
 import type { InstagramObjectArrayKeys } from "../../types/enums";
 import type { InstagramUser } from "../../types/instagram.types";
-import { isRelationshipObject } from "../utils/instagramGuards";
+import { isRelationshipObject } from "../utils";
 import { isArray, isObject } from "../utils/typeGuards";
 
 function normalizeUsernameCandidate(value: unknown): string | null {

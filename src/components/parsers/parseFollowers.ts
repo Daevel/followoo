@@ -2,9 +2,9 @@ import type { InstagramUser } from "../../types/instagram.types";
 import {
   isRawInstagramUser,
   isRelationshipObject,
-} from "../utils/instagramGuards";
+  normalizeInstagramUser,
+} from "../utils/instagram";
 import { isArray } from "../utils/typeGuards";
-import { normalizeInstagramUser } from "../utils/utils";
 
 export function parseFollowers(json: unknown): InstagramUser[] {
   if (!isArray(json)) return [];

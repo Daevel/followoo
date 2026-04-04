@@ -13,7 +13,7 @@ import { RelationshipHealthInsight } from "../ui/RelationshipHealthInsight";
 import { SortSelect } from "../ui/SortSelect";
 import { UserListItem } from "../ui/UserListItem";
 import { ResultsPieChart } from "../ui/charts/ResultPieChart";
-import { formatDate } from "../utils/utils";
+import { formatDate } from "../utils";
 
 type SortKey =
   | "alphabeticalAsc"

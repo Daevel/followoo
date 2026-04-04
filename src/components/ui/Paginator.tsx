@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { generatePagination } from "../utils/utils";
+import { generatePagination } from "../utils";
 import { FabIcon } from "./FabIcon";
 
 type PaginationProps = {

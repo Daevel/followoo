@@ -17,7 +17,7 @@ import {
   isRecentFollowRequestsFile,
   isRecentlyUnfollowedFile,
   isRestrictedFile,
-} from "./../utils/instagramExportMatchers";
+} from "../utils";
 
 function safeJsonParse(content: string): unknown | null {
   try {
