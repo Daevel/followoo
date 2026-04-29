@@ -8,14 +8,6 @@ export function initializePostHog() {
   const apiKey = import.meta.env.VITE_POSTHOG_API_KEY;
   const apiHost = import.meta.env.VITE_POSTHOG_API_HOST;
 
-  console.log("MODE", import.meta.env.MODE);
-  console.log("PROD", import.meta.env.PROD);
-  console.log(
-    "POSTHOG KEY EXISTS",
-    Boolean(import.meta.env.VITE_POSTHOG_API_KEY),
-  );
-  console.log("POSTHOG HOST", import.meta.env.VITE_POSTHOG_API_HOST);
-
   if (!apiKey) {
     console.warn("Missing VITE_POSTHOG_API_KEY");
     return;
