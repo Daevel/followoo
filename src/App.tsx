@@ -1,5 +1,6 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
+import { initializePostHog } from "./analytics/posthogInit";
 import { useLandingPageAnimations } from "./animations/pages/useLandingPageAnimations";
 import { FooterSignature } from "./components/ui/FooterSignature";
 import { FeaturesSection } from "./components/ui/hero-subsection/FeatureSection";
@@ -12,6 +13,10 @@ export default function App() {
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useLandingPageAnimations(rootRef);
+
+  useEffect(() => {
+    initializePostHog();
+  }, []);
 
   return (
     <div ref={rootRef} className="bg-background min-h-screen">

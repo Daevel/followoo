@@ -8,11 +8,9 @@ export type AnalyticsProperties = Record<
 class AnalyticsService {
   track(eventName: AnalyticsEventName, properties?: AnalyticsProperties) {
     if (typeof window === "undefined") return;
-    if (typeof window.plausible !== "function") return;
+    if (typeof window.posthog === "undefined") return;
 
-    window.plausible(eventName, {
-      props: properties,
-    });
+    window.posthog.capture(eventName, properties);
   }
 }
 
