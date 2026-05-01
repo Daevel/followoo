@@ -51,15 +51,15 @@ export function ResultsPieChart({
 
   return (
     <div className="border-foreground/10 w-full rounded-[10px] border bg-white/5 p-5 md:p-6">
-      <div className="mb-5 text-start">
+      <div className="mb-5 items-center">
         <h3 className="text-foreground text-xl font-semibold">{title}</h3>
         <p className="text-foreground/70 mt-1 text-sm">
           A quick overview of your relationship groups.
         </p>
       </div>
 
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
-        <div className="relative h-[260px] w-full lg:h-[320px] lg:flex-1">
+      <div className="flex flex-col items-center gap-6 md:gap-8 lg:gap-10">
+        <div className="relative h-[260px] w-full lg:h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -112,7 +112,7 @@ export function ResultsPieChart({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 lg:w-[320px]">
+        <div className="flex w-full flex-col gap-3">
           {chartData.map((item, index) => {
             const percentage = total
               ? Math.round((item.value / total) * 100)

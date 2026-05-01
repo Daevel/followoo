@@ -12,6 +12,7 @@ import { Pagination } from "../ui/Paginator";
 import { RelationshipHealthInsight } from "../ui/RelationshipHealthInsight";
 import { SortSelect } from "../ui/SortSelect";
 import { UserListItem } from "../ui/UserListItem";
+import { EngagementPatternChart } from "../ui/charts/EngagementPatternChart";
 import { ResultsPieChart } from "../ui/charts/ResultPieChart";
 import { formatDate } from "../utils";
 
@@ -325,10 +326,10 @@ export function ResultPage() {
     <section className="flex min-h-svh flex-col">
       <NavBar />
 
-      <Container className="flex min-h-svh flex-col">
+      <Container className="flex min-h-svh max-w-6xl flex-col">
         <div
           ref={rootRef}
-          className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-4 pt-16 pb-8 text-center md:px-6 md:pt-20"
+          className="mx-auto flex w-full flex-1 flex-col items-center px-4 pt-16 pb-8 text-center md:px-6 md:pt-20"
         >
           <h1
             data-animate="hero-item"
@@ -345,12 +346,18 @@ export function ResultPage() {
             insights.
           </p>
 
-          <div data-animate="hero-item" className="mt-6 w-full">
+          <div data-animate="hero-item" className="mt-6 flex w-full flex-row">
             <RelationshipHealthInsight insight={relationshipHealthInsight} />
           </div>
 
-          <div className="mt-10 w-full">
+          <div
+            data-animate="hero-item"
+            className="mt-10 flex w-full flex-row gap-5 max-lg:flex-col"
+          >
             <ResultsPieChart data={chartData} title="Relationship breakdown" />
+            <EngagementPatternChart
+              recentUnfollowers={analysis.recentUnfollowers}
+            />
           </div>
 
           <div data-animate="hero-item" className="mt-8 w-full">
