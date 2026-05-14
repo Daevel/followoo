@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 
+import Seo from "../Seo";
 import { initializePostHog } from "./analytics/posthogInit";
 import { useLandingPageAnimations } from "./animations/pages/useLandingPageAnimations";
 import { FooterSignature } from "./components/ui/FooterSignature";
@@ -20,6 +21,12 @@ export default function App() {
 
   return (
     <div ref={rootRef} className="bg-background min-h-screen">
+      <Seo
+        title="Followoo - Compare Instagram Followers"
+        description="See how your Instagram following compares to others. Track your growth and engagement."
+        image={"https://followoo.app/favicon.svg"}
+        canonical={"https://followoo.app"}
+      />
       <NavBar />
 
       <section className="text-foreground px-18">
