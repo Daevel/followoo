@@ -64,10 +64,6 @@ export function EngagementPatternChart({
     [recentUnfollowers, period],
   );
 
-  if (patternResult.data.length === 0) {
-    return null;
-  }
-
   type ChartDataPoint = {
     period: string;
     count: number;
