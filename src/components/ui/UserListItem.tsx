@@ -1,6 +1,7 @@
-import type { InstagramUser } from "../../types/instagram.types";
+import type { InstagramUser, UserPersona } from "../../types/instagram.types";
 import { getInstagramProfileUrl } from "../utils/instagram";
 import { extractFirstNameLetter } from "../utils/searchUtils";
+import { PersonaBadge } from "./PersonaBadge";
 
 function formatDate(timestamp?: number) {
   if (!timestamp) return null;
@@ -16,9 +17,10 @@ function formatDate(timestamp?: number) {
 type UserListItemProps = {
   user: InstagramUser;
   formatDate: (timestamp?: number) => string | null;
+  persona?: UserPersona;
 };
 
-export function UserListItem({ user }: UserListItemProps) {
+export function UserListItem({ user, persona }: UserListItemProps) {
   const href = getInstagramProfileUrl(user);
   const initial = extractFirstNameLetter(user.username.toUpperCase());
   const formattedDate = formatDate(user.timestamp);
@@ -35,13 +37,14 @@ export function UserListItem({ user }: UserListItemProps) {
         {initial}
       </div>
 
-      <div className="flex min-w-0 flex-col text-start">
-        <span className="p2-b text-primary truncate">{user.username}</span>
+      <div className="flex min-w-0 flex-col gap-2 text-start">
+        <div className="flex items-center gap-2">
+          <span className="p2-b text-primary truncate">{user.username}</span>
+          {persona && <PersonaBadge persona={persona} size="sm" />}
+        </div>
 
         {formattedDate && (
-          <span className="text-foreground/60 mt-1 text-sm">
-            {formattedDate}
-          </span>
+          <span className="text-foreground/60 text-sm">{formattedDate}</span>
         )}
       </div>
     </a>

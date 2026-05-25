@@ -50,3 +50,26 @@ export type InstagramAnalysisResult = {
   closeFriends: InstagramUser[];
   hideStoriesFrom: InstagramUser[];
 };
+
+export type VolatilityLevel = "stable" | "moderate" | "high";
+
+export type NetworkVolatilityResult = {
+  instabilityIndex: number;
+  recentUnfollowRatio: number;
+  volatilityLevel: VolatilityLevel;
+  insight: string;
+};
+
+export const UserPersona = {
+  SUPER_FAN: "SUPER_FAN",
+  ENGAGED: "ENGAGED",
+  FICKLE: "FICKLE",
+  LURKER: "LURKER",
+  DORMANT: "DORMANT",
+};
+
+export type UserPersona = (typeof UserPersona)[keyof typeof UserPersona];
+
+export type UserWithPersona = InstagramUser & {
+  persona: UserPersona;
+};

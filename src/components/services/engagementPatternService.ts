@@ -1,4 +1,8 @@
-import type { InstagramUser } from "../../types/instagram.types";
+import type {
+  InstagramAnalysisResult,
+  InstagramUser,
+  NetworkVolatilityResult,
+} from "../../types/instagram.types";
 
 export type EngagementPeriod = "week" | "month" | "all";
 
@@ -182,5 +186,55 @@ export function calculateEngagementPattern(
     peakPeriod,
     averagePerPeriod,
     trend,
+  };
+}
+
+export function calculateNetworkVolatility(
+  analysis: InstagramAnalysisResult,
+): NetworkVolatilityResult {
+  const mutualCount = analysis.mutual.length;
+  const unfollowersCount = analysis.unfollowers.length;
+  const recentUnfollowersCount = analysis.recentUnfollowers.length;
+
+  const totalFollowing = mutualCount + unfollowersCount;
+
+  // Instability Index: percentage of unstable relationships
+  const unstableCount = unfollowersCount + recentUnfollowersCount;
+  const instabilityIndex =
+    totalFollowing > 0 ? (unstableCount / totalFollowing) * 100 : 0;
+
+  // Recent Unfollow Ratio: percentage of unfollowers that are recent
+  const recentUnfollowRatio =
+    unfollowersCount > 0
+      ? (recentUnfollowersCount / unfollowersCount) * 100
+      : 0;
+
+  // Determine volatility level based on thresholds
+  let volatilityLevel: "stable" | "moderate" | "high" = "stable";
+  if (instabilityIndex >= 40) {
+    volatilityLevel = "high";
+  } else if (instabilityIndex >= 20) {
+    volatilityLevel = "moderate";
+  }
+
+  // Generate insight
+  let insight = "";
+  if (volatilityLevel === "high") {
+    insight = `Your network is experiencing high churn (${instabilityIndex.toFixed(1)}% unstable). ${
+      recentUnfollowRatio > 50
+        ? "Recent unfollow activity is significant—review your recent content and engagement strategy."
+        : "Consider reaching out to key followers to strengthen relationships."
+    }`;
+  } else if (volatilityLevel === "moderate") {
+    insight = `Your network shows moderate instability (${instabilityIndex.toFixed(1)}%). Monitor your content performance and engagement metrics.`;
+  } else {
+    insight = `Your network is stable (${instabilityIndex.toFixed(1)}% instability). Keep maintaining your current strategy.`;
+  }
+
+  return {
+    instabilityIndex,
+    recentUnfollowRatio,
+    volatilityLevel,
+    insight,
   };
 }

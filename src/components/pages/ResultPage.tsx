@@ -2,18 +2,28 @@ import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { gsap } from "@/animations/gsap";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import type { InstagramAnalysisResult } from "../../types/instagram.types";
+import type {
+  InstagramAnalysisResult,
+  UserPersona,
+} from "../../types/instagram.types";
+import { calculateNetworkVolatility } from "../services/engagementPatternService";
 import { calculateRelationshipHealthScore } from "../services/relationshipHealthService";
+import {
+  classifyUserPersona,
+  groupUsersByPersona,
+} from "../services/userPersonaService";
+import { EngagementPatternChart } from "../ui/charts/EngagementPatternChart";
+import { NetworkVolatilityCard } from "../ui/charts/NetworkVolatilityCard";
+import { ResultsPieChart } from "../ui/charts/ResultPieChart";
 import { Container } from "../ui/Container";
 import { DropdownTabButton } from "../ui/DropdownTabButton";
 import { Input } from "../ui/Input";
 import { NavBar } from "../ui/NavBar";
 import { Pagination } from "../ui/Paginator";
+import { PersonaFilter } from "../ui/PersonaFilter";
 import { RelationshipHealthInsight } from "../ui/RelationshipHealthInsight";
 import { SortSelect } from "../ui/SortSelect";
 import { UserListItem } from "../ui/UserListItem";
-import { EngagementPatternChart } from "../ui/charts/EngagementPatternChart";
-import { ResultsPieChart } from "../ui/charts/ResultPieChart";
 import { formatDate } from "../utils";
 
 type SortKey =
@@ -40,6 +50,9 @@ export function ResultPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("mutual");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedPersona, setSelectedPersona] = useState<UserPersona | null>(
+    null,
+  );
 
   const itemsPerPage = 20;
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -121,14 +134,23 @@ export function ResultPage() {
   const filteredUsers = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
 
-    if (!normalizedQuery) {
-      return users;
+    let results = users;
+
+    // Filter by persona
+    if (selectedPersona) {
+      results = results.filter(
+        (user) => classifyUserPersona(user, analysis) === selectedPersona,
+      );
     }
 
-    return users.filter((user) =>
+    if (!normalizedQuery) {
+      return results;
+    }
+
+    return results.filter((user) =>
       user.username.toLowerCase().includes(normalizedQuery),
     );
-  }, [users, searchQuery]);
+  }, [users, searchQuery, selectedPersona, analysis]);
 
   const hasUsersInCurrentTab = users.length > 0;
   const hasSearchQuery = searchQuery.trim().length > 0;
@@ -245,6 +267,16 @@ export function ResultPage() {
     [analysis],
   );
 
+  const networkVolatility = useMemo(
+    () => calculateNetworkVolatility(analysis),
+    [analysis],
+  );
+
+  const personaCounts = useMemo(
+    () => groupUsersByPersona(users, analysis),
+    [users, analysis],
+  );
+
   useEffect(() => {
     analyticsService.track(ANALYTICS_EVENTS.RESULTS_TAB_CHANGED, {
       tab: activeTab,
@@ -267,7 +299,7 @@ export function ResultPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeTab, sortBy, searchQuery]);
+  }, [activeTab, sortBy, searchQuery, selectedPersona]);
 
   const tabInfos: { sectionTitle: string; description: string } =
     useMemo(() => {
@@ -361,6 +393,10 @@ export function ResultPage() {
           </div>
 
           <div data-animate="hero-item" className="mt-8 w-full">
+            <NetworkVolatilityCard volatility={networkVolatility} />
+          </div>
+
+          <div data-animate="hero-item" className="mt-8 w-full">
             <DropdownTabButton
               title="Explore your connections"
               activeTab={activeTab}
@@ -385,6 +421,14 @@ export function ResultPage() {
                 >
                   {tabInfos.description}
                 </p>
+              </div>
+
+              <div data-animate="hero-item" className="mt-6 w-full px-0">
+                <PersonaFilter
+                  personaCounts={personaCounts}
+                  selectedPersona={selectedPersona}
+                  onPersonaChange={setSelectedPersona}
+                />
               </div>
 
               <div
@@ -448,7 +492,11 @@ export function ResultPage() {
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     {paginatedUsers.map((user) => (
                       <div key={user.username} data-animate="list-item">
-                        <UserListItem user={user} formatDate={formatDate} />
+                        <UserListItem
+                          user={user}
+                          formatDate={formatDate}
+                          persona={classifyUserPersona(user, analysis)}
+                        />
                       </div>
                     ))}
                   </div>
