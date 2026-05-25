@@ -16,7 +16,17 @@ export function NavBar() {
   const location = useLocation();
 
   useEffect(() => {
-    setIsMenuOpen(false);
+    let abortController: AbortController | null = null;
+    const runEffect = () => {
+      setIsMenuOpen(false);
+    };
+
+    abortController = new AbortController();
+    void runEffect();
+
+    return () => {
+      abortController?.abort();
+    };
   }, [location.pathname]);
 
   const isActiveLink = (to: string) => location.pathname === to;

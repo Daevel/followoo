@@ -302,19 +302,30 @@ export function StepMedia({ src, alt = "", poster }: StepMediaProps) {
   const isVideo = useMemo(() => isVideoFile(src), [src]);
 
   useEffect(() => {
-    setDuration(0);
-    setCurrentTime(0);
-    setIsPlaying(true);
-    lastTapRef.current = 0;
+    let abortController: AbortController | null = null;
 
-    if (singleTapTimeoutRef.current) {
-      window.clearTimeout(singleTapTimeoutRef.current);
-      singleTapTimeoutRef.current = null;
-    }
+    const runEffect = async () => {
+      setDuration(0);
+      setCurrentTime(0);
+      setIsPlaying(true);
+      lastTapRef.current = 0;
 
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-    }
+      if (singleTapTimeoutRef.current) {
+        window.clearTimeout(singleTapTimeoutRef.current);
+        singleTapTimeoutRef.current = null;
+      }
+
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0;
+      }
+    };
+
+    void runEffect();
+    abortController = new AbortController();
+
+    return () => {
+      abortController?.abort();
+    };
   }, [src]);
 
   useEffect(() => {
@@ -559,7 +570,19 @@ export function InstructionsToStart() {
   useStandardPageAnimation(rootRef);
 
   useEffect(() => {
-    setCurrentStep(1);
+    let abortController: AbortController | null = null;
+
+    const runEffect = async () => {
+      setCurrentStep(1);
+    };
+
+    abortController = new AbortController();
+
+    void runEffect();
+
+    return () => {
+      abortController?.abort();
+    };
   }, [selectedDevice]);
 
   const goToPreviousStep = () => {

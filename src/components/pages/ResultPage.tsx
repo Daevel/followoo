@@ -46,6 +46,18 @@ export function ResultPage() {
   const location = useLocation();
   const analysis = location.state as InstagramAnalysisResult | undefined;
 
+  if (!analysis) {
+    return <Navigate to="/get-started" replace />;
+  }
+
+  return <ResultPageContent analysis={analysis} />;
+}
+
+function ResultPageContent({
+  analysis,
+}: {
+  analysis: InstagramAnalysisResult;
+}) {
   const [sortBy, setSortBy] = useState<SortKey>("alphabeticalAsc");
   const [activeTab, setActiveTab] = useState<TabKey>("mutual");
   const [currentPage, setCurrentPage] = useState(1);
@@ -103,10 +115,6 @@ export function ResultPage() {
 
     return () => ctx.revert();
   }, []);
-
-  if (!analysis) {
-    return <Navigate to="/get-started" replace />;
-  }
 
   const users = useMemo(() => {
     switch (activeTab) {
@@ -298,7 +306,19 @@ export function ResultPage() {
   }, [searchQuery, activeTab]);
 
   useEffect(() => {
-    setCurrentPage(1);
+    let abortController: AbortController | null = null;
+
+    const runEffect = () => {
+      setCurrentPage(1);
+    };
+
+    abortController = new AbortController();
+
+    void runEffect();
+
+    return () => {
+      abortController.abort();
+    };
   }, [activeTab, sortBy, searchQuery, selectedPersona]);
 
   const tabInfos: { sectionTitle: string; description: string } =

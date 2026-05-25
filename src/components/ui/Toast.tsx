@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import gsap from "gsap";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { Icon, type IconName } from "./Icon";
 
 export type ToastVariant = "info" | "success" | "warning";
@@ -84,7 +84,7 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
     return () => ctx.revert();
   }, []);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (!rootRef.current || isClosingRef.current) return;
 
     isClosingRef.current = true;
@@ -107,7 +107,7 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
         onClose(toast.id);
       },
     });
-  };
+  }, [onClose, toast.id]);
 
   useEffect(() => {
     closeTimeoutRef.current = window.setTimeout(() => {
@@ -119,7 +119,7 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
         window.clearTimeout(closeTimeoutRef.current);
       }
     };
-  }, [duration, toast.id]);
+  }, [duration, toast.id, handleClose]);
 
   const styles = variantStyles[toast.variant];
 

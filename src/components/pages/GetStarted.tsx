@@ -2,7 +2,7 @@ import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { animateLoadingOut } from "@/animations/loading/useAnimateLoadingOut";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { handleAppError } from "../../errors";
 import { analyzeInstagramExport } from "../services/instagramAnalisysService";
@@ -44,51 +44,49 @@ export function GetStarted() {
 
   useStandardPageAnimation(rootRef);
 
-  useEffect(() => {
-    if (isDemo) {
+  const validateFile = useCallback(async (file: File) => {
+    setUploadError("");
+    setFileValidationState("checking");
+    setFileValidationMessage("");
+
+    try {
+      await parseInstagramExport(file);
       setFileValidationState("valid");
       setFileValidationMessage("Valid Instagram export detected.");
-      return;
+    } catch {
+      setFileValidationState("invalid");
+      setFileValidationMessage(
+        "Invalid file format. Please upload a valid Instagram export ZIP downloaded from the Meta Accounts Center.",
+      );
     }
+  }, []);
 
-    if (!selectedZipFile) {
-      setFileValidationState("idle");
-      setFileValidationMessage("");
-      return;
-    }
+  useEffect(() => {
+    let abortController: AbortController | null = null;
 
-    let isCancelled = false;
-
-    async function validateSelectedZipFile() {
-      if (!selectedZipFile) return;
-
-      setUploadError("");
-      setFileValidationState("checking");
-      setFileValidationMessage("");
-
-      try {
-        await parseInstagramExport(selectedZipFile);
-
-        if (isCancelled) return;
-
+    const runEffect = async () => {
+      if (isDemo) {
         setFileValidationState("valid");
         setFileValidationMessage("Valid Instagram export detected.");
-      } catch {
-        if (isCancelled) return;
-
-        setFileValidationState("invalid");
-        setFileValidationMessage(
-          "Invalid file format. Please upload a valid Instagram export ZIP downloaded from the Meta Accounts Center.",
-        );
+        return;
       }
-    }
 
-    void validateSelectedZipFile();
+      if (!selectedZipFile) {
+        setFileValidationState("idle");
+        setFileValidationMessage("");
+        return;
+      }
+
+      abortController = new AbortController();
+      await validateFile(selectedZipFile);
+    };
+
+    void runEffect();
 
     return () => {
-      isCancelled = true;
+      abortController?.abort();
     };
-  }, [selectedZipFile, isDemo]);
+  }, [selectedZipFile, isDemo, validateFile]);
 
   async function loadDemoZipFile() {
     const response = await fetch(vercelBlobStructure.demoFile);

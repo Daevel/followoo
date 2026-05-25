@@ -31,7 +31,7 @@ export function useHoverLift(
 
       if (!target) return;
 
-      const safe = <T extends (...args: any[]) => any>(fn: T): T => {
+      const safe = <T extends (...args: unknown[]) => unknown>(fn: T): T => {
         return contextSafe ? contextSafe(fn) : fn;
       };
 

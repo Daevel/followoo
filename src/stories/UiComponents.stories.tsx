@@ -43,8 +43,7 @@ const sampleAnalysis = {
     { username: "luca", timestamp: 1680002000 },
     { username: "giulia", timestamp: 1680003000 },
   ],
-  unfollowers: [
-    { username: "paolo", timestamp: 1680004000 }],
+  unfollowers: [{ username: "paolo", timestamp: 1680004000 }],
   recentUnfollowers: [
     { username: "alice", timestamp: 1680005000 },
     { username: "marco", timestamp: 1680006000 },
@@ -102,8 +101,6 @@ const allIconNames = [
   "neutralFace",
 ] as const;
 
-type IconNameOption = (typeof allIconNames)[number];
-
 export function ButtonStory() {
   return (
     <div className="flex flex-wrap gap-4">
@@ -144,7 +141,7 @@ export function CheckboxStory() {
 
 export function ContainerStory() {
   return (
-    <Container className="border border-dashed border-foreground/20 p-6">
+    <Container className="border-foreground/20 border border-dashed p-6">
       <p>This content is wrapped by the Container component.</p>
     </Container>
   );
@@ -200,7 +197,7 @@ export function IconStory() {
       {allIconNames.map((name) => (
         <div
           key={name}
-          className="rounded-xl border border-foreground/10 bg-foreground/5 p-4 text-center"
+          className="border-foreground/10 bg-foreground/5 rounded-xl border p-4 text-center"
         >
           <Icon name={name} width={32} height={32} />
           <p className="mt-3 text-sm">{name}</p>
@@ -212,7 +209,7 @@ export function IconStory() {
 
 export function InputStory() {
   return (
-    <div className="flex flex-col gap-4 max-w-lg">
+    <div className="flex max-w-lg flex-col gap-4">
       <Input placeholder="Single line input" />
       <Input variant="textarea" placeholder="Multi-line textarea" />
       <Input hasError placeholder="Error state" />
@@ -231,7 +228,9 @@ export function NavBarStory() {
 export function PaginationStory() {
   const [page, setPage] = useState(2);
 
-  return <Pagination currentPage={page} totalPages={8} onPageChange={setPage} />;
+  return (
+    <Pagination currentPage={page} totalPages={8} onPageChange={setPage} />
+  );
 }
 
 export function RelationshipHealthInsightStory() {
@@ -276,7 +275,7 @@ export function SortSelectStory() {
     { label: "Recent first", value: "recent" },
     { label: "Oldest first", value: "oldest" },
     { label: "Most popular", value: "popular" },
-  ] as const;
+  ];
 
   return (
     <div className="max-w-xs">
@@ -299,20 +298,28 @@ export function ToastStory() {
   const [visible, setVisible] = useState(true);
 
   if (!visible) {
-    return (
-      <Button onClick={() => setVisible(true)}>
-        Show toast again
-      </Button>
-    );
+    return <Button onClick={() => setVisible(true)}>Show toast again</Button>;
   }
 
   return (
     <>
-    <div className="flex flex-col gap-4">
-    <Toast toast={infoToast} duration={10000} onClose={() => setVisible(false)} />
-    <Toast toast={warningToast} duration={10000} onClose={() => setVisible(false)} />
-    <Toast toast={successToast} duration={10000} onClose={() => setVisible(false)} />
-    </div>
+      <div className="flex flex-col gap-4">
+        <Toast
+          toast={infoToast}
+          duration={10000}
+          onClose={() => setVisible(false)}
+        />
+        <Toast
+          toast={warningToast}
+          duration={10000}
+          onClose={() => setVisible(false)}
+        />
+        <Toast
+          toast={successToast}
+          duration={10000}
+          onClose={() => setVisible(false)}
+        />
+      </div>
     </>
   );
 }
@@ -337,7 +344,7 @@ export function ZipDropzoneStory() {
   return (
     <div className="max-w-xl">
       <ZipDropzone file={file} onFileChange={setFile} onError={setError} />
-      {error && <p className="mt-3 text-sm text-accent">{error}</p>}
+      {error && <p className="text-accent mt-3 text-sm">{error}</p>}
     </div>
   );
 }
@@ -360,7 +367,11 @@ export function CalloutStory() {
 }
 
 export function EngagementPatternChartStory() {
-  return <EngagementPatternChart recentUnfollowers={sampleAnalysis.recentUnfollowers} />;
+  return (
+    <EngagementPatternChart
+      recentUnfollowers={sampleAnalysis.recentUnfollowers}
+    />
+  );
 }
 
 export function ResultsPieChartStory() {
@@ -372,5 +383,9 @@ export function HeroSectionStory() {
 }
 
 export function ScrollToTopStory() {
-  return <div className="border border-dashed border-foreground/20 p-6"><p>ScrollToTop renders without visual output.</p></div>;
+  return (
+    <div className="border-foreground/20 border border-dashed p-6">
+      <p>ScrollToTop renders without visual output.</p>
+    </div>
+  );
 }
