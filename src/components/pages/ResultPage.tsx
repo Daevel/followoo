@@ -1,26 +1,26 @@
-import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
-import { gsap } from "@/animations/gsap";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
+import { gsap } from "@/animations/gsap";
 import Seo from "../../../Seo";
 import type {
-    InstagramAnalysisResult,
-    UserPersona,
+  InstagramAnalysisResult,
+  UserPersona,
 } from "../../types/instagram.types";
 import { calculateNetworkVolatility } from "../services/engagementPatternService";
 import { calculateRelationshipHealthScore } from "../services/relationshipHealthService";
 import {
-    classifyUserPersona,
-    groupUsersByPersona,
+  classifyUserPersona,
+  groupUsersByPersona,
 } from "../services/userPersonaService";
+import { Container } from "../ui/Container";
 import { EngagementPatternChart } from "../ui/charts/EngagementPatternChart";
 import { NetworkVolatilityCard } from "../ui/charts/NetworkVolatilityCard";
 import { ResultsPieChart } from "../ui/charts/ResultPieChart";
-import { Container } from "../ui/Container";
 import { DropdownTabButton } from "../ui/DropdownTabButton";
 import { Input } from "../ui/Input";
 import { NavBar } from "../ui/NavBar";
-import { Pagination } from "../ui/Paginator";
+import { Paginator } from "../ui/Paginator";
 import { PersonaFilter } from "../ui/PersonaFilter";
 import { RelationshipHealthInsight } from "../ui/RelationshipHealthInsight";
 import { SortSelect } from "../ui/SortSelect";
@@ -64,7 +64,7 @@ function ResultPageContent({
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPersona, setSelectedPersona] = useState<UserPersona | null>(
-    null,
+    null
   );
 
   const itemsPerPage = 20;
@@ -75,11 +75,11 @@ function ResultPageContent({
 
     const ctx = gsap.context(() => {
       const heroItems = rootRef.current?.querySelectorAll(
-        '[data-animate="hero-item"]',
+        '[data-animate="hero-item"]'
       );
 
       const listItems = rootRef.current?.querySelectorAll(
-        '[data-animate="list-item"]',
+        '[data-animate="list-item"]'
       );
 
       const tl = gsap.timeline({
@@ -109,7 +109,7 @@ function ResultPageContent({
             ease: "power2.out",
             clearProps: "all",
           },
-          "-=0.2",
+          "-=0.2"
         );
       }
     }, rootRef);
@@ -148,7 +148,7 @@ function ResultPageContent({
     // Filter by persona
     if (selectedPersona) {
       results = results.filter(
-        (user) => classifyUserPersona(user, analysis) === selectedPersona,
+        (user) => classifyUserPersona(user, analysis) === selectedPersona
       );
     }
 
@@ -157,7 +157,7 @@ function ResultPageContent({
     }
 
     return results.filter((user) =>
-      user.username.toLowerCase().includes(normalizedQuery),
+      user.username.toLowerCase().includes(normalizedQuery)
     );
   }, [users, searchQuery, selectedPersona, analysis]);
 
@@ -237,11 +237,11 @@ function ResultPageContent({
         return nextUsers.sort((a, b) => b.username.localeCompare(a.username));
       case "recentDesc":
         return nextUsers.sort(
-          (a, b) => (b.timestamp ?? 0) - (a.timestamp ?? 0),
+          (a, b) => (b.timestamp ?? 0) - (a.timestamp ?? 0)
         );
       case "recentAsc":
         return nextUsers.sort(
-          (a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0),
+          (a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0)
         );
       default:
         return nextUsers;
@@ -268,22 +268,22 @@ function ResultPageContent({
       { name: "Close friends", value: analysis.closeFriends.length },
       { name: "Hide stories", value: analysis.hideStoriesFrom.length },
     ],
-    [analysis],
+    [analysis]
   );
 
   const relationshipHealthInsight = useMemo(
     () => calculateRelationshipHealthScore(analysis),
-    [analysis],
+    [analysis]
   );
 
   const networkVolatility = useMemo(
     () => calculateNetworkVolatility(analysis),
-    [analysis],
+    [analysis]
   );
 
   const personaCounts = useMemo(
     () => groupUsersByPersona(users, analysis),
-    [users, analysis],
+    [users, analysis]
   );
 
   useEffect(() => {
@@ -320,7 +320,7 @@ function ResultPageContent({
     return () => {
       abortController.abort();
     };
-  }, [activeTab, sortBy, searchQuery, selectedPersona]);
+  }, []);
 
   const tabInfos: { sectionTitle: string; description: string } =
     useMemo(() => {
@@ -386,165 +386,168 @@ function ResultPageContent({
       <section className="flex min-h-svh flex-col">
         <NavBar />
 
-      <Container className="flex min-h-svh max-w-6xl flex-col">
-        <div
-          ref={rootRef}
-          className="mx-auto flex w-full flex-1 flex-col items-center px-4 pt-16 pb-8 text-center md:px-6 md:pt-20"
-        >
-          <h1
-            data-animate="hero-item"
-            className="leading-headers text-foreground text-3xl font-semibold md:text-5xl"
-          >
-            Your Instagram network analysis
-          </h1>
-
-          <p
-            data-animate="hero-item"
-            className="text-foreground/70 mt-4 max-w-2xl text-base leading-7 md:text-lg"
-          >
-            A quick overview of your relationship groups, patterns, and account
-            insights.
-          </p>
-
-          <div data-animate="hero-item" className="mt-6 flex w-full flex-row">
-            <RelationshipHealthInsight insight={relationshipHealthInsight} />
-          </div>
-
+        <Container className="flex min-h-svh max-w-6xl flex-col">
           <div
-            data-animate="hero-item"
-            className="mt-10 flex w-full flex-row gap-5 max-lg:flex-col"
+            ref={rootRef}
+            className="mx-auto flex w-full flex-1 flex-col items-center px-4 pt-16 pb-8 text-center md:px-6 md:pt-20"
           >
-            <ResultsPieChart data={chartData} title="Relationship breakdown" />
-            <EngagementPatternChart
-              recentUnfollowers={analysis.recentUnfollowers}
-            />
-          </div>
+            <h1
+              data-animate="hero-item"
+              className="leading-headers text-foreground text-3xl font-semibold md:text-5xl"
+            >
+              Your Instagram network analysis
+            </h1>
 
-          <div data-animate="hero-item" className="mt-8 w-full">
-            <NetworkVolatilityCard volatility={networkVolatility} />
-          </div>
+            <p
+              data-animate="hero-item"
+              className="text-foreground/70 mt-4 max-w-2xl text-base leading-7 md:text-lg"
+            >
+              A quick overview of your relationship groups, patterns, and
+              account insights.
+            </p>
 
-          <div data-animate="hero-item" className="mt-8 w-full">
-            <DropdownTabButton
-              title="Explore your connections"
-              activeTab={activeTab}
-              analysis={analysis}
-              setActiveTab={setActiveTab}
-            />
-          </div>
+            <div data-animate="hero-item" className="mt-6 flex w-full flex-row">
+              <RelationshipHealthInsight insight={relationshipHealthInsight} />
+            </div>
 
-          <div className="border-foreground/10 bg-foreground/5 text-foreground mt-6 w-full rounded-[10px] border p-5 md:p-8">
-            <div className="w-full">
-              <div className="flex w-full flex-col items-center gap-y-2 text-center max-sm:items-start max-sm:text-start">
-                <h3
+            <div
+              data-animate="hero-item"
+              className="mt-10 flex w-full flex-row gap-5 max-lg:flex-col"
+            >
+              <ResultsPieChart
+                data={chartData}
+                title="Relationship breakdown"
+              />
+              <EngagementPatternChart
+                recentUnfollowers={analysis.recentUnfollowers}
+              />
+            </div>
+
+            <div data-animate="hero-item" className="mt-8 w-full">
+              <NetworkVolatilityCard volatility={networkVolatility} />
+            </div>
+
+            <div data-animate="hero-item" className="mt-8 w-full">
+              <DropdownTabButton
+                title="Explore your connections"
+                activeTab={activeTab}
+                analysis={analysis}
+                setActiveTab={setActiveTab}
+              />
+            </div>
+
+            <div className="border-foreground/10 bg-foreground/5 text-foreground mt-6 w-full rounded-[10px] border p-5 md:p-8">
+              <div className="w-full">
+                <div className="flex w-full flex-col items-center gap-y-2 text-center max-sm:items-start max-sm:text-start">
+                  <h3
+                    data-animate="hero-item"
+                    className="text-foreground text-2xl font-semibold"
+                  >
+                    {tabInfos.sectionTitle}
+                  </h3>
+
+                  <p
+                    data-animate="hero-item"
+                    className="text-foreground/75 max-w-2xl text-sm leading-6 md:text-base"
+                  >
+                    {tabInfos.description}
+                  </p>
+                </div>
+
+                <div data-animate="hero-item" className="mt-6 w-full px-0">
+                  <PersonaFilter
+                    personaCounts={personaCounts}
+                    selectedPersona={selectedPersona}
+                    onPersonaChange={setSelectedPersona}
+                  />
+                </div>
+
+                <div
                   data-animate="hero-item"
-                  className="text-foreground text-2xl font-semibold"
+                  className="mt-8 flex w-full flex-col gap-4 sm:gap-5 md:flex-row md:items-end md:justify-between"
                 >
-                  {tabInfos.sectionTitle}
-                </h3>
+                  <div className="w-full md:max-w-lg">
+                    <label
+                      htmlFor="search-users"
+                      className="l2-r text-foreground/80 mb-2 block text-start"
+                    >
+                      Search username
+                    </label>
+
+                    <Input
+                      id="search-users"
+                      type="text"
+                      placeholder="Type a username..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="w-full md:w-auto">
+                    <SortSelect
+                      label="Sort by"
+                      value={sortBy}
+                      onChange={setSortBy}
+                      options={[
+                        { label: "A-Z", value: "alphabeticalAsc" },
+                        { label: "Z-A", value: "alphabeticalDesc" },
+                        { label: "Most recent", value: "recentDesc" },
+                        { label: "Oldest", value: "recentAsc" },
+                      ]}
+                      className="w-full md:w-auto"
+                    />
+                  </div>
+                </div>
 
                 <p
                   data-animate="hero-item"
-                  className="text-foreground/75 max-w-2xl text-sm leading-6 md:text-base"
+                  className="text-foreground/60 mt-6 text-start text-sm"
                 >
-                  {tabInfos.description}
+                  {filteredUsers.length} result
+                  {filteredUsers.length === 1 ? "" : "s"}
                 </p>
-              </div>
 
-              <div data-animate="hero-item" className="mt-6 w-full px-0">
-                <PersonaFilter
-                  personaCounts={personaCounts}
-                  selectedPersona={selectedPersona}
-                  onPersonaChange={setSelectedPersona}
-                />
-              </div>
+                <div data-animate="hero-item" className="mt-6">
+                  {emptyState ? (
+                    <div className="border-foreground/10 bg-foreground/5 flex min-h-56 w-full flex-col items-center justify-center rounded-[10px] border px-6 py-10 text-center">
+                      <h4 className="text-foreground text-xl font-semibold">
+                        {emptyState.title}
+                      </h4>
 
-              <div
-                data-animate="hero-item"
-                className="mt-8 flex w-full flex-col gap-4 sm:gap-5 md:flex-row md:items-end md:justify-between"
-              >
-                <div className="w-full md:max-w-lg">
-                  <label
-                    htmlFor="search-users"
-                    className="l2-r text-foreground/80 mb-2 block text-start"
-                  >
-                    Search username
-                  </label>
-
-                  <Input
-                    id="search-users"
-                    type="text"
-                    placeholder="Type a username..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full"
-                  />
+                      <p className="text-foreground/80 mt-3 max-w-md text-sm leading-6">
+                        {emptyState.description}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                      {paginatedUsers.map((user) => (
+                        <div key={user.username} data-animate="list-item">
+                          <UserListItem
+                            user={user}
+                            formatDate={formatDate}
+                            persona={classifyUserPersona(user, analysis)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                <div className="w-full md:w-auto">
-                  <SortSelect
-                    label="Sort by"
-                    value={sortBy}
-                    onChange={setSortBy}
-                    options={[
-                      { label: "A-Z", value: "alphabeticalAsc" },
-                      { label: "Z-A", value: "alphabeticalDesc" },
-                      { label: "Most recent", value: "recentDesc" },
-                      { label: "Oldest", value: "recentAsc" },
-                    ]}
-                    className="w-full md:w-auto"
-                  />
-                </div>
-              </div>
-
-              <p
-                data-animate="hero-item"
-                className="text-foreground/60 mt-6 text-start text-sm"
-              >
-                {filteredUsers.length} result
-                {filteredUsers.length === 1 ? "" : "s"}
-              </p>
-
-              <div data-animate="hero-item" className="mt-6">
-                {emptyState ? (
-                  <div className="border-foreground/10 bg-foreground/5 flex min-h-56 w-full flex-col items-center justify-center rounded-[10px] border px-6 py-10 text-center">
-                    <h4 className="text-foreground text-xl font-semibold">
-                      {emptyState.title}
-                    </h4>
-
-                    <p className="text-foreground/80 mt-3 max-w-md text-sm leading-6">
-                      {emptyState.description}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                    {paginatedUsers.map((user) => (
-                      <div key={user.username} data-animate="list-item">
-                        <UserListItem
-                          user={user}
-                          formatDate={formatDate}
-                          persona={classifyUserPersona(user, analysis)}
-                        />
-                      </div>
-                    ))}
+                {!emptyState && totalPages > 1 && (
+                  <div data-animate="hero-item" className="mt-8">
+                    <Paginator
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                    />
                   </div>
                 )}
               </div>
-
-              {!emptyState && totalPages > 1 && (
-                <div data-animate="hero-item" className="mt-8">
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                  />
-                </div>
-              )}
             </div>
           </div>
-        </div>
-      </Container>
-    </section>
+        </Container>
+      </section>
     </>
   );
 }

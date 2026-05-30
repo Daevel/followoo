@@ -12,55 +12,55 @@ export function isJsonFile(path: string): boolean {
 
 export function isFollowersFile(path: string): boolean {
   return /(^|\/)connections\/followers_and_following\/followers(\.json|_\d+\.json)$/.test(
-    path,
+    path
   );
 }
 
 export function isFollowingFile(path: string): boolean {
   return /(^|\/)connections\/followers_and_following\/following(\.json|_\d+\.json)$/.test(
-    path,
+    path
   );
 }
 
 export function isRecentlyUnfollowedFile(path: string): boolean {
   return /(^|\/)connections\/followers_and_following\/recently_unfollowed_(profiles|accounts)\.json$/.test(
-    path,
+    path
   );
 }
 
 export function isPendingFollowRequestsFile(path: string): boolean {
   return /(^|\/)connections\/followers_and_following\/pending_follow_requests\.json$/.test(
-    path,
+    path
   );
 }
 
 export function isRecentFollowRequestsFile(path: string): boolean {
   return /(^|\/)connections\/followers_and_following\/recent_follow_requests\.json$/.test(
-    path,
+    path
   );
 }
 
 export function isBlockedFile(path: string): boolean {
   return /(^|\/)connections\/followers_and_following\/blocked_(profiles|accounts)\.json$/.test(
-    path,
+    path
   );
 }
 
 export function isCloseFriendsFile(path: string): boolean {
   return /(^|\/)connections\/followers_and_following\/close_(friends|accounts)\.json$/.test(
-    path,
+    path
   );
 }
 
 export function isHideStoriesFromFile(path: string): boolean {
   return /(^|\/)connections\/followers_and_following\/hide_story_(from|accounts)\.json$/.test(
-    path,
+    path
   );
 }
 
 export function isRestrictedFile(path: string): boolean {
   return /(^|\/)connections\/followers_and_following\/restricted_(profiles|accounts)\.json$/.test(
-    path,
+    path
   );
 }
 
@@ -87,7 +87,7 @@ export function isInstagramUser(value: unknown): value is InstagramUser {
 }
 
 export function isRelationshipObject(
-  value: unknown,
+  value: unknown
 ): value is InstagramRawRelationshipObject {
   return isObject(value);
 }

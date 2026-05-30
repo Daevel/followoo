@@ -2,9 +2,9 @@ import type { ComponentProps, SVGProps } from "react";
 
 import ArrowLeft from "../../icons/arrow-left.svg?react";
 import ArrowRight from "../../icons/arrow-right.svg?react";
-import CheckCircleOutline from "../../icons/check-circle-outline.svg?react";
-import CheckCircle from "../../icons/check-circle.svg?react";
 import Check from "../../icons/check.svg?react";
+import CheckCircle from "../../icons/check-circle.svg?react";
+import CheckCircleOutline from "../../icons/check-circle-outline.svg?react";
 import Close from "../../icons/close.svg?react";
 import Code from "../../icons/code.svg?react";
 import Trash from "../../icons/delete.svg?react";

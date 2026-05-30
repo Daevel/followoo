@@ -14,8 +14,18 @@ import { TermsAndConditions } from "./components/pages/TermsAndConditions.tsx";
 import { Updates } from "./components/pages/Updates.tsx";
 import { ToastProvider } from "./components/providers/ToastProvider.tsx";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
+import { registerServiceWorker } from "./pwa/pwaRegister.ts";
 
-createRoot(document.getElementById("root")!).render(
+// Register PWA Service Worker
+registerServiceWorker();
+
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error("Root element not found");
+}
+
+createRoot(rootElement).render(
   <StrictMode>
     <BrowserRouter>
       <ToastProvider>
@@ -41,5 +51,5 @@ createRoot(document.getElementById("root")!).render(
         </RouteAwareErrorBoundary>
       </ToastProvider>
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 );

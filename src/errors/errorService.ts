@@ -1,7 +1,7 @@
 import { ANALYTICS_EVENTS } from "@/analytics/analyticsEvents";
 import { analyticsService } from "@/analytics/analyticsService";
 import { toastService } from "../components/services/toastService";
-import { AppError } from "./AppError";
+import type { AppError } from "./AppError";
 import { toAppError } from "./toAppError";
 
 type HandleAppErrorOptions = {
@@ -12,7 +12,7 @@ type HandleAppErrorOptions = {
 
 export function handleAppError(
   error: unknown,
-  options: HandleAppErrorOptions = {},
+  options: HandleAppErrorOptions = {}
 ): AppError {
   const {
     showToast = true,

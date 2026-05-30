@@ -1,7 +1,7 @@
-import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import clsx from "clsx";
 import { useCallback } from "react";
-import { useDropzone, type FileRejection } from "react-dropzone";
+import { type FileRejection, useDropzone } from "react-dropzone";
+import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { toastService } from "../services/toastService";
 import { Icon } from "../ui/Icon";
 
@@ -55,7 +55,7 @@ export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
       onFileChange(nextFile);
       onError?.("");
     },
-    [onFileChange, onError],
+    [onFileChange, onError]
   );
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } =
@@ -78,7 +78,7 @@ export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
             "border-primary bg-primary/15": !isDragActive && !isDragReject,
             "border-primary bg-primary/25": isDragActive && !isDragReject,
             "border-accent bg-accent/10": isDragReject,
-          },
+          }
         )}
       >
         <input {...getInputProps()} />

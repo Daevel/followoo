@@ -11,8 +11,6 @@ export function RouteAwareErrorBoundary({
   const location = useLocation();
 
   return (
-    <AppErrorBoundary resetKey={location.pathname}>
-      {children}
-    </AppErrorBoundary>
+    <AppErrorBoundary resetKey={location.pathname}>{children}</AppErrorBoundary>
   );
 }

@@ -17,7 +17,7 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 export function calculateRelationshipHealthScore(
-  analysis: InstagramAnalysisResult,
+  analysis: InstagramAnalysisResult
 ): RelationshipHealthResult {
   const mutualCount = analysis.mutual.length;
   const followersOnlyCount = analysis.followersOnly.length;

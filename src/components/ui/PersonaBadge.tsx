@@ -1,5 +1,5 @@
-import type { UserPersona } from "@/types/instagram.types";
 import clsx from "clsx";
+import type { UserPersona } from "@/types/instagram.types";
 
 type PersonaBadgeProps = {
   persona: UserPersona;
@@ -72,7 +72,7 @@ export function PersonaBadge({ persona, size = "md" }: PersonaBadgeProps) {
         config.bgColor,
         config.textColor,
         config.borderColor,
-        sizeClasses[size],
+        sizeClasses[size]
       )}
     >
       <span>{config.emoji}</span>

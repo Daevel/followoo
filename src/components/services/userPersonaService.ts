@@ -11,14 +11,14 @@ function normalizeUsername(username: string): string {
 
 export function classifyUserPersona(
   user: InstagramUser,
-  analysis: InstagramAnalysisResult,
+  analysis: InstagramAnalysisResult
 ): UserPersona {
   const normalizedUsername = normalizeUsername(user.username);
 
   // Check Close Friends first (highest priority)
   if (
     analysis.closeFriends.some(
-      (u) => normalizeUsername(u.username) === normalizedUsername,
+      (u) => normalizeUsername(u.username) === normalizedUsername
     )
   ) {
     return "SUPER_FAN";
@@ -27,7 +27,7 @@ export function classifyUserPersona(
   // Check Recently Unfollowed
   if (
     analysis.recentUnfollowers.some(
-      (u) => normalizeUsername(u.username) === normalizedUsername,
+      (u) => normalizeUsername(u.username) === normalizedUsername
     )
   ) {
     return "FICKLE";
@@ -36,7 +36,7 @@ export function classifyUserPersona(
   // Check Mutual
   if (
     analysis.mutual.some(
-      (u) => normalizeUsername(u.username) === normalizedUsername,
+      (u) => normalizeUsername(u.username) === normalizedUsername
     )
   ) {
     return "ENGAGED";
@@ -45,7 +45,7 @@ export function classifyUserPersona(
   // Check Followers Only (Lurkers)
   if (
     analysis.followersOnly.some(
-      (u) => normalizeUsername(u.username) === normalizedUsername,
+      (u) => normalizeUsername(u.username) === normalizedUsername
     )
   ) {
     return "LURKER";
@@ -54,7 +54,7 @@ export function classifyUserPersona(
   // Check Unfollowers (Dormant)
   if (
     analysis.unfollowers.some(
-      (u) => normalizeUsername(u.username) === normalizedUsername,
+      (u) => normalizeUsername(u.username) === normalizedUsername
     )
   ) {
     return "DORMANT";
@@ -66,7 +66,7 @@ export function classifyUserPersona(
 
 export function addPersonasToUsers(
   users: InstagramUser[],
-  analysis: InstagramAnalysisResult,
+  analysis: InstagramAnalysisResult
 ): UserWithPersona[] {
   return users.map((user) => ({
     ...user,
@@ -76,7 +76,7 @@ export function addPersonasToUsers(
 
 export function groupUsersByPersona(
   users: InstagramUser[],
-  analysis: InstagramAnalysisResult,
+  analysis: InstagramAnalysisResult
 ): Record<UserPersona, number> {
   const usersWithPersona = addPersonasToUsers(users, analysis);
 

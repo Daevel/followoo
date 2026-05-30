@@ -5,5 +5,3 @@ declare global {
     posthog?: typeof posthog;
   }
 }
-
-export {};

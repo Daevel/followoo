@@ -57,7 +57,7 @@ export function Button({
         foregroundClasses[foreground],
         !disabled && backgroundHoverClasses[background],
         disabled && "cursor-not-allowed opacity-60",
-        className,
+        className
       )}
     >
       {icon && iconPosition === "left" && (

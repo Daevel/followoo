@@ -1,5 +1,5 @@
-import type { UserPersona } from "@/types/instagram.types";
 import clsx from "clsx";
+import type { UserPersona } from "@/types/instagram.types";
 import { PersonaBadge } from "./PersonaBadge";
 
 type PersonaFilterProps = {
@@ -23,7 +23,7 @@ export function PersonaFilter({
 }: PersonaFilterProps) {
   const totalUsers = Object.values(personaCounts).reduce(
     (sum, count) => sum + count,
-    0,
+    0
   );
 
   return (
@@ -35,12 +35,13 @@ export function PersonaFilter({
       <div className="flex flex-wrap gap-2">
         {/* All button */}
         <button
+          type="button"
           onClick={() => onPersonaChange(null)}
           className={clsx(
             "rounded-full border px-4 py-2 text-sm font-medium transition-all",
             selectedPersona === null
               ? "bg-primary/20 text-primary border-primary/30"
-              : "bg-foreground/5 text-foreground/70 border-foreground/10 hover:bg-foreground/10",
+              : "bg-foreground/5 text-foreground/70 border-foreground/10 hover:bg-foreground/10"
           )}
         >
           All ({totalUsers})
@@ -53,13 +54,14 @@ export function PersonaFilter({
 
           return (
             <button
+              type="button"
               key={persona}
               onClick={() => onPersonaChange(persona)}
               className={clsx(
                 "rounded-full border px-3 py-2 transition-all",
                 selectedPersona === persona
                   ? "bg-primary/20 border-primary/30"
-                  : "bg-foreground/5 border-foreground/10 hover:bg-foreground/10",
+                  : "bg-foreground/5 border-foreground/10 hover:bg-foreground/10"
               )}
             >
               <div className="flex items-center gap-2">

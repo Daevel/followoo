@@ -1,6 +1,6 @@
+import { useEffect, useRef, useState } from "react";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { handleAppError } from "@/errors";
-import { useEffect, useRef, useState } from "react";
 import Seo from "../../../Seo";
 import { UnknownErrorPage } from "../errors/ui/UnknownErrorPage";
 import { BadgeVersion } from "../ui/BadgeVersion";
@@ -161,68 +161,71 @@ export function Updates() {
       <section className="flex min-h-svh flex-col">
         <NavBar />
 
-      <Container className="flex min-h-svh flex-col">
-        <div
-          ref={rootRef}
-          className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10"
-        >
-          <h1
-            data-page-animate="heading"
-            className="leading-headers text-foreground text-4xl font-semibold md:text-5xl"
-          >
-            Followoo updates
-          </h1>
-
-          <p data-page-animate="subheading" className="text-foreground/70 mt-3">
-            Here you can find the latest improvements and features added to
-            Followoo.
-          </p>
-
+        <Container className="flex min-h-svh flex-col">
           <div
-            data-page-animate="content"
-            className="mt-10 flex w-full flex-col gap-8"
+            ref={rootRef}
+            className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10"
           >
-            {isLoading ? (
-              <div className="flex flex-row items-center justify-center p-20 align-middle">
-                <SkeletonLoaderCircle size="lg" color="primary" />
-              </div>
-            ) : hasError ? (
-              <div className="flex h-full w-full flex-col items-center justify-center">
-                <UnknownErrorPage />
-              </div>
-            ) : updates.length === 0 ? (
-              <div className="text-foreground/70">
-                No updates available yet.
-              </div>
-            ) : (
-              updates.map((update, index) => (
-                <div
-                  key={update.id}
-                  data-page-animate="item"
-                  className="update-heading w-full"
-                >
-                  <UpdateSection
-                    className="update-card"
-                    title={update.productName}
-                    description={update.description}
-                    groups={update.groups}
-                    badgeVersion={update.version}
-                    badgeBackgroundColor={update.badgeBackgroundColor}
-                    releaseDate={update.releaseDate}
-                  />
+            <h1
+              data-page-animate="heading"
+              className="leading-headers text-foreground text-4xl font-semibold md:text-5xl"
+            >
+              Followoo updates
+            </h1>
 
-                  {index < updates.length - 1 ? (
-                    <div className="mt-8">
-                      <Separator variant="foreground" />
-                    </div>
-                  ) : null}
+            <p
+              data-page-animate="subheading"
+              className="text-foreground/70 mt-3"
+            >
+              Here you can find the latest improvements and features added to
+              Followoo.
+            </p>
+
+            <div
+              data-page-animate="content"
+              className="mt-10 flex w-full flex-col gap-8"
+            >
+              {isLoading ? (
+                <div className="flex flex-row items-center justify-center p-20 align-middle">
+                  <SkeletonLoaderCircle size="lg" color="primary" />
                 </div>
-              ))
-            )}
+              ) : hasError ? (
+                <div className="flex h-full w-full flex-col items-center justify-center">
+                  <UnknownErrorPage />
+                </div>
+              ) : updates.length === 0 ? (
+                <div className="text-foreground/70">
+                  No updates available yet.
+                </div>
+              ) : (
+                updates.map((update, index) => (
+                  <div
+                    key={update.id}
+                    data-page-animate="item"
+                    className="update-heading w-full"
+                  >
+                    <UpdateSection
+                      className="update-card"
+                      title={update.productName}
+                      description={update.description}
+                      groups={update.groups}
+                      badgeVersion={update.version}
+                      badgeBackgroundColor={update.badgeBackgroundColor}
+                      releaseDate={update.releaseDate}
+                    />
+
+                    {index < updates.length - 1 ? (
+                      <div className="mt-8">
+                        <Separator variant="foreground" />
+                      </div>
+                    ) : null}
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-        </div>
-      </Container>
-    </section>
+        </Container>
+      </section>
     </>
   );
 }

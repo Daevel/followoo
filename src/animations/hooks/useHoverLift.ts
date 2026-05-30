@@ -14,7 +14,7 @@ type UseHoverLiftOptions = {
 
 export function useHoverLift(
   rootRef: RefObject<HTMLElement | null>,
-  options: UseHoverLiftOptions = {},
+  options: UseHoverLiftOptions = {}
 ) {
   const { cardSelector, nestedSelectors = [], disabled = false } = options;
 
@@ -65,6 +65,6 @@ export function useHoverLift(
         target.removeEventListener("mouseleave", onLeave);
       };
     },
-    { scope: rootRef },
+    { scope: rootRef }
   );
 }

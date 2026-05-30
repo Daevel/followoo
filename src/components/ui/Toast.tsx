@@ -77,7 +77,7 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
           scale: 1,
           duration: 0.35,
           ease: "power3.out",
-        },
+        }
       );
     }, rootRef);
 
@@ -119,7 +119,7 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
         window.clearTimeout(closeTimeoutRef.current);
       }
     };
-  }, [duration, toast.id, handleClose]);
+  }, [duration, handleClose]);
 
   const styles = variantStyles[toast.variant];
 
@@ -130,7 +130,7 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
       aria-live="polite"
       className={clsx(
         "pointer-events-auto box-border w-full rounded-[10px] p-4 shadow-lg backdrop-blur-sm",
-        styles.container,
+        styles.container
       )}
     >
       <div className="grid grid-cols-[auto_1fr_auto] items-start gap-3">
@@ -152,7 +152,7 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
             <p
               className={clsx(
                 "mt-1 text-sm leading-5 break-words",
-                styles.body,
+                styles.body
               )}
             >
               {toast.description}

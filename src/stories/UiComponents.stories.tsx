@@ -4,21 +4,21 @@ import { BadgeVersion } from "../components/ui/BadgeVersion";
 import { Button } from "../components/ui/Button";
 import { Callout } from "../components/ui/Callout";
 import { Card } from "../components/ui/Card";
-import { EngagementPatternChart } from "../components/ui/charts/EngagementPatternChart";
-import { ResultsPieChart } from "../components/ui/charts/ResultPieChart";
 import { Checkbox } from "../components/ui/Checkbox";
 import { Container } from "../components/ui/Container";
+import { EngagementPatternChart } from "../components/ui/charts/EngagementPatternChart";
+import { ResultsPieChart } from "../components/ui/charts/ResultPieChart";
 import { DropdownCard } from "../components/ui/DropdownCard";
 import { DropdownTabButton } from "../components/ui/DropdownTabButton";
 import { FabIcon } from "../components/ui/FabIcon";
 import { FooterSignature } from "../components/ui/FooterSignature";
-import { HeroSection } from "../components/ui/hero-subsection/HeroSection";
 import { HeroIllustrations } from "../components/ui/HeroIllustrations";
+import { HeroSection } from "../components/ui/hero-subsection/HeroSection";
 import { Icon } from "../components/ui/Icon";
 import { Input } from "../components/ui/Input";
 import { Loading } from "../components/ui/Loading";
 import { NavBar } from "../components/ui/NavBar";
-import { Pagination } from "../components/ui/Paginator";
+import { Paginator } from "../components/ui/Paginator";
 import { RelationshipHealthInsight } from "../components/ui/RelationshipHealthInsight";
 import { Separator } from "../components/ui/Separator";
 import { SkeletonLoaderCircle } from "../components/ui/SkeletonLoaderCircle";
@@ -225,12 +225,10 @@ export function NavBarStory() {
   return <NavBar />;
 }
 
-export function PaginationStory() {
+export function PaginatorStory() {
   const [page, setPage] = useState(2);
 
-  return (
-    <Pagination currentPage={page} totalPages={8} onPageChange={setPage} />
-  );
+  return <Paginator currentPage={page} totalPages={8} onPageChange={setPage} />;
 }
 
 export function RelationshipHealthInsightStory() {
@@ -302,25 +300,23 @@ export function ToastStory() {
   }
 
   return (
-    <>
-      <div className="flex flex-col gap-4">
-        <Toast
-          toast={infoToast}
-          duration={10000}
-          onClose={() => setVisible(false)}
-        />
-        <Toast
-          toast={warningToast}
-          duration={10000}
-          onClose={() => setVisible(false)}
-        />
-        <Toast
-          toast={successToast}
-          duration={10000}
-          onClose={() => setVisible(false)}
-        />
-      </div>
-    </>
+    <div className="flex flex-col gap-4">
+      <Toast
+        toast={infoToast}
+        duration={10000}
+        onClose={() => setVisible(false)}
+      />
+      <Toast
+        toast={warningToast}
+        duration={10000}
+        onClose={() => setVisible(false)}
+      />
+      <Toast
+        toast={successToast}
+        duration={10000}
+        onClose={() => setVisible(false)}
+      />
+    </div>
   );
 }
 

@@ -2,8 +2,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  supportSchema,
   type SupportFormValues,
+  supportSchema,
 } from "../schemas/support.schema";
 import { sendSupportMessage } from "../services/supportService";
 

@@ -1,11 +1,9 @@
 import JSZip from "jszip";
-
+import { AppError, ERROR_CODES } from "../../errors";
 import { InstagramObjectArrayKeys } from "../../types/enums";
 import type { InstagramExportData } from "../../types/instagram.types";
 import { parseFollowers } from "../parsers/parseFollowers";
 import { parseWrappedRelationshipUsers } from "../parsers/parseWrappedRelationshipUsers";
-
-import { AppError, ERROR_CODES } from "../../errors";
 import {
   isBlockedFile,
   isCloseFriendsFile,
@@ -56,7 +54,7 @@ function createEmptyInstagramExportData(): InstagramExportData {
 }
 
 export async function parseInstagramExport(
-  file: File,
+  file: File
 ): Promise<InstagramExportData> {
   let zip: JSZip;
 
@@ -93,8 +91,8 @@ export async function parseInstagramExport(
       result.following.push(
         ...parseWrappedRelationshipUsers(
           json,
-          InstagramObjectArrayKeys.FOLLOWING,
-        ),
+          InstagramObjectArrayKeys.FOLLOWING
+        )
       );
       continue;
     }
@@ -103,8 +101,8 @@ export async function parseInstagramExport(
       result.recentlyUnfollowed.push(
         ...parseWrappedRelationshipUsers(
           json,
-          InstagramObjectArrayKeys.UNFOLLOWED_USERS,
-        ),
+          InstagramObjectArrayKeys.UNFOLLOWED_USERS
+        )
       );
       continue;
     }
@@ -113,8 +111,8 @@ export async function parseInstagramExport(
       result.blocked.push(
         ...parseWrappedRelationshipUsers(
           json,
-          InstagramObjectArrayKeys.BLOCKED_USERS,
-        ),
+          InstagramObjectArrayKeys.BLOCKED_USERS
+        )
       );
       continue;
     }
@@ -123,8 +121,8 @@ export async function parseInstagramExport(
       result.restricted.push(
         ...parseWrappedRelationshipUsers(
           json,
-          InstagramObjectArrayKeys.RESTRICTED_USERS,
-        ),
+          InstagramObjectArrayKeys.RESTRICTED_USERS
+        )
       );
       continue;
     }
@@ -133,8 +131,8 @@ export async function parseInstagramExport(
       result.closeFriends.push(
         ...parseWrappedRelationshipUsers(
           json,
-          InstagramObjectArrayKeys.CLOSE_FRIENDS,
-        ),
+          InstagramObjectArrayKeys.CLOSE_FRIENDS
+        )
       );
       continue;
     }
@@ -143,8 +141,8 @@ export async function parseInstagramExport(
       result.hideStoriesFrom.push(
         ...parseWrappedRelationshipUsers(
           json,
-          InstagramObjectArrayKeys.HIDE_STORIES_FROM,
-        ),
+          InstagramObjectArrayKeys.HIDE_STORIES_FROM
+        )
       );
       continue;
     }
@@ -153,8 +151,8 @@ export async function parseInstagramExport(
       result.pendingFollowRequests.push(
         ...parseWrappedRelationshipUsers(
           json,
-          InstagramObjectArrayKeys.PERMANENT_FOLLOW_REQUESTS,
-        ),
+          InstagramObjectArrayKeys.PERMANENT_FOLLOW_REQUESTS
+        )
       );
       continue;
     }

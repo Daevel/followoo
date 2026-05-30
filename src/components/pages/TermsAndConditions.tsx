@@ -1,5 +1,5 @@
-import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { useRef } from "react";
+import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import Seo from "../../../Seo";
 import { Container } from "../ui/Container";
 import { NavBar } from "../ui/NavBar";

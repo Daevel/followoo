@@ -1,5 +1,5 @@
-import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { useEffect, useRef } from "react";
+import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import Seo from "../../../Seo";
 import { useSupportForm } from "../hooks/useSupportForm";
 import { toastService } from "../services/toastService";
@@ -46,7 +46,7 @@ function SupportContent() {
     if (submitState.error)
       return toastService.warning({
         title: "Warning",
-        description: "An error has occurred: " + submitState.message.toString(),
+        description: `An error has occurred: ${submitState.message.toString()}`,
       });
   }, [submitState]);
 

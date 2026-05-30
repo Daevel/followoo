@@ -55,7 +55,7 @@ export const Input = forwardRef<
             baseClasses,
             stateClasses,
             "min-h-[140px] resize-none py-3",
-            className,
+            className
           )}
           {...textareaProps}
         />

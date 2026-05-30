@@ -39,7 +39,7 @@ export function SkeletonLoaderCircle({
         className={clsx(
           "animate-spin rounded-full border-solid",
           sizeClasses[size],
-          colorClasses[color],
+          colorClasses[color]
         )}
       />
     </div>

@@ -28,3 +28,10 @@ dist-ssr
 
 *storybook.log
 storybook-static
+
+
+dev-dist/
+dist/
+build/
+coverage/
+storybook-static/

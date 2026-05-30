@@ -77,7 +77,7 @@ sectionConfigs.forEach(({ section, heading, subheading, items, icon }) => {
       duration: 0.7,
       ease: "power3.out",
     },
-    icon ? "-=0.2" : 0,
+    icon ? "-=0.2" : 0
   );
 
   if (subheading) {
@@ -89,7 +89,7 @@ sectionConfigs.forEach(({ section, heading, subheading, items, icon }) => {
         duration: 0.6,
         ease: "power2.out",
       },
-      "-=0.35",
+      "-=0.35"
     );
   }
 
@@ -102,12 +102,12 @@ sectionConfigs.forEach(({ section, heading, subheading, items, icon }) => {
       ease: "power3.out",
       stagger: 0.08,
     },
-    "-=0.2",
+    "-=0.2"
   );
 });
 
 export function useLandingPageAnimations(
-  rootRef: RefObject<HTMLDivElement | null>,
+  rootRef: RefObject<HTMLDivElement | null>
 ) {
   useGSAP(
     () => {
@@ -125,7 +125,7 @@ export function useLandingPageAnimations(
           y: 0,
           duration: 0.8,
           ease: "power3.out",
-        },
+        }
       );
 
       gsap.fromTo(
@@ -141,7 +141,7 @@ export function useLandingPageAnimations(
           ease: "power3.out",
           stagger: 0.1,
           delay: 0.1,
-        },
+        }
       );
 
       gsap.fromTo(
@@ -156,7 +156,7 @@ export function useLandingPageAnimations(
           duration: 1,
           ease: "power3.out",
           delay: 0.2,
-        },
+        }
       );
 
       gsap.fromTo(
@@ -172,7 +172,7 @@ export function useLandingPageAnimations(
           ease: "power3.out",
           stagger: 0.08,
           delay: 0.35,
-        },
+        }
       );
 
       const sectionConfigs = [
@@ -225,7 +225,7 @@ export function useLandingPageAnimations(
                 scale: 1,
                 duration: 0.6,
                 ease: "power3.out",
-              },
+              }
             );
           }
 
@@ -241,7 +241,7 @@ export function useLandingPageAnimations(
               duration: 0.7,
               ease: "power3.out",
             },
-            icon ? "-=0.2" : undefined,
+            icon ? "-=0.2" : undefined
           );
 
           if (subheading) {
@@ -257,7 +257,7 @@ export function useLandingPageAnimations(
                 duration: 0.6,
                 ease: "power2.out",
               },
-              "-=0.35",
+              "-=0.35"
             );
           }
 
@@ -274,9 +274,9 @@ export function useLandingPageAnimations(
               ease: "power3.out",
               stagger: 0.08,
             },
-            "-=0.2",
+            "-=0.2"
           );
-        },
+        }
       );
 
       // Footer
@@ -296,7 +296,7 @@ export function useLandingPageAnimations(
             start: "top 85%",
             once: true,
           },
-        },
+        }
       );
 
       gsap.fromTo(
@@ -315,7 +315,7 @@ export function useLandingPageAnimations(
             start: "top 85%",
             once: true,
           },
-        },
+        }
       );
 
       // Optional desktop-only parallax
@@ -336,6 +336,6 @@ export function useLandingPageAnimations(
         mm.revert();
       };
     },
-    { scope: rootRef },
+    { scope: rootRef }
   );
 }

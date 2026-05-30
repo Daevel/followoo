@@ -75,7 +75,7 @@ export function ResultsPieChart({
               >
                 {chartData.map((entry, index) => (
                   <Cell
-                    key={`${entry.name}-${index}`}
+                    key={entry.name}
                     fill={CHART_COLORS[index % CHART_COLORS.length]}
                   />
                 ))}

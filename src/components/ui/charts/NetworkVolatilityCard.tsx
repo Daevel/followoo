@@ -1,6 +1,6 @@
+import clsx from "clsx";
 import { Icon } from "@/components/ui/Icon";
 import type { NetworkVolatilityResult } from "@/types/instagram.types";
-import clsx from "clsx";
 
 type NetworkVolatilityCardProps = {
   volatility: NetworkVolatilityResult;
@@ -46,7 +46,7 @@ export function NetworkVolatilityCard({
     <div
       className={clsx(
         "border-foreground/10 flex w-full flex-col rounded-[10px] border bg-white/5 p-5 md:p-6",
-        config.borderColor,
+        config.borderColor
       )}
     >
       <div className="mb-6 flex flex-col">

@@ -10,6 +10,6 @@ export async function sendSupportMessage(data: SupportFormValues) {
       email: data.email,
       message: data.message,
     },
-    import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+    import.meta.env.VITE_EMAILJS_PUBLIC_KEY
   );
 }

@@ -1,6 +1,6 @@
 export async function ensureMinimumDelay(
   startTime: number,
-  minimumDelay: number,
+  minimumDelay: number
 ) {
   const elapsed = Date.now() - startTime;
   const remaining = Math.max(0, minimumDelay - elapsed);

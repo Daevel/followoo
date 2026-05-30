@@ -9,7 +9,7 @@ Analyze your Instagram followers and relationships using your official Instagram
 
 Take a look: https://followoo.app
 
-![Followoo Hero](./docs/hero.png)
+![Followoo Hero](./docs/images/hero.png)
 
 Followoo is a privacy-focused tool that allows you to analyze your Instagram relationships directly in the browser using the ZIP file provided by Instagram's official data export.
 
@@ -72,25 +72,25 @@ Once the page is refreshed or closed, the data disappears.
 
 ### Results Overview
 
-![Results](./docs/results.png)
+![Results](./docs/images/results.png)
 
 ### Search and Sorting
 
-![Search](./docs/search.png)
+![Search](./docs/images/search.png)
 
 ### Mobile Experience
 
-![Mobile](./docs/mobile.png)
+![Mobile](./docs/images/mobile.png)
 
 ### Upload ZIP
 
-![Upload](./docs/upload.png)
+![Upload](./docs/images/upload.png)
 
 ---
 
 ## 🎥 Demo
 
-![Demo](./docs/demo.gif)
+![Demo](./docs/images/demo.gif)
 
 ---
 

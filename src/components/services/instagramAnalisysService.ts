@@ -25,7 +25,7 @@ function dedupeUsers(users: InstagramUser[]): InstagramUser[] {
 }
 
 export function analyzeInstagramExport(
-  data: InstagramExportData,
+  data: InstagramExportData
 ): InstagramAnalysisResult {
   const followers = dedupeUsers(data.followers);
   const following = dedupeUsers(data.following);
@@ -36,23 +36,23 @@ export function analyzeInstagramExport(
   const hideStoriesFrom = dedupeUsers(data.hideStoriesFrom);
 
   const followerMap = new Map(
-    followers.map((user) => [normalizeUsername(user.username), user]),
+    followers.map((user) => [normalizeUsername(user.username), user])
   );
 
   const followingMap = new Map(
-    following.map((user) => [normalizeUsername(user.username), user]),
+    following.map((user) => [normalizeUsername(user.username), user])
   );
 
   const mutual = followers.filter((user) =>
-    followingMap.has(normalizeUsername(user.username)),
+    followingMap.has(normalizeUsername(user.username))
   );
 
   const followersOnly = followers.filter(
-    (user) => !followingMap.has(normalizeUsername(user.username)),
+    (user) => !followingMap.has(normalizeUsername(user.username))
   );
 
   const unfollowers = following.filter(
-    (user) => !followerMap.has(normalizeUsername(user.username)),
+    (user) => !followerMap.has(normalizeUsername(user.username))
   );
 
   return {
@@ -63,6 +63,6 @@ export function analyzeInstagramExport(
     blocked,
     restricted,
     closeFriends,
-    hideStoriesFrom
+    hideStoriesFrom,
   };
 }

@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { Icon } from "@/components/ui/Icon.tsx";
 import type { InstagramAnalysisResult } from "@/types/instagram.types";
-import { useState } from "react";
 import { TabButton } from "./TabButton";
 
 type TabKey =

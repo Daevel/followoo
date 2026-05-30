@@ -13,7 +13,7 @@ export function UnknownErrorPage() {
         <h2>We couldn't load the latest updates</h2>
         <img
           src="images/illustration-body-female-concerned-home.svg"
-          alt="woman concerned image"
+          alt="Concerned woman"
         />
         <div className="text-foreground flex flex-col items-center gap-8 px-4">
           <p>

@@ -12,7 +12,7 @@ function normalizeUsernameCandidate(value: unknown): string | null {
 
 export function parseWrappedRelationshipUsers(
   json: unknown,
-  key: InstagramObjectArrayKeys,
+  key: InstagramObjectArrayKeys
 ): InstagramUser[] {
   if (!isObject(json)) return [];
 

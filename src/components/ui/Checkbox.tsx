@@ -1,10 +1,8 @@
 import clsx from "clsx";
 import { Icon } from "./Icon";
 
-interface CheckboxProps extends Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "type"
-> {
+interface CheckboxProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
   label?: React.ReactNode;
   hasError?: boolean;
 }
@@ -22,7 +20,7 @@ export function Checkbox({
       className={clsx(
         "inline-flex items-center gap-3",
         disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
-        className,
+        className
       )}
     >
       <input
@@ -43,7 +41,7 @@ export function Checkbox({
           hasError && checked && "bg-accent border-accent",
           hasError && !checked && "border-accent",
           "peer-focus:ring-2 peer-focus:ring-primary",
-          hasError && "peer-focus:ring-accent",
+          hasError && "peer-focus:ring-accent"
         )}
       >
         <Icon
@@ -53,7 +51,7 @@ export function Checkbox({
           height={14}
           className={clsx(
             "transition-opacity",
-            checked ? "opacity-100" : "opacity-0",
+            checked ? "opacity-100" : "opacity-0"
           )}
           aria-hidden="true"
         />

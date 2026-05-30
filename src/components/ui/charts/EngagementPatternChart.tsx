@@ -1,10 +1,3 @@
-import {
-  calculateEngagementPattern,
-  type EngagementPatternResult,
-  type EngagementPeriod,
-} from "@/components/services/engagementPatternService";
-import { Icon } from "@/components/ui/Icon";
-import type { InstagramUser } from "@/types/instagram.types";
 import clsx from "clsx";
 import { useMemo, useState } from "react";
 import {
@@ -16,6 +9,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  calculateEngagementPattern,
+  type EngagementPatternResult,
+  type EngagementPeriod,
+} from "@/components/services/engagementPatternService";
+import { Icon } from "@/components/ui/Icon";
+import type { InstagramUser } from "@/types/instagram.types";
 
 type EngagementPatternChartProps = {
   recentUnfollowers: InstagramUser[];
@@ -61,7 +61,7 @@ export function EngagementPatternChart({
 
   const patternResult: EngagementPatternResult = useMemo(
     () => calculateEngagementPattern(recentUnfollowers, period),
-    [recentUnfollowers, period],
+    [recentUnfollowers, period]
   );
 
   type ChartDataPoint = {
@@ -91,13 +91,14 @@ export function EngagementPatternChart({
       <div className="mb-6 flex flex-row justify-center gap-3">
         {(["month", "week"] as const).map((p) => (
           <button
+            type="button"
             key={p}
             onClick={() => setPeriod(p)}
             className={clsx(
               "rounded-lg px-4 py-2 text-sm font-medium transition-all",
               period === p
                 ? "bg-primary/20 text-primary border-primary/30 border"
-                : "bg-foreground/5 text-foreground/70 border-foreground/10 hover:bg-foreground/10 border",
+                : "bg-foreground/5 text-foreground/70 border-foreground/10 hover:bg-foreground/10 border"
             )}
           >
             {p === "month" ? "Monthly" : "Weekly"}

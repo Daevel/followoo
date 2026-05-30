@@ -1,8 +1,8 @@
-import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
-import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
+import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import Seo from "../../../Seo";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
@@ -40,10 +40,8 @@ const desktopInstructionSteps: InstructionStep[] = [
       <>
         Inside <b>Accounts Center</b>:
         <br />
-        <br />
-        👉 Tap <b>Your information and permissions</b>
-        <br />
-        👉 Then select <b>Export your information</b>
+        <br />👉 Tap <b>Your information and permissions</b>
+        <br />👉 Then select <b>Export your information</b>
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.desktop.step02,
@@ -58,8 +56,7 @@ const desktopInstructionSteps: InstructionStep[] = [
         <br />
         <br />
         If you have multiple accounts:
-        <br />
-        👉 Select your <b>Instagram account</b>
+        <br />👉 Select your <b>Instagram account</b>
         <br />
         <br />
         Then choose:
@@ -77,10 +74,8 @@ const desktopInstructionSteps: InstructionStep[] = [
       <>
         Now customize your export:
         <br />
-        <br />
-        👉 Deselect everything
-        <br />
-        👉 Select only <b>Followers and Following</b>
+        <br />👉 Deselect everything
+        <br />👉 Select only <b>Followers and Following</b>
         <br />
         <br />
         Then set:
@@ -94,8 +89,7 @@ const desktopInstructionSteps: InstructionStep[] = [
         <br />
         Tap <b>Save</b>, then <b>Create export</b>.
         <br />
-        <br />
-        💡 Don't worry: you can't break anything here.
+        <br />💡 Don't worry: you can't break anything here.
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.desktop.step04,
@@ -108,10 +102,8 @@ const desktopInstructionSteps: InstructionStep[] = [
       <>
         When Instagram notifies you:
         <br />
-        <br />
-        👉 Go back to <b>Accounts Center</b>
-        <br />
-        👉 Tap <b>Download file</b>
+        <br />👉 Go back to <b>Accounts Center</b>
+        <br />👉 Tap <b>Download file</b>
         <br />
         <br />
         This will download a <b>ZIP file</b> to your device.
@@ -148,10 +140,8 @@ const mobileInstructionSteps: InstructionStep[] = [
         <br />
         Tap the <b>menu (☰)</b> → <b>Settings</b> → <b>Accounts Center</b>.
         <br />
-        <br />
-        👉 Tap <b>Your information and permissions</b>
-        <br />
-        👉 Tap <b>Export your information</b>
+        <br />👉 Tap <b>Your information and permissions</b>
+        <br />👉 Tap <b>Export your information</b>
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.mobile.step01,
@@ -166,8 +156,7 @@ const mobileInstructionSteps: InstructionStep[] = [
         <br />
         <br />
         If you have multiple accounts:
-        <br />
-        👉 Select your <b>Instagram account</b>
+        <br />👉 Select your <b>Instagram account</b>
         <br />
         <br />
         Choose how to export:
@@ -185,10 +174,8 @@ const mobileInstructionSteps: InstructionStep[] = [
       <>
         Customize your export:
         <br />
-        <br />
-        👉 Deselect everything
-        <br />
-        👉 Select only <b>Followers and Following</b>
+        <br />👉 Deselect everything
+        <br />👉 Select only <b>Followers and Following</b>
         <br />
         <br />
         Then set:
@@ -202,8 +189,7 @@ const mobileInstructionSteps: InstructionStep[] = [
         <br />
         Tap <b>Save</b>, then <b>Create export</b>.
         <br />
-        <br />
-        💡 Don't worry: you can't break anything here.
+        <br />💡 Don't worry: you can't break anything here.
       </>
     ),
     mediaSrc: vercelBlobStructure.videos.mobile.step03,
@@ -216,10 +202,8 @@ const mobileInstructionSteps: InstructionStep[] = [
       <>
         When your file is ready:
         <br />
-        <br />
-        👉 Download the <b>ZIP file</b>
-        <br />
-        👉 Upload it here
+        <br />👉 Download the <b>ZIP file</b>
+        <br />👉 Upload it here
         <br />
         <br />
         ⚠️ <b>Important:</b> Do NOT extract the file.
@@ -327,7 +311,7 @@ export function StepMedia({ src, alt = "", poster }: StepMediaProps) {
     return () => {
       abortController?.abort();
     };
-  }, [src]);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -538,7 +522,7 @@ function DeviceStepperContent({
         "border-foreground flex h-15 w-15 items-center justify-center rounded-full border transition-all duration-200",
         isActive
           ? "bg-accent scale-105 shadow-[0_0_0_4px_rgba(255,255,255,0.04)]"
-          : "bg-bg hover:border-foreground/70",
+          : "bg-bg hover:border-foreground/70"
       )}
     >
       <Icon name={deviceIcon} color="foreground" width={30} height={30} />
@@ -563,7 +547,7 @@ export function InstructionsToStart() {
     () =>
       instructionSteps.find((step) => step.id === currentStep) ??
       instructionSteps[0],
-    [currentStep, instructionSteps],
+    [currentStep, instructionSteps]
   );
 
   const hasMedia = Boolean(activeStep.mediaSrc?.trim());
@@ -584,7 +568,7 @@ export function InstructionsToStart() {
     return () => {
       abortController?.abort();
     };
-  }, [selectedDevice]);
+  }, []);
 
   const goToPreviousStep = () => {
     setCurrentStep((prev) => Math.max(1, prev - 1));
@@ -605,127 +589,127 @@ export function InstructionsToStart() {
       <section className="flex min-h-svh flex-col">
         <NavBar />
 
-      <Container className="flex min-h-svh max-w-5xl flex-col">
-        <div
-          ref={rootRef}
-          className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-4 pt-16 pb-12 text-center md:px-6 md:pt-20"
-        >
-          <h1
-            data-page-animate="heading"
-            className="text-foreground mt-4 max-w-4xl text-4xl font-semibold md:text-6xl"
-          >
-            Get your Instagram data in a few steps
-          </h1>
-
-          <p
-            data-page-animate="subheading"
-            className="text-foreground/80 mt-5 max-w-2xl text-lg leading-8"
-          >
-            Follow these simple steps to download your Instagram data and upload
-            the correct ZIP file.
-          </p>
-
+        <Container className="flex min-h-svh max-w-5xl flex-col">
           <div
-            data-page-animate="content"
-            className="mt-8 flex flex-col items-center gap-3"
+            ref={rootRef}
+            className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-4 pt-16 pb-12 text-center md:px-6 md:pt-20"
           >
-            <p className="text-foreground/60 text-xs font-medium tracking-wide uppercase">
-              Choose your device
+            <h1
+              data-page-animate="heading"
+              className="text-foreground mt-4 max-w-4xl text-4xl font-semibold md:text-6xl"
+            >
+              Get your Instagram data in a few steps
+            </h1>
+
+            <p
+              data-page-animate="subheading"
+              className="text-foreground/80 mt-5 max-w-2xl text-lg leading-8"
+            >
+              Follow these simple steps to download your Instagram data and
+              upload the correct ZIP file.
             </p>
 
-            <div className="flex flex-row gap-3">
-              <div data-page-animate="item">
-                <DeviceStepperContent
-                  deviceIcon="laptop"
-                  isActive={selectedDevice === "laptop"}
-                  onClick={() => setSelectedDevice("laptop")}
-                />
-              </div>
+            <div
+              data-page-animate="content"
+              className="mt-8 flex flex-col items-center gap-3"
+            >
+              <p className="text-foreground/60 text-xs font-medium tracking-wide uppercase">
+                Choose your device
+              </p>
 
-              <div data-page-animate="item">
-                <DeviceStepperContent
-                  deviceIcon="smartPhone"
-                  isActive={selectedDevice === "smartPhone"}
-                  onClick={() => setSelectedDevice("smartPhone")}
-                />
+              <div className="flex flex-row gap-3">
+                <div data-page-animate="item">
+                  <DeviceStepperContent
+                    deviceIcon="laptop"
+                    isActive={selectedDevice === "laptop"}
+                    onClick={() => setSelectedDevice("laptop")}
+                  />
+                </div>
+
+                <div data-page-animate="item">
+                  <DeviceStepperContent
+                    deviceIcon="smartPhone"
+                    isActive={selectedDevice === "smartPhone"}
+                    onClick={() => setSelectedDevice("smartPhone")}
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div data-page-animate="content" className="mt-10">
-            <Stepper
-              steps={instructionSteps}
-              currentStep={currentStep}
-              onStepClick={setCurrentStep}
-            />
-          </div>
-
-          {hasMedia && activeStep.mediaSrc && (
-            <>
-              <div
-                data-page-animate="content"
-                className="mt-8 w-full max-w-220"
-              >
-                <StepMedia
-                  key={`${selectedDevice}-${activeStep.id}`}
-                  src={activeStep.mediaSrc}
-                  alt={activeStep.mediaAlt}
-                />
-              </div>
-
-              <p
-                data-page-animate="item"
-                className="text-foreground/50 mt-3 text-xs"
-              >
-                Tap to pause • Double tap or use the button for fullscreen
-              </p>
-            </>
-          )}
-
-          <div
-            data-page-animate="content"
-            className="mt-8 flex w-full flex-col items-center justify-center gap-4"
-          >
-            <div data-page-animate="item">
-              <ActiveStepContent
-                step={activeStep}
-                totalSteps={instructionSteps.length}
+            <div data-page-animate="content" className="mt-10">
+              <Stepper
+                steps={instructionSteps}
+                currentStep={currentStep}
+                onStepClick={setCurrentStep}
               />
             </div>
 
-            <div
-              data-page-animate="item"
-              className="mt-3 flex flex-row items-center gap-4"
-            >
-              <Button
-                background="primary"
-                foreground="foreground"
-                onClick={goToPreviousStep}
-                disabled={currentStep === 1}
-              >
-                Back
-              </Button>
-
-              {currentStep < totalSteps ? (
-                <Button
-                  background="accent"
-                  foreground="foreground"
-                  onClick={goToNextStep}
+            {hasMedia && activeStep.mediaSrc && (
+              <>
+                <div
+                  data-page-animate="content"
+                  className="mt-8 w-full max-w-220"
                 >
-                  Next
+                  <StepMedia
+                    key={`${selectedDevice}-${activeStep.id}`}
+                    src={activeStep.mediaSrc}
+                    alt={activeStep.mediaAlt}
+                  />
+                </div>
+
+                <p
+                  data-page-animate="item"
+                  className="text-foreground/50 mt-3 text-xs"
+                >
+                  Tap to pause • Double tap or use the button for fullscreen
+                </p>
+              </>
+            )}
+
+            <div
+              data-page-animate="content"
+              className="mt-8 flex w-full flex-col items-center justify-center gap-4"
+            >
+              <div data-page-animate="item">
+                <ActiveStepContent
+                  step={activeStep}
+                  totalSteps={instructionSteps.length}
+                />
+              </div>
+
+              <div
+                data-page-animate="item"
+                className="mt-3 flex flex-row items-center gap-4"
+              >
+                <Button
+                  background="primary"
+                  foreground="foreground"
+                  onClick={goToPreviousStep}
+                  disabled={currentStep === 1}
+                >
+                  Back
                 </Button>
-              ) : (
-                <Link to="/get-started">
-                  <Button background="accent" foreground="foreground">
-                    Continue
+
+                {currentStep < totalSteps ? (
+                  <Button
+                    background="accent"
+                    foreground="foreground"
+                    onClick={goToNextStep}
+                  >
+                    Next
                   </Button>
-                </Link>
-              )}
+                ) : (
+                  <Link to="/get-started">
+                    <Button background="accent" foreground="foreground">
+                      Continue
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </Container>
-    </section>
+        </Container>
+      </section>
     </>
   );
 }

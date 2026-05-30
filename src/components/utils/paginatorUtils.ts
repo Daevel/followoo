@@ -1,7 +1,7 @@
-export function generatePagination(
+export function generatePaginator(
   currentPage: number,
   totalPages: number,
-  maxVisiblePages: number,
+  maxVisiblePages: number
 ): Array<number | "..."> {
   if (totalPages <= maxVisiblePages) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);

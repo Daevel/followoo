@@ -44,7 +44,7 @@ function formatWeekRange(startDate: Date): string {
 }
 
 function groupByMonth(
-  users: InstagramUser[],
+  users: InstagramUser[]
 ): Map<string, { date: Date; count: number }> {
   const groupMap = new Map<string, { date: Date; count: number }>();
 
@@ -65,7 +65,7 @@ function groupByMonth(
 }
 
 function groupByWeek(
-  users: InstagramUser[],
+  users: InstagramUser[]
 ): Map<string, { date: Date; count: number }> {
   const groupMap = new Map<string, Date>();
   const weekCounts = new Map<string, number>();
@@ -98,10 +98,10 @@ function groupByWeek(
 
 export function calculateEngagementPattern(
   recentUnfollowers: InstagramUser[],
-  period: EngagementPeriod = "month",
+  period: EngagementPeriod = "month"
 ): EngagementPatternResult {
   const unfollowersWithTimestamp = recentUnfollowers.filter(
-    (user) => user.timestamp,
+    (user) => user.timestamp
   );
 
   if (unfollowersWithTimestamp.length === 0) {
@@ -130,7 +130,7 @@ export function calculateEngagementPattern(
 
   const totalUnfollowers = sortedEntries.reduce(
     (sum, item) => sum + item.count,
-    0,
+    0
   );
 
   const timelineData: TimelineDataPoint[] = sortedEntries.map(
@@ -145,13 +145,13 @@ export function calculateEngagementPattern(
       date,
       count,
       percentage: (count / totalUnfollowers) * 100,
-    }),
+    })
   );
 
   const peakPeriod =
     timelineData.length > 0
       ? timelineData.reduce((max, current) =>
-          current.count > max.count ? current : max,
+          current.count > max.count ? current : max
         )
       : null;
 
@@ -190,7 +190,7 @@ export function calculateEngagementPattern(
 }
 
 export function calculateNetworkVolatility(
-  analysis: InstagramAnalysisResult,
+  analysis: InstagramAnalysisResult
 ): NetworkVolatilityResult {
   const mutualCount = analysis.mutual.length;
   const unfollowersCount = analysis.unfollowers.length;

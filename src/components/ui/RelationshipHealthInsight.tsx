@@ -32,7 +32,7 @@ function HealthFace({ level }: { level: RelationshipHealthLevel }) {
     <div
       className={clsx(
         "flex h-16 w-16 shrink-0 items-center justify-center rounded-full border md:h-18 md:w-18",
-        faceColorClass,
+        faceColorClass
       )}
       aria-hidden="true"
     >
@@ -81,7 +81,7 @@ export function RelationshipHealthInsight({
           <div
             className={clsx(
               "rounded-[10px] border px-4 py-2 text-sm font-medium",
-              badgeClass,
+              badgeClass
             )}
           >
             {insight.level === "healthy" && "Good"}
@@ -96,7 +96,7 @@ export function RelationshipHealthInsight({
             <p
               className={clsx(
                 "text-3xl font-semibold max-md:text-5xl md:text-5xl",
-                accentClass,
+                accentClass
               )}
             >
               {insight.score}

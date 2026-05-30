@@ -8,7 +8,7 @@ export function isArray(value: unknown): value is unknown[] {
 
 export function isArrayOf<T>(
   value: unknown,
-  guard: (item: unknown) => item is T,
+  guard: (item: unknown) => item is T
 ): value is T[] {
   return isArray(value) && value.every(guard);
 }

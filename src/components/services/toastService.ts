@@ -18,7 +18,9 @@ function emit(toast: ToastPayload) {
     ...toast,
   };
 
-  listeners.forEach((listener) => listener(item));
+  listeners.forEach((listener) => {
+    listener(item);
+  });
 }
 
 export const toastService = {
