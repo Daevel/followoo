@@ -3,6 +3,7 @@ import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import Seo from "../../../Seo";
 import { Button } from "../ui/Button";
 import { Container } from "../ui/Container";
 import { Icon } from "../ui/Icon";
@@ -594,8 +595,15 @@ export function InstructionsToStart() {
   };
 
   return (
-    <section className="flex min-h-svh flex-col">
-      <NavBar />
+    <>
+      <Seo
+        title="Followoo - Instructions"
+        description="Follow our step-by-step instructions to download your Instagram data and start analyzing your followers."
+        image="https://followoo.app/favicon.svg"
+        canonical="https://followoo.app/instructions"
+      />
+      <section className="flex min-h-svh flex-col">
+        <NavBar />
 
       <Container className="flex min-h-svh max-w-5xl flex-col">
         <div
@@ -718,5 +726,6 @@ export function InstructionsToStart() {
         </div>
       </Container>
     </section>
+    </>
   );
 }

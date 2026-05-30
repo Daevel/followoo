@@ -4,6 +4,7 @@ import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnim
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
+import Seo from "../../../Seo";
 import { handleAppError } from "../../errors";
 import { analyzeInstagramExport } from "../services/instagramAnalisysService";
 import { parseInstagramExport } from "../services/instagramExportService";
@@ -174,8 +175,15 @@ export function GetStarted() {
   }
 
   return (
-    <section className="flex min-h-svh flex-col">
-      <NavBar />
+    <>
+      <Seo
+        title="Followoo - Get Started"
+        description="Start analyzing your Instagram followers. Upload your Instagram data to compare your engagement and growth with others."
+        image="https://followoo.app/favicon.svg"
+        canonical="https://followoo.app/get-started"
+      />
+      <section className="flex min-h-svh flex-col">
+        <NavBar />
 
       <Container className="flex min-h-svh flex-col">
         <div
@@ -364,5 +372,6 @@ export function GetStarted() {
         </div>
       </Container>
     </section>
+    </>
   );
 }

@@ -1,5 +1,6 @@
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { useRef } from "react";
+import Seo from "../../../Seo";
 import { Callout } from "../ui/Callout";
 import { Container } from "../ui/Container";
 import { NavBar } from "../ui/NavBar";
@@ -25,6 +26,12 @@ export function PrivacyPolicy() {
 
   return (
     <section className="flex min-h-svh flex-col">
+      <Seo
+        title="Followoo - Privacy Policy"
+        description="Read our privacy policy to understand how we collect, use, and protect your data."
+        image="https://followoo.app/favicon.svg"
+        canonical="https://followoo.app/privacy"
+      />
       <NavBar />
 
       <Container className="flex min-h-svh flex-col">

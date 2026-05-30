@@ -1,5 +1,6 @@
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { useEffect, useRef } from "react";
+import Seo from "../../../Seo";
 import { useSupportForm } from "../hooks/useSupportForm";
 import { toastService } from "../services/toastService";
 import { Button } from "../ui/Button";
@@ -9,6 +10,20 @@ import { NavBar } from "../ui/NavBar";
 import { SkeletonLoaderCircle } from "../ui/SkeletonLoaderCircle";
 
 export function SupportSection() {
+  return (
+    <>
+      <Seo
+        title="Followoo - Support"
+        description="Contact our support team if you have any questions or need assistance with Followoo."
+        image="https://followoo.app/favicon.svg"
+        canonical="https://followoo.app/support"
+      />
+      <SupportContent />
+    </>
+  );
+}
+
+function SupportContent() {
   const { form, onSubmit, submitState, isSubmitting } = useSupportForm();
   const {
     register,

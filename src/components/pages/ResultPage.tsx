@@ -2,15 +2,16 @@ import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { gsap } from "@/animations/gsap";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import Seo from "../../../Seo";
 import type {
-  InstagramAnalysisResult,
-  UserPersona,
+    InstagramAnalysisResult,
+    UserPersona,
 } from "../../types/instagram.types";
 import { calculateNetworkVolatility } from "../services/engagementPatternService";
 import { calculateRelationshipHealthScore } from "../services/relationshipHealthService";
 import {
-  classifyUserPersona,
-  groupUsersByPersona,
+    classifyUserPersona,
+    groupUsersByPersona,
 } from "../services/userPersonaService";
 import { EngagementPatternChart } from "../ui/charts/EngagementPatternChart";
 import { NetworkVolatilityCard } from "../ui/charts/NetworkVolatilityCard";
@@ -375,8 +376,15 @@ function ResultPageContent({
     }, [activeTab]);
 
   return (
-    <section className="flex min-h-svh flex-col">
-      <NavBar />
+    <>
+      <Seo
+        title="Followoo - Analysis Results"
+        description="View detailed insights about your Instagram followers, including engagement patterns, relationship health, and user personas."
+        image="https://followoo.app/favicon.svg"
+        canonical="https://followoo.app/results"
+      />
+      <section className="flex min-h-svh flex-col">
+        <NavBar />
 
       <Container className="flex min-h-svh max-w-6xl flex-col">
         <div
@@ -537,5 +545,6 @@ function ResultPageContent({
         </div>
       </Container>
     </section>
+    </>
   );
 }

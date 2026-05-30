@@ -1,6 +1,7 @@
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { handleAppError } from "@/errors";
 import { useEffect, useRef, useState } from "react";
+import Seo from "../../../Seo";
 import { UnknownErrorPage } from "../errors/ui/UnknownErrorPage";
 import { BadgeVersion } from "../ui/BadgeVersion";
 import { Container } from "../ui/Container";
@@ -150,8 +151,15 @@ export function Updates() {
   }, []);
 
   return (
-    <section className="flex min-h-svh flex-col">
-      <NavBar />
+    <>
+      <Seo
+        title="Followoo - Updates"
+        description="Check out the latest updates and improvements to Followoo."
+        image="https://followoo.app/favicon.svg"
+        canonical="https://followoo.app/updates"
+      />
+      <section className="flex min-h-svh flex-col">
+        <NavBar />
 
       <Container className="flex min-h-svh flex-col">
         <div
@@ -215,5 +223,6 @@ export function Updates() {
         </div>
       </Container>
     </section>
+    </>
   );
 }

@@ -1,5 +1,6 @@
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { useRef } from "react";
+import Seo from "../../../Seo";
 import { Container } from "../ui/Container";
 import { NavBar } from "../ui/NavBar";
 
@@ -24,6 +25,12 @@ export function TermsAndConditions() {
 
   return (
     <section className="flex min-h-svh flex-col">
+      <Seo
+        title="Followoo - Terms and Conditions"
+        description="Review our terms and conditions that govern the use of Followoo service."
+        image="https://followoo.app/favicon.svg"
+        canonical="https://followoo.app/terms"
+      />
       <NavBar />
 
       <Container className="flex min-h-svh flex-col">

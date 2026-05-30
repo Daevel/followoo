@@ -8,7 +8,7 @@ type SeoProps = {
   schemaMarkup?: object;
 };
 
-const Seo = ({
+export const Seo = ({
   title,
   description,
   canonical,
