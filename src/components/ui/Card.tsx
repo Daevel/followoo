@@ -7,6 +7,7 @@ type CardProps = {
   color?: "primary" | "accent" | "bg" | "foreground";
   iconName?: IconName | null;
   children?: React.ReactNode;
+  opacity?: boolean;
 };
 
 const textColorMap: Record<NonNullable<CardProps["color"]>, string> = {
@@ -39,16 +40,18 @@ export function Card({
   className = "",
   iconName = null,
   color = "primary",
+  opacity = false,
   children,
 }: CardProps) {
   const textColorClass = textColorMap[color];
   const iconWrapperBg = iconWrapperBgMap[color];
   const iconColor = iconColorMap[color];
+  const opacityClass = opacity ? "backdrop-blur-md" : "";
 
   return (
     <div
       key={title}
-      className={`bg-${color} ${textColorClass} rounded-[10px] px-6 py-8 text-center sm:px-8 sm:py-10 ${className}`}
+      className={`bg-${color} ${opacityClass} ${textColorClass} rounded-[10px] px-6 py-8 text-center sm:px-8 sm:py-10 ${className}`}
     >
       {iconName && (
         <div
@@ -68,7 +71,7 @@ export function Card({
       </div>
 
       {children && (
-        <div className="flex flex-row mt-8 gap-2 justify-center">
+        <div className="flex flex-row flex-wrap mt-8 gap-2 justify-center">
           {children}
         </div>
       )}

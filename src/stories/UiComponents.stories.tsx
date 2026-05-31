@@ -20,6 +20,7 @@ import { Loading } from "../components/ui/Loading";
 import { NavBar } from "../components/ui/NavBar";
 import { Paginator } from "../components/ui/Paginator";
 import { RelationshipHealthInsight } from "../components/ui/RelationshipHealthInsight";
+import { ScreenMount } from "../components/ui/ScreenMount";
 import { Separator } from "../components/ui/Separator";
 import { Skeleton } from "../components/ui/Skeleton";
 import { SkeletonLoaderCircle } from "../components/ui/SkeletonLoaderCircle";
@@ -599,6 +600,27 @@ export function ToastStory() {
         onClose={() => setVisible(false)}
       />
     </div>
+  );
+}
+
+export function ScreenMountStory() {
+  return (
+    <>
+      <div className="min-h-[40vh] rounded-[10px] border border-primary/20 bg-primary/5 p-6">
+        <p className="text-foreground/80">
+          Questo è il contenuto della pagina. Il componente montato da
+          `ScreenMount` è posizionato in overlay sullo schermo.
+        </p>
+      </div>
+
+      <ScreenMount position="bottom-left">
+        <Card
+          title="Floating card"
+          description="Una card montata tramite ScreenMount, completa di posizione fissa sullo schermo."
+          iconName="happyFace"
+        />
+      </ScreenMount>
+    </>
   );
 }
 

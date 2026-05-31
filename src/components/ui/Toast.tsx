@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import gsap from "gsap";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { gsap } from "@/animations/gsap";
 import { Icon, type IconName } from "./Icon";
 
 export type ToastVariant = "info" | "success" | "warning";

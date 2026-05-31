@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toastService } from "../services/toastService";
+import { ScreenMount } from "../ui/ScreenMount";
 import { Toast, type ToastItem } from "../ui/Toast";
 
 type InternalToast = ToastItem & {
@@ -32,16 +33,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
     <>
       {children}
 
-      <div
-        className="
-          pointer-events-none fixed z-50 flex flex-col gap-3
-          top-4 right-4 w-[calc(100vw-2rem)] max-w-sm
-          sm:top-4 sm:right-4 sm:w-full sm:max-w-sm
-          max-sm:left-1/2 max-sm:right-auto max-sm:top-auto
-          max-sm:bottom-[calc(1rem+env(safe-area-inset-bottom))]
-          max-sm:-translate-x-1/2
-        "
-      >
+      <ScreenMount position="top-right" className="max-w-sm sm:w-full">
         {toasts.map((toast) => (
           <Toast
             key={toast.id}
@@ -50,7 +42,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
             onClose={handleClose}
           />
         ))}
-      </div>
+      </ScreenMount>
     </>
   );
 }

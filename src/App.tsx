@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-
+import { useCallback, useEffect, useRef, useState } from "react";
 import Seo from "../Seo";
 import { initializePostHog } from "./analytics/posthogInit";
 import { useLandingPageAnimations } from "./animations/pages/useLandingPageAnimations";
@@ -10,10 +9,27 @@ import { PrivacySection } from "./components/ui/hero-subsection/PrivacySection";
 import { Questions } from "./components/ui/hero-subsection/Questions";
 import { NavBar } from "./components/ui/NavBar";
 import { PWANotification } from "./components/ui/PWANotification";
+import { ScreenMount } from "./components/ui/ScreenMount";
+import { isRunningAsApp } from "./pwa/pwaConfig";
+
+interface DeferredPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{
+    outcome: "accepted" | "dismissed";
+    platform: string;
+  }>;
+}
+
+const PWA_INSTALLED_KEY = "pwa-installed";
+const PWA_DISMISSED_AT_KEY = "pwa-dismissed-at";
+const PWA_DISMISS_DELAY_MS = 24 * 60 * 60 * 1000;
 
 export default function App() {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [showPWAApprovalQuestion, setShowPWAApprovalQuestion] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<DeferredPromptEvent | null>(null);
+  const [isAppInstalled, setIsAppInstalled] = useState(false);
 
   useLandingPageAnimations(rootRef);
 
@@ -22,13 +38,34 @@ export default function App() {
 
     let abortController: AbortController | null = null;
 
+    const installState =
+      localStorage.getItem(PWA_INSTALLED_KEY) === "true" || isRunningAsApp();
+    setIsAppInstalled(installState);
+
+    const lastDismissedAt = Number(
+      localStorage.getItem(PWA_DISMISSED_AT_KEY) ?? "0"
+    );
+    const isDismissedRecently =
+      lastDismissedAt > 0 &&
+      Date.now() - lastDismissedAt < PWA_DISMISS_DELAY_MS;
+
+    const onBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setDeferredPrompt(event as DeferredPromptEvent);
+      localStorage.removeItem(PWA_INSTALLED_KEY);
+    };
+
+    const onAppInstalled = () => {
+      setIsAppInstalled(true);
+      localStorage.setItem(PWA_INSTALLED_KEY, "true");
+      setShowPWAApprovalQuestion(false);
+    };
+
+    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+    window.addEventListener("appinstalled", onAppInstalled);
+
     const runEffect = async () => {
-      const pwaSeen = localStorage.getItem("pwa-approval-question-shown");
-      if (!pwaSeen) {
-        localStorage.setItem(
-          "pwa-approval-question-shown-date",
-          new Date().toISOString()
-        );
+      if (!installState && !isDismissedRecently) {
         setShowPWAApprovalQuestion(true);
       }
       abortController = new AbortController();
@@ -36,14 +73,65 @@ export default function App() {
 
     void runEffect();
     return () => {
+      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", onAppInstalled);
       abortController?.abort();
     };
   }, []);
 
-  const hidePWAApprovalQuestion = () => {
-    localStorage.setItem("pwa-approval-question-shown", "true");
+  useEffect(() => {
+    let abortController: AbortController | null = null;
+
+    const runEffect = async () => {
+      if (isAppInstalled) {
+        setShowPWAApprovalQuestion(false);
+      }
+    };
+
+    abortController = new AbortController();
+
+    void runEffect();
+
+    return () => {
+      abortController.abort();
+    };
+  }, [isAppInstalled]);
+
+  const handleEnablePWA = useCallback(async () => {
+    if (deferredPrompt) {
+      await deferredPrompt.prompt();
+      const choiceResult = await deferredPrompt.userChoice;
+      setDeferredPrompt(null);
+
+      if (choiceResult.outcome === "accepted") {
+        setIsAppInstalled(true);
+        localStorage.setItem("pwa-installed", "true");
+        setShowPWAApprovalQuestion(false);
+      } else {
+        setShowPWAApprovalQuestion(false);
+      }
+      return;
+    }
+
+    const isSafari =
+      typeof navigator !== "undefined" &&
+      /Safari/.test(navigator.userAgent) &&
+      !/Chrome/.test(navigator.userAgent) &&
+      !/CriOS/.test(navigator.userAgent);
+
+    if (isSafari) {
+      window.alert(
+        "Per installare Followoo su Safari, usa il pulsante Condividi e poi seleziona Aggiungi a Home."
+      );
+    }
+
     setShowPWAApprovalQuestion(false);
-  };
+  }, [deferredPrompt]);
+
+  const handleDismissPWA = useCallback(() => {
+    localStorage.setItem(PWA_DISMISSED_AT_KEY, Date.now().toString());
+    setShowPWAApprovalQuestion(false);
+  }, []);
 
   return (
     <div ref={rootRef} className="bg-background min-h-screen">
@@ -61,12 +149,12 @@ export default function App() {
       </section>
 
       {showPWAApprovalQuestion && (
-        <section className="px-18 pt-10">
+        <ScreenMount position="bottom-center">
           <PWANotification
-            onInstall={hidePWAApprovalQuestion}
-            onDismiss={hidePWAApprovalQuestion}
+            onInstall={handleEnablePWA}
+            onDismiss={handleDismissPWA}
           />
-        </section>
+        </ScreenMount>
       )}
 
       <PrivacySection />
