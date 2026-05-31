@@ -7,7 +7,7 @@ import { BadgeVersion } from "../ui/BadgeVersion";
 import { Container } from "../ui/Container";
 import { NavBar } from "../ui/NavBar";
 import { Separator } from "../ui/Separator";
-import { SkeletonLoaderCircle } from "../ui/SkeletonLoaderCircle";
+import { Skeleton } from "../ui/Skeleton";
 
 type UpdateChangeGroup = {
   label: string;
@@ -187,7 +187,12 @@ export function Updates() {
             >
               {isLoading ? (
                 <div className="flex flex-row items-center justify-center p-20 align-middle">
-                  <SkeletonLoaderCircle size="lg" color="primary" />
+                  {/* <SkeletonLoaderCircle size="lg" color="primary" /> */}
+                  <Skeleton
+                    size="lg"
+                    ariaLabel="Loading updates"
+                    className="ml-4"
+                  />
                 </div>
               ) : hasError ? (
                 <div className="flex h-full w-full flex-col items-center justify-center">
