@@ -189,6 +189,7 @@ export function Updates() {
                 <div className="flex flex-row items-center justify-center p-20 align-middle">
                   {/* <SkeletonLoaderCircle size="lg" color="primary" /> */}
                   <Skeleton
+                    shape="circle"
                     size="lg"
                     ariaLabel="Loading updates"
                     className="ml-4"

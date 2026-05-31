@@ -14,13 +14,14 @@ import { FabIcon } from "../components/ui/FabIcon";
 import { FooterSignature } from "../components/ui/FooterSignature";
 import { HeroIllustrations } from "../components/ui/HeroIllustrations";
 import { HeroSection } from "../components/ui/hero-subsection/HeroSection";
-import { Icon } from "../components/ui/Icon";
+import { Icon, type IconName } from "../components/ui/Icon";
 import { Input } from "../components/ui/Input";
 import { Loading } from "../components/ui/Loading";
 import { NavBar } from "../components/ui/NavBar";
 import { Paginator } from "../components/ui/Paginator";
 import { RelationshipHealthInsight } from "../components/ui/RelationshipHealthInsight";
 import { Separator } from "../components/ui/Separator";
+import { Skeleton } from "../components/ui/Skeleton";
 import { SkeletonLoaderCircle } from "../components/ui/SkeletonLoaderCircle";
 import { SortSelect } from "../components/ui/SortSelect";
 import { TabButton } from "../components/ui/TabButton";
@@ -101,43 +102,143 @@ const allIconNames = [
   "neutralFace",
 ] as const;
 
-export function ButtonStory() {
+type ButtonStoryProps = {
+  background: "primary" | "accent" | "bg";
+  foreground: "foreground";
+  disabled: boolean;
+  icon?: string;
+  label: string;
+};
+
+export function ButtonStory({
+  background = "primary",
+  foreground = "foreground",
+  disabled = false,
+  icon,
+  label = "Button",
+}: ButtonStoryProps) {
   return (
     <div className="flex flex-wrap gap-4">
-      <Button background="primary" foreground="foreground">
-        Primary label
-      </Button>
-      <Button background="accent" foreground="foreground" icon="arrowRight">
-        Accent icon right
-      </Button>
-      <Button background="bg" foreground="foreground" disabled>
-        Disabled
+      <Button
+        background={background}
+        foreground={foreground}
+        disabled={disabled}
+        icon={icon as IconName}
+      >
+        {label}
       </Button>
     </div>
   );
 }
 
-export function CardStory() {
+ButtonStory.args = {
+  background: "primary",
+  foreground: "foreground",
+  disabled: false,
+  label: "Button",
+};
+
+ButtonStory.argTypes = {
+  background: {
+    control: { type: "select" },
+    options: ["primary", "accent", "bg"],
+    description: "Background color of the button",
+  },
+  disabled: {
+    control: { type: "boolean" },
+    description: "Disable the button",
+  },
+  label: {
+    control: { type: "text" },
+    description: "Button label text",
+  },
+  icon: {
+    control: { type: "text" },
+    description: "Optional icon name",
+  },
+};
+
+type CardStoryProps = {
+  title: string;
+  description: string;
+  iconName: string;
+};
+
+export function CardStory({
+  title = "Secure growth",
+  description = "A compact card example with icon and text.",
+  iconName = "shield",
+}: CardStoryProps) {
   return (
     <div className="max-w-sm">
       <Card
-        title="Secure growth"
-        description="A compact card example with icon and text."
-        iconName="shield"
+        title={title}
+        description={description}
+        iconName={iconName as IconName}
       />
     </div>
   );
 }
 
-export function CheckboxStory() {
+CardStory.args = {
+  title: "Secure growth",
+  description: "A compact card example with icon and text.",
+  iconName: "shield",
+};
+
+CardStory.argTypes = {
+  title: {
+    control: { type: "text" },
+    description: "Card title",
+  },
+  description: {
+    control: { type: "text" },
+    description: "Card description",
+  },
+  iconName: {
+    control: { type: "text" },
+    description: "Icon name for the card",
+  },
+};
+
+type CheckboxStoryProps = {
+  checked: boolean;
+  label: string;
+  hasError: boolean;
+};
+
+export function CheckboxStory({
+  checked = false,
+  label = "Option",
+  hasError = false,
+}: CheckboxStoryProps) {
   return (
     <div className="flex flex-col gap-4">
-      <Checkbox checked label="Option selected" />
-      <Checkbox label="Option not selected" />
-      <Checkbox hasError label="Error state" />
+      <Checkbox checked={checked} label={label} hasError={hasError} />
     </div>
   );
 }
+
+CheckboxStory.args = {
+  checked: false,
+  label: "Option",
+  hasError: false,
+};
+
+CheckboxStory.argTypes = {
+  checked: {
+    control: { type: "boolean" },
+    description: "Whether the checkbox is checked",
+  },
+  label: {
+    control: { type: "text" },
+    description: "Checkbox label text",
+  },
+  hasError: {
+    control: { type: "boolean" },
+    description: "Show error state",
+  },
+};
 
 export function ContainerStory() {
   return (
@@ -173,15 +274,48 @@ export function DropdownTabButtonStory() {
   );
 }
 
-export function FabIconStory() {
+type FabIconStoryProps = {
+  icon: IconName;
+  background: string;
+  disabled: boolean;
+};
+
+export function FabIconStory({
+  icon = "upload",
+  background = "primary",
+  disabled = false,
+}: FabIconStoryProps) {
   return (
     <div className="flex gap-4">
-      <FabIcon icon="upload" />
-      <FabIcon icon="check" background="accent" />
-      <FabIcon icon="menu" disabled />
+      <FabIcon
+        icon={icon as IconName}
+        background={background as any}
+        disabled={disabled}
+      />
     </div>
   );
 }
+
+FabIconStory.args = {
+  icon: "upload",
+  background: "primary",
+  disabled: false,
+};
+
+FabIconStory.argTypes = {
+  icon: {
+    control: { type: "text" },
+    description: "Icon name",
+  },
+  background: {
+    control: { type: "text" },
+    description: "Background color",
+  },
+  disabled: {
+    control: { type: "boolean" },
+    description: "Disable the fab icon",
+  },
+};
 
 export function FooterSignatureStory() {
   return <FooterSignature />;
@@ -207,29 +341,104 @@ export function IconStory() {
   );
 }
 
-export function InputStory() {
+type InputStoryProps = {
+  placeholder: string;
+  variant: "input" | "textarea";
+  hasError: boolean;
+};
+
+export function InputStory({
+  placeholder = "Enter text",
+  variant = "input",
+  hasError = false,
+}: InputStoryProps) {
   return (
     <div className="flex max-w-lg flex-col gap-4">
-      <Input placeholder="Single line input" />
-      <Input variant="textarea" placeholder="Multi-line textarea" />
-      <Input hasError placeholder="Error state" />
+      <Input placeholder={placeholder} variant={variant} hasError={hasError} />
     </div>
   );
 }
 
-export function LoadingStory() {
-  return <Loading loading />;
+InputStory.args = {
+  placeholder: "Enter text",
+  variant: "input",
+  hasError: false,
+};
+
+InputStory.argTypes = {
+  placeholder: {
+    control: { type: "text" },
+    description: "Input placeholder text",
+  },
+  variant: {
+    control: { type: "select" },
+    options: ["input", "textarea"],
+    description: "Input variant type",
+  },
+  hasError: {
+    control: { type: "boolean" },
+    description: "Show error state",
+  },
+};
+
+type LoadingStoryProps = {
+  loading: boolean;
+};
+
+export function LoadingStory({ loading = true }: LoadingStoryProps) {
+  return <Loading loading={loading} />;
 }
+
+LoadingStory.args = {
+  loading: true,
+};
+
+LoadingStory.argTypes = {
+  loading: {
+    control: { type: "boolean" },
+    description: "Show loading state",
+  },
+};
 
 export function NavBarStory() {
   return <NavBar />;
 }
 
-export function PaginatorStory() {
-  const [page, setPage] = useState(2);
+type PaginatorStoryProps = {
+  currentPage: number;
+  totalPages: number;
+};
 
-  return <Paginator currentPage={page} totalPages={8} onPageChange={setPage} />;
+export function PaginatorStory({
+  currentPage = 2,
+  totalPages = 8,
+}: PaginatorStoryProps) {
+  const [page, setPage] = useState(currentPage);
+
+  return (
+    <Paginator
+      currentPage={page}
+      totalPages={totalPages}
+      onPageChange={setPage}
+    />
+  );
 }
+
+PaginatorStory.args = {
+  currentPage: 2,
+  totalPages: 8,
+};
+
+PaginatorStory.argTypes = {
+  currentPage: {
+    control: { type: "number" },
+    description: "Current page number",
+  },
+  totalPages: {
+    control: { type: "number" },
+    description: "Total number of pages",
+  },
+};
 
 export function RelationshipHealthInsightStory() {
   return (
@@ -247,28 +456,63 @@ export function RelationshipHealthInsightStory() {
   );
 }
 
-export function SeparatorStory() {
+type SeparatorStoryProps = {
+  variant: string;
+};
+
+export function SeparatorStory({ variant = "primary" }: SeparatorStoryProps) {
   return (
     <div>
       <p>Top content</p>
-      <Separator variant="primary" />
+      <Separator variant={variant as any} />
       <p>Bottom content</p>
     </div>
   );
 }
 
-export function SkeletonLoaderCircleStory() {
+SeparatorStory.args = {
+  variant: "primary",
+};
+
+SeparatorStory.argTypes = {
+  variant: {
+    control: { type: "text" },
+    description: "Separator variant",
+  },
+};
+
+type SkeletonLoaderCircleStoryProps = {
+  size: "sm" | "md" | "lg";
+};
+
+export function SkeletonLoaderCircleStory({
+  size = "md",
+}: SkeletonLoaderCircleStoryProps) {
   return (
     <div className="flex items-center gap-4">
-      <SkeletonLoaderCircle size="sm" />
-      <SkeletonLoaderCircle size="md" />
-      <SkeletonLoaderCircle size="lg" />
+      <SkeletonLoaderCircle size={size} />
     </div>
   );
 }
 
-export function SortSelectStory() {
-  const [value, setValue] = useState("recent");
+SkeletonLoaderCircleStory.args = {
+  size: "md",
+};
+
+SkeletonLoaderCircleStory.argTypes = {
+  size: {
+    control: { type: "select" },
+    options: ["sm", "md", "lg"],
+    description: "Size of the skeleton loader",
+  },
+};
+
+type SortSelectStoryProps = {
+  value: string;
+};
+
+export function SortSelectStory({ value = "recent" }: SortSelectStoryProps) {
+  const [selectedValue, setSelectedValue] = useState(value);
   const options = [
     { label: "Recent first", value: "recent" },
     { label: "Oldest first", value: "oldest" },
@@ -277,20 +521,60 @@ export function SortSelectStory() {
 
   return (
     <div className="max-w-xs">
-      <SortSelect value={value} options={options} onChange={setValue} />
+      <SortSelect
+        value={selectedValue}
+        options={options}
+        onChange={setSelectedValue}
+      />
     </div>
   );
 }
 
-export function TabButtonStory() {
-  const [active, setActive] = useState(false);
+SortSelectStory.args = {
+  value: "recent",
+};
+
+SortSelectStory.argTypes = {
+  value: {
+    control: { type: "select" },
+    options: ["recent", "oldest", "popular"],
+    description: "Default selected value",
+  },
+};
+
+type TabButtonStoryProps = {
+  active: boolean;
+  label: string;
+};
+
+export function TabButtonStory({
+  active = false,
+  label = "Tab Button",
+}: TabButtonStoryProps) {
+  const [isActive, setIsActive] = useState(active);
 
   return (
-    <TabButton active={active} onClick={() => setActive((prev) => !prev)}>
-      {active ? "Active state" : "Inactive state"}
+    <TabButton active={isActive} onClick={() => setIsActive((prev) => !prev)}>
+      {label}
     </TabButton>
   );
 }
+
+TabButtonStory.args = {
+  active: false,
+  label: "Tab Button",
+};
+
+TabButtonStory.argTypes = {
+  active: {
+    control: { type: "boolean" },
+    description: "Whether the tab is active",
+  },
+  label: {
+    control: { type: "text" },
+    description: "Tab button label",
+  },
+};
 
 export function ToastStory() {
   const [visible, setVisible] = useState(true);
@@ -345,22 +629,80 @@ export function ZipDropzoneStory() {
   );
 }
 
-export function BadgeVersionStory() {
+type BadgeVersionStoryProps = {
+  version: string;
+  backgroundColor: string;
+};
+
+export function BadgeVersionStory({
+  version = "1.0.0",
+  backgroundColor = "primary",
+}: BadgeVersionStoryProps) {
   return (
     <div className="flex gap-4">
-      <BadgeVersion version="1.0.0" />
-      <BadgeVersion version="2.1.5" backgroundColor="accent" />
+      <BadgeVersion
+        version={version}
+        backgroundColor={backgroundColor as any}
+      />
     </div>
   );
 }
 
-export function CalloutStory() {
+BadgeVersionStory.args = {
+  version: "1.0.0",
+  backgroundColor: "primary",
+};
+
+BadgeVersionStory.argTypes = {
+  version: {
+    control: { type: "text" },
+    description: "Version string",
+  },
+  backgroundColor: {
+    control: { type: "text" },
+    description: "Background color",
+  },
+};
+
+type CalloutStoryProps = {
+  title: string;
+  variant: "info" | "warning" | "success";
+  children: string;
+};
+
+export function CalloutStory({
+  title = "Information",
+  variant = "info",
+  children = "This is a callout component for important information.",
+}: CalloutStoryProps) {
   return (
-    <Callout title="Information" variant="info">
-      This is a callout component for important information.
+    <Callout title={title} variant={variant}>
+      {children}
     </Callout>
   );
 }
+
+CalloutStory.args = {
+  title: "Information",
+  variant: "info",
+  children: "This is a callout component for important information.",
+};
+
+CalloutStory.argTypes = {
+  title: {
+    control: { type: "text" },
+    description: "Callout title",
+  },
+  variant: {
+    control: { type: "select" },
+    options: ["info", "warning", "success"],
+    description: "Callout variant",
+  },
+  children: {
+    control: { type: "text" },
+    description: "Callout content",
+  },
+};
 
 export function EngagementPatternChartStory() {
   return (
@@ -385,3 +727,75 @@ export function ScrollToTopStory() {
     </div>
   );
 }
+
+export function SkeletonStory({
+  animation = "wave",
+}: {
+  animation?: "pulse" | "wave";
+}) {
+  return (
+    <>
+      <div className="flex flex-col gap-2 mt-6 transition-colors">
+        <h2>Rectangle shape</h2>
+        <Skeleton
+          size="sm"
+          ariaLabel="Loading content"
+          className="w-full"
+          animation={animation}
+          shape="rectangle"
+        />
+        <Skeleton
+          size="md"
+          ariaLabel="Loading content"
+          className="w-full"
+          animation={animation}
+          shape="rectangle"
+        />
+        <Skeleton
+          size="lg"
+          ariaLabel="Loading content"
+          className="w-full"
+          animation={animation}
+          shape="rectangle"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2 mt-6 transition-colors">
+        <h2>Circle shape</h2>
+        <Skeleton
+          size="sm"
+          ariaLabel="Loading content"
+          className="w-full"
+          animation={animation}
+          shape="circle"
+        />
+        <Skeleton
+          size="md"
+          ariaLabel="Loading content"
+          className="w-full"
+          animation={animation}
+          shape="circle"
+        />
+        <Skeleton
+          size="lg"
+          ariaLabel="Loading content"
+          className="w-full"
+          animation={animation}
+          shape="circle"
+        />
+      </div>
+    </>
+  );
+}
+
+SkeletonStory.args = {
+  animation: "wave",
+};
+
+SkeletonStory.argTypes = {
+  animation: {
+    control: { type: "select" },
+    options: ["wave", "pulse"],
+    description: "Animation type for the skeleton loaders",
+  },
+};
