@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Seo from "../Seo";
 import { initializePostHog } from "./analytics/posthogInit";
@@ -9,15 +9,41 @@ import { HeroSection } from "./components/ui/hero-subsection/HeroSection";
 import { PrivacySection } from "./components/ui/hero-subsection/PrivacySection";
 import { Questions } from "./components/ui/hero-subsection/Questions";
 import { NavBar } from "./components/ui/NavBar";
+import { PWANotification } from "./components/ui/PWANotification";
 
 export default function App() {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const [showPWAApprovalQuestion, setShowPWAApprovalQuestion] = useState(false);
 
   useLandingPageAnimations(rootRef);
 
   useEffect(() => {
     initializePostHog();
+
+    let abortController: AbortController | null = null;
+
+    const runEffect = async () => {
+      const pwaSeen = localStorage.getItem("pwa-approval-question-shown");
+      if (!pwaSeen) {
+        localStorage.setItem(
+          "pwa-approval-question-shown-date",
+          new Date().toISOString()
+        );
+        setShowPWAApprovalQuestion(true);
+      }
+      abortController = new AbortController();
+    };
+
+    void runEffect();
+    return () => {
+      abortController?.abort();
+    };
   }, []);
+
+  const hidePWAApprovalQuestion = () => {
+    localStorage.setItem("pwa-approval-question-shown", "true");
+    setShowPWAApprovalQuestion(false);
+  };
 
   return (
     <div ref={rootRef} className="bg-background min-h-screen">
@@ -33,6 +59,15 @@ export default function App() {
         <HeroSection />
         <FeaturesSection />
       </section>
+
+      {showPWAApprovalQuestion && (
+        <section className="px-18 pt-10">
+          <PWANotification
+            onInstall={hidePWAApprovalQuestion}
+            onDismiss={hidePWAApprovalQuestion}
+          />
+        </section>
+      )}
 
       <PrivacySection />
       <Questions />
