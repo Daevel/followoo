@@ -276,7 +276,7 @@ export function DropdownTabButtonStory() {
 
 type FabIconStoryProps = {
   icon: IconName;
-  background: string;
+  background: "primary" | "accent" | "bg";
   disabled: boolean;
 };
 
@@ -287,11 +287,7 @@ export function FabIconStory({
 }: FabIconStoryProps) {
   return (
     <div className="flex gap-4">
-      <FabIcon
-        icon={icon as IconName}
-        background={background as any}
-        disabled={disabled}
-      />
+      <FabIcon icon={icon} background={background} disabled={disabled} />
     </div>
   );
 }
@@ -308,7 +304,8 @@ FabIconStory.argTypes = {
     description: "Icon name",
   },
   background: {
-    control: { type: "text" },
+    control: { type: "select" },
+    options: ["primary", "accent", "bg"],
     description: "Background color",
   },
   disabled: {
@@ -457,14 +454,14 @@ export function RelationshipHealthInsightStory() {
 }
 
 type SeparatorStoryProps = {
-  variant: string;
+  variant: "primary" | "accent" | "foreground";
 };
 
 export function SeparatorStory({ variant = "primary" }: SeparatorStoryProps) {
   return (
     <div>
       <p>Top content</p>
-      <Separator variant={variant as any} />
+      <Separator variant={variant} />
       <p>Bottom content</p>
     </div>
   );
@@ -476,7 +473,8 @@ SeparatorStory.args = {
 
 SeparatorStory.argTypes = {
   variant: {
-    control: { type: "text" },
+    control: { type: "select" },
+    options: ["primary", "accent", "foreground"],
     description: "Separator variant",
   },
 };
@@ -631,7 +629,7 @@ export function ZipDropzoneStory() {
 
 type BadgeVersionStoryProps = {
   version: string;
-  backgroundColor: string;
+  backgroundColor?: string;
 };
 
 export function BadgeVersionStory({
@@ -640,10 +638,7 @@ export function BadgeVersionStory({
 }: BadgeVersionStoryProps) {
   return (
     <div className="flex gap-4">
-      <BadgeVersion
-        version={version}
-        backgroundColor={backgroundColor as any}
-      />
+      <BadgeVersion version={version} backgroundColor={backgroundColor} />
     </div>
   );
 }
