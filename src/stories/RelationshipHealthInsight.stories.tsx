@@ -22,26 +22,26 @@ export const HealthyNetwork: Story = {
   },
 };
 
-export const AtRisk: Story = {
+export const Average: Story = {
   args: {
     insight: {
       color: "foreground",
-      level: "at_risk",
-      title: "Rete a rischio",
+      level: "average",
+      title: "Rete media",
       score: 45,
       description: "La tua rete potrebbe aver bisogno di attenzione.",
     },
   },
 };
 
-export const UnhealthyNetwork: Story = {
+export const Critical: Story = {
   args: {
     insight: {
       color: "foreground",
-      level: "unhealthy",
-      title: "Rete non salutare",
+      level: "critical",
+      title: "Rete critica",
       score: 20,
-      description: "La tua rete ha bisogno di revisione.",
+      description: "La tua rete ha bisogno di revisione urgente.",
     },
   },
 };

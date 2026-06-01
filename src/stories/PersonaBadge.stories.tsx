@@ -8,7 +8,7 @@ const meta: Meta<typeof PersonaBadge> = {
   argTypes: {
     persona: {
       control: { type: "select" },
-      options: ["SUPER_FAN", "ENGAGED", "OCCASIONAL", "GHOST"],
+      options: ["SUPER_FAN", "ENGAGED", "FICKLE", "LURKER", "DORMANT"],
       description: "Persona type",
     },
     size: {
@@ -36,16 +36,23 @@ export const Engaged: Story = {
   },
 };
 
-export const Occasional: Story = {
+export const Fickle: Story = {
   args: {
-    persona: "OCCASIONAL",
+    persona: "FICKLE",
     size: "md",
   },
 };
 
-export const Ghost: Story = {
+export const Lurker: Story = {
   args: {
-    persona: "GHOST",
+    persona: "LURKER",
+    size: "md",
+  },
+};
+
+export const Dormant: Story = {
+  args: {
+    persona: "DORMANT",
     size: "md",
   },
 };

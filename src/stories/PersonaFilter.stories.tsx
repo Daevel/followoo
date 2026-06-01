@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { PersonaFilter } from "../components/ui/PersonaFilter";
+import type { UserPersona } from "../types/instagram.types";
 
 const meta: Meta<typeof PersonaFilter> = {
   title: "Components/UI/PersonaFilter",
@@ -11,23 +12,24 @@ const meta: Meta<typeof PersonaFilter> = {
 export default meta;
 type Story = StoryObj<typeof PersonaFilter>;
 
-const personaCounts = {
+const personaCounts: Record<UserPersona, number> = {
   SUPER_FAN: 45,
   ENGAGED: 120,
-  OCCASIONAL: 234,
-  GHOST: 89,
+  FICKLE: 234,
+  LURKER: 89,
+  DORMANT: 56,
 };
 
 export const Default: Story = {
   render: () => {
-    const [selectedPersona, setSelectedPersona] = useState<
-      keyof typeof personaCounts | null
-    >(null);
+    const [selectedPersona, setSelectedPersona] = useState<UserPersona | null>(
+      null
+    );
     return (
       <PersonaFilter
         personaCounts={personaCounts}
         selectedPersona={selectedPersona}
-        onPersonaChange={setSelectedPersona}
+        onPersonaChange={(persona) => setSelectedPersona(persona)}
       />
     );
   },
