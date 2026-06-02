@@ -245,3 +245,44 @@ h5 {
   font-size: clamp(20px, 2.5vw, 24px);
   line-height: var(--lh-headers);
 }
+
+/* SKELETON ANIMATIONS */
+
+@keyframes skeletonWave {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+.skeleton-base {
+  background-color: color-mix(
+    in srgb,
+    var(--color-foreground) 10%,
+    transparent
+  );
+}
+
+.skeleton-wave-animation {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-wave-animation::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-foreground) 8%, transparent) 35%,
+    color-mix(in srgb, var(--color-foreground) 28%, transparent) 50%,
+    color-mix(in srgb, var(--color-foreground) 8%, transparent) 65%,
+    transparent 100%
+  );
+  animation: skeletonWave 1.35s ease-in-out infinite;
+}

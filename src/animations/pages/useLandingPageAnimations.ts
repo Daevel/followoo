@@ -19,7 +19,7 @@ const sectionConfigs = [
   {
     section: "[data-section='faq']",
     heading: "[data-section='faq'] [data-animate='section-heading']",
-    subheading: null,
+    subheading: "[data-section='faq'] [data-animate='section-subheading']",
     items: "[data-section='faq'] [data-animate='faq-card']",
     icon: "[data-section='faq'] [data-animate='section-icon']",
   },
@@ -195,7 +195,8 @@ export function useLandingPageAnimations(
         {
           section: "[data-section='faq']",
           heading: "[data-section='faq'] [data-animate='section-heading']",
-          subheading: null,
+          subheading:
+            "[data-section='faq'] [data-animate='section-subheading']",
           items: "[data-section='faq'] [data-animate='faq-card']",
           icon: "[data-section='faq'] [data-animate='section-icon']",
         },

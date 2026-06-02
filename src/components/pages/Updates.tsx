@@ -186,15 +186,15 @@ export function Updates() {
               className="mt-10 flex w-full flex-col gap-8"
             >
               {isLoading ? (
-                <div className="flex flex-row items-center justify-center p-20 align-middle">
-                  {/* <SkeletonLoaderCircle size="lg" color="primary" /> */}
-                  <Skeleton
-                    shape="circle"
-                    size="lg"
-                    ariaLabel="Loading updates"
-                    className="ml-4"
-                  />
-                </div>
+                <Skeleton
+                  variant="list"
+                  items={5}
+                  lines={2}
+                  shape="circle"
+                  animation="wave"
+                  size="lg"
+                  ariaLabel="Loading updates"
+                />
               ) : hasError ? (
                 <div className="flex h-full w-full flex-col items-center justify-center">
                   <UnknownErrorPage />

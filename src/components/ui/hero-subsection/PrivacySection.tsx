@@ -29,7 +29,7 @@ export function PrivacySection() {
       data-section="privacy"
       className="bg-accent/90 from-accent/90 to-primary mt-16 w-full rounded-t-[60px] bg-linear-to-b"
     >
-      <div className="px-18 py-16">
+      <div className="px-8 py-16">
         <div className="text-foreground mx-auto max-w-5xl text-center">
           <div className="flex justify-center">
             <div
@@ -44,8 +44,11 @@ export function PrivacySection() {
             data-animate="section-heading"
             className="hero-h1 mt-6 font-semibold"
           >
-            Your privacy? <br /> Glad you asked.
+            Your privacy?
           </h1>
+          <h2 data-animate="section-subheading" className=" mt-6 font-semibold">
+            Glad you asked.
+          </h2>
 
           <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((card) => (
@@ -61,10 +64,11 @@ export function PrivacySection() {
           </div>
 
           <div data-animate="section-subheading" className="mt-20">
-            <h2>
-              I designed Followoo to be private by default. Your data stays
-              where it belongs - on your device.
-            </h2>
+            <h2>I designed Followoo to be private by default.</h2>
+          </div>
+
+          <div data-animate="section-subheading" className="mt-15">
+            <h2> Your data stays where it belongs - on your device.</h2>
           </div>
         </div>
       </div>

@@ -66,7 +66,9 @@ export default function App() {
 
     const runEffect = async () => {
       if (!installState && !isDismissedRecently) {
-        setShowPWAApprovalQuestion(true);
+        setTimeout(() => {
+          setShowPWAApprovalQuestion(true);
+        }, 1250);
       }
       abortController = new AbortController();
     };
@@ -134,7 +136,7 @@ export default function App() {
   }, []);
 
   return (
-    <div ref={rootRef} className="bg-background min-h-screen">
+    <div ref={rootRef} className="bg-background w-full min-h-screen">
       <Seo
         title="Followoo - Compare Instagram Followers"
         description="See how your Instagram following compares to others. Track your growth and engagement."
@@ -143,13 +145,13 @@ export default function App() {
       />
       <NavBar />
 
-      <section className="text-foreground px-18">
+      <section className="text-foreground px-5">
         <HeroSection />
         <FeaturesSection />
       </section>
 
       {showPWAApprovalQuestion && (
-        <ScreenMount position="bottom-center">
+        <ScreenMount className="flex w-full" position="bottom-center">
           <PWANotification
             onInstall={handleEnablePWA}
             onDismiss={handleDismissPWA}

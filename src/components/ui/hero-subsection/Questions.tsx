@@ -34,7 +34,7 @@ export function Questions() {
       data-section="faq"
       className="bg-accent/90 from-primary to-accent/90 flex w-full flex-col items-center rounded-b-[60px] bg-linear-to-b"
     >
-      <div className="px-18 py-16">
+      <div className="px-8 py-16">
         <div className="text-foreground mx-auto max-w-5xl text-center">
           <div className="flex justify-center">
             <div
@@ -44,13 +44,18 @@ export function Questions() {
               <Icon name="help" color="foreground" width={30} height={30} />
             </div>
           </div>
-
           <h1
             data-animate="section-heading"
             className="faq-heading hero-h1 mt-6 font-semibold"
           >
-            Got questions? <br /> Here&apos;s the answers.
+            Got questions?
           </h1>
+          <h2
+            data-animate="section-subheading"
+            className="faq-heading mt-6 font-semibold"
+          >
+            Here&apos;s the answers.
+          </h2>
 
           <div className="mt-12 flex flex-col justify-center gap-y-5">
             {cards.map((card) => (
