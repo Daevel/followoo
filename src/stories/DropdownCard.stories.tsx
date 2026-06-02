@@ -20,7 +20,7 @@ const meta: Meta<typeof DropdownCard> = {
 export default meta;
 type Story = StoryObj<typeof DropdownCard>;
 
-export const Default: Story = {
+export const DropdownCard_: Story = {
   args: {
     title: "Ulteriori dettagli",
     description: "Il contenuto dettagliato appare quando la card è espansa.",

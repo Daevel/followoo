@@ -11,35 +11,35 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     children: {
       control: "text",
-      description: "Button label",
+      description: "Etichetta pulsante",
     },
     background: {
       control: { type: "select" },
       options: ["primary", "accent", "bg"],
-      description: "Background color",
+      description: "Colore di sfondo",
     },
     foreground: {
       control: { type: "select" },
       options: ["primary", "accent", "bg", "foreground"],
-      description: "Text color",
+      description: "Colore del testo",
     },
     disabled: {
       control: "boolean",
-      description: "Disable the button",
+      description: "Disabilitare il pulsante",
     },
     icon: {
       control: "text",
-      description: "Optional icon name",
+      description: "Nome icona opzionale",
     },
     iconPosition: {
       control: { type: "select" },
       options: ["left", "right"],
-      description: "Icon position",
+      description: "Posizione icona",
     },
     type: {
       control: { type: "select" },
       options: ["button", "submit", "reset"],
-      description: "Button type",
+      description: "Tipo pulsante",
     },
   },
 };
@@ -71,20 +71,43 @@ export const Bg: Story = {
   },
 };
 
-export const Disabled: Story = {
+export const Deactivated: Story = {
   args: {
     background: "primary",
     foreground: "foreground",
     disabled: true,
-    children: "Disabled",
+    children: "Disabilitato",
   },
 };
 
-export const WithIcon: Story = {
+export const IconVariant: Story = {
   args: {
     background: "primary",
     foreground: "foreground",
     icon: "check",
     children: "Con icona",
   },
+};
+
+export const AllVariants: Story = {
+  name: "Tutte le varianti",
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <Button background="primary" foreground="foreground">
+        Primary
+      </Button>
+      <Button background="accent" foreground="foreground">
+        Accent
+      </Button>
+      <Button background="bg" foreground="foreground">
+        Bg
+      </Button>
+      <Button background="primary" foreground="foreground" disabled>
+        Disabilitato
+      </Button>
+      <Button background="primary" foreground="foreground" icon="check">
+        Con icona
+      </Button>
+    </div>
+  ),
 };

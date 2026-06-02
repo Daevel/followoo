@@ -20,14 +20,14 @@ const meta: Meta<typeof Checkbox> = {
 export default meta;
 type Story = StoryObj<typeof Checkbox>;
 
-export const Default: Story = {
+export const Unchecked: Story = {
   args: {
     label: "Opzione",
     hasError: false,
   },
 };
 
-export const WithError: Story = {
+export const ErrorState: Story = {
   args: {
     label: "Opzione",
     hasError: true,

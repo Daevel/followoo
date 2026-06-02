@@ -9,12 +9,12 @@ const meta: Meta<typeof SortSelect> = {
   argTypes: {
     label: {
       control: "text",
-      description: "Select label",
+      description: "Etichetta select",
     },
     value: {
       control: { type: "select" },
       options: ["recent", "oldest", "popular"],
-      description: "Selected value",
+      description: "Valore selezionato",
     },
   },
 };

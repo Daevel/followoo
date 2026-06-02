@@ -21,7 +21,7 @@ const meta: Meta<typeof BadgeVersion> = {
 export default meta;
 type Story = StoryObj<typeof BadgeVersion>;
 
-export const Default: Story = {
+export const BadgeVersion_: Story = {
   args: {
     version: "1.0.0",
     backgroundColor: "primary",

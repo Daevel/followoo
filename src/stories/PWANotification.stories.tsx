@@ -6,12 +6,13 @@ const meta: Meta<typeof PWANotification> = {
   title: "Components/UI/PWANotification",
   component: PWANotification,
   tags: ["autodocs"],
+  argTypes: {},
 };
 
 export default meta;
 type Story = StoryObj<typeof PWANotification>;
 
-export const Default: Story = {
+export const PWANotification_: Story = {
   render: () => {
     const [visible, setVisible] = useState(true);
 

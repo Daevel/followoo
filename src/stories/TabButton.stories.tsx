@@ -21,7 +21,7 @@ const meta: Meta<typeof TabButton> = {
 export default meta;
 type Story = StoryObj<typeof TabButton>;
 
-export const Active: Story = {
+export const Selected: Story = {
   render: () => {
     const [isActive, setIsActive] = useState(true);
     return (
@@ -32,7 +32,7 @@ export const Active: Story = {
   },
 };
 
-export const Inactive: Story = {
+export const Unselected: Story = {
   render: () => {
     const [isActive, setIsActive] = useState(false);
     return (

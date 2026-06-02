@@ -5,12 +5,13 @@ const meta: Meta<typeof Container> = {
   title: "Components/UI/Container",
   component: Container,
   tags: ["autodocs"],
+  argTypes: {},
 };
 
 export default meta;
 type Story = StoryObj<typeof Container>;
 
-export const Default: Story = {
+export const Container_: Story = {
   args: {
     children: "Questo contenuto è avvolto dal componente Container.",
   },

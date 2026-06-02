@@ -5,9 +5,10 @@ const meta: Meta<typeof HeroIllustrations> = {
   title: "Components/UI/HeroIllustrations",
   component: HeroIllustrations,
   tags: ["autodocs"],
+  argTypes: {},
 };
 
 export default meta;
 type Story = StoryObj<typeof HeroIllustrations>;
 
-export const Default: Story = {};
+export const HeroIllustrations_: Story = {};

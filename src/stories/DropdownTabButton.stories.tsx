@@ -6,6 +6,16 @@ const meta: Meta<typeof DropdownTabButton> = {
   title: "Components/UI/DropdownTabButton",
   component: DropdownTabButton,
   tags: ["autodocs"],
+  argTypes: {
+    title: {
+      control: "text",
+      description: "Card title",
+    },
+    activeTab: {
+      control: "text",
+      description: "Active tab name",
+    },
+  },
 };
 
 export default meta;
@@ -31,7 +41,7 @@ const sampleAnalysis = {
   hideStoriesFrom: [{ username: "elena", timestamp: 1680010000 }],
 };
 
-export const Default: Story = {
+export const DropdownTabButton_: Story = {
   render: () => {
     const [activeTab, setActiveTab] = useState("mutual");
     return (

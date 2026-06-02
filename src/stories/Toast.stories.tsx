@@ -9,7 +9,7 @@ const meta: Meta<typeof Toast> = {
   argTypes: {
     duration: {
       control: { type: "number" },
-      description: "Duration in milliseconds",
+      description: "Durata in millisecondi",
     },
   },
 };
@@ -38,7 +38,7 @@ const warningToast: ToastItem = {
   variant: "warning",
 };
 
-export const Info: Story = {
+export const InfoVariant: Story = {
   render: () => {
     const [visible, setVisible] = useState(true);
     return visible ? (
@@ -53,7 +53,7 @@ export const Info: Story = {
   },
 };
 
-export const Success: Story = {
+export const SuccessVariant: Story = {
   render: () => {
     const [visible, setVisible] = useState(true);
     return visible ? (
@@ -68,7 +68,7 @@ export const Success: Story = {
   },
 };
 
-export const Warning: Story = {
+export const WarningVariant: Story = {
   render: () => {
     const [visible, setVisible] = useState(true);
     return visible ? (
@@ -81,4 +81,15 @@ export const Warning: Story = {
       <div className="text-foreground">Toast chiuso</div>
     );
   },
+};
+
+export const AllVariants: Story = {
+  name: "Tutte le varianti",
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <Toast toast={infoToast} onClose={() => {}} duration={10000} />
+      <Toast toast={successToast} onClose={() => {}} duration={10000} />
+      <Toast toast={warningToast} onClose={() => {}} duration={10000} />
+    </div>
+  ),
 };

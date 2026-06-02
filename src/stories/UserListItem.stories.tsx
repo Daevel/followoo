@@ -5,6 +5,7 @@ const meta: Meta<typeof UserListItem> = {
   title: "Components/UI/UserListItem",
   component: UserListItem,
   tags: ["autodocs"],
+  argTypes: {},
 };
 
 export default meta;
@@ -15,7 +16,7 @@ const sampleUser = {
   timestamp: 1680012000,
 };
 
-export const Default: Story = {
+export const UserListItem_: Story = {
   args: {
     user: sampleUser,
     formatDate: (timestamp) =>

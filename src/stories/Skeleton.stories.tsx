@@ -9,21 +9,21 @@ const meta: Meta<typeof Skeleton> = {
     size: {
       control: { type: "select" },
       options: ["sm", "md", "lg"],
-      description: "Skeleton size",
+      description: "Grandezza skeleton",
     },
     shape: {
       control: { type: "select" },
       options: ["circle", "rectangle"],
-      description: "Skeleton shape",
+      description: "Forma skeleton",
     },
     animation: {
       control: { type: "select" },
       options: ["pulse", "wave"],
-      description: "Animation type",
+      description: "Tipo di animazione",
     },
     ariaLabel: {
       control: "text",
-      description: "Aria label",
+      description: "Etichetta aria",
     },
   },
 };
@@ -92,4 +92,51 @@ export const WithPulseAnimation: Story = {
     animation: "pulse",
     ariaLabel: "Loading content",
   },
+};
+
+export const AllVariants: Story = {
+  name: "Tutte le varianti",
+  render: () => (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gap: "1rem",
+      }}
+    >
+      <Skeleton
+        size="sm"
+        shape="rectangle"
+        animation="wave"
+        ariaLabel="Loading"
+      />
+      <Skeleton
+        size="md"
+        shape="rectangle"
+        animation="wave"
+        ariaLabel="Loading"
+      />
+      <Skeleton
+        size="lg"
+        shape="rectangle"
+        animation="wave"
+        ariaLabel="Loading"
+      />
+      <Skeleton size="sm" shape="circle" animation="wave" ariaLabel="Loading" />
+      <Skeleton size="md" shape="circle" animation="wave" ariaLabel="Loading" />
+      <Skeleton size="lg" shape="circle" animation="wave" ariaLabel="Loading" />
+      <Skeleton
+        size="md"
+        shape="rectangle"
+        animation="pulse"
+        ariaLabel="Loading"
+      />
+      <Skeleton
+        size="md"
+        shape="circle"
+        animation="pulse"
+        ariaLabel="Loading"
+      />
+    </div>
+  ),
 };

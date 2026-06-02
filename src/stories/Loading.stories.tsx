@@ -22,7 +22,7 @@ export const Active: Story = {
   },
 };
 
-export const Inactive: Story = {
+export const Idle: Story = {
   args: {
     loading: false,
   },

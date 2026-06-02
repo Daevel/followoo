@@ -7,6 +7,7 @@ const meta: Meta<typeof PersonaFilter> = {
   title: "Components/UI/PersonaFilter",
   component: PersonaFilter,
   tags: ["autodocs"],
+  argTypes: {},
 };
 
 export default meta;
@@ -20,7 +21,7 @@ const personaCounts: Record<UserPersona, number> = {
   DORMANT: 56,
 };
 
-export const Default: Story = {
+export const PersonaFilter_: Story = {
   render: () => {
     const [selectedPersona, setSelectedPersona] = useState<UserPersona | null>(
       null

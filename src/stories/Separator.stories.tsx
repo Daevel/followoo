@@ -9,7 +9,7 @@ const meta: Meta<typeof Separator> = {
     variant: {
       control: { type: "select" },
       options: ["primary", "accent", "foreground"],
-      description: "Separator variant",
+      description: "Colore separatore",
     },
   },
 };
@@ -33,4 +33,27 @@ export const Foreground: Story = {
   args: {
     variant: "foreground",
   },
+};
+
+export const AllVariants: Story = {
+  name: "Tutte le varianti",
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div>
+        <p>Top content</p>
+        <Separator variant="primary" />
+        <p>Bottom content</p>
+      </div>
+      <div>
+        <p>Top content</p>
+        <Separator variant="accent" />
+        <p>Bottom content</p>
+      </div>
+      <div>
+        <p>Top content</p>
+        <Separator variant="foreground" />
+        <p>Bottom content</p>
+      </div>
+    </div>
+  ),
 };

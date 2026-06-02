@@ -16,7 +16,7 @@ const meta: Meta<typeof ZipDropzone> = {
 export default meta;
 type Story = StoryObj<typeof ZipDropzone>;
 
-export const Default: Story = {
+export const ZipDropzone_: Story = {
   render: () => {
     const [file, setFile] = useState<File | null>(null);
     const [error, setError] = useState("");

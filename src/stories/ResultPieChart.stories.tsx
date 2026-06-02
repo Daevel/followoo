@@ -5,6 +5,7 @@ const meta: Meta<typeof ResultsPieChart> = {
   title: "Components/UI/Charts/ResultsPieChart",
   component: ResultsPieChart,
   tags: ["autodocs"],
+  argTypes: {},
 };
 
 export default meta;
@@ -17,7 +18,7 @@ const sampleData = [
   { name: "Blocked", value: 2 },
 ];
 
-export const Default: Story = {
+export const ResultPieChart_: Story = {
   args: {
     data: sampleData,
     title: "Panoramica",

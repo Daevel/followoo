@@ -5,6 +5,7 @@ const meta: Meta<typeof RelationshipHealthInsight> = {
   title: "Components/UI/RelationshipHealthInsight",
   component: RelationshipHealthInsight,
   tags: ["autodocs"],
+  argTypes: {},
 };
 
 export default meta;

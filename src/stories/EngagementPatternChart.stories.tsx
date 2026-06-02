@@ -5,6 +5,7 @@ const meta: Meta<typeof EngagementPatternChart> = {
   title: "Components/UI/Charts/EngagementPatternChart",
   component: EngagementPatternChart,
   tags: ["autodocs"],
+  argTypes: {},
 };
 
 export default meta;
@@ -16,7 +17,7 @@ const sampleRecentUnfollowers = [
   { username: "sara", timestamp: 1680007000 },
 ];
 
-export const Default: Story = {
+export const EngagementPatternChart_: Story = {
   args: {
     recentUnfollowers: sampleRecentUnfollowers,
   },

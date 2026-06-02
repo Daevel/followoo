@@ -52,3 +52,20 @@ export const Success: Story = {
     children: "L'operazione è stata completata con successo.",
   },
 };
+
+export const AllVariants: Story = {
+  name: "Tutte le varianti",
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <Callout title="Informazione" variant="info">
+        Questo è un componente callout per informazioni importanti.
+      </Callout>
+      <Callout title="Avvertimento" variant="warning">
+        Si prega di controllare le informazioni di cui sopra.
+      </Callout>
+      <Callout title="Successo" variant="success">
+        L'operazione è stata completata con successo.
+      </Callout>
+    </div>
+  ),
+};

@@ -5,9 +5,10 @@ const meta: Meta<typeof NavBar> = {
   title: "Components/UI/NavBar",
   component: NavBar,
   tags: ["autodocs"],
+  argTypes: {},
 };
 
 export default meta;
 type Story = StoryObj<typeof NavBar>;
 
-export const Default: Story = {};
+export const NavBar_: Story = {};

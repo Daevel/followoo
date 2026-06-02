@@ -53,11 +53,27 @@ export const Accent: Story = {
   },
 };
 
-export const Disabled: Story = {
+export const Deactivated: Story = {
   args: {
     icon: "upload",
     background: "primary",
     foreground: "foreground",
     disabled: true,
   },
+};
+
+export const AllVariants: Story = {
+  name: "Tutte le varianti",
+  render: () => (
+    <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+      <FabIcon icon="upload" background="primary" foreground="foreground" />
+      <FabIcon icon="download" background="accent" foreground="foreground" />
+      <FabIcon
+        icon="upload"
+        background="primary"
+        foreground="foreground"
+        disabled
+      />
+    </div>
+  ),
 };

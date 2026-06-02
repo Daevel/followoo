@@ -9,12 +9,12 @@ const meta: Meta<typeof PersonaBadge> = {
     persona: {
       control: { type: "select" },
       options: ["SUPER_FAN", "ENGAGED", "FICKLE", "LURKER", "DORMANT"],
-      description: "Persona type",
+      description: "Tipo di persona utente",
     },
     size: {
       control: { type: "select" },
       options: ["sm", "md"],
-      description: "Badge size",
+      description: "Grandezza badge",
     },
   },
 };
@@ -55,6 +55,26 @@ export const Dormant: Story = {
     persona: "DORMANT",
     size: "md",
   },
+};
+
+export const AllVariants: Story = {
+  name: "Tutte le varianti",
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+        <PersonaBadge persona="SUPER_FAN" size="md" />
+        <PersonaBadge persona="ENGAGED" size="md" />
+        <PersonaBadge persona="FICKLE" size="md" />
+        <PersonaBadge persona="LURKER" size="md" />
+        <PersonaBadge persona="DORMANT" size="md" />
+      </div>
+      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+        <PersonaBadge persona="SUPER_FAN" size="sm" />
+        <PersonaBadge persona="ENGAGED" size="sm" />
+        <PersonaBadge persona="FICKLE" size="sm" />
+      </div>
+    </div>
+  ),
 };
 
 export const SmallSize: Story = {

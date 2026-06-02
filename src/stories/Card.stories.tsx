@@ -68,3 +68,41 @@ export const Foreground: Story = {
     iconName: "shield",
   },
 };
+
+export const AllVariants: Story = {
+  name: "Tutte le varianti",
+  render: () => (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 1fr)",
+        gap: "1rem",
+      }}
+    >
+      <Card
+        title="Primary"
+        description="Card con colore primary"
+        color="primary"
+        iconName="shield"
+      />
+      <Card
+        title="Accent"
+        description="Card con colore accent"
+        color="accent"
+        iconName="shield"
+      />
+      <Card
+        title="Bg"
+        description="Card con colore bg"
+        color="bg"
+        iconName="shield"
+      />
+      <Card
+        title="Foreground"
+        description="Card con colore foreground"
+        color="foreground"
+        iconName="shield"
+      />
+    </div>
+  ),
+};

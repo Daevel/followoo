@@ -5,9 +5,10 @@ const meta: Meta<typeof FooterSignature> = {
   title: "Components/UI/FooterSignature",
   component: FooterSignature,
   tags: ["autodocs"],
+  argTypes: {},
 };
 
 export default meta;
 type Story = StoryObj<typeof FooterSignature>;
 
-export const Default: Story = {};
+export const FooterSignature_: Story = {};
