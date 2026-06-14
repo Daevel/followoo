@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import Seo from "../Seo";
+import Seo from "@/components/ui/Seo";
 import { initializePostHog } from "./analytics/posthogInit";
 import { useLandingPageAnimations } from "./animations/pages/useLandingPageAnimations";
 import { FooterSignature } from "./components/ui/FooterSignature";

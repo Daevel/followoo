@@ -2,12 +2,12 @@ import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
+import { Button } from "@/components/ui/Button";
+import { Container } from "@/components/ui/Container";
+import { Icon } from "@/components/ui/Icon";
+import { NavBar } from "@/components/ui/NavBar";
+import Seo from "@/components/ui/Seo";
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
-import Seo from "../../../Seo";
-import { Button } from "../ui/Button";
-import { Container } from "../ui/Container";
-import { Icon } from "../ui/Icon";
-import { NavBar } from "../ui/NavBar";
 
 type DeviceType = "laptop" | "smartPhone";
 

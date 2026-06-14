@@ -2,30 +2,30 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { gsap } from "@/animations/gsap";
-import Seo from "../../../Seo";
-import type {
-  InstagramAnalysisResult,
-  UserPersona,
-} from "../../types/instagram.types";
-import { calculateNetworkVolatility } from "../services/engagementPatternService";
-import { calculateRelationshipHealthScore } from "../services/relationshipHealthService";
+import { calculateNetworkVolatility } from "@/components/services/engagementPatternService";
+import { calculateRelationshipHealthScore } from "@/components/services/relationshipHealthService";
 import {
   classifyUserPersona,
   groupUsersByPersona,
-} from "../services/userPersonaService";
-import { Container } from "../ui/Container";
-import { EngagementPatternChart } from "../ui/charts/EngagementPatternChart";
-import { NetworkVolatilityCard } from "../ui/charts/NetworkVolatilityCard";
-import { ResultsPieChart } from "../ui/charts/ResultPieChart";
-import { DropdownTabButton } from "../ui/DropdownTabButton";
-import { Input } from "../ui/Input";
-import { NavBar } from "../ui/NavBar";
-import { Paginator } from "../ui/Paginator";
-import { PersonaFilter } from "../ui/PersonaFilter";
-import { RelationshipHealthInsight } from "../ui/RelationshipHealthInsight";
-import { SortSelect } from "../ui/SortSelect";
-import { UserListItem } from "../ui/UserListItem";
-import { formatDate } from "../utils";
+} from "@/components/services/userPersonaService";
+import { Container } from "@/components/ui/Container";
+import { EngagementPatternChart } from "@/components/ui/charts/EngagementPatternChart";
+import { NetworkVolatilityCard } from "@/components/ui/charts/NetworkVolatilityCard";
+import { ResultsPieChart } from "@/components/ui/charts/ResultPieChart";
+import { DropdownTabButton } from "@/components/ui/DropdownTabButton";
+import { Input } from "@/components/ui/Input";
+import { NavBar } from "@/components/ui/NavBar";
+import { Paginator } from "@/components/ui/Paginator";
+import { PersonaFilter } from "@/components/ui/PersonaFilter";
+import { RelationshipHealthInsight } from "@/components/ui/RelationshipHealthInsight";
+import Seo from "@/components/ui/Seo";
+import { SortSelect } from "@/components/ui/SortSelect";
+import { UserListItem } from "@/components/ui/UserListItem";
+import { formatDate } from "@/components/utils";
+import type {
+  InstagramAnalysisResult,
+  UserPersona,
+} from "@/types/instagram.types";
 
 type SortKey =
   | "alphabeticalAsc"

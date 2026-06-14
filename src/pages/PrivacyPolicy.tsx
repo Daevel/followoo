@@ -1,9 +1,9 @@
 import { useRef } from "react";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
-import Seo from "../../../Seo";
-import { Callout } from "../ui/Callout";
-import { Container } from "../ui/Container";
-import { NavBar } from "../ui/NavBar";
+import { Callout } from "@/components/ui/Callout";
+import { Container } from "@/components/ui/Container";
+import { NavBar } from "@/components/ui/NavBar";
+import Seo from "@/components/ui/Seo";
 
 type SectionProps = {
   title: string;

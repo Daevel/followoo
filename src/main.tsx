@@ -5,15 +5,15 @@ import App from "./App.tsx";
 import "./index.css";
 
 import { RouteAwareErrorBoundary } from "./components/errors/RouteAwareErrorBoundary.tsx";
-import { GetStarted } from "./components/pages/GetStarted.tsx";
-import { InstructionsToStart } from "./components/pages/InstructionsToStart.tsx";
-import { PrivacyPolicy } from "./components/pages/PrivacyPolicy.tsx";
-import { ResultPage } from "./components/pages/ResultPage.tsx";
-import { SupportSection } from "./components/pages/SupportSection.tsx";
-import { TermsAndConditions } from "./components/pages/TermsAndConditions.tsx";
-import { Updates } from "./components/pages/Updates.tsx";
 import { ToastProvider } from "./components/providers/ToastProvider.tsx";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
+import { GetStarted } from "./pages/GetStarted.tsx";
+import { InstructionsToStart } from "./pages/InstructionsToStart.tsx";
+import { PrivacyPolicy } from "./pages/PrivacyPolicy.tsx";
+import { ResultPage } from "./pages/ResultPage.tsx";
+import { SupportSection } from "./pages/SupportSection.tsx";
+import { TermsAndConditions } from "./pages/TermsAndConditions.tsx";
+import { Updates } from "./pages/Updates.tsx";
 import { registerServiceWorker } from "./pwa/pwaRegister.ts";
 
 // Register PWA Service Worker

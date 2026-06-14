@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
-import Seo from "../../../Seo";
-import { useSupportForm } from "../hooks/useSupportForm";
-import { toastService } from "../services/toastService";
-import { Button } from "../ui/Button";
-import { Container } from "../ui/Container";
-import { Input } from "../ui/Input";
-import { NavBar } from "../ui/NavBar";
-import { SkeletonLoaderCircle } from "../ui/SkeletonLoaderCircle";
+import { useSupportForm } from "@/components/hooks/useSupportForm";
+import { toastService } from "@/components/services/toastService";
+import { Button } from "@/components/ui/Button";
+import { Container } from "@/components/ui/Container";
+import { Input } from "@/components/ui/Input";
+import { NavBar } from "@/components/ui/NavBar";
+import Seo from "@/components/ui/Seo";
+import { SkeletonLoaderCircle } from "@/components/ui/SkeletonLoaderCircle";
 
 export function SupportSection() {
   return (

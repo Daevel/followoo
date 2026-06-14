@@ -1,4 +1,4 @@
-import type { PublicUpdateListItem } from "../../data/updates/updates.types.js";
+import type { PublicUpdateListItem } from "../../src/data/updates/updates.types.js";
 import { sql } from "../db/neon.js";
 
 type UpdateGroup = {
