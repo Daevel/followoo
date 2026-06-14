@@ -92,11 +92,12 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 
 - `src/main.tsx` mounts the app, registers the service worker, configures `BrowserRouter`, global providers, error boundaries, and routes.
 - `src/App.tsx` is the landing page composition and PWA install prompt behavior.
-- Page-level routes currently live in `src/components/pages`.
+- Page-level routes live in `src/pages`.
 - Shared UI currently lives in `src/components/ui`.
 - Services, parsers, schemas, hooks, utils, and providers currently live under `src/components/*`, even when some of them are not React components. Refactors may improve this gradually, but do not move large areas without a clear migration goal.
 - Cross-cutting folders already exist at `src/analytics`, `src/animations`, `src/errors`, `src/pwa`, `src/data`, and `src/types`.
-- Vercel serverless/API code lives outside `src` under `api/`.
+- Vercel serverless/API endpoints live outside `src` under `api/`.
+- Server-only services, repositories, and infrastructure shared by API endpoints live under `server/`.
 
 ## Privacy And Analytics Rules
 

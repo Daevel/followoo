@@ -117,7 +117,7 @@ Use the existing target folders instead.
 
 Do not perform large folder migrations as a side effect of a small feature.
 
-Because existing code currently includes paths like `src/components/pages`, `src/components/services`, `src/components/utils`, `src/components/hooks`, `src/components/schemas`, and `src/components/providers`, follow this rule:
+Because existing code currently includes paths like `src/components/services`, `src/components/utils`, `src/components/hooks`, `src/components/schemas`, and `src/components/providers`, follow this rule:
 
 ```txt
 Small feature or bug fix -> follow nearby existing structure.
@@ -131,7 +131,7 @@ When moving files, update imports and run the relevant checks.
 
 Routing is configured in `src/main.tsx` with React Router.
 
-Current route page components live in `src/components/pages`. The target location is:
+Current route page components live in:
 
 ```txt
 src/pages/
