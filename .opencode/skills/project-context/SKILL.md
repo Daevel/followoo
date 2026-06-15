@@ -84,13 +84,16 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - JSZip for in-browser ZIP parsing.
 - Recharts for charts.
 - Storybook for component documentation and visual development.
-- Biome for formatting and lint checks.
+- Biome 2.5 for formatting and lint checks.
 - Vite PWA plugin for installable app behavior.
 - PostHog is present for product analytics initialization; do not use it to track private Instagram relationship data.
 
 ## Runtime Shape
 
-- `src/main.tsx` mounts the app, registers the service worker, configures `BrowserRouter`, global providers, error boundaries, and routes.
+- `src/main.tsx` mounts the app, configures `HelmetProvider`, `BrowserRouter`, global providers, and delegates route composition to `src/AppRoutes.tsx`.
+- `src/AppRoutes.tsx` is the shared route tree used by both the browser app and prerender entry.
+- `src/entry-prerender.tsx` and `scripts/prerender-static.mjs` generate static HTML for public SEO routes after the Vite client and SSR builds.
+- PWA service worker registration and manifest injection are handled by `vite-plugin-pwa`; do not add a manual `public/sw.js` or manual `/manifest.json` link.
 - `src/App.tsx` is the landing page composition and PWA install prompt behavior.
 - Page-level routes live in `src/pages`.
 - Shared UI currently lives in `src/components/ui`.
@@ -117,7 +120,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 ## Useful Commands
 
 - `npm run dev`: start local Vite development server.
-- `npm run build`: TypeScript build plus Vite production build.
+- `npm run build`: TypeScript build, Vite client build, Vite SSR prerender bundle, then static HTML prerender for public SEO routes.
 - `npm run lint`: Biome check.
 - `npm run lint:fix`: Biome check with writes.
 - `npm run format`: Biome format with writes.

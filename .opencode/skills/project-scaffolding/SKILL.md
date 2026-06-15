@@ -129,7 +129,9 @@ When moving files, update imports and run the relevant checks.
 
 ## Pages And Routing
 
-Routing is configured in `src/main.tsx` with React Router.
+Routing is composed in `src/AppRoutes.tsx` with React Router and mounted from `src/main.tsx`.
+
+`src/AppRoutes.tsx` is also used by `src/entry-prerender.tsx` for static prerendering. Keep route additions in the shared route tree unless a route is intentionally browser-only.
 
 Current route page components live in:
 
@@ -429,10 +431,26 @@ src/pwa/
 
 Rules:
 
-- Keep service worker registration and PWA configuration isolated.
+- Keep service worker registration and manifest injection owned by `vite-plugin-pwa`; do not add manual `public/sw.js` registration or a separate manual `/manifest.json` link.
 - App install prompt UI can stay app-level while small.
 - If install behavior grows, move it into `features/pwa-install`.
 - Do not cache private uploaded Instagram data.
+
+## Static Prerendering
+
+Public SEO routes are prerendered after the client build using:
+
+```txt
+src/entry-prerender.tsx
+scripts/prerender-static.mjs
+```
+
+Rules:
+
+- Keep prerendered routes public and non-session-specific.
+- Do not prerender `/results`, because it depends on in-memory browser navigation state and private analysis data.
+- Avoid module-level DOM or animation side effects in code imported by prerendered routes.
+- When adding a new public SEO route, update the shared route tree, sitemap config, and prerender route list together.
 
 ## Errors
 
