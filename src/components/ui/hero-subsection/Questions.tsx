@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { DropdownCard } from "@/components/ui/DropdownCard.tsx";
 import { Icon } from "../../../components/ui/Icon";
 
-const cards = [
+export const faqCards = [
   {
     title: "Is my Instagram data safe?",
     description:
@@ -58,7 +58,7 @@ export function Questions() {
           </h2>
 
           <div className="mt-12 flex flex-col justify-center gap-y-5">
-            {cards.map((card) => (
+            {faqCards.map((card) => (
               <div
                 key={card.title}
                 data-animate="faq-card"

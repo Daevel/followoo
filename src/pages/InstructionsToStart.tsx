@@ -581,10 +581,10 @@ export function InstructionsToStart() {
   return (
     <>
       <Seo
-        title="Followoo - Instructions"
-        description="Follow our step-by-step instructions to download your Instagram data and start analyzing your followers."
-        image="https://followoo.app/favicon.svg"
-        canonical="https://followoo.app/instructions"
+        title="How to Download Instagram Followers Export - Followoo"
+        description="Step-by-step instructions to download your official Instagram followers and following export from Meta Accounts Center in JSON format."
+        image="https://followoo.app/icons/pwa-icon-512.svg"
+        canonical="https://followoo.app/instructions-to-start"
       />
       <section className="flex min-h-svh flex-col">
         <NavBar />

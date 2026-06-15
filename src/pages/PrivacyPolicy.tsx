@@ -27,10 +27,10 @@ export function PrivacyPolicy() {
   return (
     <section className="flex min-h-svh flex-col">
       <Seo
-        title="Followoo - Privacy Policy"
-        description="Read our privacy policy to understand how we collect, use, and protect your data."
-        image="https://followoo.app/favicon.svg"
-        canonical="https://followoo.app/privacy"
+        title="Privacy Policy - Followoo"
+        description="Learn how Followoo protects your Instagram export data by processing files locally in your browser without uploading them to external servers."
+        image="https://followoo.app/icons/pwa-icon-512.svg"
+        canonical="https://followoo.app/privacy-and-policy"
       />
       <NavBar />
 

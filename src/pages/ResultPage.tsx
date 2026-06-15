@@ -378,10 +378,11 @@ function ResultPageContent({
   return (
     <>
       <Seo
-        title="Followoo - Analysis Results"
-        description="View detailed insights about your Instagram followers, including engagement patterns, relationship health, and user personas."
-        image="https://followoo.app/favicon.svg"
+        title="Analysis Results - Followoo"
+        description="View your private Instagram relationship analysis for the current browser session."
+        image="https://followoo.app/icons/pwa-icon-512.svg"
         canonical="https://followoo.app/results"
+        noIndex
       />
       <section className="flex min-h-svh flex-col">
         <NavBar />

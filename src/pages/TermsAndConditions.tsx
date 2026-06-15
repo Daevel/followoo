@@ -26,10 +26,10 @@ export function TermsAndConditions() {
   return (
     <section className="flex min-h-svh flex-col">
       <Seo
-        title="Followoo - Terms and Conditions"
-        description="Review our terms and conditions that govern the use of Followoo service."
-        image="https://followoo.app/favicon.svg"
-        canonical="https://followoo.app/terms"
+        title="Terms and Conditions - Followoo"
+        description="Review the terms for using Followoo to analyze official Instagram export files locally in your browser."
+        image="https://followoo.app/icons/pwa-icon-512.svg"
+        canonical="https://followoo.app/terms-and-conditions"
       />
       <NavBar />
 

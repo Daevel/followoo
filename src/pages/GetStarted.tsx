@@ -177,9 +177,9 @@ export function GetStarted() {
   return (
     <>
       <Seo
-        title="Followoo - Get Started"
-        description="Start analyzing your Instagram followers. Upload your Instagram data to compare your engagement and growth with others."
-        image="https://followoo.app/favicon.svg"
+        title="Upload Instagram Export ZIP - Followoo"
+        description="Start a private Instagram follower analysis by uploading your official export ZIP. Followoo processes the file locally in your browser."
+        image="https://followoo.app/icons/pwa-icon-512.svg"
         canonical="https://followoo.app/get-started"
       />
       <section className="flex min-h-svh flex-col">

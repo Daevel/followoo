@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && vite build --ssr src/entry-prerender.tsx --outDir dist-ssr && node scripts/prerender-static.mjs",
     "format": "biome format . --write",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
@@ -42,7 +42,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.16",
+    "@biomejs/biome": "^2.5.0",
     "@chromatic-com/storybook": "^5.2.1",
     "@emailjs/browser": "^4.4.1",
     "@eslint/js": "^9.39.1",

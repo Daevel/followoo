@@ -153,9 +153,9 @@ export function Updates() {
   return (
     <>
       <Seo
-        title="Followoo - Updates"
-        description="Check out the latest updates and improvements to Followoo."
-        image="https://followoo.app/favicon.svg"
+        title="Product Updates - Followoo"
+        description="Read the latest Followoo updates, improvements and fixes for private Instagram export analysis."
+        image="https://followoo.app/icons/pwa-icon-512.svg"
         canonical="https://followoo.app/updates"
       />
       <section className="flex min-h-svh flex-col">
