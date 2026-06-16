@@ -20,7 +20,7 @@ const routes = [
 ];
 
 const siteUrl = "https://followoo.app";
-const socialImage = `${siteUrl}/icons/pwa-icon-512.svg`;
+const socialImage = `${siteUrl}/icons/pwa-icon-512.png`;
 
 const routeSeo = {
   "/": {

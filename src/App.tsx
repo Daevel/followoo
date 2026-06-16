@@ -182,7 +182,7 @@ export default function App() {
       <Seo
         title="Followoo - Private Instagram Followers Analyzer"
         description="Analyze your Instagram export locally in your browser. Compare followers, following, mutuals and unfollowers without login or server-side file uploads."
-        image={`${SITE_URL}/icons/pwa-icon-512.svg`}
+        image={`${SITE_URL}/icons/pwa-icon-512.png`}
         canonical={SITE_URL}
         schemaMarkup={homeSchemaMarkup}
       />

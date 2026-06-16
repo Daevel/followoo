@@ -28,7 +28,7 @@ export function TermsAndConditions() {
       <Seo
         title="Terms and Conditions - Followoo"
         description="Review the terms for using Followoo to analyze official Instagram export files locally in your browser."
-        image="https://followoo.app/icons/pwa-icon-512.svg"
+        image="https://followoo.app/icons/pwa-icon-512.png"
         canonical="https://followoo.app/terms-and-conditions"
       />
       <NavBar />

@@ -67,7 +67,7 @@ export default defineConfig(({ isSsrBuild }) => ({
     }),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg", "robots.txt", "icons/*.svg"],
+      includeAssets: ["favicon.svg", "robots.txt", "icons/*.{png,svg}"],
       manifest: {
         name: "Followoo - Private Instagram Export Analyzer",
         short_name: "Followoo",
@@ -83,21 +83,21 @@ export default defineConfig(({ isSsrBuild }) => ({
         prefer_related_applications: false,
         icons: [
           {
-            src: "/icons/pwa-icon-192.svg",
+            src: "/icons/pwa-icon-192.png",
             sizes: "192x192",
-            type: "image/svg+xml",
+            type: "image/png",
             purpose: "any",
           },
           {
-            src: "/icons/pwa-icon-512.svg",
+            src: "/icons/pwa-icon-512.png",
             sizes: "512x512",
-            type: "image/svg+xml",
+            type: "image/png",
             purpose: "any",
           },
           {
-            src: "/icons/pwa-icon-maskable.svg",
+            src: "/icons/pwa-icon-maskable.png",
             sizes: "512x512",
-            type: "image/svg+xml",
+            type: "image/png",
             purpose: "maskable",
           },
         ],
@@ -109,16 +109,15 @@ export default defineConfig(({ isSsrBuild }) => ({
             url: "/get-started",
             icons: [
               {
-                src: "/icons/pwa-icon-192.svg",
+                src: "/icons/pwa-icon-192.png",
                 sizes: "192x192",
-                type: "image/svg+xml",
+                type: "image/png",
               },
             ],
           },
         ],
         // TODO: add real app screenshots once the final production UI is captured.
         // Recommended assets: /screenshots/pwa-mobile.png (540x720) and /screenshots/pwa-desktop.png (1280x720).
-        // TODO: add PNG versions of icons for maximum browser compatibility.
       },
       workbox: {
         globPatterns: [

@@ -380,7 +380,7 @@ function ResultPageContent({
       <Seo
         title="Analysis Results - Followoo"
         description="View your private Instagram relationship analysis for the current browser session."
-        image="https://followoo.app/icons/pwa-icon-512.svg"
+        image="https://followoo.app/icons/pwa-icon-512.png"
         canonical="https://followoo.app/results"
         noIndex
       />

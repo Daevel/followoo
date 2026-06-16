@@ -29,7 +29,7 @@ export function PrivacyPolicy() {
       <Seo
         title="Privacy Policy - Followoo"
         description="Learn how Followoo protects your Instagram export data by processing files locally in your browser without uploading them to external servers."
-        image="https://followoo.app/icons/pwa-icon-512.svg"
+        image="https://followoo.app/icons/pwa-icon-512.png"
         canonical="https://followoo.app/privacy-and-policy"
       />
       <NavBar />
