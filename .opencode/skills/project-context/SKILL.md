@@ -93,6 +93,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - `src/main.tsx` mounts the app, configures `HelmetProvider`, `BrowserRouter`, global providers, and delegates route composition to `src/AppRoutes.tsx`.
 - `src/AppRoutes.tsx` is the shared route tree used by both the browser app and prerender entry.
 - `src/entry-prerender.tsx` and `scripts/prerender-static.mjs` generate static HTML for public SEO routes after the Vite client and SSR builds.
+- Vercel should serve prerendered public SEO routes from the generated static files; only SPA-only routes such as `/results` should rewrite to `/index.html`.
 - PWA service worker registration and manifest injection are handled by `vite-plugin-pwa`; do not add a manual `public/sw.js` or manual `/manifest.json` link.
 - `src/App.tsx` is the landing page composition and PWA install prompt behavior.
 - Page-level routes live in `src/pages`.
