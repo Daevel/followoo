@@ -15,7 +15,7 @@ export function SupportSection() {
       <Seo
         title="Support - Followoo"
         description="Contact Followoo support for help, bug reports or feedback about private Instagram export analysis."
-        image="https://followoo.app/icons/pwa-icon-512.png"
+        image="https://followoo.app/icons/OG.png"
         canonical="https://followoo.app/support"
       />
       <SupportContent />

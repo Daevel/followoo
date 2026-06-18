@@ -179,7 +179,7 @@ export function GetStarted() {
       <Seo
         title="Upload Instagram Export ZIP - Followoo"
         description="Start a private Instagram follower analysis by uploading your official export ZIP. Followoo processes the file locally in your browser."
-        image="https://followoo.app/icons/pwa-icon-512.png"
+        image="https://followoo.app/icons/OG.png"
         canonical="https://followoo.app/get-started"
       />
       <section className="flex min-h-svh flex-col">

@@ -583,7 +583,7 @@ export function InstructionsToStart() {
       <Seo
         title="How to Download Instagram Followers Export - Followoo"
         description="Step-by-step instructions to download your official Instagram followers and following export from Meta Accounts Center in JSON format."
-        image="https://followoo.app/icons/pwa-icon-512.png"
+        image="https://followoo.app/icons/OG.png"
         canonical="https://followoo.app/instructions-to-start"
       />
       <section className="flex min-h-svh flex-col">

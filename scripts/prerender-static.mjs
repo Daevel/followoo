@@ -20,7 +20,10 @@ const routes = [
 ];
 
 const siteUrl = "https://followoo.app";
-const socialImage = `${siteUrl}/icons/pwa-icon-512.png`;
+const socialImage = `${siteUrl}/icons/OG.png`;
+const socialImageAlt = "Followoo private Instagram export analyzer preview";
+const socialImageHeight = "630";
+const socialImageWidth = "1200";
 
 const routeSeo = {
   "/": {
@@ -118,6 +121,7 @@ function createFallbackHead(route) {
   const description = escapeAttribute(seo.description);
   const canonical = escapeAttribute(seo.canonical);
   const image = escapeAttribute(socialImage);
+  const imageAlt = escapeAttribute(socialImageAlt);
   const schema = seo.schemaMarkup
     ? `<script type="application/ld+json">${JSON.stringify(seo.schemaMarkup)}</script>`
     : "";
@@ -131,11 +135,16 @@ function createFallbackHead(route) {
     '<meta property="og:type" content="website"/>',
     `<meta property="og:url" content="${canonical}"/>`,
     `<meta property="og:image" content="${image}"/>`,
+    '<meta property="og:image:type" content="image/png"/>',
+    `<meta property="og:image:width" content="${socialImageWidth}"/>`,
+    `<meta property="og:image:height" content="${socialImageHeight}"/>`,
+    `<meta property="og:image:alt" content="${imageAlt}"/>`,
     '<meta property="og:site_name" content="Followoo"/>',
     '<meta name="twitter:card" content="summary_large_image"/>',
     `<meta name="twitter:title" content="${title}"/>`,
     `<meta name="twitter:description" content="${description}"/>`,
     `<meta name="twitter:image" content="${image}"/>`,
+    `<meta name="twitter:image:alt" content="${imageAlt}"/>`,
     schema,
   ].join("");
 }

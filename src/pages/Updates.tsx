@@ -155,7 +155,7 @@ export function Updates() {
       <Seo
         title="Product Updates - Followoo"
         description="Read the latest Followoo updates, improvements and fixes for private Instagram export analysis."
-        image="https://followoo.app/icons/pwa-icon-512.png"
+        image="https://followoo.app/icons/OG.png"
         canonical="https://followoo.app/updates"
       />
       <section className="flex min-h-svh flex-col">
