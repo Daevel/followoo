@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { animateLoadingOut } from "@/animations/loading/useAnimateLoadingOut";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
+import { compareFollowerSnapshots } from "@/components/services/followerSnapshotDiffService";
 import { analyzeInstagramExport } from "@/components/services/instagramAnalisysService";
 import { parseInstagramExport } from "@/components/services/instagramExportService";
 import { Button } from "@/components/ui/Button";
@@ -23,7 +24,9 @@ export function GetStarted() {
   const navigate = useNavigate();
 
   const [selectedZipFile, setSelectedZipFile] = useState<File | null>(null);
+  const [previousZipFile, setPreviousZipFile] = useState<File | null>(null);
   const [uploadError, setUploadError] = useState("");
+  const [previousUploadError, setPreviousUploadError] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [termsAndConditionsAccepted, setTermsAndConditionsAccepted] =
     useState<boolean>(false);
@@ -31,6 +34,10 @@ export function GetStarted() {
   const [fileValidationState, setFileValidationState] =
     useState<FileValidationState>("idle");
   const [fileValidationMessage, setFileValidationMessage] = useState("");
+  const [previousFileValidationState, setPreviousFileValidationState] =
+    useState<FileValidationState>("idle");
+  const [previousFileValidationMessage, setPreviousFileValidationMessage] =
+    useState("");
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
@@ -42,6 +49,8 @@ export function GetStarted() {
   const isTermsAccepted = isDemo || termsAndConditionsAccepted;
   const hasValidFile =
     isDemo || (Boolean(selectedZipFile) && fileValidationState === "valid");
+  const hasValidPreviousFile =
+    Boolean(previousZipFile) && previousFileValidationState === "valid";
 
   useStandardPageAnimation(rootRef);
 
@@ -58,6 +67,23 @@ export function GetStarted() {
       setFileValidationState("invalid");
       setFileValidationMessage(
         "Invalid file format. Please upload a valid Instagram export ZIP downloaded from the Meta Accounts Center."
+      );
+    }
+  }, []);
+
+  const validatePreviousFile = useCallback(async (file: File) => {
+    setPreviousUploadError("");
+    setPreviousFileValidationState("checking");
+    setPreviousFileValidationMessage("");
+
+    try {
+      await parseInstagramExport(file);
+      setPreviousFileValidationState("valid");
+      setPreviousFileValidationMessage("Previous export detected.");
+    } catch {
+      setPreviousFileValidationState("invalid");
+      setPreviousFileValidationMessage(
+        "Invalid previous export. Please upload a valid Instagram export ZIP."
       );
     }
   }, []);
@@ -88,6 +114,27 @@ export function GetStarted() {
       abortController?.abort();
     };
   }, [selectedZipFile, isDemo, validateFile]);
+
+  useEffect(() => {
+    let abortController: AbortController | null = null;
+
+    const runEffect = async () => {
+      if (!previousZipFile) {
+        setPreviousFileValidationState("idle");
+        setPreviousFileValidationMessage("");
+        return;
+      }
+
+      abortController = new AbortController();
+      await validatePreviousFile(previousZipFile);
+    };
+
+    void runEffect();
+
+    return () => {
+      abortController?.abort();
+    };
+  }, [previousZipFile, validatePreviousFile]);
 
   async function loadDemoZipFile() {
     const response = await fetch(vercelBlobStructure.demoFile);
@@ -133,6 +180,14 @@ export function GetStarted() {
       const exportData = await parseInstagramExport(zipFile);
       const analysis = analyzeInstagramExport(exportData);
 
+      if (previousZipFile && hasValidPreviousFile) {
+        const previousExportData = await parseInstagramExport(previousZipFile);
+        analysis.followerSnapshotDiff = compareFollowerSnapshots(
+          previousExportData,
+          exportData
+        );
+      }
+
       analyticsService.track(ANALYTICS_EVENTS.ANALYSIS_COMPLETED, {
         followers_count: exportData.followers.length,
         following_count: exportData.following.length,
@@ -142,6 +197,8 @@ export function GetStarted() {
         blocked_count: analysis.blocked.length,
         restricted_count: analysis.restricted.length,
         close_friends_count: analysis.closeFriends.length,
+        pending_follow_requests_count: analysis.pendingFollowRequests.length,
+        recent_follow_requests_count: analysis.recentFollowRequests.length,
       });
 
       const elapsed = Date.now() - start;
@@ -220,6 +277,9 @@ export function GetStarted() {
             >
               {!isDemo && (
                 <div data-page-animate="item" className="w-full">
+                  <p className="text-foreground mb-3 text-sm font-semibold">
+                    Current export
+                  </p>
                   <ZipDropzone
                     file={selectedZipFile}
                     onFileChange={setSelectedZipFile}
@@ -227,6 +287,27 @@ export function GetStarted() {
                       setUploadError(errorMessage);
                       setFileValidationState("invalid");
                       setFileValidationMessage(errorMessage);
+                    }}
+                  />
+                </div>
+              )}
+
+              {!isDemo && (
+                <div data-page-animate="item" className="w-full">
+                  <p className="text-foreground mb-2 text-sm font-semibold">
+                    Previous export for follower changes
+                  </p>
+                  <p className="text-foreground/60 mb-3 text-sm leading-6">
+                    Optional. Add an older ZIP to discover lost and new
+                    followers between the two exports.
+                  </p>
+                  <ZipDropzone
+                    file={previousZipFile}
+                    onFileChange={setPreviousZipFile}
+                    onError={(errorMessage) => {
+                      setPreviousUploadError(errorMessage);
+                      setPreviousFileValidationState("invalid");
+                      setPreviousFileValidationMessage(errorMessage);
                     }}
                   />
                 </div>
@@ -256,6 +337,33 @@ export function GetStarted() {
                   </Callout>
                 </div>
               )}
+
+              {!isDemo && previousFileValidationState === "checking" && (
+                <div data-page-animate="item" className="w-full">
+                  <Callout title="Checking previous export" variant="info">
+                    Verifying the previous ZIP structure...
+                  </Callout>
+                </div>
+              )}
+
+              {!isDemo && previousFileValidationState === "valid" && (
+                <div data-page-animate="item" className="w-full">
+                  <Callout title="Previous export verified" variant="success">
+                    {previousFileValidationMessage}
+                  </Callout>
+                </div>
+              )}
+
+              {!isDemo &&
+                (previousFileValidationState === "invalid" ||
+                  previousUploadError) &&
+                previousFileValidationMessage && (
+                  <div data-page-animate="item" className="w-full">
+                    <Callout title="Invalid previous export" variant="warning">
+                      {previousFileValidationMessage}
+                    </Callout>
+                  </div>
+                )}
 
               {!isDemo &&
                 (fileValidationState === "invalid" || uploadError) &&
@@ -341,7 +449,9 @@ export function GetStarted() {
                     !isTermsAccepted ||
                     !hasValidFile ||
                     !!uploadError ||
-                    fileValidationState === "checking"
+                    fileValidationState === "checking" ||
+                    previousFileValidationState === "checking" ||
+                    previousFileValidationState === "invalid"
                   }
                   onClick={onElaborateFile}
                 >

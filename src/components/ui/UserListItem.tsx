@@ -3,24 +3,13 @@ import { getInstagramProfileUrl } from "../utils/instagram";
 import { extractFirstNameLetter } from "../utils/searchUtils";
 import { PersonaBadge } from "./PersonaBadge";
 
-function formatDate(timestamp?: number) {
-  if (!timestamp) return null;
-
-  const date = new Date(timestamp * 1000);
-
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    year: "numeric",
-  });
-}
-
 type UserListItemProps = {
   user: InstagramUser;
   formatDate: (timestamp?: number) => string | null;
   persona?: UserPersona;
 };
 
-export function UserListItem({ user, persona }: UserListItemProps) {
+export function UserListItem({ user, formatDate, persona }: UserListItemProps) {
   const href = getInstagramProfileUrl(user);
   const initial = extractFirstNameLetter(user.username.toUpperCase());
   const formattedDate = formatDate(user.timestamp);

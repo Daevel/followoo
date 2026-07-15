@@ -39,6 +39,18 @@ const sampleAnalysis = {
   restricted: [{ username: "filippo", timestamp: 1680008000 }],
   closeFriends: [{ username: "lucia", timestamp: 1680009000 }],
   hideStoriesFrom: [{ username: "elena", timestamp: 1680010000 }],
+  pendingFollowRequests: [{ username: "rita", timestamp: 1680011000 }],
+  recentFollowRequests: [{ username: "nico", timestamp: 1680012000 }],
+  sourceCounts: {
+    followers: 4,
+    following: 3,
+  },
+  followerSnapshotDiff: {
+    previousFollowersCount: 5,
+    currentFollowersCount: 4,
+    lostFollowers: [{ username: "roberto", timestamp: 1680013000 }],
+    newFollowers: [{ username: "chiara", timestamp: 1680014000 }],
+  },
 };
 
 export const DropdownTabButton_: Story = {

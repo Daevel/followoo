@@ -34,6 +34,8 @@ export function analyzeInstagramExport(
   const restricted = dedupeUsers(data.restricted);
   const closeFriends = dedupeUsers(data.closeFriends);
   const hideStoriesFrom = dedupeUsers(data.hideStoriesFrom);
+  const pendingFollowRequests = dedupeUsers(data.pendingFollowRequests);
+  const recentFollowRequests = dedupeUsers(data.recentFollowRequests);
 
   const followerMap = new Map(
     followers.map((user) => [normalizeUsername(user.username), user])
@@ -51,6 +53,7 @@ export function analyzeInstagramExport(
     (user) => !followingMap.has(normalizeUsername(user.username))
   );
 
+  // Legacy field name: this is the FOLLOWING-only category, not actual unfollow events.
   const unfollowers = following.filter(
     (user) => !followerMap.has(normalizeUsername(user.username))
   );
@@ -64,5 +67,11 @@ export function analyzeInstagramExport(
     restricted,
     closeFriends,
     hideStoriesFrom,
+    pendingFollowRequests,
+    recentFollowRequests,
+    sourceCounts: {
+      followers: followers.length,
+      following: following.length,
+    },
   };
 }

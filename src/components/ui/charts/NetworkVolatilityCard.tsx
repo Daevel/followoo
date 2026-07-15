@@ -71,8 +71,7 @@ export function NetworkVolatilityCard({
             <p className="text-foreground/60 text-sm">of following</p>
           </div>
           <p className="text-foreground/70 mt-2 text-xs leading-5">
-            Percentage of your following list that is unstable (unfollowers +
-            recently unfollowed)
+            Percentage of your following list linked to recent unfollow activity
           </p>
         </div>
 
@@ -85,10 +84,11 @@ export function NetworkVolatilityCard({
             <p className={clsx("text-3xl font-bold", config.labelColor)}>
               {volatility.recentUnfollowRatio.toFixed(1)}%
             </p>
-            <p className="text-foreground/60 text-sm">of unfollowers</p>
+            <p className="text-foreground/60 text-sm">of following gap</p>
           </div>
           <p className="text-foreground/70 mt-2 text-xs leading-5">
-            Percentage of your unfollowers that unfollowed recently
+            Recent unfollows compared with people you follow who don't follow
+            back
           </p>
         </div>
 

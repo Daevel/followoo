@@ -132,7 +132,7 @@ export function EngagementPatternChart({
               cursor={{ fill: "rgba(99, 102, 241, 0.1)" }}
               formatter={(value) => {
                 if (typeof value === "number") {
-                  return [`${value}`, "Unfollowers"];
+                  return [`${value}`, "Recent unfollows"];
                 }
                 return value;
               }}
@@ -147,7 +147,7 @@ export function EngagementPatternChart({
         {/* Total */}
         <div className="bg-foreground/5 flex flex-col items-center rounded-lg p-4">
           <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
-            Total unfollowers
+            Recent unfollowers
           </p>
           <p className="text-foreground mt-2 text-2xl font-bold">
             {patternResult.totalUnfollowers}
@@ -164,7 +164,7 @@ export function EngagementPatternChart({
               {patternResult.peakPeriod.period}
             </p>
             <p className="text-accent/70 text-xs">
-              {patternResult.peakPeriod.count} unfollowers
+              {patternResult.peakPeriod.count} recent unfollows
             </p>
           </div>
         )}

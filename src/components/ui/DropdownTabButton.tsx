@@ -11,7 +11,11 @@ type TabKey =
   | "blocked"
   | "restricted"
   | "closeFriends"
-  | "hideStoriesFrom";
+  | "hideStoriesFrom"
+  | "pendingFollowRequests"
+  | "recentFollowRequests"
+  | "lostFollowers"
+  | "newFollowers";
 
 type DropdownTabButtonProps = {
   title: string;
@@ -74,7 +78,7 @@ export function DropdownTabButton({
               active={activeTab === "followersOnly"}
               onClick={() => setActiveTab("followersOnly")}
             >
-              Followers ({analysis.followersOnly.length})
+              Follower ({analysis.followersOnly.length})
             </TabButton>
 
             <TabButton
@@ -95,7 +99,7 @@ export function DropdownTabButton({
               active={activeTab === "unfollowers"}
               onClick={() => setActiveTab("unfollowers")}
             >
-              Unfollowers ({analysis.unfollowers.length})
+              Following ({analysis.unfollowers.length})
             </TabButton>
 
             <TabButton
@@ -118,6 +122,40 @@ export function DropdownTabButton({
             >
               Hide Stories ({analysis.hideStoriesFrom.length})
             </TabButton>
+
+            <TabButton
+              active={activeTab === "pendingFollowRequests"}
+              onClick={() => setActiveTab("pendingFollowRequests")}
+            >
+              Pending Requests ({analysis.pendingFollowRequests.length})
+            </TabButton>
+
+            <TabButton
+              active={activeTab === "recentFollowRequests"}
+              onClick={() => setActiveTab("recentFollowRequests")}
+            >
+              Recent Requests ({analysis.recentFollowRequests.length})
+            </TabButton>
+
+            {analysis.followerSnapshotDiff && (
+              <>
+                <TabButton
+                  active={activeTab === "lostFollowers"}
+                  onClick={() => setActiveTab("lostFollowers")}
+                >
+                  Lost Followers (
+                  {analysis.followerSnapshotDiff.lostFollowers.length})
+                </TabButton>
+
+                <TabButton
+                  active={activeTab === "newFollowers"}
+                  onClick={() => setActiveTab("newFollowers")}
+                >
+                  New Followers (
+                  {analysis.followerSnapshotDiff.newFollowers.length})
+                </TabButton>
+              </>
+            )}
           </div>
         </div>
       </div>

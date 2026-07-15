@@ -193,20 +193,20 @@ export function calculateNetworkVolatility(
   analysis: InstagramAnalysisResult
 ): NetworkVolatilityResult {
   const mutualCount = analysis.mutual.length;
-  const unfollowersCount = analysis.unfollowers.length;
+  const followingOnlyCount = analysis.unfollowers.length;
   const recentUnfollowersCount = analysis.recentUnfollowers.length;
 
-  const totalFollowing = mutualCount + unfollowersCount;
+  const totalFollowing = mutualCount + followingOnlyCount;
 
-  // Instability Index: percentage of unstable relationships
-  const unstableCount = unfollowersCount + recentUnfollowersCount;
+  // Only Instagram's recently-unfollowed export represents actual churn.
+  const unstableCount = recentUnfollowersCount;
   const instabilityIndex =
     totalFollowing > 0 ? (unstableCount / totalFollowing) * 100 : 0;
 
-  // Recent Unfollow Ratio: percentage of unfollowers that are recent
+  // Recent Unfollow Ratio: recent unfollows relative to non-mutual following.
   const recentUnfollowRatio =
-    unfollowersCount > 0
-      ? (recentUnfollowersCount / unfollowersCount) * 100
+    followingOnlyCount > 0
+      ? (recentUnfollowersCount / followingOnlyCount) * 100
       : 0;
 
   // Determine volatility level based on thresholds
@@ -222,8 +222,8 @@ export function calculateNetworkVolatility(
   if (volatilityLevel === "high") {
     insight = `Your network is experiencing high churn (${instabilityIndex.toFixed(1)}% unstable). ${
       recentUnfollowRatio > 50
-        ? "Recent unfollow activity is significant—review your recent content and engagement strategy."
-        : "Consider reaching out to key followers to strengthen relationships."
+        ? "Recent unfollow activity is significant; review your recent content and engagement strategy."
+        : "Monitor recent unfollow activity and keep strengthening key relationships."
     }`;
   } else if (volatilityLevel === "moderate") {
     insight = `Your network shows moderate instability (${instabilityIndex.toFixed(1)}%). Monitor your content performance and engagement metrics.`;

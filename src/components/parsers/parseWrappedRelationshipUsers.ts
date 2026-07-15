@@ -6,29 +6,30 @@ import { isArray, isObject } from "../utils/typeGuards";
 function normalizeUsernameCandidate(value: unknown): string | null {
   if (typeof value !== "string") return null;
 
-  const trimmed = value.trim();
+  const trimmed = value.trim().replace(/^@+/, "");
   return trimmed.length > 0 ? trimmed : null;
 }
 
-export function parseWrappedRelationshipUsers(
-  json: unknown,
-  key: InstagramObjectArrayKeys
-): InstagramUser[] {
-  if (!isObject(json)) return [];
+function findLabelValue(
+  labelValues: unknown[],
+  expectedLabel: string
+): unknown | null {
+  const match = labelValues.find(
+    (item) =>
+      isObject(item) &&
+      typeof item.label === "string" &&
+      item.label.toLowerCase() === expectedLabel.toLowerCase()
+  );
 
-  const list = json[key];
+  return isObject(match) ? match.value : null;
+}
 
-  if (!isArray(list)) return [];
+function parseRelationshipUserEntry(entry: unknown): InstagramUser[] {
+  if (!isRelationshipObject(entry)) return [];
 
-  return list.flatMap((entry): InstagramUser[] => {
-    if (!isRelationshipObject(entry)) return [];
+  const stringListData = entry.string_list_data;
 
-    const stringListData = entry.string_list_data;
-
-    if (!isArray(stringListData) || stringListData.length === 0) {
-      return [];
-    }
-
+  if (isArray(stringListData) && stringListData.length > 0) {
     const firstItem = stringListData[0];
 
     if (!isObject(firstItem)) {
@@ -56,5 +57,59 @@ export function parseWrappedRelationshipUsers(
             : undefined,
       },
     ];
-  });
+  }
+
+  const labelValues = entry.label_values;
+
+  if (!isArray(labelValues) || labelValues.length === 0) {
+    return [];
+  }
+
+  const username = normalizeUsernameCandidate(
+    findLabelValue(labelValues, "Username")
+  );
+
+  if (!username) {
+    return [];
+  }
+
+  const href = findLabelValue(labelValues, "URL");
+
+  return [
+    {
+      username,
+      href:
+        typeof href === "string" && href.trim().length > 0
+          ? href.trim()
+          : `https://www.instagram.com/${username}/`,
+      timestamp:
+        typeof entry.timestamp === "number" ? entry.timestamp : undefined,
+    },
+  ];
+}
+
+export function parseRelationshipUsersFromJson(
+  json: unknown,
+  key?: InstagramObjectArrayKeys
+): InstagramUser[] {
+  if (key !== undefined && isObject(json)) {
+    const keyedList = json[key];
+
+    if (isArray(keyedList)) {
+      return keyedList.flatMap(parseRelationshipUserEntry);
+    }
+  }
+
+  if (isArray(json)) {
+    return json.flatMap(parseRelationshipUserEntry);
+  }
+
+  return parseRelationshipUserEntry(json);
+}
+
+export function parseWrappedRelationshipUsers(
+  json: unknown,
+  key: InstagramObjectArrayKeys
+): InstagramUser[] {
+  return parseRelationshipUsersFromJson(json, key);
 }

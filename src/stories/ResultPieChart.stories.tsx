@@ -14,7 +14,7 @@ type Story = StoryObj<typeof ResultsPieChart>;
 const sampleData = [
   { name: "Mutual", value: 42 },
   { name: "Followers", value: 18 },
-  { name: "Unfollowers", value: 7 },
+  { name: "Following", value: 7 },
   { name: "Blocked", value: 2 },
 ];
 

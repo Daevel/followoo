@@ -49,12 +49,13 @@ connections/
     └── blocked_profiles.json
 ```
 
-The current code also supports additional relationship files such as restricted users, close friends, hide stories from, pending follow requests, and recent follow requests when present in the export.
+The current code also supports additional relationship files such as restricted users, close friends, hide stories from, pending follow requests, and recent follow requests when present in the export. Instagram exports may use either the historical `string_list_data` shape or newer `label_values` entries with labels such as `Username`, `URL`, and `Name`; parsers should support both.
 
 Important implementation references:
 
 - `src/components/services/instagramExportService.ts`: ZIP parsing and supported file routing.
 - `src/components/services/instagramAnalisysService.ts`: relationship comparison logic.
+- `src/components/services/followerSnapshotDiffService.ts`: optional previous-vs-current follower snapshot comparison for lost and new followers.
 - `src/components/parsers/*`: Instagram JSON normalization.
 - `src/types/instagram.types.ts`: domain types for Instagram export data and analysis results.
 - `src/components/utils/instagram/*` and `src/components/utils/*`: path detection, guards, search, pagination, formatting.
@@ -67,8 +68,9 @@ Core relationships:
 
 - Mutual: the user follows an account and that account follows the user back.
 - Followers only: an account follows the user, but the user does not follow it back.
-- Unfollowers / not following back: the user follows an account, but that account does not follow the user.
+- Following-only / not following back: the user follows an account, but that account does not follow the user. This is not an unfollow event.
 - Recent unfollowers: accounts reported by Instagram export as recently unfollowed.
+- Lost followers: accounts present in a previous export's followers list and missing from the current export's followers list. This requires comparing two local ZIP exports.
 - Blocked, restricted, close friends, hidden stories: direct lists from supported Instagram export files.
 
 Avoid changing these semantics during refactors unless the user explicitly asks for product behavior changes.

@@ -41,7 +41,11 @@ type TabKey =
   | "blocked"
   | "restricted"
   | "closeFriends"
-  | "hideStoriesFrom";
+  | "hideStoriesFrom"
+  | "pendingFollowRequests"
+  | "recentFollowRequests"
+  | "lostFollowers"
+  | "newFollowers";
 
 export function ResultPage() {
   const location = useLocation();
@@ -135,6 +139,14 @@ function ResultPageContent({
         return analysis.closeFriends;
       case "hideStoriesFrom":
         return analysis.hideStoriesFrom;
+      case "pendingFollowRequests":
+        return analysis.pendingFollowRequests;
+      case "recentFollowRequests":
+        return analysis.recentFollowRequests;
+      case "lostFollowers":
+        return analysis.followerSnapshotDiff?.lostFollowers ?? [];
+      case "newFollowers":
+        return analysis.followerSnapshotDiff?.newFollowers ?? [];
       default:
         return [];
     }
@@ -176,13 +188,13 @@ function ResultPageContent({
           };
         case "followersOnly":
           return {
-            title: "No followers-only users found",
+            title: "No follower-only users found",
             description:
-              "There are no people in this export who follow you without being followed back.",
+              "There are no people in this export who follow you while you don't follow them back.",
           };
         case "unfollowers":
           return {
-            title: "No unfollowers found",
+            title: "No following-only users found",
             description:
               "Good news — everyone you follow appears to follow you back.",
           };
@@ -213,6 +225,30 @@ function ResultPageContent({
             title: "No hidden stories users found",
             description:
               "There are no users hidden from your stories in this export.",
+          };
+        case "pendingFollowRequests":
+          return {
+            title: "No pending follow requests found",
+            description:
+              "There are no pending follow requests available in this export.",
+          };
+        case "recentFollowRequests":
+          return {
+            title: "No recent follow requests found",
+            description:
+              "There are no recent follow requests available in this export.",
+          };
+        case "lostFollowers":
+          return {
+            title: "No lost followers found",
+            description:
+              "No accounts from the previous follower list are missing in the current export.",
+          };
+        case "newFollowers":
+          return {
+            title: "No new followers found",
+            description:
+              "No accounts appear in the current follower list that were missing from the previous export.",
           };
       }
     }
@@ -260,13 +296,8 @@ function ResultPageContent({
   const chartData = useMemo(
     () => [
       { name: "Mutual", value: analysis.mutual.length },
-      { name: "Followers only", value: analysis.followersOnly.length },
-      { name: "Unfollowers", value: analysis.unfollowers.length },
-      { name: "Recent unfollowers", value: analysis.recentUnfollowers.length },
-      { name: "Blocked", value: analysis.blocked.length },
-      { name: "Restricted", value: analysis.restricted.length },
-      { name: "Close friends", value: analysis.closeFriends.length },
-      { name: "Hide stories", value: analysis.hideStoriesFrom.length },
+      { name: "Follower", value: analysis.followersOnly.length },
+      { name: "Following", value: analysis.unfollowers.length },
     ],
     [analysis]
   );
@@ -281,10 +312,38 @@ function ResultPageContent({
     [analysis]
   );
 
+  function handleActiveTabChange(tab: TabKey) {
+    setActiveTab(tab);
+    setCurrentPage(1);
+  }
+
+  function handleSearchQueryChange(value: string) {
+    setSearchQuery(value);
+    setCurrentPage(1);
+  }
+
+  function handlePersonaChange(persona: UserPersona | null) {
+    setSelectedPersona(persona);
+    setCurrentPage(1);
+  }
+
+  function handleSortChange(sort: SortKey) {
+    setSortBy(sort);
+    setCurrentPage(1);
+  }
+
   const personaCounts = useMemo(
     () => groupUsersByPersona(users, analysis),
     [users, analysis]
   );
+
+  useEffect(() => {
+    if (!selectedPersona) return;
+
+    if (personaCounts[selectedPersona] === 0) {
+      setSelectedPersona(null);
+    }
+  }, [personaCounts, selectedPersona]);
 
   useEffect(() => {
     analyticsService.track(ANALYTICS_EVENTS.RESULTS_TAB_CHANGED, {
@@ -306,22 +365,6 @@ function ResultPageContent({
     });
   }, [searchQuery, activeTab]);
 
-  useEffect(() => {
-    let abortController: AbortController | null = null;
-
-    const runEffect = () => {
-      setCurrentPage(1);
-    };
-
-    abortController = new AbortController();
-
-    void runEffect();
-
-    return () => {
-      abortController.abort();
-    };
-  }, []);
-
   const tabInfos: { sectionTitle: string; description: string } =
     useMemo(() => {
       switch (activeTab) {
@@ -332,12 +375,12 @@ function ResultPageContent({
           };
         case "followersOnly":
           return {
-            sectionTitle: "Followers only",
+            sectionTitle: "Follower",
             description: "People who follow you, but you don't follow back.",
           };
         case "unfollowers":
           return {
-            sectionTitle: "Unfollowers",
+            sectionTitle: "Following",
             description: "People you follow, but who don't follow you back.",
           };
         case "recentUnfollowers":
@@ -366,6 +409,28 @@ function ResultPageContent({
           return {
             sectionTitle: "Hidden stories",
             description: "People you have hidden your stories from.",
+          };
+        case "pendingFollowRequests":
+          return {
+            sectionTitle: "Pending follow requests",
+            description: "People you have requested to follow.",
+          };
+        case "recentFollowRequests":
+          return {
+            sectionTitle: "Recent follow requests",
+            description: "Recent accounts involved in follow request activity.",
+          };
+        case "lostFollowers":
+          return {
+            sectionTitle: "Lost followers",
+            description:
+              "People who were followers in the previous export and are missing from the current export.",
+          };
+        case "newFollowers":
+          return {
+            sectionTitle: "New followers",
+            description:
+              "People who are followers in the current export and were missing from the previous export.",
           };
         default:
           return {
@@ -407,9 +472,63 @@ function ResultPageContent({
               account insights.
             </p>
 
+            <div
+              data-animate="hero-item"
+              className="border-foreground/10 bg-foreground/5 mt-5 flex flex-wrap items-center justify-center gap-3 rounded-full border px-4 py-2 text-sm text-foreground/75"
+            >
+              <span>Imported source records</span>
+              <span className="text-foreground font-semibold">
+                {analysis.sourceCounts.followers} followers
+              </span>
+              <span className="text-foreground/30">/</span>
+              <span className="text-foreground font-semibold">
+                {analysis.sourceCounts.following} following
+              </span>
+            </div>
+
             <div data-animate="hero-item" className="mt-6 flex w-full flex-row">
               <RelationshipHealthInsight insight={relationshipHealthInsight} />
             </div>
+
+            {analysis.followerSnapshotDiff && (
+              <div
+                data-animate="hero-item"
+                className="border-primary/30 bg-primary/10 mt-6 grid w-full gap-4 rounded-[10px] border p-5 text-start md:grid-cols-4 md:p-6"
+              >
+                <div>
+                  <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
+                    Previous followers
+                  </p>
+                  <p className="text-foreground mt-2 text-2xl font-semibold">
+                    {analysis.followerSnapshotDiff.previousFollowersCount}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
+                    Current followers
+                  </p>
+                  <p className="text-foreground mt-2 text-2xl font-semibold">
+                    {analysis.followerSnapshotDiff.currentFollowersCount}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
+                    Lost followers
+                  </p>
+                  <p className="text-accent mt-2 text-2xl font-semibold">
+                    {analysis.followerSnapshotDiff.lostFollowers.length}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
+                    New followers
+                  </p>
+                  <p className="text-primary mt-2 text-2xl font-semibold">
+                    {analysis.followerSnapshotDiff.newFollowers.length}
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div
               data-animate="hero-item"
@@ -433,7 +552,7 @@ function ResultPageContent({
                 title="Explore your connections"
                 activeTab={activeTab}
                 analysis={analysis}
-                setActiveTab={setActiveTab}
+                setActiveTab={handleActiveTabChange}
               />
             </div>
 
@@ -459,7 +578,7 @@ function ResultPageContent({
                   <PersonaFilter
                     personaCounts={personaCounts}
                     selectedPersona={selectedPersona}
-                    onPersonaChange={setSelectedPersona}
+                    onPersonaChange={handlePersonaChange}
                   />
                 </div>
 
@@ -480,7 +599,7 @@ function ResultPageContent({
                       type="text"
                       placeholder="Type a username..."
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e) => handleSearchQueryChange(e.target.value)}
                       className="w-full"
                     />
                   </div>
@@ -489,7 +608,7 @@ function ResultPageContent({
                     <SortSelect
                       label="Sort by"
                       value={sortBy}
-                      onChange={setSortBy}
+                      onChange={handleSortChange}
                       options={[
                         { label: "A-Z", value: "alphabeticalAsc" },
                         { label: "Z-A", value: "alphabeticalDesc" },
