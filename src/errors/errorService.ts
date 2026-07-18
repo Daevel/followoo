@@ -1,6 +1,6 @@
 import { ANALYTICS_EVENTS } from "@/analytics/analyticsEvents";
 import { analyticsService } from "@/analytics/analyticsService";
-import { toastService } from "../components/services/toastService";
+import { toastService } from "@/services/toastService";
 import type { AppError } from "./AppError";
 import { toAppError } from "./toAppError";
 

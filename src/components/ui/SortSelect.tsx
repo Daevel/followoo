@@ -1,13 +1,7 @@
 import clsx from "clsx";
-import { gsap } from "gsap";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useDropdownMenuAnimation } from "@/animations/hooks/useDropdownMenuAnimation";
 import { Icon } from "./Icon";
 
 type SelectOption<T extends string> = {
@@ -42,6 +36,7 @@ export function SortSelect<T extends string>({
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const selectedOption = options.find((option) => option.value === value);
+  useDropdownMenuAnimation(menuRef, isOpen);
 
   const updateMenuPosition = useCallback(() => {
     if (!triggerRef.current) return;
@@ -55,32 +50,10 @@ export function SortSelect<T extends string>({
     });
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!isOpen) return;
 
     updateMenuPosition();
-
-    if (!menuRef.current) return;
-
-    gsap.fromTo(
-      menuRef.current,
-      {
-        opacity: 0,
-        y: -8,
-        scale: 0.98,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.2,
-        ease: "power2.out",
-      }
-    );
-  }, [isOpen, updateMenuPosition]);
-
-  useEffect(() => {
-    if (!isOpen) return;
 
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;

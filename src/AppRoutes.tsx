@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import App from "./App.tsx";
-import { RouteAwareErrorBoundary } from "./components/errors/RouteAwareErrorBoundary.tsx";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
+import { RouteAwareErrorBoundary } from "./errors";
 import { GetStarted } from "./pages/GetStarted.tsx";
 import { InstructionsToStart } from "./pages/InstructionsToStart.tsx";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy.tsx";

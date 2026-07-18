@@ -2,7 +2,7 @@ import { renderToString } from "react-dom/server";
 import { HelmetProvider, type HelmetServerState } from "react-helmet-async";
 import { MemoryRouter } from "react-router-dom";
 import { AppRoutes } from "./AppRoutes";
-import { ToastProvider } from "./components/providers/ToastProvider";
+import { ToastProvider } from "./providers/ToastProvider";
 
 HelmetProvider.canUseDOM = false;
 

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { HeroSection } from "../components/ui/hero-subsection/HeroSection";
+import { HeroSection } from "@/features/landing/components/HeroSection";
 
 const meta: Meta<typeof HeroSection> = {
   title: "Components/UI/HeroSection",

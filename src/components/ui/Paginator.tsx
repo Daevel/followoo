@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { generatePaginator } from "../utils";
+import { generatePaginator } from "@/lib";
 import { FabIcon } from "./FabIcon";
 
 type PaginatorProps = {

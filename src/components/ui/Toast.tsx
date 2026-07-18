@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
-import { gsap } from "@/animations/gsap";
+import { useCallback, useEffect, useRef } from "react";
+import { useDismissibleNotificationAnimation } from "@/animations/hooks/useDismissibleNotificationAnimation";
 import { Icon, type IconName } from "./Icon";
 
 export type ToastVariant = "info" | "success" | "warning";
@@ -54,60 +54,18 @@ const variantStyles: Record<
 export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
-  const isClosingRef = useRef(false);
-
-  useLayoutEffect(() => {
-    if (!rootRef.current) return;
-
-    const isMobile = window.matchMedia("(max-width: 639px)").matches;
-    const enterFromY = isMobile ? 24 : -16;
-    //const exitToY = isMobile ? 16 : -12;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        rootRef.current,
-        {
-          opacity: 0,
-          y: enterFromY,
-          scale: 0.98,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.35,
-          ease: "power3.out",
-        }
-      );
-    }, rootRef);
-
-    return () => ctx.revert();
-  }, []);
+  const { closeWithAnimation } = useDismissibleNotificationAnimation(rootRef);
 
   const handleClose = useCallback(() => {
-    if (!rootRef.current || isClosingRef.current) return;
-
-    isClosingRef.current = true;
-
     if (closeTimeoutRef.current !== null) {
       window.clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
 
-    const isMobile = window.matchMedia("(max-width: 639px)").matches;
-    const exitToY = isMobile ? 16 : -12;
-
-    gsap.to(rootRef.current, {
-      opacity: 0,
-      y: exitToY,
-      scale: 0.98,
-      duration: 0.22,
-      ease: "power2.in",
-      onComplete: () => {
-        onClose(toast.id);
-      },
+    closeWithAnimation(() => {
+      onClose(toast.id);
     });
-  }, [onClose, toast.id]);
+  }, [closeWithAnimation, onClose, toast.id]);
 
   useEffect(() => {
     closeTimeoutRef.current = window.setTimeout(() => {

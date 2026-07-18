@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
-import { UnknownErrorPage } from "@/components/errors/ui/UnknownErrorPage";
 import { BadgeVersion } from "@/components/ui/BadgeVersion";
 import { Container } from "@/components/ui/Container";
 import { NavBar } from "@/components/ui/NavBar";
 import Seo from "@/components/ui/Seo";
 import { Separator } from "@/components/ui/Separator";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { handleAppError } from "@/errors";
+import { handleAppError, UnknownErrorPage } from "@/errors";
 
 type UpdateChangeGroup = {
   label: string;

@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { useCallback } from "react";
 import { type FileRejection, useDropzone } from "react-dropzone";
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
-import { toastService } from "../services/toastService";
+import { toastService } from "@/services/toastService";
 import { Icon } from "../ui/Icon";
 
 type ZipDropzoneProps = {

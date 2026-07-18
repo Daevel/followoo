@@ -1,5 +1,5 @@
-import { useCallback, useLayoutEffect, useRef } from "react";
-import { gsap } from "@/animations/gsap";
+import { useRef } from "react";
+import { useDismissibleNotificationAnimation } from "@/animations/hooks/useDismissibleNotificationAnimation";
 import { Button } from "./Button";
 import { Card } from "./Card";
 
@@ -13,53 +13,7 @@ export function PWANotification({
   onDismiss,
 }: PWANotificationProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const isClosingRef = useRef(false);
-
-  useLayoutEffect(() => {
-    if (!rootRef.current) return;
-
-    const isMobile = window.matchMedia("(max-width: 639px)").matches;
-    const enterFromY = isMobile ? 24 : -16;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        rootRef.current,
-        {
-          opacity: 0,
-          y: enterFromY,
-          scale: 0.98,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.35,
-          ease: "power3.out",
-        }
-      );
-    }, rootRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  const handleClose = useCallback((callback?: () => void) => {
-    if (!rootRef.current || isClosingRef.current) return;
-
-    isClosingRef.current = true;
-    const isMobile = window.matchMedia("(max-width: 639px)").matches;
-    const exitToY = isMobile ? 16 : -12;
-
-    gsap.to(rootRef.current, {
-      opacity: 0,
-      y: exitToY,
-      scale: 0.98,
-      duration: 0.22,
-      ease: "power2.in",
-      onComplete: () => {
-        callback?.();
-      },
-    });
-  }, []);
+  const { closeWithAnimation } = useDismissibleNotificationAnimation(rootRef);
 
   return (
     <div ref={rootRef} className="pointer-events-auto px-4 sm:px-0">
@@ -74,7 +28,7 @@ export function PWANotification({
           background="primary"
           foreground="foreground"
           onClick={() => {
-            handleClose(onInstall);
+            closeWithAnimation(onInstall);
           }}
         >
           Install
@@ -83,7 +37,7 @@ export function PWANotification({
           background="accent"
           foreground="foreground"
           onClick={() => {
-            handleClose(onDismiss);
+            closeWithAnimation(onDismiss);
           }}
         >
           Not now

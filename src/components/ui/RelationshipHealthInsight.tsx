@@ -2,7 +2,7 @@ import clsx from "clsx";
 import type {
   RelationshipHealthLevel,
   RelationshipHealthResult,
-} from "../services/relationshipHealthService";
+} from "@/features/relationship/services/relationshipHealthService";
 import { Icon, type IconColor, type IconName } from "./Icon";
 
 type RelationshipHealthInsightProps = {

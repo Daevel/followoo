@@ -1,6 +1,6 @@
+import { getInstagramProfileUrl } from "@/features/instagram-export/utils/instagramUtils";
+import { extractFirstNameLetter } from "@/lib/searchUtils";
 import type { InstagramUser, UserPersona } from "../../types/instagram.types";
-import { getInstagramProfileUrl } from "../utils/instagram";
-import { extractFirstNameLetter } from "../utils/searchUtils";
 import { PersonaBadge } from "./PersonaBadge";
 
 type UserListItemProps = {

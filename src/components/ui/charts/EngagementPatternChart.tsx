@@ -9,12 +9,12 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { Icon } from "@/components/ui/Icon";
 import {
   calculateEngagementPattern,
   type EngagementPatternResult,
   type EngagementPeriod,
-} from "@/components/services/engagementPatternService";
-import { Icon } from "@/components/ui/Icon";
+} from "@/features/relationship/services/engagementPatternService";
 import type { InstagramUser } from "@/types/instagram.types";
 
 type EngagementPatternChartProps = {

@@ -5,7 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AppRoutes } from "./AppRoutes.tsx";
 import "./index.css";
 
-import { ToastProvider } from "./components/providers/ToastProvider.tsx";
+import { ToastProvider } from "./providers/ToastProvider.tsx";
 
 const rootElement = document.getElementById("root");
 
