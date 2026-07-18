@@ -73,6 +73,14 @@ Core relationships:
 - Lost followers: accounts present in a previous export's followers list and missing from the current export's followers list. This requires comparing two local ZIP exports.
 - Blocked, restricted, close friends, hidden stories: direct lists from supported Instagram export files.
 
+Initial relationship vocabulary, where X is the current user's profile and Y is another profile:
+
+- `MUTUAL`: X follows Y and Y follows X.
+- `FOLLOWERS`: Y follows X, but X does not follow Y.
+- `UNFOLLOWERS`: X follows Y, but Y does not follow X.
+- `RECENT_UNFOLLOWERS`: direct list from `recently_unfollowed_profiles.json`.
+- `BLOCKED`: direct list from `blocked_profiles.json`.
+
 Avoid changing these semantics during refactors unless the user explicitly asks for product behavior changes.
 
 ## Tech Stack

@@ -143,7 +143,9 @@ Page rules:
 
 - Pages compose feature components, shared UI, providers, and SEO.
 - Pages should stay thin and avoid complex parsing, filtering, or business logic.
+- Pages should not own large workflow orchestration such as ZIP validation, parsing, analysis, filtering, sorting, pagination, empty-state copy maps, analytics side effects, or feature-specific animation timelines.
 - Move complex stateful/domain logic into feature hooks or services.
+- If a page grows beyond route composition and simple local UI state, extract a feature component such as `ResultsExperience` or feature hooks such as `useInstagramAnalysisFlow`.
 - Page components should be named by route intent, such as `ResultPage`, `GetStarted`, or `PrivacyPolicy`.
 - Keep route path changes explicit; do not rename public URLs during structural refactors unless requested.
 
@@ -188,6 +190,8 @@ features/instagram-export  -> ZIP parsing, export file recognition, parser orche
 features/results           -> relationship result UI, tabs, filters, sorting, pagination
 features/relationship      -> relationship analysis, health, persona, engagement insights
 features/landing           -> homepage sections and landing-only behavior
+features/upload            -> upload flow UI and hooks when it grows beyond a thin page
+features/instructions      -> instruction page sections and instruction-step data
 features/support           -> support form, schema, service integration
 features/updates           -> changelog/update display
 features/pwa-install       -> install prompt UX if it grows beyond app-level behavior
@@ -208,6 +212,7 @@ UI component rules:
 - Components in `components/ui` must be reusable and mostly presentational.
 - They may know visual design language, accessibility behavior, and interaction patterns.
 - They should not own Instagram export parsing or relationship analysis logic.
+- They should not encode product-specific concepts such as relationship health, user personas, Instagram network tabs, or landing-page content unless deliberately treated as reusable app-level UI.
 - If a component is only meaningful for one feature, keep it inside that feature.
 - Keep Storybook stories close to existing project convention in `src/stories` unless a Storybook refactor is explicitly requested.
 
@@ -223,7 +228,6 @@ Paginator
 SortSelect
 Toast
 ZipDropzone
-ResultPieChart
 ```
 
 Feature-specific examples that should not be added directly to `components/ui` unless intentionally shared:
@@ -232,6 +236,16 @@ Feature-specific examples that should not be added directly to `components/ui` u
 InstagramExportAnalyzer
 ResultsDashboard
 RelationshipTabsController
+RelationshipHealthInsight
+PersonaFilter
+UserListItem
+ResultPieChart
+EngagementPatternChart
+NetworkVolatilityCard
+HeroSection
+FeatureSection
+PrivacySection
+Questions
 SupportForm
 UpdateTimeline
 ```
@@ -256,6 +270,8 @@ Service rules:
 - Prefer pure functions for analysis and normalization.
 - Keep browser-only APIs explicit when used, such as `File`, `localStorage`, or `window`.
 - Do not send private Instagram data to network services.
+- Do not place domain services under `src/components`; move them to `src/features/<feature>/services` or `src/services` during focused refactors.
+- Rename files with spelling mistakes when moving them, such as `instagramAnalisysService.ts` to `instagramAnalysisService.ts`.
 
 Existing services under `src/components/services` can be migrated gradually when touched by a focused refactor.
 
@@ -275,6 +291,7 @@ Rules:
 
 - Keep ZIP extraction separate from JSON shape parsing.
 - Keep path detection helpers separate from relationship analysis.
+- Keep parsing/export code out of `src/components`.
 - Preserve support for all currently parsed export files unless the user requests otherwise.
 - Fail with app-level errors instead of raw thrown strings.
 - Ignore unsupported JSON files safely.
@@ -295,6 +312,7 @@ Rules:
 - Normalize usernames before comparison.
 - Deduplicate by normalized username.
 - Keep the semantics of mutual, followers-only, unfollowers, recent unfollowers, blocked, restricted, close friends, and hidden stories stable.
+- Keep relationship health, persona, engagement, volatility, and follower snapshot diff logic under `src/features/relationship/services` unless it becomes clearly owned by a narrower results feature.
 - Keep sorting/filtering/pagination separate from core relationship computation.
 - Avoid coupling analysis services to React components.
 
@@ -395,6 +413,7 @@ Rules:
 
 - Prefer `@/` for cross-folder imports inside `src`.
 - Relative imports are fine within the same folder or nearby files.
+- Avoid explicit `.tsx` or `.ts` extensions in source imports unless required by the runtime target.
 - Avoid deep imports across feature internals. Export intentional feature APIs from `index.ts` when useful.
 - Do not create barrel files by default; add them only when they reduce import noise for stable public surfaces.
 
@@ -416,10 +435,14 @@ Animation code belongs in `src/animations` or feature-local animation hooks when
 
 Rules:
 
+- Import GSAP through `@/animations/gsap`; do not import directly from `gsap` in application code unless creating the GSAP setup module itself.
 - Use existing GSAP setup and animation token conventions.
+- Keep `src/animations` for GSAP setup, tokens, presets, and reusable animation hooks.
+- Move page/feature-specific timelines to feature-local animation hooks, such as `src/features/landing/animations/useLandingPageAnimations.ts` or `src/features/results/animations/useResultPageAnimations.ts`.
 - Keep animation selectors and refs understandable.
 - Respect cleanup to avoid duplicated animations after route changes or remounts.
 - Do not mix domain logic into animation hooks.
+- Prefer hooks over inline page/component timelines when animation logic is more than a small one-off interaction.
 
 ## PWA
 
