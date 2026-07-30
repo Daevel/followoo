@@ -8,7 +8,7 @@ type UseStandardPageAnimationOptions = {
 
 export function useStandardPageAnimation(
   rootRef: RefObject<HTMLElement | null>,
-  options: UseStandardPageAnimationOptions = {},
+  options: UseStandardPageAnimationOptions = {}
 ) {
   const { animateItems = true, itemSelector = "[data-page-animate='item']" } =
     options;
@@ -32,7 +32,7 @@ export function useStandardPageAnimation(
             autoAlpha: 1,
             y: 0,
             duration: 0.55,
-          },
+          }
         )
         .fromTo(
           "[data-page-animate='subheading']",
@@ -45,7 +45,7 @@ export function useStandardPageAnimation(
             y: 0,
             duration: 0.45,
           },
-          "-=0.35",
+          "-=0.35"
         )
         .fromTo(
           "[data-page-animate='callout']",
@@ -58,7 +58,7 @@ export function useStandardPageAnimation(
             y: 0,
             duration: 0.4,
           },
-          "-=0.25",
+          "-=0.25"
         )
         .fromTo(
           "[data-page-animate='content']",
@@ -71,7 +71,7 @@ export function useStandardPageAnimation(
             y: 0,
             duration: 0.5,
           },
-          "-=0.2",
+          "-=0.2"
         );
 
       if (animateItems) {
@@ -88,10 +88,10 @@ export function useStandardPageAnimation(
             ease: "power3.out",
             stagger: 0.05,
             delay: 0.1,
-          },
+          }
         );
       }
     },
-    { scope: rootRef },
+    { scope: rootRef }
   );
 }

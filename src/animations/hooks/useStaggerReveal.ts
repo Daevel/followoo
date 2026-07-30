@@ -11,7 +11,7 @@ type UseStaggerRevealOptions = {
 
 export function useStaggerReveal(
   rootRef: RefObject<HTMLElement | null>,
-  options: UseStaggerRevealOptions,
+  options: UseStaggerRevealOptions
 ) {
   const {
     selector,
@@ -45,9 +45,9 @@ export function useStaggerReveal(
             start,
             once,
           },
-        },
+        }
       );
     },
-    { scope: rootRef },
+    { scope: rootRef }
   );
 }

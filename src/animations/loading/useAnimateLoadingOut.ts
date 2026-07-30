@@ -25,7 +25,7 @@ export function animateLoadingOut(root: HTMLDivElement) {
           y: 0,
           duration: 0.15,
         },
-        0,
+        0
       )
       .to(
         [title, label, progressText],
@@ -35,7 +35,7 @@ export function animateLoadingOut(root: HTMLDivElement) {
           duration: 0.28,
           stagger: 0.03,
         },
-        0.08,
+        0.08
       )
       .to(
         barWrapper,
@@ -44,7 +44,7 @@ export function animateLoadingOut(root: HTMLDivElement) {
           y: -8,
           duration: 0.28,
         },
-        0.12,
+        0.12
       )
       .to(
         img,
@@ -53,7 +53,7 @@ export function animateLoadingOut(root: HTMLDivElement) {
           scale: 0.96,
           duration: 0.3,
         },
-        0.1,
+        0.1
       )
       .to(
         root,
@@ -62,7 +62,7 @@ export function animateLoadingOut(root: HTMLDivElement) {
           filter: "blur(6px)",
           duration: 0.35,
         },
-        0.18,
+        0.18
       );
   });
 }

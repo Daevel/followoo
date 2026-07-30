@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { Icon } from "@/components/ui/Icon.tsx";
 import type { InstagramAnalysisResult } from "@/types/instagram.types";
-import { useState } from "react";
 import { TabButton } from "./TabButton";
 
 type TabKey =
@@ -11,7 +11,9 @@ type TabKey =
   | "blocked"
   | "restricted"
   | "closeFriends"
-  | "hideStoriesFrom";
+  | "hideStoriesFrom"
+  | "pendingFollowRequests"
+  | "recentFollowRequests";
 
 type DropdownTabButtonProps = {
   title: string;
@@ -29,14 +31,14 @@ export function DropdownTabButton({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-foreground/10 bg-foreground/5 text-foreground w-full rounded-[10px] border p-5 md:p-6">
+    <div className="border-foreground/10 bg-foreground/5 text-foreground w-full min-w-0 rounded-[10px] border p-4 sm:p-5 md:p-6">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex w-full cursor-pointer items-center justify-between gap-6"
+        className="flex w-full cursor-pointer items-center justify-between gap-4 sm:gap-6"
         aria-expanded={isOpen}
       >
-        <h4 className="pr-4 text-start">{title}</h4>
+        <h4 className="min-w-0 pr-2 text-start text-base sm:pr-4">{title}</h4>
 
         <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-transform duration-300 ease-out">
           <div
@@ -62,7 +64,7 @@ export function DropdownTabButton({
         }`}
       >
         <div className="overflow-hidden">
-          <div className="grid gap-3 text-start md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid min-w-0 gap-2 text-start sm:gap-3 md:grid-cols-2 lg:grid-cols-3">
             <TabButton
               active={activeTab === "mutual"}
               onClick={() => setActiveTab("mutual")}
@@ -74,7 +76,7 @@ export function DropdownTabButton({
               active={activeTab === "followersOnly"}
               onClick={() => setActiveTab("followersOnly")}
             >
-              Followers ({analysis.followersOnly.length})
+              Follower ({analysis.followersOnly.length})
             </TabButton>
 
             <TabButton
@@ -95,7 +97,7 @@ export function DropdownTabButton({
               active={activeTab === "unfollowers"}
               onClick={() => setActiveTab("unfollowers")}
             >
-              Unfollowers ({analysis.unfollowers.length})
+              Following ({analysis.unfollowers.length})
             </TabButton>
 
             <TabButton
@@ -117,6 +119,20 @@ export function DropdownTabButton({
               onClick={() => setActiveTab("hideStoriesFrom")}
             >
               Hide Stories ({analysis.hideStoriesFrom.length})
+            </TabButton>
+
+            <TabButton
+              active={activeTab === "pendingFollowRequests"}
+              onClick={() => setActiveTab("pendingFollowRequests")}
+            >
+              Pending Requests ({analysis.pendingFollowRequests.length})
+            </TabButton>
+
+            <TabButton
+              active={activeTab === "recentFollowRequests"}
+              onClick={() => setActiveTab("recentFollowRequests")}
+            >
+              Recent Requests ({analysis.recentFollowRequests.length})
             </TabButton>
           </div>
         </div>

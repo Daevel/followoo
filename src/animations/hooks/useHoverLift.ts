@@ -14,7 +14,7 @@ type UseHoverLiftOptions = {
 
 export function useHoverLift(
   rootRef: RefObject<HTMLElement | null>,
-  options: UseHoverLiftOptions = {},
+  options: UseHoverLiftOptions = {}
 ) {
   const { cardSelector, nestedSelectors = [], disabled = false } = options;
 
@@ -31,7 +31,7 @@ export function useHoverLift(
 
       if (!target) return;
 
-      const safe = <T extends (...args: any[]) => any>(fn: T): T => {
+      const safe = <T extends (...args: unknown[]) => unknown>(fn: T): T => {
         return contextSafe ? contextSafe(fn) : fn;
       };
 
@@ -65,6 +65,6 @@ export function useHoverLift(
         target.removeEventListener("mouseleave", onLeave);
       };
     },
-    { scope: rootRef },
+    { scope: rootRef }
   );
 }

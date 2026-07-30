@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 import { Icon } from "./Icon";
 
 const navLinks = [
@@ -16,8 +16,18 @@ export function NavBar() {
   const location = useLocation();
 
   useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location.pathname]);
+    let abortController: AbortController | null = null;
+    const runEffect = () => {
+      setIsMenuOpen(false);
+    };
+
+    abortController = new AbortController();
+    void runEffect();
+
+    return () => {
+      abortController?.abort();
+    };
+  }, []);
 
   const isActiveLink = (to: string) => location.pathname === to;
 
@@ -64,14 +74,14 @@ export function NavBar() {
                       "relative inline-flex items-center py-1 font-semibold transition-colors",
                       isActive
                         ? "text-foreground"
-                        : "text-foreground/50 hover:text-foreground",
+                        : "text-foreground/50 hover:text-foreground"
                     )}
                   >
                     {link.label}
                     <span
                       className={clsx(
                         "bg-foreground absolute -bottom-1 left-0 h-px w-full rounded-full transition-opacity",
-                        isActive ? "opacity-100" : "opacity-0",
+                        isActive ? "opacity-100" : "opacity-0"
                       )}
                     />
                   </Link>
@@ -90,14 +100,14 @@ export function NavBar() {
               "relative inline-flex items-center py-1 font-semibold transition-colors",
               isActiveLink("/updates")
                 ? "text-foreground"
-                : "text-foreground/50 hover:text-foreground",
+                : "text-foreground/50 hover:text-foreground"
             )}
           >
             Updates
             <span
               className={clsx(
                 "bg-foreground absolute -bottom-1 left-0 h-px w-full rounded-full transition-opacity",
-                isActiveLink("/updates") ? "opacity-100" : "opacity-0",
+                isActiveLink("/updates") ? "opacity-100" : "opacity-0"
               )}
             />
           </Link>
@@ -135,7 +145,7 @@ export function NavBar() {
             "bg-background/95 absolute top-full left-0 z-50 w-full overflow-hidden rounded-[10px] border border-white/10 shadow-lg backdrop-blur-md transition-all duration-300 lg:hidden",
             isMenuOpen
               ? "pointer-events-auto mt-2 opacity-100"
-              : "pointer-events-none mt-0 opacity-0",
+              : "pointer-events-none mt-0 opacity-0"
           )}
         >
           <div className="flex flex-col p-3">
@@ -150,7 +160,7 @@ export function NavBar() {
                     "rounded-[10px] px-4 py-3 font-semibold transition-colors hover:bg-white/5",
                     isActive
                       ? "text-foreground"
-                      : "text-foreground/50 hover:text-foreground",
+                      : "text-foreground/50 hover:text-foreground"
                   )}
                 >
                   {link.label}

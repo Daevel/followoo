@@ -50,16 +50,18 @@ export function ResultsPieChart({
   }
 
   return (
-    <div className="border-foreground/10 w-full rounded-[10px] border bg-white/5 p-5 md:p-6">
-      <div className="mb-5 text-start">
-        <h3 className="text-foreground text-xl font-semibold">{title}</h3>
+    <div className="border-foreground/10 w-full min-w-0 rounded-[10px] border bg-white/5 p-4 sm:p-5 md:p-6">
+      <div className="mb-5 items-center">
+        <h3 className="text-foreground text-lg font-semibold sm:text-xl">
+          {title}
+        </h3>
         <p className="text-foreground/70 mt-1 text-sm">
           A quick overview of your relationship groups.
         </p>
       </div>
 
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
-        <div className="relative h-[260px] w-full lg:h-[320px] lg:flex-1">
+      <div className="flex flex-col items-center gap-6 md:gap-8 lg:gap-10">
+        <div className="relative h-[220px] w-full sm:h-[260px] lg:h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -75,7 +77,7 @@ export function ResultsPieChart({
               >
                 {chartData.map((entry, index) => (
                   <Cell
-                    key={`${entry.name}-${index}`}
+                    key={entry.name}
                     fill={CHART_COLORS[index % CHART_COLORS.length]}
                   />
                 ))}
@@ -107,12 +109,14 @@ export function ResultsPieChart({
               <p className="text-foreground/60 text-xs tracking-wide uppercase">
                 Total
               </p>
-              <p className="text-foreground text-3xl font-semibold">{total}</p>
+              <p className="text-foreground text-2xl font-semibold sm:text-3xl">
+                {total}
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 lg:w-[320px]">
+        <div className="flex w-full flex-col gap-3">
           {chartData.map((item, index) => {
             const percentage = total
               ? Math.round((item.value / total) * 100)
@@ -121,9 +125,9 @@ export function ResultsPieChart({
             return (
               <div
                 key={item.name}
-                className="border-foreground/10 bg-foreground/5 flex items-center justify-between rounded-[10px] border px-4 py-3"
+                className="border-foreground/10 bg-foreground/5 flex min-w-0 items-center justify-between gap-3 rounded-[10px] border px-3 py-3 sm:px-4"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-center gap-3">
                   <span
                     className="h-3 w-3 rounded-full"
                     style={{
@@ -131,7 +135,7 @@ export function ResultsPieChart({
                         CHART_COLORS[index % CHART_COLORS.length],
                     }}
                   />
-                  <span className="text-foreground text-sm font-medium">
+                  <span className="text-foreground truncate text-sm font-medium">
                     {item.name}
                   </span>
                 </div>

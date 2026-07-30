@@ -8,6 +8,8 @@ export type InstagramRawUser = {
 
 export type InstagramRawRelationshipObject = {
   title?: unknown;
+  timestamp?: unknown;
+  label_values?: unknown;
   media_list_data?: unknown;
   string_list_data?: unknown;
 };
@@ -49,4 +51,33 @@ export type InstagramAnalysisResult = {
   restricted: InstagramUser[];
   closeFriends: InstagramUser[];
   hideStoriesFrom: InstagramUser[];
+  pendingFollowRequests: InstagramUser[];
+  recentFollowRequests: InstagramUser[];
+  sourceCounts: {
+    followers: number;
+    following: number;
+  };
+};
+
+export type VolatilityLevel = "stable" | "moderate" | "high";
+
+export type NetworkVolatilityResult = {
+  instabilityIndex: number;
+  recentUnfollowRatio: number;
+  volatilityLevel: VolatilityLevel;
+  insight: string;
+};
+
+export const UserPersona = {
+  SUPER_FAN: "SUPER_FAN",
+  ENGAGED: "ENGAGED",
+  FICKLE: "FICKLE",
+  LURKER: "LURKER",
+  DORMANT: "DORMANT",
+};
+
+export type UserPersona = (typeof UserPersona)[keyof typeof UserPersona];
+
+export type UserWithPersona = InstagramUser & {
+  persona: UserPersona;
 };

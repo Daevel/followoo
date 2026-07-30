@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import gsap from "gsap";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { useDismissibleNotificationAnimation } from "@/animations/hooks/useDismissibleNotificationAnimation";
 import { Icon, type IconName } from "./Icon";
 
 export type ToastVariant = "info" | "success" | "warning";
@@ -10,6 +10,11 @@ export type ToastItem = {
   title: string;
   description?: string;
   variant: ToastVariant;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  onClose?: () => void;
 };
 
 type ToastProps = {
@@ -54,62 +59,30 @@ const variantStyles: Record<
 export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
-  const isClosingRef = useRef(false);
+  const { closeWithAnimation } = useDismissibleNotificationAnimation(rootRef);
 
-  useLayoutEffect(() => {
-    if (!rootRef.current) return;
-
-    const isMobile = window.matchMedia("(max-width: 639px)").matches;
-    const enterFromY = isMobile ? 24 : -16;
-    //const exitToY = isMobile ? 16 : -12;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        rootRef.current,
-        {
-          opacity: 0,
-          y: enterFromY,
-          scale: 0.98,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.35,
-          ease: "power3.out",
-        },
-      );
-    }, rootRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  const handleClose = () => {
-    if (!rootRef.current || isClosingRef.current) return;
-
-    isClosingRef.current = true;
-
+  const handleClose = useCallback(() => {
     if (closeTimeoutRef.current !== null) {
       window.clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
 
-    const isMobile = window.matchMedia("(max-width: 639px)").matches;
-    const exitToY = isMobile ? 16 : -12;
-
-    gsap.to(rootRef.current, {
-      opacity: 0,
-      y: exitToY,
-      scale: 0.98,
-      duration: 0.22,
-      ease: "power2.in",
-      onComplete: () => {
-        onClose(toast.id);
-      },
+    closeWithAnimation(() => {
+      toast.onClose?.();
+      onClose(toast.id);
     });
-  };
+  }, [closeWithAnimation, onClose, toast]);
+
+  function handleActionClick() {
+    toast.action?.onClick();
+    handleClose();
+  }
 
   useEffect(() => {
+    if (!Number.isFinite(duration)) {
+      return;
+    }
+
     closeTimeoutRef.current = window.setTimeout(() => {
       handleClose();
     }, duration);
@@ -119,7 +92,7 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
         window.clearTimeout(closeTimeoutRef.current);
       }
     };
-  }, [duration, toast.id]);
+  }, [duration, handleClose]);
 
   const styles = variantStyles[toast.variant];
 
@@ -130,7 +103,7 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
       aria-live="polite"
       className={clsx(
         "pointer-events-auto box-border w-full rounded-[10px] p-4 shadow-lg backdrop-blur-sm",
-        styles.container,
+        styles.container
       )}
     >
       <div className="grid grid-cols-[auto_1fr_auto] items-start gap-3">
@@ -152,11 +125,24 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
             <p
               className={clsx(
                 "mt-1 text-sm leading-5 break-words",
-                styles.body,
+                styles.body
               )}
             >
               {toast.description}
             </p>
+          ) : null}
+
+          {toast.action ? (
+            <button
+              type="button"
+              onClick={handleActionClick}
+              className={clsx(
+                "mt-3 cursor-pointer text-sm font-semibold underline underline-offset-4 transition hover:opacity-80",
+                styles.title
+              )}
+            >
+              {toast.action.label}
+            </button>
           ) : null}
         </div>
 

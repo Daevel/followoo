@@ -1,113 +1,8 @@
 import type { RefObject } from "react";
 import { gsap, useGSAP } from "../gsap";
 
-const sectionConfigs = [
-  {
-    section: "[data-section='features']",
-    heading: "[data-section='features'] [data-animate='section-heading']",
-    subheading: "[data-section='features'] [data-animate='section-subheading']",
-    items: "[data-section='features'] [data-animate='feature-card']",
-    icon: null,
-  },
-  {
-    section: "[data-section='privacy']",
-    heading: "[data-section='privacy'] [data-animate='section-heading']",
-    subheading: "[data-section='privacy'] [data-animate='section-subheading']",
-    items: "[data-section='privacy'] [data-animate='privacy-card']",
-    icon: "[data-section='privacy'] [data-animate='section-icon']",
-  },
-  {
-    section: "[data-section='faq']",
-    heading: "[data-section='faq'] [data-animate='section-heading']",
-    subheading: null,
-    items: "[data-section='faq'] [data-animate='faq-card']",
-    icon: "[data-section='faq'] [data-animate='section-icon']",
-  },
-];
-
-sectionConfigs.forEach(({ section, heading, subheading, items, icon }) => {
-  if (icon) {
-    gsap.set(icon, {
-      autoAlpha: 0,
-      y: 18,
-      scale: 0.96,
-    });
-  }
-
-  gsap.set(heading, {
-    autoAlpha: 0,
-    y: 20,
-  });
-
-  if (subheading) {
-    gsap.set(subheading, {
-      autoAlpha: 0,
-      y: 16,
-    });
-  }
-
-  gsap.set(items, {
-    autoAlpha: 0,
-    y: 24,
-  });
-
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: section,
-      start: "top 72%",
-      once: true,
-    },
-  });
-
-  if (icon) {
-    tl.to(icon, {
-      autoAlpha: 1,
-      y: 0,
-      scale: 1,
-      duration: 0.6,
-      ease: "power3.out",
-    });
-  }
-
-  tl.to(
-    heading,
-    {
-      autoAlpha: 1,
-      y: 0,
-      duration: 0.7,
-      ease: "power3.out",
-    },
-    icon ? "-=0.2" : 0,
-  );
-
-  if (subheading) {
-    tl.to(
-      subheading,
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power2.out",
-      },
-      "-=0.35",
-    );
-  }
-
-  tl.to(
-    items,
-    {
-      autoAlpha: 1,
-      y: 0,
-      duration: 0.65,
-      ease: "power3.out",
-      stagger: 0.08,
-    },
-    "-=0.2",
-  );
-});
-
 export function useLandingPageAnimations(
-  rootRef: RefObject<HTMLDivElement | null>,
+  rootRef: RefObject<HTMLDivElement | null>
 ) {
   useGSAP(
     () => {
@@ -125,7 +20,7 @@ export function useLandingPageAnimations(
           y: 0,
           duration: 0.8,
           ease: "power3.out",
-        },
+        }
       );
 
       gsap.fromTo(
@@ -141,7 +36,7 @@ export function useLandingPageAnimations(
           ease: "power3.out",
           stagger: 0.1,
           delay: 0.1,
-        },
+        }
       );
 
       gsap.fromTo(
@@ -156,7 +51,7 @@ export function useLandingPageAnimations(
           duration: 1,
           ease: "power3.out",
           delay: 0.2,
-        },
+        }
       );
 
       gsap.fromTo(
@@ -172,7 +67,7 @@ export function useLandingPageAnimations(
           ease: "power3.out",
           stagger: 0.08,
           delay: 0.35,
-        },
+        }
       );
 
       const sectionConfigs = [
@@ -195,7 +90,8 @@ export function useLandingPageAnimations(
         {
           section: "[data-section='faq']",
           heading: "[data-section='faq'] [data-animate='section-heading']",
-          subheading: null,
+          subheading:
+            "[data-section='faq'] [data-animate='section-subheading']",
           items: "[data-section='faq'] [data-animate='faq-card']",
           icon: "[data-section='faq'] [data-animate='section-icon']",
         },
@@ -225,7 +121,7 @@ export function useLandingPageAnimations(
                 scale: 1,
                 duration: 0.6,
                 ease: "power3.out",
-              },
+              }
             );
           }
 
@@ -241,7 +137,7 @@ export function useLandingPageAnimations(
               duration: 0.7,
               ease: "power3.out",
             },
-            icon ? "-=0.2" : undefined,
+            icon ? "-=0.2" : undefined
           );
 
           if (subheading) {
@@ -257,7 +153,7 @@ export function useLandingPageAnimations(
                 duration: 0.6,
                 ease: "power2.out",
               },
-              "-=0.35",
+              "-=0.35"
             );
           }
 
@@ -274,9 +170,9 @@ export function useLandingPageAnimations(
               ease: "power3.out",
               stagger: 0.08,
             },
-            "-=0.2",
+            "-=0.2"
           );
-        },
+        }
       );
 
       // Footer
@@ -296,7 +192,7 @@ export function useLandingPageAnimations(
             start: "top 85%",
             once: true,
           },
-        },
+        }
       );
 
       gsap.fromTo(
@@ -315,7 +211,7 @@ export function useLandingPageAnimations(
             start: "top 85%",
             once: true,
           },
-        },
+        }
       );
 
       // Optional desktop-only parallax
@@ -336,6 +232,6 @@ export function useLandingPageAnimations(
         mm.revert();
       };
     },
-    { scope: rootRef },
+    { scope: rootRef }
   );
 }

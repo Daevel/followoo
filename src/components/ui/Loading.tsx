@@ -1,5 +1,5 @@
-import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import { forwardRef, useEffect, useMemo, useState } from "react";
+import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import { Container } from "./Container";
 
 type LoadingProps = {
@@ -115,5 +115,5 @@ export const Loading = forwardRef<HTMLDivElement, LoadingProps>(
         </Container>
       </section>
     );
-  },
+  }
 );

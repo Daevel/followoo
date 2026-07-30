@@ -1,28 +1,73 @@
-import { useEffect, useRef } from "react";
-
-import { initializePostHog } from "./analytics/posthogInit";
+import { useRef } from "react";
+import Seo from "@/components/ui/Seo";
+import { FeaturesSection } from "@/features/landing/components/FeatureSection";
+import { HeroSection } from "@/features/landing/components/HeroSection";
+import { PrivacySection } from "@/features/landing/components/PrivacySection";
+import { faqCards, Questions } from "@/features/landing/components/Questions";
 import { useLandingPageAnimations } from "./animations/pages/useLandingPageAnimations";
 import { FooterSignature } from "./components/ui/FooterSignature";
-import { FeaturesSection } from "./components/ui/hero-subsection/FeatureSection";
-import { HeroSection } from "./components/ui/hero-subsection/HeroSection";
-import { PrivacySection } from "./components/ui/hero-subsection/PrivacySection";
-import { Questions } from "./components/ui/hero-subsection/Questions";
 import { NavBar } from "./components/ui/NavBar";
+
+const SITE_URL = "https://followoo.app";
+
+const homeSchemaMarkup = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      name: "Followoo",
+      url: SITE_URL,
+      description:
+        "Privacy-first web app for analyzing Instagram followers, following and unfollowers from official export files.",
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${SITE_URL}/#app`,
+      name: "Followoo",
+      applicationCategory: "UtilitiesApplication",
+      operatingSystem: "Web browser",
+      url: SITE_URL,
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+      description:
+        "Analyze your official Instagram export locally in your browser to compare followers, following, mutuals and unfollowers without an Instagram login.",
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${SITE_URL}/#faq`,
+      mainEntity: faqCards.map((card) => ({
+        "@type": "Question",
+        name: card.title,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: card.description,
+        },
+      })),
+    },
+  ],
+};
 
 export default function App() {
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useLandingPageAnimations(rootRef);
 
-  useEffect(() => {
-    initializePostHog();
-  }, []);
-
   return (
-    <div ref={rootRef} className="bg-background min-h-screen">
+    <div ref={rootRef} className="bg-background w-full min-h-screen">
+      <Seo
+        title="Followoo - Private Instagram Followers Analyzer"
+        description="Analyze your Instagram export locally in your browser. Compare followers, following, mutuals and unfollowers without login or server-side file uploads."
+        image={`${SITE_URL}/icons/OG.png`}
+        canonical={SITE_URL}
+        schemaMarkup={homeSchemaMarkup}
+      />
       <NavBar />
 
-      <section className="text-foreground px-18">
+      <section className="text-foreground px-5">
         <HeroSection />
         <FeaturesSection />
       </section>

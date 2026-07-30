@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 export function FooterSignature() {
   return (
-    <footer className="w-full py-12">
+    <footer className="w-full sm:py-8">
       <div className="flex flex-col gap-10 md:gap-12 lg:flex-row lg:items-start lg:justify-around">
         <div className="shrink-0">
           <img src="/favicon.svg" alt="Followoo logo" width={32} height={32} />

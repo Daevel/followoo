@@ -25,3 +25,13 @@ dist-ssr
 .env
 .vercel
 .env*.local
+
+*storybook.log
+storybook-static
+
+
+dev-dist/
+dist/
+build/
+coverage/
+storybook-static/

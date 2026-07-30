@@ -1,7 +1,7 @@
 import clsx from "clsx";
-import { gsap } from "gsap";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useDropdownMenuAnimation } from "@/animations/hooks/useDropdownMenuAnimation";
 import { Icon } from "./Icon";
 
 type SelectOption<T extends string> = {
@@ -36,8 +36,9 @@ export function SortSelect<T extends string>({
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const selectedOption = options.find((option) => option.value === value);
+  useDropdownMenuAnimation(menuRef, isOpen);
 
-  function updateMenuPosition() {
+  const updateMenuPosition = useCallback(() => {
     if (!triggerRef.current) return;
 
     const rect = triggerRef.current.getBoundingClientRect();
@@ -47,34 +48,12 @@ export function SortSelect<T extends string>({
       left: rect.left + window.scrollX,
       width: rect.width,
     });
-  }
-
-  useLayoutEffect(() => {
-    if (!isOpen) return;
-
-    updateMenuPosition();
-
-    if (!menuRef.current) return;
-
-    gsap.fromTo(
-      menuRef.current,
-      {
-        opacity: 0,
-        y: -8,
-        scale: 0.98,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.2,
-        ease: "power2.out",
-      },
-    );
-  }, [isOpen]);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
+
+    updateMenuPosition();
 
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
@@ -110,7 +89,7 @@ export function SortSelect<T extends string>({
       window.removeEventListener("resize", handleReposition);
       window.removeEventListener("scroll", handleReposition, true);
     };
-  }, [isOpen]);
+  }, [isOpen, updateMenuPosition]);
 
   return (
     <>
@@ -118,11 +97,10 @@ export function SortSelect<T extends string>({
         ref={rootRef}
         className={clsx(
           "inline-flex w-full flex-col items-start gap-2 md:w-auto",
-          className,
+          className
         )}
       >
-        <label className="l2-r text-foreground/80 text-start">{label}</label>
-
+        <span className="l2-r text-foreground/80 text-start">{label}</span>
         <div className="relative w-full min-w-44 md:w-auto">
           <button
             ref={triggerRef}
@@ -138,7 +116,7 @@ export function SortSelect<T extends string>({
             }}
             className={clsx(
               "border-primary bg-primary text-foreground flex w-full items-center justify-between gap-3 rounded-[10px] border px-4 py-2 transition-colors",
-              "focus:ring-primary hover:opacity-95 focus:ring-2 focus:outline-none",
+              "focus:ring-primary hover:opacity-95 focus:ring-2 focus:outline-none"
             )}
           >
             <span>{selectedOption?.label ?? "Select"}</span>
@@ -150,7 +128,7 @@ export function SortSelect<T extends string>({
               height={24}
               className={clsx(
                 "shrink-0 transition-transform duration-200",
-                isOpen && "rotate-90",
+                isOpen && "rotate-90"
               )}
               aria-hidden="true"
             />
@@ -192,7 +170,7 @@ export function SortSelect<T extends string>({
                       "px-4 py-3 text-left transition-colors",
                       isSelected
                         ? "bg-accent text-foreground"
-                        : "text-foreground hover:bg-primary/20",
+                        : "text-foreground hover:bg-primary/20"
                     )}
                   >
                     {option.label}
@@ -201,7 +179,7 @@ export function SortSelect<T extends string>({
               })}
             </div>
           </div>,
-          document.body,
+          document.body
         )}
     </>
   );

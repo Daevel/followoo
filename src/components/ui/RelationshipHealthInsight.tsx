@@ -2,7 +2,7 @@ import clsx from "clsx";
 import type {
   RelationshipHealthLevel,
   RelationshipHealthResult,
-} from "../services/relationshipHealthService";
+} from "@/features/relationship/services/relationshipHealthService";
 import { Icon, type IconColor, type IconName } from "./Icon";
 
 type RelationshipHealthInsightProps = {
@@ -32,7 +32,7 @@ function HealthFace({ level }: { level: RelationshipHealthLevel }) {
     <div
       className={clsx(
         "flex h-16 w-16 shrink-0 items-center justify-center rounded-full border md:h-18 md:w-18",
-        faceColorClass,
+        faceColorClass
       )}
       aria-hidden="true"
     >
@@ -57,17 +57,17 @@ export function RelationshipHealthInsight({
   }[insight.level];
 
   return (
-    <div className="border-foreground/10 bg-foreground/5 w-full rounded-[10px] border p-5 md:p-6">
+    <div className="border-foreground/10 bg-foreground/5 w-full min-w-0 rounded-[10px] border p-4 sm:p-5 md:p-6">
       <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center">
           <HealthFace level={insight.level} />
 
-          <div className="text-start">
+          <div className="min-w-0 text-start">
             <p className="text-foreground/60 text-xs tracking-[0.18em] uppercase">
               Network health
             </p>
 
-            <h3 className="text-foreground mt-1 text-xl font-semibold">
+            <h3 className="text-foreground mt-1 text-xl font-semibold break-words">
               {insight.title}
             </h3>
 
@@ -77,11 +77,11 @@ export function RelationshipHealthInsight({
           </div>
         </div>
 
-        <div className="flex flex-col items-start gap-3 max-md:flex-row max-md:items-center max-md:justify-between md:items-end">
+        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between md:flex-col md:items-end">
           <div
             className={clsx(
               "rounded-[10px] border px-4 py-2 text-sm font-medium",
-              badgeClass,
+              badgeClass
             )}
           >
             {insight.level === "healthy" && "Good"}
@@ -95,8 +95,8 @@ export function RelationshipHealthInsight({
             </p>
             <p
               className={clsx(
-                "text-3xl font-semibold max-md:text-5xl md:text-5xl",
-                accentClass,
+                "text-4xl font-semibold sm:text-5xl",
+                accentClass
               )}
             >
               {insight.score}

@@ -14,7 +14,7 @@ type UseRevealAnimationOptions = {
 
 export function useRevealAnimation(
   rootRef: RefObject<HTMLElement | null>,
-  options: UseRevealAnimationOptions = {},
+  options: UseRevealAnimationOptions = {}
 ) {
   const {
     selector,
@@ -47,6 +47,6 @@ export function useRevealAnimation(
         },
       });
     },
-    { scope: rootRef },
+    { scope: rootRef }
   );
 }
