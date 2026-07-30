@@ -50,16 +50,6 @@ const emptyStatesByTab: Record<TabKey, ResultsEmptyState> = {
     description:
       "There are no recent follow requests available in this export.",
   },
-  lostFollowers: {
-    title: "No lost followers found",
-    description:
-      "No accounts from the previous follower list are missing in the current export.",
-  },
-  newFollowers: {
-    title: "No new followers found",
-    description:
-      "No accounts appear in the current follower list that were missing from the previous export.",
-  },
 };
 
 const tabInfoByTab: Record<TabKey, ResultsTabInfo> = {
@@ -104,16 +94,6 @@ const tabInfoByTab: Record<TabKey, ResultsTabInfo> = {
   recentFollowRequests: {
     sectionTitle: "Recent follow requests",
     description: "Recent accounts involved in follow request activity.",
-  },
-  lostFollowers: {
-    sectionTitle: "Lost followers",
-    description:
-      "People who were followers in the previous export and are missing from the current export.",
-  },
-  newFollowers: {
-    sectionTitle: "New followers",
-    description:
-      "People who are followers in the current export and were missing from the previous export.",
   },
 };
 

@@ -4,7 +4,6 @@ import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { animateLoadingOut } from "@/animations/loading/useAnimateLoadingOut";
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import { handleAppError } from "@/errors";
-import { compareFollowerSnapshots } from "@/features/relationship/services/followerSnapshotDiffService";
 import { analyzeInstagramExport } from "@/features/relationship/services/instagramAnalysisService";
 import { parseInstagramExport } from "../services/instagramExportService";
 
@@ -14,27 +13,19 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
   const navigate = useNavigate();
 
   const [selectedZipFile, setSelectedZipFile] = useState<File | null>(null);
-  const [previousZipFile, setPreviousZipFile] = useState<File | null>(null);
   const [uploadError, setUploadError] = useState("");
-  const [previousUploadError, setPreviousUploadError] = useState("");
   const [loading, setLoading] = useState(false);
   const [termsAndConditionsAccepted, setTermsAndConditionsAccepted] =
     useState(false);
   const [fileValidationState, setFileValidationState] =
     useState<FileValidationState>("idle");
   const [fileValidationMessage, setFileValidationMessage] = useState("");
-  const [previousFileValidationState, setPreviousFileValidationState] =
-    useState<FileValidationState>("idle");
-  const [previousFileValidationMessage, setPreviousFileValidationMessage] =
-    useState("");
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const loadingRef = useRef<HTMLDivElement | null>(null);
   const isTermsAccepted = isDemo || termsAndConditionsAccepted;
   const hasValidFile =
     isDemo || (Boolean(selectedZipFile) && fileValidationState === "valid");
-  const hasValidPreviousFile =
-    Boolean(previousZipFile) && previousFileValidationState === "valid";
 
   const validateFile = useCallback(async (file: File) => {
     setUploadError("");
@@ -49,23 +40,6 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
       setFileValidationState("invalid");
       setFileValidationMessage(
         "Invalid file format. Please upload a valid Instagram export ZIP downloaded from the Meta Accounts Center."
-      );
-    }
-  }, []);
-
-  const validatePreviousFile = useCallback(async (file: File) => {
-    setPreviousUploadError("");
-    setPreviousFileValidationState("checking");
-    setPreviousFileValidationMessage("");
-
-    try {
-      await parseInstagramExport(file);
-      setPreviousFileValidationState("valid");
-      setPreviousFileValidationMessage("Previous export detected.");
-    } catch {
-      setPreviousFileValidationState("invalid");
-      setPreviousFileValidationMessage(
-        "Invalid previous export. Please upload a valid Instagram export ZIP."
       );
     }
   }, []);
@@ -96,27 +70,6 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
       abortController?.abort();
     };
   }, [selectedZipFile, isDemo, validateFile]);
-
-  useEffect(() => {
-    let abortController: AbortController | null = null;
-
-    const runEffect = async () => {
-      if (!previousZipFile) {
-        setPreviousFileValidationState("idle");
-        setPreviousFileValidationMessage("");
-        return;
-      }
-
-      abortController = new AbortController();
-      await validatePreviousFile(previousZipFile);
-    };
-
-    void runEffect();
-
-    return () => {
-      abortController?.abort();
-    };
-  }, [previousZipFile, validatePreviousFile]);
 
   async function loadDemoZipFile() {
     const response = await fetch(vercelBlobStructure.demoFile);
@@ -162,14 +115,6 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
       const exportData = await parseInstagramExport(zipFile);
       const analysis = analyzeInstagramExport(exportData);
 
-      if (previousZipFile && hasValidPreviousFile) {
-        const previousExportData = await parseInstagramExport(previousZipFile);
-        analysis.followerSnapshotDiff = compareFollowerSnapshots(
-          previousExportData,
-          exportData
-        );
-      }
-
       analyticsService.track(ANALYTICS_EVENTS.ANALYSIS_COMPLETED, {
         followers_count: exportData.followers.length,
         following_count: exportData.following.length,
@@ -212,12 +157,8 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
   return {
     selectedZipFile,
     setSelectedZipFile,
-    previousZipFile,
-    setPreviousZipFile,
     uploadError,
     setUploadError,
-    previousUploadError,
-    setPreviousUploadError,
     loading,
     loadingRef,
     termsAndConditionsAccepted,
@@ -226,10 +167,6 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
     setFileValidationState,
     fileValidationMessage,
     setFileValidationMessage,
-    previousFileValidationState,
-    setPreviousFileValidationState,
-    previousFileValidationMessage,
-    setPreviousFileValidationMessage,
     isTermsAccepted,
     hasValidFile,
     onElaborateFile,

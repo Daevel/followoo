@@ -45,27 +45,32 @@ export function NetworkVolatilityCard({
   return (
     <div
       className={clsx(
-        "border-foreground/10 flex w-full flex-col rounded-[10px] border bg-white/5 p-5 md:p-6",
+        "border-foreground/10 flex w-full min-w-0 flex-col rounded-[10px] border bg-white/5 p-4 sm:p-5 md:p-6",
         config.borderColor
       )}
     >
       <div className="mb-6 flex flex-col">
-        <h3 className="text-foreground text-xl font-semibold">
+        <h3 className="text-foreground text-lg font-semibold sm:text-xl">
           Network volatility
         </h3>
-        <p className="text-foreground/70 mt-1 text-sm">
+        <p className="text-foreground/70 mt-1 text-sm leading-6">
           Assess the stability and churn rate of your relationships
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {/* Instability Index */}
         <div className={clsx("flex flex-col rounded-lg p-4", config.bgColor)}>
           <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
             Instability index
           </p>
-          <div className="mt-4 flex items-baseline gap-2">
-            <p className={clsx("text-3xl font-bold", config.labelColor)}>
+          <div className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <p
+              className={clsx(
+                "text-2xl font-bold sm:text-3xl",
+                config.labelColor
+              )}
+            >
               {volatility.instabilityIndex.toFixed(1)}%
             </p>
             <p className="text-foreground/60 text-sm">of following</p>
@@ -80,8 +85,13 @@ export function NetworkVolatilityCard({
           <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
             Recent churn ratio
           </p>
-          <div className="mt-4 flex items-baseline gap-2">
-            <p className={clsx("text-3xl font-bold", config.labelColor)}>
+          <div className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <p
+              className={clsx(
+                "text-2xl font-bold sm:text-3xl",
+                config.labelColor
+              )}
+            >
               {volatility.recentUnfollowRatio.toFixed(1)}%
             </p>
             <p className="text-foreground/60 text-sm">of following gap</p>

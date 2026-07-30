@@ -115,6 +115,11 @@ export function Updates() {
           handleAppError("error", {
             fallbackTitle: "There was a generic error.",
           });
+
+          if (isMounted) {
+            setHasError(true);
+          }
+
           return;
         }
 

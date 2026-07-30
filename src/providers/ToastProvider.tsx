@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { ScreenMount } from "@/components/ui/ScreenMount";
 import { Toast, type ToastItem } from "@/components/ui/Toast";
+import { usePwaInstallPrompt } from "@/features/pwa-install/hooks/usePwaInstallPrompt";
+import { usePwaUpdateToast } from "@/pwa/usePwaUpdateToast";
 import { toastService } from "@/services/toastService";
 
 type InternalToast = ToastItem & {
@@ -13,6 +15,9 @@ type ToastProviderProps = {
 
 export function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<InternalToast[]>([]);
+
+  usePwaInstallPrompt();
+  usePwaUpdateToast();
 
   useEffect(() => {
     return toastService.subscribe((toast) => {

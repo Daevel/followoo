@@ -11,13 +11,13 @@ import {
 } from "recharts";
 import { Icon } from "@/components/ui/Icon";
 import {
-  calculateEngagementPattern,
-  type EngagementPatternResult,
-  type EngagementPeriod,
-} from "@/features/relationship/services/engagementPatternService";
+  calculateRecentUnfollowActivity,
+  type RecentUnfollowActivityPeriod,
+  type RecentUnfollowActivityResult,
+} from "@/features/relationship/services/recentUnfollowActivityService";
 import type { InstagramUser } from "@/types/instagram.types";
 
-type EngagementPatternChartProps = {
+type RecentUnfollowActivityChartProps = {
   recentUnfollowers: InstagramUser[];
 };
 
@@ -54,13 +54,13 @@ function TrendIcon({
   );
 }
 
-export function EngagementPatternChart({
+export function RecentUnfollowActivityChart({
   recentUnfollowers,
-}: EngagementPatternChartProps) {
-  const [period, setPeriod] = useState<EngagementPeriod>("month");
+}: RecentUnfollowActivityChartProps) {
+  const [period, setPeriod] = useState<RecentUnfollowActivityPeriod>("month");
 
-  const patternResult: EngagementPatternResult = useMemo(
-    () => calculateEngagementPattern(recentUnfollowers, period),
+  const activityResult: RecentUnfollowActivityResult = useMemo(
+    () => calculateRecentUnfollowActivity(recentUnfollowers, period),
     [recentUnfollowers, period]
   );
 
@@ -70,25 +70,25 @@ export function EngagementPatternChart({
     percentage: number;
   };
 
-  const chartData: ChartDataPoint[] = patternResult.data.map((point) => ({
+  const chartData: ChartDataPoint[] = activityResult.data.map((point) => ({
     period: point.period,
     count: point.count,
     percentage: parseFloat(point.percentage.toFixed(1)),
   }));
 
   return (
-    <div className="border-foreground/10 flex w-full flex-col justify-between rounded-[10px] border bg-white/5 p-5 md:p-6">
+    <div className="border-foreground/10 flex w-full min-w-0 flex-col justify-between rounded-[10px] border bg-white/5 p-4 sm:p-5 md:p-6">
       <div className="mb-6 flex flex-col">
-        <h3 className="text-foreground text-xl font-semibold">
-          Engagement pattern
+        <h3 className="text-foreground text-lg font-semibold sm:text-xl">
+          Recent unfollow activity
         </h3>
-        <p className="text-foreground/70 mt-1 text-sm">
-          Visualize when you lose followers over time
+        <p className="text-foreground/70 mt-1 text-sm leading-6">
+          Based only on recent unfollowers included in this Instagram export.
         </p>
       </div>
 
       {/* Period selector */}
-      <div className="mb-6 flex flex-row justify-center gap-3">
+      <div className="mb-6 flex flex-row justify-center gap-2 sm:gap-3">
         {(["month", "week"] as const).map((p) => (
           <button
             type="button"
@@ -97,8 +97,8 @@ export function EngagementPatternChart({
             className={clsx(
               "rounded-lg px-4 py-2 text-sm font-medium transition-all",
               period === p
-                ? "bg-primary/20 text-primary border-primary/30 border"
-                : "bg-foreground/5 text-foreground/70 border-foreground/10 hover:bg-foreground/10 border"
+                ? "border border-primary/30 bg-primary/20 text-primary"
+                : "border border-foreground/10 bg-foreground/5 text-foreground/70 hover:bg-foreground/10"
             )}
           >
             {p === "month" ? "Monthly" : "Weekly"}
@@ -107,7 +107,7 @@ export function EngagementPatternChart({
       </div>
 
       {/* Chart */}
-      <div className="flex h-[300px] w-full flex-row">
+      <div className="flex h-[240px] w-full min-w-0 flex-row sm:h-[280px] lg:h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
             <CartesianGrid
@@ -143,28 +143,28 @@ export function EngagementPatternChart({
       </div>
 
       {/* Insights */}
-      <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
         {/* Total */}
         <div className="bg-foreground/5 flex flex-col items-center rounded-lg p-4">
           <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
             Recent unfollowers
           </p>
           <p className="text-foreground mt-2 text-2xl font-bold">
-            {patternResult.totalUnfollowers}
+            {activityResult.totalUnfollowers}
           </p>
         </div>
 
         {/* Peak period */}
-        {patternResult.peakPeriod && (
+        {activityResult.peakPeriod && (
           <div className="bg-accent/10 rounded-lg p-4">
             <p className="text-accent/80 text-xs font-semibold tracking-widest uppercase">
               Peak period
             </p>
             <p className="text-accent mt-2 text-sm font-semibold">
-              {patternResult.peakPeriod.period}
+              {activityResult.peakPeriod.period}
             </p>
             <p className="text-accent/70 text-xs">
-              {patternResult.peakPeriod.count} recent unfollows
+              {activityResult.peakPeriod.count} recent unfollows
             </p>
           </div>
         )}
@@ -175,7 +175,7 @@ export function EngagementPatternChart({
             Avg per period
           </p>
           <p className="text-foreground mt-2 text-2xl font-bold">
-            {Math.round(patternResult.averagePerPeriod)}
+            {Math.round(activityResult.averagePerPeriod)}
           </p>
         </div>
 
@@ -185,7 +185,7 @@ export function EngagementPatternChart({
             Trend
           </p>
           <div className="mt-4">
-            <TrendIcon trend={patternResult.trend} />
+            <TrendIcon trend={activityResult.trend} />
           </div>
         </div>
       </div>
@@ -193,24 +193,22 @@ export function EngagementPatternChart({
       {/* Interpretation */}
       <div className="border-foreground/10 bg-foreground/5 mt-6 flex flex-row rounded-lg border p-4">
         <p className="text-foreground text-sm leading-6">
-          {patternResult.trend === "increasing" && (
+          {activityResult.trend === "increasing" && (
             <>
-              <strong>📈 Watch out!</strong> Your unfollower rate is increasing.
-              You're losing followers at an accelerating pace. Consider
-              reviewing your recent content or engagement strategy.
+              <strong>Recent unfollows increased.</strong> Instagram reports
+              more recent unfollow records in the later periods of this export.
             </>
           )}
-          {patternResult.trend === "decreasing" && (
+          {activityResult.trend === "decreasing" && (
             <>
-              <strong>✨ Looking good!</strong> Your unfollower rate is
-              decreasing, which suggests your recent content and engagement
-              strategy are working well.
+              <strong>Recent unfollows decreased.</strong> Instagram reports
+              fewer recent unfollow records in the later periods of this export.
             </>
           )}
-          {patternResult.trend === "stable" && (
+          {activityResult.trend === "stable" && (
             <>
-              <strong>⚖️ Balanced.</strong> Your unfollower rate is stable over
-              time. Keep maintaining your current strategy while monitoring key
+              <strong>Recent unfollows look stable.</strong> The records in this
+              export do not show a strong increase or decrease over the grouped
               periods.
             </>
           )}

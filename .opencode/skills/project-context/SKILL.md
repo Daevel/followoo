@@ -53,12 +53,11 @@ The current code also supports additional relationship files such as restricted 
 
 Important implementation references:
 
-- `src/components/services/instagramExportService.ts`: ZIP parsing and supported file routing.
-- `src/components/services/instagramAnalisysService.ts`: relationship comparison logic.
-- `src/components/services/followerSnapshotDiffService.ts`: optional previous-vs-current follower snapshot comparison for lost and new followers.
-- `src/components/parsers/*`: Instagram JSON normalization.
+- `src/features/instagram-export/services/instagramExportService.ts`: ZIP parsing and supported file routing.
+- `src/features/relationship/services/instagramAnalysisService.ts`: relationship comparison logic.
+- `src/features/instagram-export/parsers/*`: Instagram JSON normalization.
 - `src/types/instagram.types.ts`: domain types for Instagram export data and analysis results.
-- `src/components/utils/instagram/*` and `src/components/utils/*`: path detection, guards, search, pagination, formatting.
+- `src/features/instagram-export/utils/*`, `src/components/utils/*`, and `src/lib/*`: path detection, guards, search, pagination, formatting.
 
 ## Relationship Semantics
 
@@ -70,7 +69,6 @@ Core relationships:
 - Followers only: an account follows the user, but the user does not follow it back.
 - Following-only / not following back: the user follows an account, but that account does not follow the user. This is not an unfollow event.
 - Recent unfollowers: accounts reported by Instagram export as recently unfollowed.
-- Lost followers: accounts present in a previous export's followers list and missing from the current export's followers list. This requires comparing two local ZIP exports.
 - Blocked, restricted, close friends, hidden stories: direct lists from supported Instagram export files.
 
 Initial relationship vocabulary, where X is the current user's profile and Y is another profile:
@@ -88,7 +86,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - React 19.
 - TypeScript 5.
 - Vite 7.
-- React Router.
+- React Router 8.
 - Tailwind CSS 4 via `@tailwindcss/vite`.
 - GSAP for animations.
 - JSZip for in-browser ZIP parsing.
@@ -104,8 +102,9 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - `src/AppRoutes.tsx` is the shared route tree used by both the browser app and prerender entry.
 - `src/entry-prerender.tsx` and `scripts/prerender-static.mjs` generate static HTML for public SEO routes after the Vite client and SSR builds.
 - Vercel should serve prerendered public SEO routes from the generated static files; only SPA-only routes such as `/results` should rewrite to `/index.html`.
-- PWA service worker registration and manifest injection are handled by `vite-plugin-pwa`; do not add a manual `public/sw.js` or manual `/manifest.json` link.
-- `src/App.tsx` is the landing page composition and PWA install prompt behavior.
+- PWA service worker registration, update prompts, and manifest injection are handled by `vite-plugin-pwa`; do not add a manual `public/sw.js` or manual `/manifest.json` link.
+- PWA install and update prompts use the global toast system via `src/features/pwa-install/hooks/usePwaInstallPrompt.ts` and `src/pwa/usePwaUpdateToast.ts`.
+- `src/App.tsx` is the landing page composition.
 - Page-level routes live in `src/pages`.
 - Shared UI currently lives in `src/components/ui`.
 - Services, parsers, schemas, hooks, utils, and providers currently live under `src/components/*`, even when some of them are not React components. Refactors may improve this gradually, but do not move large areas without a clear migration goal.

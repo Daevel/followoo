@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";

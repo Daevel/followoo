@@ -1,10 +1,12 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { retrievePublishedUpdates } from "../server/updates/updates.service.js";
 
-export default async function handler(
-  _req: VercelRequest,
-  res: VercelResponse
-) {
+type JsonResponse = {
+  status: (statusCode: number) => {
+    json: (body: unknown) => unknown;
+  };
+};
+
+export default async function handler(_req: unknown, res: JsonResponse) {
   try {
     const updates = await retrievePublishedUpdates();
 

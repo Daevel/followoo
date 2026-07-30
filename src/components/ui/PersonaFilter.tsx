@@ -32,13 +32,13 @@ export function PersonaFilter({
         Filter by persona
       </p>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex max-w-full flex-wrap gap-2">
         {/* All button */}
         <button
           type="button"
           onClick={() => onPersonaChange(null)}
           className={clsx(
-            "rounded-full border px-4 py-2 text-sm font-medium transition-all",
+            "rounded-full border px-3 py-2 text-sm font-medium transition-all sm:px-4",
             selectedPersona === null
               ? "bg-primary/20 text-primary border-primary/30"
               : "bg-foreground/5 text-foreground/70 border-foreground/10 hover:bg-foreground/10"
@@ -58,13 +58,13 @@ export function PersonaFilter({
               key={persona}
               onClick={() => onPersonaChange(persona)}
               className={clsx(
-                "rounded-full border px-3 py-2 transition-all",
+                "min-w-0 rounded-full border px-2.5 py-2 transition-all sm:px-3",
                 selectedPersona === persona
                   ? "bg-primary/20 border-primary/30"
                   : "bg-foreground/5 border-foreground/10 hover:bg-foreground/10"
               )}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex min-w-0 items-center gap-2">
                 <PersonaBadge persona={persona} size="sm" />
                 <span className="text-foreground/70 text-xs font-semibold">
                   ({count})

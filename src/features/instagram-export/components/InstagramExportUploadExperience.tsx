@@ -20,12 +20,8 @@ export function InstagramExportUploadExperience({
   const {
     selectedZipFile,
     setSelectedZipFile,
-    previousZipFile,
-    setPreviousZipFile,
     uploadError,
     setUploadError,
-    previousUploadError,
-    setPreviousUploadError,
     loading,
     loadingRef,
     setTermsAndConditionsAccepted,
@@ -33,10 +29,6 @@ export function InstagramExportUploadExperience({
     setFileValidationState,
     fileValidationMessage,
     setFileValidationMessage,
-    previousFileValidationState,
-    setPreviousFileValidationState,
-    previousFileValidationMessage,
-    setPreviousFileValidationMessage,
     isTermsAccepted,
     hasValidFile,
     onElaborateFile,
@@ -104,27 +96,6 @@ export function InstagramExportUploadExperience({
               </div>
             )}
 
-            {!isDemo && (
-              <div data-page-animate="item" className="w-full">
-                <p className="text-foreground mb-2 text-sm font-semibold">
-                  Previous export for follower changes
-                </p>
-                <p className="text-foreground/60 mb-3 text-sm leading-6">
-                  Optional. Add an older ZIP to discover lost and new followers
-                  between the two exports.
-                </p>
-                <ZipDropzone
-                  file={previousZipFile}
-                  onFileChange={setPreviousZipFile}
-                  onError={(errorMessage) => {
-                    setPreviousUploadError(errorMessage);
-                    setPreviousFileValidationState("invalid");
-                    setPreviousFileValidationMessage(errorMessage);
-                  }}
-                />
-              </div>
-            )}
-
             {!isDemo && !selectedZipFile && !uploadError && (
               <p
                 data-page-animate="item"
@@ -149,33 +120,6 @@ export function InstagramExportUploadExperience({
                 </Callout>
               </div>
             )}
-
-            {!isDemo && previousFileValidationState === "checking" && (
-              <div data-page-animate="item" className="w-full">
-                <Callout title="Checking previous export" variant="info">
-                  Verifying the previous ZIP structure...
-                </Callout>
-              </div>
-            )}
-
-            {!isDemo && previousFileValidationState === "valid" && (
-              <div data-page-animate="item" className="w-full">
-                <Callout title="Previous export verified" variant="success">
-                  {previousFileValidationMessage}
-                </Callout>
-              </div>
-            )}
-
-            {!isDemo &&
-              (previousFileValidationState === "invalid" ||
-                previousUploadError) &&
-              previousFileValidationMessage && (
-                <div data-page-animate="item" className="w-full">
-                  <Callout title="Invalid previous export" variant="warning">
-                    {previousFileValidationMessage}
-                  </Callout>
-                </div>
-              )}
 
             {!isDemo &&
               (fileValidationState === "invalid" || uploadError) &&
@@ -261,9 +205,7 @@ export function InstagramExportUploadExperience({
                   !isTermsAccepted ||
                   !hasValidFile ||
                   !!uploadError ||
-                  fileValidationState === "checking" ||
-                  previousFileValidationState === "checking" ||
-                  previousFileValidationState === "invalid"
+                  fileValidationState === "checking"
                 }
                 onClick={onElaborateFile}
               >

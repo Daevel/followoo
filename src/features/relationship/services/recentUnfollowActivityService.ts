@@ -4,7 +4,7 @@ import type {
   NetworkVolatilityResult,
 } from "@/types/instagram.types";
 
-export type EngagementPeriod = "week" | "month" | "all";
+export type RecentUnfollowActivityPeriod = "week" | "month" | "all";
 
 export type TimelineDataPoint = {
   period: string;
@@ -13,7 +13,7 @@ export type TimelineDataPoint = {
   percentage: number;
 };
 
-export type EngagementPatternResult = {
+export type RecentUnfollowActivityResult = {
   data: TimelineDataPoint[];
   totalUnfollowers: number;
   peakPeriod: TimelineDataPoint | null;
@@ -96,10 +96,10 @@ function groupByWeek(
   return result;
 }
 
-export function calculateEngagementPattern(
+export function calculateRecentUnfollowActivity(
   recentUnfollowers: InstagramUser[],
-  period: EngagementPeriod = "month"
-): EngagementPatternResult {
+  period: RecentUnfollowActivityPeriod = "month"
+): RecentUnfollowActivityResult {
   const unfollowersWithTimestamp = recentUnfollowers.filter(
     (user) => user.timestamp
   );
@@ -215,11 +215,11 @@ export function calculateNetworkVolatility(
   if (volatilityLevel === "high") {
     insight = `Your network is experiencing high churn (${instabilityIndex.toFixed(1)}% unstable). ${
       recentUnfollowRatio > 50
-        ? "Recent unfollow activity is significant; review your recent content and engagement strategy."
+        ? "Recent unfollow activity is significant in this export."
         : "Monitor recent unfollow activity and keep strengthening key relationships."
     }`;
   } else if (volatilityLevel === "moderate") {
-    insight = `Your network shows moderate instability (${instabilityIndex.toFixed(1)}%). Monitor your content performance and engagement metrics.`;
+    insight = `Your network shows moderate instability (${instabilityIndex.toFixed(1)}%). Monitor recent unfollow activity in future exports.`;
   } else {
     insight = `Your network is stable (${instabilityIndex.toFixed(1)}% instability). Keep maintaining your current strategy.`;
   }

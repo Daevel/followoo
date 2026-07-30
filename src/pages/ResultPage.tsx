@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router";
 import { ResultsExperience } from "@/features/results/components/ResultsExperience";
 import type { InstagramAnalysisResult } from "@/types/instagram.types";
 

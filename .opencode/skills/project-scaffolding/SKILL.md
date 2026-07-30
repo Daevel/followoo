@@ -455,8 +455,8 @@ src/pwa/
 Rules:
 
 - Keep service worker registration and manifest injection owned by `vite-plugin-pwa`; do not add manual `public/sw.js` registration or a separate manual `/manifest.json` link.
-- App install prompt UI can stay app-level while small.
-- If install behavior grows, move it into `features/pwa-install`.
+- Keep app install prompt behavior in `features/pwa-install` and use the global toast system for install/update prompts.
+- Keep service worker update prompt behavior in `src/pwa` unless it grows into a broader feature.
 - Do not cache private uploaded Instagram data.
 
 ## Static Prerendering

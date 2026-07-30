@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router";
 import App from "./App.tsx";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
 import { RouteAwareErrorBoundary } from "./errors";

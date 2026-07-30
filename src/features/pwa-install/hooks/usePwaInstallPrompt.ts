@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { isRunningAsApp } from "@/pwa/pwaConfig";
+import { toastService } from "@/services/toastService";
 
 interface DeferredPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -14,17 +15,13 @@ const PWA_DISMISSED_AT_KEY = "pwa-dismissed-at";
 const PWA_DISMISS_DELAY_MS = 24 * 60 * 60 * 1000;
 
 export function usePwaInstallPrompt() {
-  const [showPWAApprovalQuestion, setShowPWAApprovalQuestion] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<DeferredPromptEvent | null>(null);
-  const [isAppInstalled, setIsAppInstalled] = useState(false);
+  const deferredPromptRef = useRef<DeferredPromptEvent | null>(null);
+  const isAppInstalledRef = useRef(false);
 
   useEffect(() => {
-    let abortController: AbortController | null = null;
-
     const installState =
       localStorage.getItem(PWA_INSTALLED_KEY) === "true" || isRunningAsApp();
-    setIsAppInstalled(installState);
+    isAppInstalledRef.current = installState;
 
     const lastDismissedAt = Number(
       localStorage.getItem(PWA_DISMISSED_AT_KEY) ?? "0"
@@ -35,93 +32,61 @@ export function usePwaInstallPrompt() {
 
     const onBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
-      setDeferredPrompt(event as DeferredPromptEvent);
+      deferredPromptRef.current = event as DeferredPromptEvent;
       localStorage.removeItem(PWA_INSTALLED_KEY);
     };
 
     const onAppInstalled = () => {
-      setIsAppInstalled(true);
+      isAppInstalledRef.current = true;
       localStorage.setItem(PWA_INSTALLED_KEY, "true");
-      setShowPWAApprovalQuestion(false);
     };
 
     window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
     window.addEventListener("appinstalled", onAppInstalled);
 
-    const runEffect = async () => {
-      if (!installState && !isDismissedRecently) {
-        setTimeout(() => {
-          setShowPWAApprovalQuestion(true);
-        }, 1250);
+    const timeoutId = window.setTimeout(() => {
+      if (installState || isDismissedRecently || isAppInstalledRef.current) {
+        return;
       }
-      abortController = new AbortController();
-    };
 
-    void runEffect();
+      toastService.info({
+        title: "Install Followoo as an app",
+        description:
+          "Add Followoo to your device for faster access and an app-like experience.",
+        duration: Number.POSITIVE_INFINITY,
+        action: {
+          label: "Install app",
+          onClick: async () => {
+            const deferredPrompt = deferredPromptRef.current;
+
+            if (deferredPrompt) {
+              await deferredPrompt.prompt();
+              const choiceResult = await deferredPrompt.userChoice;
+              deferredPromptRef.current = null;
+
+              if (choiceResult.outcome === "accepted") {
+                isAppInstalledRef.current = true;
+                localStorage.setItem(PWA_INSTALLED_KEY, "true");
+              }
+
+              return;
+            }
+
+            window.alert(
+              "To install Followoo, use your browser menu and choose Add to Home Screen or Install app."
+            );
+          },
+        },
+        onClose: () => {
+          localStorage.setItem(PWA_DISMISSED_AT_KEY, Date.now().toString());
+        },
+      });
+    }, 1250);
+
     return () => {
+      window.clearTimeout(timeoutId);
       window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
       window.removeEventListener("appinstalled", onAppInstalled);
-      abortController?.abort();
     };
   }, []);
-
-  useEffect(() => {
-    let abortController: AbortController | null = null;
-
-    const runEffect = async () => {
-      if (isAppInstalled) {
-        setShowPWAApprovalQuestion(false);
-      }
-    };
-
-    abortController = new AbortController();
-
-    void runEffect();
-
-    return () => {
-      abortController.abort();
-    };
-  }, [isAppInstalled]);
-
-  const handleEnablePWA = useCallback(async () => {
-    if (deferredPrompt) {
-      await deferredPrompt.prompt();
-      const choiceResult = await deferredPrompt.userChoice;
-      setDeferredPrompt(null);
-
-      if (choiceResult.outcome === "accepted") {
-        setIsAppInstalled(true);
-        localStorage.setItem("pwa-installed", "true");
-        setShowPWAApprovalQuestion(false);
-      } else {
-        setShowPWAApprovalQuestion(false);
-      }
-      return;
-    }
-
-    const isSafari =
-      typeof navigator !== "undefined" &&
-      /Safari/.test(navigator.userAgent) &&
-      !/Chrome/.test(navigator.userAgent) &&
-      !/CriOS/.test(navigator.userAgent);
-
-    if (isSafari) {
-      window.alert(
-        "Per installare Followoo su Safari, usa il pulsante Condividi e poi seleziona Aggiungi a Home."
-      );
-    }
-
-    setShowPWAApprovalQuestion(false);
-  }, [deferredPrompt]);
-
-  const handleDismissPWA = useCallback(() => {
-    localStorage.setItem(PWA_DISMISSED_AT_KEY, Date.now().toString());
-    setShowPWAApprovalQuestion(false);
-  }, []);
-
-  return {
-    showPWAApprovalQuestion,
-    handleEnablePWA,
-    handleDismissPWA,
-  };
 }

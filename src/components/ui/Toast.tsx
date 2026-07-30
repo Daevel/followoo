@@ -10,6 +10,11 @@ export type ToastItem = {
   title: string;
   description?: string;
   variant: ToastVariant;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  onClose?: () => void;
 };
 
 type ToastProps = {
@@ -63,11 +68,21 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
     }
 
     closeWithAnimation(() => {
+      toast.onClose?.();
       onClose(toast.id);
     });
-  }, [closeWithAnimation, onClose, toast.id]);
+  }, [closeWithAnimation, onClose, toast]);
+
+  function handleActionClick() {
+    toast.action?.onClick();
+    handleClose();
+  }
 
   useEffect(() => {
+    if (!Number.isFinite(duration)) {
+      return;
+    }
+
     closeTimeoutRef.current = window.setTimeout(() => {
       handleClose();
     }, duration);
@@ -115,6 +130,19 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
             >
               {toast.description}
             </p>
+          ) : null}
+
+          {toast.action ? (
+            <button
+              type="button"
+              onClick={handleActionClick}
+              className={clsx(
+                "mt-3 cursor-pointer text-sm font-semibold underline underline-offset-4 transition hover:opacity-80",
+                styles.title
+              )}
+            >
+              {toast.action.label}
+            </button>
           ) : null}
         </div>
 

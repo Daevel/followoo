@@ -1,16 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import Seo from "@/components/ui/Seo";
 import { FeaturesSection } from "@/features/landing/components/FeatureSection";
 import { HeroSection } from "@/features/landing/components/HeroSection";
 import { PrivacySection } from "@/features/landing/components/PrivacySection";
 import { faqCards, Questions } from "@/features/landing/components/Questions";
-import { usePwaInstallPrompt } from "@/features/pwa-install/hooks/usePwaInstallPrompt";
-import { initializePostHog } from "./analytics/posthogInit";
 import { useLandingPageAnimations } from "./animations/pages/useLandingPageAnimations";
 import { FooterSignature } from "./components/ui/FooterSignature";
 import { NavBar } from "./components/ui/NavBar";
-import { PWANotification } from "./components/ui/PWANotification";
-import { ScreenMount } from "./components/ui/ScreenMount";
 
 const SITE_URL = "https://followoo.app";
 
@@ -57,14 +53,8 @@ const homeSchemaMarkup = {
 
 export default function App() {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const { showPWAApprovalQuestion, handleEnablePWA, handleDismissPWA } =
-    usePwaInstallPrompt();
 
   useLandingPageAnimations(rootRef);
-
-  useEffect(() => {
-    initializePostHog();
-  }, []);
 
   return (
     <div ref={rootRef} className="bg-background w-full min-h-screen">
@@ -81,15 +71,6 @@ export default function App() {
         <HeroSection />
         <FeaturesSection />
       </section>
-
-      {showPWAApprovalQuestion && (
-        <ScreenMount className="flex w-full" position="bottom-center">
-          <PWANotification
-            onInstall={handleEnablePWA}
-            onDismiss={handleDismissPWA}
-          />
-        </ScreenMount>
-      )}
 
       <PrivacySection />
       <Questions />

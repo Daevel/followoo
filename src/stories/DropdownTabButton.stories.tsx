@@ -45,12 +45,6 @@ const sampleAnalysis = {
     followers: 4,
     following: 3,
   },
-  followerSnapshotDiff: {
-    previousFollowersCount: 5,
-    currentFollowersCount: 4,
-    lostFollowers: [{ username: "roberto", timestamp: 1680013000 }],
-    newFollowers: [{ username: "chiara", timestamp: 1680014000 }],
-  },
 };
 
 export const DropdownTabButton_: Story = {

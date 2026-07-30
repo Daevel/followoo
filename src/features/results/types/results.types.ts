@@ -14,9 +14,7 @@ export type TabKey =
   | "closeFriends"
   | "hideStoriesFrom"
   | "pendingFollowRequests"
-  | "recentFollowRequests"
-  | "lostFollowers"
-  | "newFollowers";
+  | "recentFollowRequests";
 
 export type ResultsEmptyState = {
   title: string;

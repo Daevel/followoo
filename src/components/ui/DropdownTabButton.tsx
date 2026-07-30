@@ -13,9 +13,7 @@ type TabKey =
   | "closeFriends"
   | "hideStoriesFrom"
   | "pendingFollowRequests"
-  | "recentFollowRequests"
-  | "lostFollowers"
-  | "newFollowers";
+  | "recentFollowRequests";
 
 type DropdownTabButtonProps = {
   title: string;
@@ -33,14 +31,14 @@ export function DropdownTabButton({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-foreground/10 bg-foreground/5 text-foreground w-full rounded-[10px] border p-5 md:p-6">
+    <div className="border-foreground/10 bg-foreground/5 text-foreground w-full min-w-0 rounded-[10px] border p-4 sm:p-5 md:p-6">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex w-full cursor-pointer items-center justify-between gap-6"
+        className="flex w-full cursor-pointer items-center justify-between gap-4 sm:gap-6"
         aria-expanded={isOpen}
       >
-        <h4 className="pr-4 text-start">{title}</h4>
+        <h4 className="min-w-0 pr-2 text-start text-base sm:pr-4">{title}</h4>
 
         <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-transform duration-300 ease-out">
           <div
@@ -66,7 +64,7 @@ export function DropdownTabButton({
         }`}
       >
         <div className="overflow-hidden">
-          <div className="grid gap-3 text-start md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid min-w-0 gap-2 text-start sm:gap-3 md:grid-cols-2 lg:grid-cols-3">
             <TabButton
               active={activeTab === "mutual"}
               onClick={() => setActiveTab("mutual")}
@@ -136,26 +134,6 @@ export function DropdownTabButton({
             >
               Recent Requests ({analysis.recentFollowRequests.length})
             </TabButton>
-
-            {analysis.followerSnapshotDiff && (
-              <>
-                <TabButton
-                  active={activeTab === "lostFollowers"}
-                  onClick={() => setActiveTab("lostFollowers")}
-                >
-                  Lost Followers (
-                  {analysis.followerSnapshotDiff.lostFollowers.length})
-                </TabButton>
-
-                <TabButton
-                  active={activeTab === "newFollowers"}
-                  onClick={() => setActiveTab("newFollowers")}
-                >
-                  New Followers (
-                  {analysis.followerSnapshotDiff.newFollowers.length})
-                </TabButton>
-              </>
-            )}
           </div>
         </div>
       </div>

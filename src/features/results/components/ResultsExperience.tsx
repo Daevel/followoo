@@ -2,8 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { useResultsPageAnimation } from "@/animations/pages/useResultsPageAnimation";
 import { Container } from "@/components/ui/Container";
-import { EngagementPatternChart } from "@/components/ui/charts/EngagementPatternChart";
 import { NetworkVolatilityCard } from "@/components/ui/charts/NetworkVolatilityCard";
+import { RecentUnfollowActivityChart } from "@/components/ui/charts/RecentUnfollowActivityChart";
 import { ResultsPieChart } from "@/components/ui/charts/ResultPieChart";
 import { DropdownTabButton } from "@/components/ui/DropdownTabButton";
 import { Input } from "@/components/ui/Input";
@@ -14,7 +14,7 @@ import { RelationshipHealthInsight } from "@/components/ui/RelationshipHealthIns
 import Seo from "@/components/ui/Seo";
 import { SortSelect } from "@/components/ui/SortSelect";
 import { UserListItem } from "@/components/ui/UserListItem";
-import { calculateNetworkVolatility } from "@/features/relationship/services/engagementPatternService";
+import { calculateNetworkVolatility } from "@/features/relationship/services/recentUnfollowActivityService";
 import { calculateRelationshipHealthScore } from "@/features/relationship/services/relationshipHealthService";
 import {
   classifyUserPersona,
@@ -71,10 +71,6 @@ export function ResultsExperience({
         return analysis.pendingFollowRequests;
       case "recentFollowRequests":
         return analysis.recentFollowRequests;
-      case "lostFollowers":
-        return analysis.followerSnapshotDiff?.lostFollowers ?? [];
-      case "newFollowers":
-        return analysis.followerSnapshotDiff?.newFollowers ?? [];
       default:
         return [];
     }
@@ -232,21 +228,21 @@ export function ResultsExperience({
       <section className="flex min-h-svh flex-col">
         <NavBar />
 
-        <Container className="flex min-h-svh max-w-6xl flex-col">
+        <Container className="flex min-h-svh max-w-6xl flex-col overflow-x-hidden">
           <div
             ref={rootRef}
-            className="mx-auto flex w-full flex-1 flex-col items-center px-4 pt-16 pb-8 text-center md:px-6 md:pt-20"
+            className="mx-auto flex w-full min-w-0 flex-1 flex-col items-center px-3 pt-14 pb-8 text-center sm:px-4 md:px-6 md:pt-20"
           >
             <h1
               data-animate="hero-item"
-              className="leading-headers text-foreground text-3xl font-semibold md:text-5xl"
+              className="leading-headers text-foreground max-w-4xl text-balance text-3xl font-semibold sm:text-4xl md:text-5xl"
             >
               Your Instagram network analysis
             </h1>
 
             <p
               data-animate="hero-item"
-              className="text-foreground/70 mt-4 max-w-2xl text-base leading-7 md:text-lg"
+              className="text-foreground/70 mt-4 max-w-2xl text-pretty text-sm leading-6 sm:text-base md:text-lg md:leading-7"
             >
               A quick overview of your relationship groups, patterns, and
               account insights.
@@ -254,7 +250,7 @@ export function ResultsExperience({
 
             <div
               data-animate="hero-item"
-              className="border-foreground/10 bg-foreground/5 mt-5 flex flex-wrap items-center justify-center gap-3 rounded-full border px-4 py-2 text-sm text-foreground/75"
+              className="border-foreground/10 bg-foreground/5 mt-5 flex w-full flex-wrap items-center justify-center gap-2 rounded-[18px] border px-3 py-2 text-xs text-foreground/75 sm:w-auto sm:gap-3 sm:rounded-full sm:px-4 sm:text-sm"
             >
               <span>Imported source records</span>
               <span className="text-foreground font-semibold">
@@ -270,55 +266,15 @@ export function ResultsExperience({
               <RelationshipHealthInsight insight={relationshipHealthInsight} />
             </div>
 
-            {analysis.followerSnapshotDiff && (
-              <div
-                data-animate="hero-item"
-                className="border-primary/30 bg-primary/10 mt-6 grid w-full gap-4 rounded-[10px] border p-5 text-start md:grid-cols-4 md:p-6"
-              >
-                <div>
-                  <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
-                    Previous followers
-                  </p>
-                  <p className="text-foreground mt-2 text-2xl font-semibold">
-                    {analysis.followerSnapshotDiff.previousFollowersCount}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
-                    Current followers
-                  </p>
-                  <p className="text-foreground mt-2 text-2xl font-semibold">
-                    {analysis.followerSnapshotDiff.currentFollowersCount}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
-                    Lost followers
-                  </p>
-                  <p className="text-accent mt-2 text-2xl font-semibold">
-                    {analysis.followerSnapshotDiff.lostFollowers.length}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
-                    New followers
-                  </p>
-                  <p className="text-primary mt-2 text-2xl font-semibold">
-                    {analysis.followerSnapshotDiff.newFollowers.length}
-                  </p>
-                </div>
-              </div>
-            )}
-
             <div
               data-animate="hero-item"
-              className="mt-10 flex w-full flex-row gap-5 max-lg:flex-col"
+              className="mt-8 grid w-full min-w-0 grid-cols-1 gap-5 lg:mt-10 lg:grid-cols-2"
             >
               <ResultsPieChart
                 data={chartData}
                 title="Relationship breakdown"
               />
-              <EngagementPatternChart
+              <RecentUnfollowActivityChart
                 recentUnfollowers={analysis.recentUnfollowers}
               />
             </div>
@@ -336,19 +292,19 @@ export function ResultsExperience({
               />
             </div>
 
-            <div className="border-foreground/10 bg-foreground/5 text-foreground mt-6 w-full rounded-[10px] border p-5 md:p-8">
+            <div className="border-foreground/10 bg-foreground/5 text-foreground mt-6 w-full min-w-0 rounded-[10px] border p-4 sm:p-5 md:p-8">
               <div className="w-full">
                 <div className="flex w-full flex-col items-center gap-y-2 text-center max-sm:items-start max-sm:text-start">
                   <h3
                     data-animate="hero-item"
-                    className="text-foreground text-2xl font-semibold"
+                    className="text-foreground text-xl font-semibold sm:text-2xl"
                   >
                     {tabInfos.sectionTitle}
                   </h3>
 
                   <p
                     data-animate="hero-item"
-                    className="text-foreground/75 max-w-2xl text-sm leading-6 md:text-base"
+                    className="text-foreground/75 max-w-2xl text-pretty text-sm leading-6 md:text-base"
                   >
                     {tabInfos.description}
                   </p>
@@ -410,8 +366,8 @@ export function ResultsExperience({
 
                 <div data-animate="hero-item" className="mt-6">
                   {emptyState ? (
-                    <div className="border-foreground/10 bg-foreground/5 flex min-h-56 w-full flex-col items-center justify-center rounded-[10px] border px-6 py-10 text-center">
-                      <h4 className="text-foreground text-xl font-semibold">
+                    <div className="border-foreground/10 bg-foreground/5 flex min-h-56 w-full flex-col items-center justify-center rounded-[10px] border px-4 py-10 text-center sm:px-6">
+                      <h4 className="text-foreground text-lg font-semibold sm:text-xl">
                         {emptyState.title}
                       </h4>
 
@@ -420,7 +376,7 @@ export function ResultsExperience({
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 xl:gap-5">
                       {paginatedUsers.map((user) => (
                         <div key={user.username} data-animate="list-item">
                           <UserListItem

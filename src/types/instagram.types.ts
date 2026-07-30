@@ -57,14 +57,6 @@ export type InstagramAnalysisResult = {
     followers: number;
     following: number;
   };
-  followerSnapshotDiff?: FollowerSnapshotDiff;
-};
-
-export type FollowerSnapshotDiff = {
-  previousFollowersCount: number;
-  currentFollowersCount: number;
-  lostFollowers: InstagramUser[];
-  newFollowers: InstagramUser[];
 };
 
 export type VolatilityLevel = "stable" | "moderate" | "high";

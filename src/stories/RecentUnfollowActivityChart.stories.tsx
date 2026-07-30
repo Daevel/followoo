@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { EngagementPatternChart } from "../components/ui/charts/EngagementPatternChart";
+import { RecentUnfollowActivityChart } from "../components/ui/charts/RecentUnfollowActivityChart";
 
-const meta: Meta<typeof EngagementPatternChart> = {
-  title: "Components/UI/Charts/EngagementPatternChart",
-  component: EngagementPatternChart,
+const meta: Meta<typeof RecentUnfollowActivityChart> = {
+  title: "Components/UI/Charts/RecentUnfollowActivityChart",
+  component: RecentUnfollowActivityChart,
   tags: ["autodocs"],
   argTypes: {},
 };
 
 export default meta;
-type Story = StoryObj<typeof EngagementPatternChart>;
+type Story = StoryObj<typeof RecentUnfollowActivityChart>;
 
 const sampleRecentUnfollowers = [
   { username: "alice", timestamp: 1680005000 },
@@ -17,7 +17,7 @@ const sampleRecentUnfollowers = [
   { username: "sara", timestamp: 1680007000 },
 ];
 
-export const EngagementPatternChart_: Story = {
+export const RecentUnfollowActivityChart_: Story = {
   args: {
     recentUnfollowers: sampleRecentUnfollowers,
   },

@@ -7,7 +7,6 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vite";
-import { createHtmlPlugin } from "vite-plugin-html";
 import { VitePWA } from "vite-plugin-pwa";
 import sitemapPlugin from "vite-plugin-sitemap";
 import svgr from "vite-plugin-svgr";
@@ -46,19 +45,6 @@ export default defineConfig(({ isSsrBuild }) => ({
         },
       ],
     }),
-    createHtmlPlugin({
-      minify: true,
-      inject: {
-        data: {
-          title: "Followoo",
-          description:
-            "Followoo - The best way to compare your Instagram followers",
-          ogTitle: "Followoo",
-          ogDescription:
-            "Followoo - Confronta i tuoi follower Instagram in modo semplice",
-        },
-      },
-    }),
     tailwindcss(),
     svgr({
       svgrOptions: {
@@ -66,7 +52,7 @@ export default defineConfig(({ isSsrBuild }) => ({
       },
     }),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       includeAssets: ["favicon.svg", "robots.txt", "icons/*.{png,svg}"],
       manifest: {
         name: "Followoo - Private Instagram Export Analyzer",
@@ -166,7 +152,7 @@ export default defineConfig(({ isSsrBuild }) => ({
         rollupOptions: {
           output: {
             manualChunks: {
-              react: ["react", "react-dom", "react-router-dom"],
+              react: ["react", "react-dom", "react-router"],
             },
           },
         },
