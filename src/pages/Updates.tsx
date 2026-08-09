@@ -7,6 +7,7 @@ import Seo from "@/components/ui/Seo";
 import { Separator } from "@/components/ui/Separator";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { handleAppError, UnknownErrorPage } from "@/errors";
+import { getApiUrl } from "@/lib/api";
 
 type UpdateChangeGroup = {
   label: string;
@@ -109,7 +110,7 @@ export function Updates() {
         setIsLoading(true);
         setHasError(false);
 
-        const response = await fetch("/api/updates");
+        const response = await fetch(getApiUrl("/updates"));
 
         if (!response.ok) {
           handleAppError("error", {

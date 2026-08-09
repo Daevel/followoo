@@ -31,11 +31,10 @@ followoo/
 ├── .opencode/
 │   └── skills/
 ├── .storybook/
-├── api/
+├── backend/
 ├── docs/
 ├── public/
 ├── scripts/
-├── server/
 ├── src/
 ├── package.json
 ├── tsconfig.json
@@ -47,8 +46,7 @@ Responsibility boundaries:
 
 ```txt
 src/        -> browser application source
-api/        -> Vercel/serverless endpoints, not browser UI code
-server/     -> server-only services, repositories, and infrastructure shared by api endpoints
+backend/    -> Python FastAPI backend for public server-side API endpoints
 public/     -> static public assets
 docs/       -> documentation and images
 scripts/    -> local automation
@@ -390,16 +388,18 @@ Provider rules:
 - Do not place general domain services in providers.
 - Keep provider composition visible near `src/main.tsx` or an app-level composition file.
 
-## API Folder
+## Backend Folder
 
-The `api/` directory is for Vercel/serverless endpoints.
+The `backend/` directory is for the Python FastAPI backend.
 
 Rules:
 
-- Do not import browser UI code from `api/`.
-- Do not import server-only code into `src/` browser bundles.
+- Keep backend code under `backend/app` using feature routers, services, repositories, and schemas.
+- Do not import browser UI code from `backend/`.
+- Do not import backend-only code into `src/` browser bundles.
 - Keep endpoint code focused and validate inputs explicitly.
-- Never accept uploaded Instagram ZIP contents in server endpoints unless the user explicitly changes the privacy model.
+- Never accept uploaded Instagram ZIP contents in backend endpoints unless the user explicitly changes the privacy model.
+- Use the `python-backend` skill for detailed FastAPI, database, CORS, and verification rules.
 
 ## Imports
 
@@ -546,6 +546,6 @@ When creating a file, decide in this order:
 4. Is it shared React behavior? Use `src/hooks`.
 5. Is it pure/shared domain or application logic? Use `src/services`, `src/types`, `src/schemas`, or `src/lib` based on responsibility.
 6. Is it analytics, animation, error, PWA, or data infrastructure? Use the existing dedicated top-level folder.
-7. Is it serverless? Use `api/`.
+7. Is it a server-side API feature? Use `backend/app/<feature>/` and the `python-backend` skill.
 
 If none fits, ask whether a new top-level folder is warranted instead of inventing one silently.

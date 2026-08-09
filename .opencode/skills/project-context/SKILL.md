@@ -109,8 +109,8 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - Shared UI currently lives in `src/components/ui`.
 - Services, parsers, schemas, hooks, utils, and providers currently live under `src/components/*`, even when some of them are not React components. Refactors may improve this gradually, but do not move large areas without a clear migration goal.
 - Cross-cutting folders already exist at `src/analytics`, `src/animations`, `src/errors`, `src/pwa`, `src/data`, and `src/types`.
-- Vercel serverless/API endpoints live outside `src` under `api/`.
-- Server-only services, repositories, and infrastructure shared by API endpoints live under `server/`.
+- Python FastAPI backend code lives under `backend/` and owns server-side public data endpoints such as `/updates`.
+- The React app calls the Python backend through `src/lib/api.ts` and `VITE_API_BASE_URL`; do not reintroduce the old `api/` and `server/` TypeScript updates path unless explicitly requested.
 
 ## Privacy And Analytics Rules
 
@@ -136,7 +136,9 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - `npm run format`: Biome format with writes.
 - `npm run storybook`: start Storybook.
 - `npm run build-storybook`: build Storybook.
+- `backend/.venv/bin/python -m uvicorn app.main:app --reload --port 8000`: start the Python API from `backend/`.
+- `backend/.venv/bin/python -m ruff check app` and `backend/.venv/bin/python -m mypy app`: verify the Python backend from `backend/`.
 
 ## Current Direction
 
-Followoo started as a single React app and has accumulated structural complexity. Refactors should be incremental, preserve user-visible behavior, and make responsibilities clearer without introducing monorepo or backend complexity unless explicitly requested.
+Followoo started as a single React app and has accumulated structural complexity. Refactors should be incremental, preserve user-visible behavior, and make responsibilities clearer. The Python backend should grow inside `backend/` using feature routers, services, repositories, and schemas before considering a separate repository.

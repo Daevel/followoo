@@ -1,0 +1,17 @@
+[project]
+name = "followoo-api"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+  "fastapi",
+  "psycopg[binary]",
+  "pydantic-settings",
+  "python-dotenv",
+  "uvicorn",
+]
+
+[tool.ruff]
+line-length = 88
+
+[tool.mypy]
+python_version = "3.13"
