@@ -1,9 +1,15 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { ScreenMount } from "@/components/ui/ScreenMount";
-import { Toast, type ToastItem } from "@/components/ui/Toast";
+import type { ToastItem } from "@/components/ui/Toast";
 import { usePwaInstallPrompt } from "@/features/pwa-install/hooks/usePwaInstallPrompt";
 import { usePwaUpdateToast } from "@/pwa/usePwaUpdateToast";
 import { toastService } from "@/services/toastService";
+
+const Toast = lazy(() =>
+  import("@/components/ui/Toast").then((module) => ({
+    default: module.Toast,
+  }))
+);
 
 type InternalToast = ToastItem & {
   duration: number;
@@ -39,14 +45,16 @@ export function ToastProvider({ children }: ToastProviderProps) {
       {children}
 
       <ScreenMount position="top-right" className="max-w-sm sm:w-full">
-        {toasts.map((toast) => (
-          <Toast
-            key={toast.id}
-            toast={toast}
-            duration={toast.duration}
-            onClose={handleClose}
-          />
-        ))}
+        <Suspense fallback={null}>
+          {toasts.map((toast) => (
+            <Toast
+              key={toast.id}
+              toast={toast}
+              duration={toast.duration}
+              onClose={handleClose}
+            />
+          ))}
+        </Suspense>
       </ScreenMount>
     </>
   );

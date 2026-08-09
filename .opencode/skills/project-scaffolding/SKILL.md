@@ -127,9 +127,9 @@ When moving files, update imports and run the relevant checks.
 
 ## Pages And Routing
 
-Routing is composed in `src/AppRoutes.tsx` with React Router and mounted from `src/main.tsx`.
+Routing is composed through `src/AppRouteTree.tsx` with React Router and mounted from `src/main.tsx`.
 
-`src/AppRoutes.tsx` is also used by `src/entry-prerender.tsx` for static prerendering. Keep route additions in the shared route tree unless a route is intentionally browser-only.
+`src/AppRoutes.tsx` is the client route wrapper and may lazy-load pages for bundle splitting. `src/AppRoutesPrerender.tsx` is the prerender route wrapper and should keep static page imports so `renderToString` can produce full SEO HTML. Keep route additions in `src/AppRouteTree.tsx` unless a route is intentionally browser-only or prerender-only.
 
 Current route page components live in:
 
@@ -472,6 +472,7 @@ Rules:
 
 - Keep prerendered routes public and non-session-specific.
 - Do not prerender `/results`, because it depends on in-memory browser navigation state and private analysis data.
+- Do not use lazy route components in `src/AppRoutesPrerender.tsx`; `renderToString` cannot wait for them and may output only fallback markup.
 - Avoid module-level DOM or animation side effects in code imported by prerendered routes.
 - When adding a new public SEO route, update the shared route tree, sitemap config, and prerender route list together.
 

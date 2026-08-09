@@ -14,7 +14,7 @@ if (!rootElement) {
   throw new Error("Root element not found");
 }
 
-initializePostHog();
+void initializePostHog();
 
 createRoot(rootElement).render(
   <StrictMode>
