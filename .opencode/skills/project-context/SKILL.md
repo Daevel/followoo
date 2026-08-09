@@ -98,8 +98,9 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 
 ## Runtime Shape
 
-- `src/main.tsx` mounts the app, configures `HelmetProvider`, `BrowserRouter`, global providers, and delegates route composition to `src/AppRoutes.tsx`.
-- `src/AppRoutes.tsx` is the shared route tree used by both the browser app and prerender entry.
+- `src/main.tsx` mounts the app, configures `HelmetProvider`, `BrowserRouter`, global providers, and delegates client routing to `src/AppRoutes.tsx`.
+- `src/AppRoutes.tsx` lazy-loads route pages for client bundle splitting, while `src/AppRoutesPrerender.tsx` imports route pages statically for SEO prerender output.
+- `src/AppRouteTree.tsx` owns the shared route definitions used by both client and prerender route wrappers.
 - `src/entry-prerender.tsx` and `scripts/prerender-static.mjs` generate static HTML for public SEO routes after the Vite client and SSR builds.
 - Vercel should serve prerendered public SEO routes from the generated static files; only SPA-only routes such as `/results` should rewrite to `/index.html`.
 - PWA service worker registration, update prompts, and manifest injection are handled by `vite-plugin-pwa`; do not add a manual `public/sw.js` or manual `/manifest.json` link.

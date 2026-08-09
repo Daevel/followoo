@@ -1,7 +1,7 @@
 import { renderToString } from "react-dom/server";
 import { HelmetProvider, type HelmetServerState } from "react-helmet-async";
 import { MemoryRouter } from "react-router";
-import { AppRoutes } from "./AppRoutes";
+import { AppRoutesPrerender } from "./AppRoutesPrerender";
 import { ToastProvider } from "./providers/ToastProvider";
 
 HelmetProvider.canUseDOM = false;
@@ -16,7 +16,7 @@ export function render(route: string) {
     <HelmetProvider context={helmetContext}>
       <MemoryRouter initialEntries={[route]}>
         <ToastProvider>
-          <AppRoutes />
+          <AppRoutesPrerender />
         </ToastProvider>
       </MemoryRouter>
     </HelmetProvider>

@@ -1,4 +1,3 @@
-import JSZip from "jszip";
 import { AppError, ERROR_CODES } from "@/errors";
 import { InstagramObjectArrayKeys } from "@/types/enums";
 import type { InstagramExportData } from "@/types/instagram.types";
@@ -56,11 +55,119 @@ function createEmptyInstagramExportData(): InstagramExportData {
 export async function parseInstagramExport(
   file: File
 ): Promise<InstagramExportData> {
-  let zip: JSZip;
+  const { default: JSZip } = await import("jszip");
 
   try {
-    zip = await JSZip.loadAsync(file);
+    const zip = await JSZip.loadAsync(file);
+    const result = createEmptyInstagramExportData();
+    const paths = Object.keys(zip.files);
+
+    for (const path of paths) {
+      const entry = zip.files[path];
+
+      if (!entry || entry.dir || !isJsonFile(path)) continue;
+
+      const content = await entry.async("string");
+      const json = safeJsonParse(content);
+
+      if (json === null) continue;
+
+      if (isFollowersFile(path)) {
+        result.followers.push(...parseFollowers(json));
+        continue;
+      }
+
+      if (isFollowingFile(path)) {
+        result.following.push(
+          ...parseWrappedRelationshipUsers(
+            json,
+            InstagramObjectArrayKeys.FOLLOWING
+          )
+        );
+        continue;
+      }
+
+      if (isRecentlyUnfollowedFile(path)) {
+        result.recentlyUnfollowed.push(
+          ...parseWrappedRelationshipUsers(
+            json,
+            InstagramObjectArrayKeys.UNFOLLOWED_USERS
+          )
+        );
+        continue;
+      }
+
+      if (isBlockedFile(path)) {
+        result.blocked.push(
+          ...parseWrappedRelationshipUsers(
+            json,
+            InstagramObjectArrayKeys.BLOCKED_USERS
+          )
+        );
+        continue;
+      }
+
+      if (isRestrictedFile(path)) {
+        result.restricted.push(
+          ...parseWrappedRelationshipUsers(
+            json,
+            InstagramObjectArrayKeys.RESTRICTED_USERS
+          )
+        );
+        continue;
+      }
+
+      if (isCloseFriendsFile(path)) {
+        result.closeFriends.push(
+          ...parseWrappedRelationshipUsers(
+            json,
+            InstagramObjectArrayKeys.CLOSE_FRIENDS
+          )
+        );
+        continue;
+      }
+
+      if (isHideStoriesFromFile(path)) {
+        result.hideStoriesFrom.push(
+          ...parseWrappedRelationshipUsers(
+            json,
+            InstagramObjectArrayKeys.HIDE_STORIES_FROM
+          )
+        );
+        continue;
+      }
+
+      if (isPendingFollowRequestsFile(path)) {
+        result.pendingFollowRequests.push(
+          ...parseWrappedRelationshipUsers(
+            json,
+            InstagramObjectArrayKeys.PERMANENT_FOLLOW_REQUESTS
+          )
+        );
+        continue;
+      }
+
+      if (isRecentFollowRequestsFile(path)) {
+        result.recentFollowRequests.push(...parseFollowers(json));
+      }
+    }
+
+    if (!hasAnyParsedData(result)) {
+      throw new AppError({
+        code: ERROR_CODES.INVALID_INSTAGRAM_EXPORT,
+        message: "No supported Instagram relationship data found",
+        userMessage:
+          "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
+        details: { fileName: file.name },
+      });
+    }
+
+    return result;
   } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+
     throw new AppError({
       code: ERROR_CODES.INVALID_ZIP_FILE,
       message: "Failed to load ZIP file",
@@ -68,109 +175,4 @@ export async function parseInstagramExport(
       details: error,
     });
   }
-
-  const result = createEmptyInstagramExportData();
-  const paths = Object.keys(zip.files);
-
-  for (const path of paths) {
-    const entry = zip.files[path];
-
-    if (!entry || entry.dir || !isJsonFile(path)) continue;
-
-    const content = await entry.async("string");
-    const json = safeJsonParse(content);
-
-    if (json === null) continue;
-
-    if (isFollowersFile(path)) {
-      result.followers.push(...parseFollowers(json));
-      continue;
-    }
-
-    if (isFollowingFile(path)) {
-      result.following.push(
-        ...parseWrappedRelationshipUsers(
-          json,
-          InstagramObjectArrayKeys.FOLLOWING
-        )
-      );
-      continue;
-    }
-
-    if (isRecentlyUnfollowedFile(path)) {
-      result.recentlyUnfollowed.push(
-        ...parseWrappedRelationshipUsers(
-          json,
-          InstagramObjectArrayKeys.UNFOLLOWED_USERS
-        )
-      );
-      continue;
-    }
-
-    if (isBlockedFile(path)) {
-      result.blocked.push(
-        ...parseWrappedRelationshipUsers(
-          json,
-          InstagramObjectArrayKeys.BLOCKED_USERS
-        )
-      );
-      continue;
-    }
-
-    if (isRestrictedFile(path)) {
-      result.restricted.push(
-        ...parseWrappedRelationshipUsers(
-          json,
-          InstagramObjectArrayKeys.RESTRICTED_USERS
-        )
-      );
-      continue;
-    }
-
-    if (isCloseFriendsFile(path)) {
-      result.closeFriends.push(
-        ...parseWrappedRelationshipUsers(
-          json,
-          InstagramObjectArrayKeys.CLOSE_FRIENDS
-        )
-      );
-      continue;
-    }
-
-    if (isHideStoriesFromFile(path)) {
-      result.hideStoriesFrom.push(
-        ...parseWrappedRelationshipUsers(
-          json,
-          InstagramObjectArrayKeys.HIDE_STORIES_FROM
-        )
-      );
-      continue;
-    }
-
-    if (isPendingFollowRequestsFile(path)) {
-      result.pendingFollowRequests.push(
-        ...parseWrappedRelationshipUsers(
-          json,
-          InstagramObjectArrayKeys.PERMANENT_FOLLOW_REQUESTS
-        )
-      );
-      continue;
-    }
-
-    if (isRecentFollowRequestsFile(path)) {
-      result.recentFollowRequests.push(...parseFollowers(json));
-    }
-  }
-
-  if (!hasAnyParsedData(result)) {
-    throw new AppError({
-      code: ERROR_CODES.INVALID_INSTAGRAM_EXPORT,
-      message: "No supported Instagram relationship data found",
-      userMessage:
-        "This ZIP file does not look like a valid Instagram export, or it does not contain supported relationship data.",
-      details: { fileName: file.name },
-    });
-  }
-
-  return result;
 }

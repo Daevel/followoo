@@ -1,8 +1,6 @@
-import posthog from "posthog-js";
-
 let initialized = false;
 
-export function initializePostHog() {
+export async function initializePostHog() {
   if (initialized) return;
 
   const apiKey = import.meta.env.VITE_POSTHOG_API_KEY;
@@ -12,6 +10,8 @@ export function initializePostHog() {
     console.warn("Missing VITE_POSTHOG_API_KEY");
     return;
   }
+
+  const { default: posthog } = await import("posthog-js");
 
   posthog.init(apiKey, {
     api_host: apiHost,
