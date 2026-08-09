@@ -1,9 +1,0 @@
-import { neon } from "@neondatabase/serverless";
-
-const databaseUrl = process.env.FOLLOWOO_DATABASE_URL;
-
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL is not defined");
-}
-
-export const sql = neon(databaseUrl);
