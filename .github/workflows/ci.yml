@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, build, test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          # No .nvmrc / package.json "engines" pin exists yet in this repo;
+          # keep this in sync with the Node major version used locally
+          # (see devDependencies["@types/node"]) if that ever changes.
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit tests
+        # Runs only the "unit" Vitest project (pure parsing/relationship
+        # analysis logic, no browser needed). The "storybook" Vitest
+        # project requires Playwright browsers to be installed and is
+        # intentionally out of scope for this base pipeline.
+        run: npx vitest run --project unit
+
+  chromatic:
+    name: Chromatic
+    needs: verify
+    runs-on: ubuntu-latest
+    # Skips cleanly until CHROMATIC_PROJECT_TOKEN is added to the repo
+    # secrets (Settings > Secrets and variables > Actions). That token must
+    # be created manually on chromatic.com by linking this repo/Storybook
+    # project - it cannot be generated from here. This condition also keeps
+    # the job skipped on PRs from forks, which never have access to secrets.
+    if: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
+    permissions:
+      contents: read
+      statuses: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # Chromatic needs full history to diff against the baseline build.
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish to Chromatic
+        uses: chromaui/action@v18.8.1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  # Vercel preview deployments are already handled automatically by the
+  # Vercel GitHub App connected to this repo (see deployments created by
+  # vercel[bot] and the "Vercel" commit status). No deploy-preview job is
+  # added here to avoid duplicating that work - see docs/CI.md.
