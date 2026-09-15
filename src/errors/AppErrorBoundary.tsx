@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { captureError } from "./sentryInit";
 
 type AppErrorBoundaryProps = {
   children: React.ReactNode;
@@ -31,6 +32,9 @@ export class AppErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("[AppErrorBoundary]", error, errorInfo);
+    // A render crash here would otherwise be invisible outside the local
+    // browser console: this was fully lost in production before Sentry.
+    captureError(error, { tags: { boundary: "AppErrorBoundary" } });
   }
 
   componentDidUpdate(prevProps: AppErrorBoundaryProps) {

@@ -95,6 +95,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - Biome 2.5 for formatting and lint checks.
 - Vite PWA plugin for installable app behavior.
 - PostHog is present for product analytics initialization; do not use it to track private Instagram relationship data.
+- Sentry (`@sentry/react`, initialized in `src/errors/sentryInit.ts`) is present for error tracking, wired through `src/errors/errorService.ts`'s `handleAppError` and `AppErrorBoundary`; do not use it to track private Instagram relationship data either (see Privacy And Analytics Rules below).
 
 ## Runtime Shape
 
@@ -116,9 +117,9 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 ## Privacy And Analytics Rules
 
 - Never upload or log raw Instagram export contents.
-- Never send usernames, follower lists, relationship lists, or derived private relationship data to analytics.
+- Never send usernames, follower lists, relationship lists, or derived private relationship data to analytics **or error tracking** (PostHog, Sentry).
 - Analytics events should describe generic product interactions only, such as page visits or feature usage.
-- Error reporting must avoid embedding raw parsed data or file contents.
+- Error reporting must avoid embedding raw parsed data or file contents. Concretely for Sentry: only send an `AppError`'s `code`/message/stack, never its `details` (see `src/errors/sentryInit.ts`'s `captureAppError`); keep error messages static/developer-authored rather than interpolating usernames or export content into them; the same rule applies to the Python SDK on the backend (`backend/app/core/sentry.py`).
 - If adding persistence, prefer explicit user-controlled exports/downloads over implicit browser storage.
 
 ## Product Copy Rules

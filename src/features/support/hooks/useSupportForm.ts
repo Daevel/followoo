@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { captureError } from "@/errors/sentryInit";
 import {
   type SupportFormValues,
   supportSchema,
@@ -49,6 +50,9 @@ export function useSupportForm() {
       form.reset();
     } catch (error) {
       console.error(error);
+      // Only the thrown error (EmailJS status/text) is captured, never
+      // `values` (name/email/message the visitor typed).
+      captureError(error, { tags: { feature: "support" } });
 
       setSubmitState({
         success: false,

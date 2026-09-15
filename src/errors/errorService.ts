@@ -2,6 +2,7 @@ import { ANALYTICS_EVENTS } from "@/analytics/analyticsEvents";
 import { analyticsService } from "@/analytics/analyticsService";
 import { toastService } from "@/services/toastService";
 import type { AppError } from "./AppError";
+import { captureAppError } from "./sentryInit";
 import { toAppError } from "./toAppError";
 
 type HandleAppErrorOptions = {
@@ -26,6 +27,8 @@ export function handleAppError(
     code: appError.code,
     context: "global_handler",
   });
+
+  captureAppError(appError);
 
   if (log) {
     console.error("[AppError]", {
