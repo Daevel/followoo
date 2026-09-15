@@ -129,6 +129,7 @@ Prefer stable public field names in camelCase for JSON responses consumed by the
 - Avoid leaking raw exception messages to clients.
 - Keep `/health` cheap and independent from database connectivity unless a deep health check is explicitly needed.
 - Rate limit every public endpoint except `/health` using the shared `slowapi` limiter in `app/core/limiter.py`: add `request: Request` as a parameter and decorate with `@limiter.limit(PUBLIC_RATE_LIMIT)` (see `app/updates/router.py`). When a backend-side support/contact endpoint is created, it must get this same decorator - it was intentionally skipped only because no such endpoint exists yet (the support form is still frontend-only, see `src/features/support`).
+- When a router's `except Exception` turns a real error into an `HTTPException` (or otherwise handles/swallows it), call `sentry_sdk.capture_exception(error)` before raising - Sentry's automatic capture only sees truly unhandled exceptions, not ones already converted to an HTTP response (see `app/updates/router.py`). Never attach parsed row data, request bodies, or `AppError`-style `details` as extra Sentry context; see Error Tracking (Sentry) in `backend/README.md` for the full privacy rules `app/core/sentry.py` enforces.
 
 ## Configuration And Environment
 
@@ -139,6 +140,8 @@ Current variables:
 ```txt
 FOLLOWOO_DATABASE_URL="postgresql://..."
 FOLLOWOO_CORS_ORIGINS="http://localhost:5173,https://followoo.app"
+FOLLOWOO_SENTRY_DSN=""              # optional, Sentry disabled when unset
+FOLLOWOO_ENVIRONMENT="development"  # optional, tags Sentry events
 ```
 
 Rules:
@@ -214,6 +217,7 @@ psycopg_pool
 pydantic-settings
 python-dotenv
 slowapi
+sentry-sdk
 alembic
 sqlalchemy
 ```

@@ -10,10 +10,12 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
 from app.core.limiter import limiter
+from app.core.sentry import init_sentry
 from app.db import get_pool
 from app.updates.router import router as updates_router
 
 load_dotenv()
+init_sentry()
 
 
 def _handle_rate_limit_exceeded(request: Request, exc: Exception) -> Response:

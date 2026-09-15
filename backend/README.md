@@ -9,7 +9,14 @@ Create `backend/.env` with:
 ```txt
 FOLLOWOO_DATABASE_URL="postgresql://..."
 FOLLOWOO_CORS_ORIGINS="http://localhost:5173,http://127.0.0.1:5173"
+FOLLOWOO_SENTRY_DSN=""
+FOLLOWOO_ENVIRONMENT="development"
 ```
+
+`FOLLOWOO_SENTRY_DSN` and `FOLLOWOO_ENVIRONMENT` are optional - see
+[Error Tracking (Sentry)](#error-tracking-sentry) below. Never commit a real
+DSN; leave it unset/empty locally unless you are deliberately testing
+against your own Sentry project.
 
 In production, configure `FOLLOWOO_CORS_ORIGINS` on the backend host with the
 public frontend origins:
@@ -55,6 +62,49 @@ with `slowapi` at 30 requests/minute, using the shared limiter in
 reliable. When a backend-side support/contact endpoint is added, apply the
 same `@limiter.limit(PUBLIC_RATE_LIMIT)` decorator to it - it does not exist
 in the backend yet (the support form is still frontend-only).
+
+## Error Tracking (Sentry)
+
+`app/core/sentry.py` initializes the
+[Python Sentry SDK](https://docs.sentry.io/platforms/python/) from
+`FOLLOWOO_SENTRY_DSN` (optional) and `FOLLOWOO_ENVIRONMENT` (defaults to
+`development`), read through `pydantic-settings` the same way
+`FOLLOWOO_DATABASE_URL`/`FOLLOWOO_CORS_ORIGINS` are. `init_sentry()` is a
+no-op when `FOLLOWOO_SENTRY_DSN` is unset, so Sentry stays fully disabled by
+default (e.g. in this repo's CI and in anyone's local dev unless they opt
+in).
+
+**Setup**: create a Sentry account/project at
+[sentry.io](https://sentry.io) (Python/FastAPI platform), copy its DSN, and
+set `FOLLOWOO_SENTRY_DSN` in `backend/.env` locally or as an environment
+variable on the deploy host. **Never commit a real DSN** to this repo -
+treat it like any other secret, even though Sentry DSNs are not
+request-forging secrets by design (they only accept event writes).
+
+**Privacy**: this integration must never send Instagram export content,
+usernames, follower/following lists, or relationship analysis results to
+Sentry - the same non-negotiable rule already applied in `app/updates` and
+documented in `.opencode/skills/project-context/SKILL.md`. Concretely:
+
+- `traces_sample_rate=0.0` (tracing/profiling is disabled entirely).
+- `send_default_pii=False` (no automatic IP/cookie/header attachment).
+- `before_send` (`scrub_event` in `app/core/sentry.py`) strips request
+  headers/cookies/query strings and redacts any `extra`/`contexts` key
+  matching an Instagram/relationship-data pattern before an event leaves
+  the process.
+- Routers only ever call `sentry_sdk.capture_exception(error)` with the
+  exception itself, never with parsed row data or request bodies as extra
+  context.
+- This scrubbing only reaches structured fields; it cannot rewrite a free
+  text exception message a future bug might accidentally build from
+  private data. Keep raising `AppError`-style errors with static,
+  developer-authored messages (see `app/updates/repository.py`) rather
+  than interpolating user/export data into error text.
+
+**Testing it locally**: with `FOLLOWOO_SENTRY_DSN` set to your own project's
+DSN, start the API and hit an endpoint that raises (e.g. temporarily break
+`FOLLOWOO_DATABASE_URL`, or add a throwaway route that raises) - the error
+should appear in that Sentry project within a few seconds.
 
 ## Database Migrations (Alembic)
 

@@ -9,6 +9,7 @@ dependencies = [
   "psycopg_pool",
   "pydantic-settings",
   "python-dotenv",
+  "sentry-sdk",
   "slowapi",
   "sqlalchemy",
   "uvicorn",
