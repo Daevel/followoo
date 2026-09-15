@@ -3,3 +3,5 @@ uvicorn
 psycopg[binary]
 pydantic-settings
 python-dotenv
+alembic
+sqlalchemy
