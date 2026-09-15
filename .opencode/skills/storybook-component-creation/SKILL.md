@@ -1,45 +1,57 @@
-# Storybook Story Generation
+---
+name: storybook-component-creation
+description: Storybook story, CSF3, autodocs, stories per component. Use quando si crea o si aggiorna una story Storybook per un componente UI di Followoo.
+---
 
-You generate Storybook stories for `/src/stories` components. Every story file MUST follow the patterns and conventions described below.
+# Storybook Story Generation - Followoo
+
+Generi story Storybook per i componenti UI di Followoo. Ogni file di story DEVE seguire i pattern e le convenzioni descritte qui sotto.
 
 ## Tech Stack
 
-- **Storybook** with `@storybook/react-vite` framework
-- **CSF 3** (Component Story Format) — object-based stories, no CSF 2 `Template.bind({})`
-- Types imported from `@storybook/react-vite`: `Meta`, `StoryObj`
-- Preview loads `bootstrap/dist/css/bootstrap.min.css` and `src/styles/fonts.css`
+- **Storybook** con framework `@storybook/react-vite`
+- **CSF 3** (Component Story Format) — story basate su oggetti, niente `Template.bind({})` di CSF 2
+- Tipi importati da `@storybook/react-vite`: `Meta`, `StoryObj`
+- Styling: **Tailwind CSS 4**, con i design token definiti in `src/index.css` (blocco `@theme inline`: `--color-primary`, `--color-bg`, `--color-accent`, `--color-foreground`, font, tipografia, breakpoint)
+- Il preview (`.storybook/preview.tsx`) importa `../src/index.css`, avvolge ogni story in `MemoryRouter` e applica `bg-background text-foreground p-6`
 
-## File Naming and Location
+## File Naming e Posizione
 
-Story files live alongside the component:
+Tutte le story vivono in `src/stories/`, non accanto al componente:
 
 ```
-src/components/<ComponentName>/<ComponentName>.stories.tsx
+src/stories/<ComponentName>.stories.tsx
 ```
 
-## Story Structure
+Il componente viene importato da `src/components/ui/<ComponentName>`:
 
-Read existing stories in `src/components/` for reference patterns. Follow this structure:
+```tsx
+import { ComponentName } from "../components/ui/ComponentName";
+```
+
+## Struttura della Story
+
+Leggi le story esistenti in `src/stories/` come riferimento (es. `Button.stories.tsx`, `Card.stories.tsx`, `Callout.stories.tsx`). Segui questa struttura:
 
 ```tsx
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { ComponentName } from "./ComponentName";
+import { ComponentName } from "../components/ui/ComponentName";
 
 const meta: Meta<typeof ComponentName> = {
-  title: "Components/<Category>/<ComponentName>",
+  title: "Components/UI/ComponentName",
   component: ComponentName,
   tags: ["autodocs"],
   argTypes: {
-    // Controls for interactive props — see "ArgTypes" section below
+    // Controlli per le props — vedi sezione "ArgTypes" sotto
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof ComponentName>;
 
-// One story per variant — no Default, no Disabled, no edge cases.
-// Prop combinations (count, size, disabled, visible, …) are reachable
-// from the Storybook controls panel.
+// Una story per variante — niente Default, niente Disabled, niente edge case.
+// Le combinazioni di prop (size, disabled, ecc.) sono raggiungibili dal
+// pannello controls di Storybook.
 export const Primary: Story = {
   args: {
     variant: "primary",
@@ -47,111 +59,85 @@ export const Primary: Story = {
 };
 ```
 
-## Key Rules
+## Regole Principali
 
 ### 1. Meta object
 
-- `title`: follows the folder hierarchy — `"Components/Buttons/Button"`, `"Components/Inputs/InputToggle"`, `"Components/Banner"`, etc.
-- `tags: ["autodocs"]` — always include for auto-generated documentation
-- `component` — always set to the actual component reference
-- `args` on meta — use for shared defaults across all stories (e.g., `onClick: () => {}` for buttons)
+- `title`: sempre `"Components/UI/<ComponentName>"` — tutti i componenti di Followoo vivono sotto la stessa categoria `UI`, non serve una gerarchia di cartelle aggiuntiva
+- `tags: ["autodocs"]` — sempre presente per la documentazione automatica
+- `component` — sempre valorizzato con il riferimento reale al componente
+- `args` su meta — usali per default condivisi tra tutte le story (es. `onClick: () => {}` per i pulsanti)
 
-### 2. Story naming
+### 2. Naming delle story
 
-- Use PascalCase export names: `export const Primary: Story`
-- Use `name` property for Italian display labels when useful: `{ name: "Tutte le varianti" }`
-- If the component has a `variant` prop: one story per variant + one `AllVariants` story. Nothing else.
-- If the component has no variants: a single story (named after the component, e.g. `Banner`) is enough.
-- Do NOT add `Default`, `Disabled`, `Loading`, `WithIcon`, `XSmall`, `XColumn`, etc. — every prop combination is reachable from the controls panel at the bottom of Storybook.
+- Usa nomi di export in PascalCase: `export const Primary: Story`
+- Usa la proprietà `name` per etichette in italiano quando utile, in particolare per `AllVariants`: `{ name: "Tutte le varianti" }`
+- Se il componente ha una prop `variant` (o equivalente, es. `color`, `size`): una story per ogni valore + una story `AllVariants`. Nient'altro.
+- Se il componente non ha varianti: basta una singola story (nominata come il componente, es. `Banner`).
+- NON aggiungere `Default`, `Disabled`, `Loading`, `WithIcon`, `XSmall`, ecc. — ogni combinazione di prop è raggiungibile dal pannello controls in fondo a Storybook.
 
 ### 3. ArgTypes
 
-Define `argTypes` in meta to configure Storybook controls. Read the component's props type to determine which controls to add:
+Definisci `argTypes` in meta per configurare i controlli di Storybook. Leggi il tipo delle props del componente per determinare quali controlli aggiungere:
 
-- **Variant/enum props**: use `control: "radio"` or `control: "select"` with `options` array
-- **Boolean props**: use `control: "boolean"`
-- **Token-backed props** (colors, sizes, fonts): use `control: { type: "select" }` with `options` listing the relevant token keys — read the token source files from `src/styles/theme/` to get the available keys
+- **Prop variant/enum**: usa `control: { type: "select" }` (o `"radio"`) con l'array `options`
+- **Prop booleane**: usa `control: "boolean"`
+- **Prop testuali**: usa `control: "text"`
+- **Prop numeriche**: usa `control: { type: "number" }`
+- **Prop di colore basate su token** (es. `background`, `foreground`, `color`): usa `control: { type: "select" }` con `options` che elencano i valori validi (`"primary"`, `"accent"`, `"bg"`, `"foreground"`) — leggi il tipo delle props del componente per l'elenco esatto, non serve consultare `src/index.css` per ogni story
 
-### 4. Composing stories with `render`
+### 4. Composizione con `render`
 
-For stories that show multiple states or require layout, use the `render` function with `Box`:
+Per le story che mostrano più stati o richiedono un layout, usa la funzione `render` con un `div` a `style` inline (o classi Tailwind), coerente con il resto di `src/stories/`:
 
 ```tsx
-import { Box } from "../Box";
-
 export const AllVariants: Story = {
   name: "Tutte le varianti",
   render: () => (
-    <Box display="flex" flexDirection="column" gap="m" p="l">
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <ComponentName variant="primary" />
-      <ComponentName variant="secondary" />
-    </Box>
+      <ComponentName variant="accent" />
+    </div>
   ),
 };
 ```
 
-### 5. Form-based components (Inputs)
+Per griglie usa `display: "grid"` con `gridTemplateColumns`, come in `Card.stories.tsx` e `Skeleton.stories.tsx`.
 
-**All components inside `src/components/Inputs/`** use `react-hook-form` and MUST have a `FormProvider` decorator. This is not optional — without it, `useFormContext` will throw at runtime. Use this pattern:
+Per componenti con stato interno (es. pagina corrente, visibilità), usa `useState` dentro `render`, come in `Paginator.stories.tsx` e `Toast.stories.tsx`.
 
-```tsx
-import type { ReactNode } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+### 5. Lingua dei contenuti
 
-const withForm =
-  (defaultValues: Record<string, unknown> = {}) =>
-  (Story: () => ReactNode) => {
-    const Wrapper = () => {
-      const methods = useForm({ defaultValues });
-      return <FormProvider {...methods}>{Story()}</FormProvider>;
-    };
-    return <Wrapper />;
-  };
-
-export const InputToggle: Story = {
-  decorators: [withForm({ fieldName: false })],
-  render: () => (
-    <Box p="l">
-      <InputComponent name="fieldName" label="Label" />
-    </Box>
-  ),
-};
-```
-
-### 6. Content language
-
-Use **English** for all story content text (labels, placeholder text, descriptions). This is a banking app — use realistic banking/financial context:
+Usa l'**italiano** per tutto il testo delle story (etichette, placeholder, descrizioni), coerente con il tono prodotto di Followoo — un'app che analizza i follower/following di Instagram, mai un contesto bancario o finanziario:
 
 - "Conferma", "Annulla", "Vai al dettaglio"
-- "Il saldo del tuo conto", "Bonifico bancario"
 - "Operazione completata con successo"
 - "Si è verificato un errore. Riprova più tardi."
+- "Tutte le varianti", "Pagina intermedia", "Caricamento in corso"
 
-### 7. Stories to always include
+Le descrizioni in `argTypes` possono restare in inglese o italiano a seconda di quanto già presente nel file (in `src/stories/` convivono entrambi gli stili — segui quello del file più simile che stai estendendo).
 
-Keep the story file minimal — Storybook controls already let the user toggle every prop. For every component, generate exactly:
+### 6. Story da includere sempre
 
-1. **One story per `variant` value** — `args` set the variant and any prop required to make it meaningful (e.g. `children` fallback so the user can flip `visible` from controls and see something)
-2. **`AllVariants`** — `render` function showing every variant side by side, with `name: "Tutte le varianti"`
+Mantieni il file di story minimale — i controls di Storybook permettono già all'utente di modificare ogni prop. Per ogni componente, genera esattamente:
 
-If the component has no `variant` prop, emit a single story with the component's name (e.g. `Banner`) and stop there.
+1. **Una story per ogni valore di `variant`** (o prop di variante equivalente) — gli `args` impostano la variante e ogni prop necessaria per renderla significativa (es. `children` per un Button)
+2. **`AllVariants`** — funzione `render` che mostra tutte le varianti affiancate, con `name: "Tutte le varianti"`
 
-Do NOT add per-prop-combination stories (`Default`, `Disabled`, `Loading`, `WithIcon`, `XSmall`, `XColumn`, `Hidden`, `WithChildren`, …). Each is already reachable by tweaking controls on the existing per-variant story.
+Se il componente non ha prop di variante, genera una singola story con il nome del componente e fermati lì.
 
-#### Interactive props
+NON aggiungere story per singola combinazione di prop (`Default`, `Disabled`, `Loading`, `WithIcon`, `XSmall`, `Hidden`, `WithChildren`, ecc.). Sono già raggiungibili modificando i controls sulla story di variante esistente.
 
-When a component prop only makes sense in combination with other state (e.g. `children` only renders when `visible=false`), put that prop in the `args` of every per-variant story so the user can toggle the gating prop from the controls and see the effect immediately.
+## Checklist Prima di Generare una Story
 
-## Checklist Before Generating a Story
-
-1. `Meta` uses `@storybook/react-vite` types, not `@storybook/react`
-2. `tags: ["autodocs"]` is present
-3. CSF 3 format — `args` object, no `Template.bind({})`
-4. `argTypes` configured for all controllable props
-5. `Box` used for layout in `render` stories (with theme spacing tokens)
-6. Form inputs wrapped with `withForm` decorator
-7. Content text is in Italian with banking context
-8. Exactly one story per `variant` value + `AllVariants` for components with variants; one story for components without variants
-9. NO `Default`, `Disabled`, `Loading`, `Hidden`, `WithIcon`, `XSmall`, `XColumn`, … — controls panel covers prop combinations
-10. Interactive props (e.g. `children` fallback) set in `args` of every per-variant story
-11. `type Story = StoryObj<typeof ComponentName>` — not generic `StoryObj`
+1. Il file vive in `src/stories/<ComponentName>.stories.tsx`
+2. Il componente è importato da `../components/ui/<ComponentName>`
+3. `Meta` usa i tipi di `@storybook/react-vite`, non `@storybook/react`
+4. `title: "Components/UI/<ComponentName>"`
+5. `tags: ["autodocs"]` presente
+6. Formato CSF 3 — oggetto `args`, niente `Template.bind({})`
+7. `argTypes` configurati per tutte le props controllabili
+8. Contenuto testuale in italiano, coerente col tono prodotto Followoo (mai contesto bancario)
+9. Esattamente una story per valore di `variant` + `AllVariants` per componenti con varianti; una sola story per componenti senza varianti
+10. NO `Default`, `Disabled`, `Loading`, `Hidden`, `WithIcon`, `XSmall`, … — il pannello controls copre le combinazioni di prop
+11. `type Story = StoryObj<typeof ComponentName>` — non `StoryObj` generico
