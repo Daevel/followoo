@@ -46,16 +46,31 @@ jobs:
         # intentionally out of scope for this base pipeline.
         run: npx vitest run --project unit
 
+  chromatic-guard:
+    name: Check Chromatic secret
+    runs-on: ubuntu-latest
+    # The "secrets" context can't be read directly in a job/step "if:"
+    # condition (GitHub Actions restricts which contexts each "if:" can
+    # see). This job reads it once in a "run:" step - where secrets ARE
+    # allowed - and exposes the result as an output the "chromatic" job's
+    # "if:" can read via the "needs" context.
+    outputs:
+      has_token: ${{ steps.check.outputs.has_token }}
+    steps:
+      - name: Check whether CHROMATIC_PROJECT_TOKEN is set
+        id: check
+        run: echo "has_token=${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+
   chromatic:
     name: Chromatic
-    needs: verify
+    needs: [verify, chromatic-guard]
     runs-on: ubuntu-latest
     # Skips cleanly until CHROMATIC_PROJECT_TOKEN is added to the repo
     # secrets (Settings > Secrets and variables > Actions). That token must
     # be created manually on chromatic.com by linking this repo/Storybook
     # project - it cannot be generated from here. This condition also keeps
     # the job skipped on PRs from forks, which never have access to secrets.
-    if: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
+    if: needs.chromatic-guard.outputs.has_token == 'true'
     permissions:
       contents: read
       statuses: write
