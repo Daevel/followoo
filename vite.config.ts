@@ -182,6 +182,14 @@ export default defineConfig(({ isSsrBuild }) => ({
           },
         },
       },
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          environment: "node",
+          include: ["src/**/*.test.ts"],
+        },
+      },
     ],
   },
 }));
