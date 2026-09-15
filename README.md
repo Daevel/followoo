@@ -143,7 +143,18 @@ cd followoo
 npm install
 ```
 
-### 3. Start development server
+### 3. Configure environment variables (optional)
+
+Copy `.env.example` to `.env` and fill in the values you need (PostHog,
+Sentry, EmailJS, backend API URL). Everything in it is optional for local
+development - the app runs without it. Never commit `.env` or a real DSN/API
+key.
+
+```bash
+cp .env.example .env
+```
+
+### 4. Start development server
 
 ```bash
 npm run dev
