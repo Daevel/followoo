@@ -1,14 +1,44 @@
 import os
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
+from app.core.limiter import limiter
+from app.db import get_pool
 from app.updates.router import router as updates_router
 
 load_dotenv()
 
-app = FastAPI(title="Followoo API")
+
+def _handle_rate_limit_exceeded(request: Request, exc: Exception) -> Response:
+    # slowapi's own handler is typed for RateLimitExceeded specifically,
+    # narrower than the Exception Starlette's add_exception_handler expects;
+    # it is only ever invoked for RateLimitExceeded since that is the
+    # exception class it is registered against below.
+    assert isinstance(exc, RateLimitExceeded)
+    return _rate_limit_exceeded_handler(request, exc)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    get_pool().open()
+    try:
+        yield
+    finally:
+        get_pool().close()
+
+
+app = FastAPI(title="Followoo API", lifespan=lifespan)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _handle_rate_limit_exceeded)
+app.add_middleware(SlowAPIMiddleware)
 
 cors_origins = [
     origin.strip()
@@ -27,8 +57,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/health")
 def health_check() -> dict[str, str]:
+    # Intentionally not rate limited (see python-backend skill): must stay
+    # cheap and available for uptime/health checks.
     return {"status": "ok"}
+
 
 app.include_router(updates_router)

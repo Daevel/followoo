@@ -36,6 +36,26 @@ Updates endpoint:
 GET http://localhost:8000/updates
 ```
 
+## Database Connections
+
+`app/db.py` keeps a `psycopg_pool.ConnectionPool` (min 1, max 5 connections)
+instead of opening a new Postgres connection per request. The pool is opened
+on app startup and closed on shutdown via the FastAPI `lifespan` in
+`app/main.py`. Repositories still use `get_connection()` as a context
+manager exactly as before
+(`with get_connection() as connection, connection.cursor() as cursor:`) -
+it now borrows/returns a pooled connection instead of opening/closing one.
+
+## Rate Limiting
+
+Public GET endpoints (currently `/updates`) are rate limited per client IP
+with `slowapi` at 30 requests/minute, using the shared limiter in
+`app/core/limiter.py`. Exceeding the limit returns `429` with a JSON body.
+`/health` is intentionally not rate limited so uptime checks stay cheap and
+reliable. When a backend-side support/contact endpoint is added, apply the
+same `@limiter.limit(PUBLIC_RATE_LIMIT)` decorator to it - it does not exist
+in the backend yet (the support form is still frontend-only).
+
 ## Database Migrations (Alembic)
 
 Schema changes to the Neon Postgres database are tracked with

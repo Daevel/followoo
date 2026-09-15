@@ -1,7 +1,9 @@
 fastapi
 uvicorn
 psycopg[binary]
+psycopg_pool
 pydantic-settings
 python-dotenv
 alembic
 sqlalchemy
+slowapi

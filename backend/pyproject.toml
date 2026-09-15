@@ -6,8 +6,10 @@ dependencies = [
   "alembic",
   "fastapi",
   "psycopg[binary]",
+  "psycopg_pool",
   "pydantic-settings",
   "python-dotenv",
+  "slowapi",
   "sqlalchemy",
   "uvicorn",
 ]

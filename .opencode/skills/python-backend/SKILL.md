@@ -128,6 +128,7 @@ Prefer stable public field names in camelCase for JSON responses consumed by the
 - Raise `HTTPException` in routers for HTTP boundary failures.
 - Avoid leaking raw exception messages to clients.
 - Keep `/health` cheap and independent from database connectivity unless a deep health check is explicitly needed.
+- Rate limit every public endpoint except `/health` using the shared `slowapi` limiter in `app/core/limiter.py`: add `request: Request` as a parameter and decorate with `@limiter.limit(PUBLIC_RATE_LIMIT)` (see `app/updates/router.py`). When a backend-side support/contact endpoint is created, it must get this same decorator - it was intentionally skipped only because no such endpoint exists yet (the support form is still frontend-only, see `src/features/support`).
 
 ## Configuration And Environment
 
@@ -150,16 +151,26 @@ Rules:
 
 ## Database Rules
 
-The backend currently uses Postgres/Neon through `psycopg`.
+The backend currently uses Postgres/Neon through `psycopg`, borrowing
+connections from a `psycopg_pool.ConnectionPool` (`app/db.py`) instead of
+opening a new connection per request. The pool is opened/closed via the
+FastAPI `lifespan` in `app/main.py`, not on first use.
 
 Rules:
 
 - Keep SQL in repositories.
+- Get connections through `app/db.py`'s `get_connection()` (still a
+  context manager: `with get_connection() as connection, connection.cursor() as cursor:`),
+  never call `psycopg.connect()` directly in a repository.
 - Use parameterized queries for any user-provided input.
 - For read-only public endpoints, return only fields needed by the frontend.
 - Convert `date` and `datetime` values to ISO strings when necessary.
 - Avoid logging raw row payloads if they could contain private data.
-- Do not introduce ORM abstractions until there is a concrete need.
+- Do not introduce ORM abstractions in application code until there is a
+  concrete need; `alembic/schema.py` is the one sanctioned exception,
+  using SQLAlchemy Core only for Alembic's own autogenerate diffing (see
+  backend/README.md's Database Migrations section) - `app/` itself must
+  keep using `psycopg` directly.
 
 ## Privacy Rules
 
@@ -199,9 +210,15 @@ Runtime dependencies should stay minimal:
 fastapi
 uvicorn
 psycopg[binary]
+psycopg_pool
 pydantic-settings
 python-dotenv
+slowapi
+alembic
+sqlalchemy
 ```
+
+`alembic` and `sqlalchemy` are for schema migrations only (see backend/README.md); `sqlalchemy` is not used as an ORM by `app/`. `slowapi` is the public-endpoint rate limiter (see FastAPI Rules above).
 
 Development dependencies currently used:
 
