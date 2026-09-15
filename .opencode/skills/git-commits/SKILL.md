@@ -65,6 +65,8 @@ build     -> build system changes
 ci        -> CI/CD changes
 ```
 
+Commit messages must always be written in English, regardless of the language used elsewhere in the project (Notion docs, code comments, PR descriptions, agent prompts). Follow Conventional Commits (`type(scope): short description`) exactly as shown above.
+
 ## Recommended Scopes
 
 Use scopes that match Followoo areas:
