@@ -52,6 +52,7 @@ Relevant Followoo knowledge files include:
 .opencode/skills/pre-push-sync-knowledge/SKILL.md
 .opencode/skills/python-backend/SKILL.md
 .opencode/skills/storybook-component-creation/SKILL.md
+.opencode/skills/public-changelog/SKILL.md
 README.md
 docs/*
 ```
