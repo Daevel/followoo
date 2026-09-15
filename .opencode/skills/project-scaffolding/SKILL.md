@@ -53,9 +53,9 @@ scripts/    -> local automation
 .opencode/  -> agent skills and OpenCode project configuration
 ```
 
-## Target `src` Structure
+## `src` Structure
 
-Followoo currently has historical code under `src/components/*`. New code and refactors should move gradually toward this structure:
+This is the actual current `src` shape (services/providers/hooks/schemas/utils were moved out of `src/components/*` in 2026-07 - see the "refactor(project): align source architecture" commit). Place new code directly in it; do not reintroduce a `src/components/services`-style catch-all:
 
 ```txt
 src/
@@ -113,13 +113,11 @@ Use the existing target folders instead.
 
 ## Incremental Migration Rule
 
-Do not perform large folder migrations as a side effect of a small feature.
-
-Because existing code currently includes paths like `src/components/services`, `src/components/utils`, `src/components/hooks`, `src/components/schemas`, and `src/components/providers`, follow this rule:
+Do not perform large folder migrations as a side effect of a small feature. If a future refactor needs to move a coherent area of code again (e.g. reorganizing a feature, or extracting shared code out of a feature into `src/services`, `src/hooks`, `src/schemas`, `src/providers`, or `src/lib`), follow this rule:
 
 ```txt
 Small feature or bug fix -> follow nearby existing structure.
-Focused refactor -> move one coherent responsibility at a time toward target structure.
+Focused refactor -> move one coherent responsibility at a time.
 New isolated capability -> place it directly in the target structure.
 ```
 
@@ -268,10 +266,8 @@ Service rules:
 - Prefer pure functions for analysis and normalization.
 - Keep browser-only APIs explicit when used, such as `File`, `localStorage`, or `window`.
 - Do not send private Instagram data to network services.
-- Do not place domain services under `src/components`; move them to `src/features/<feature>/services` or `src/services` during focused refactors.
+- Do not place domain services under `src/components`; use `src/features/<feature>/services` or `src/services`.
 - Rename files with spelling mistakes when moving them, such as `instagramAnalisysService.ts` to `instagramAnalysisService.ts`.
-
-Existing services under `src/components/services` can be migrated gradually when touched by a focused refactor.
 
 ## Parsers And Instagram Export Logic
 
@@ -340,7 +336,7 @@ Use `src/lib` for small technical utilities that are not tied to a specific doma
 
 Use feature `utils/` folders for utilities that only make sense inside that feature.
 
-Avoid dumping unrelated functions into a global `utils` folder. If touching existing `src/components/utils`, either keep the change minimal or migrate a coherent subset to the correct target folder.
+Avoid dumping unrelated functions into a global `utils` folder.
 
 ## Types And Schemas
 

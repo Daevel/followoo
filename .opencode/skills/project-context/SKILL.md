@@ -57,7 +57,7 @@ Important implementation references:
 - `src/features/relationship/services/instagramAnalysisService.ts`: relationship comparison logic.
 - `src/features/instagram-export/parsers/*`: Instagram JSON normalization.
 - `src/types/instagram.types.ts`: domain types for Instagram export data and analysis results.
-- `src/features/instagram-export/utils/*`, `src/components/utils/*`, and `src/lib/*`: path detection, guards, search, pagination, formatting.
+- `src/features/instagram-export/utils/*` and `src/lib/*`: path detection, guards, search, pagination, formatting.
 
 ## Relationship Semantics
 
@@ -108,8 +108,8 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - PWA install and update prompts use the global toast system via `src/features/pwa-install/hooks/usePwaInstallPrompt.ts` and `src/pwa/usePwaUpdateToast.ts`.
 - `src/App.tsx` is the landing page composition.
 - Page-level routes live in `src/pages`.
-- Shared UI currently lives in `src/components/ui`.
-- Services, parsers, schemas, hooks, utils, and providers currently live under `src/components/*`, even when some of them are not React components. Refactors may improve this gradually, but do not move large areas without a clear migration goal.
+- Shared UI lives in `src/components/ui`.
+- `src/services/`, `src/providers/`, and `src/lib/` hold shared services, React context providers, and technical utilities respectively; feature-owned services, hooks, schemas, and utils live under `src/features/<feature>/`. See the `project-scaffolding` skill for the full target structure and File Placement Decision Tree.
 - Cross-cutting folders already exist at `src/analytics`, `src/animations`, `src/errors`, `src/pwa`, `src/data`, and `src/types`.
 - Python FastAPI backend code lives under `backend/` and owns server-side public data endpoints such as `/updates`.
 - The React app calls the Python backend through `src/lib/api.ts` and `VITE_API_BASE_URL`; do not reintroduce the old `api/` and `server/` TypeScript updates path unless explicitly requested.
@@ -143,4 +143,4 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 
 ## Current Direction
 
-Followoo started as a single React app and has accumulated structural complexity. Refactors should be incremental, preserve user-visible behavior, and make responsibilities clearer. The Python backend should grow inside `backend/` using feature routers, services, repositories, and schemas before considering a separate repository.
+`src/` already follows the target structure in the `project-scaffolding` skill (services/providers/hooks/schemas/utils moved out of `src/components/*` in 2026-07). Keep new code there directly rather than reintroducing a `src/components/services`-style catch-all. Refactors should stay incremental, preserve user-visible behavior, and make responsibilities clearer. The Python backend should grow inside `backend/` using feature routers, services, repositories, and schemas before considering a separate repository.
