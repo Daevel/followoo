@@ -27,20 +27,26 @@ FOLLOWOO_CORS_ORIGINS="https://followoo.app,https://www.followoo.app"
 
 ### Preview environment
 
-Besides the production service, a second Render service exists (or is being
-set up) tracking the `preview` branch instead of `main`, with its own
-environment variables:
+Besides the production service, a second Render service
+(`followoo-api-preview`) tracks the `preview` branch instead of `main`,
+with its own environment variables:
 
-```txt
-FOLLOWOO_DATABASE_URL="<preview Neon branch connection string - not the production database>"
-FOLLOWOO_CORS_ORIGINS="<the preview Vercel deployment's origin, e.g. https://followoo-git-preview-<team>.vercel.app - verify the exact URL once that deployment exists>"
-FOLLOWOO_ENVIRONMENT="preview"
-```
+- `FOLLOWOO_DATABASE_URL` -> dedicated Neon branch `preview-backend` (not
+  the production database; created manually, independent of the
+  Vercel-Neon integration's automatic branch lifecycle)
+- `FOLLOWOO_CORS_ORIGINS` ->
+  `http://localhost:5173,http://127.0.0.1:5173,https://followoo.app,https://www.followoo.app,https://followoo-git-preview-daevels-projects.vercel.app`
+  (no trailing slash on any origin, or the CORS match fails)
+- `FOLLOWOO_ENVIRONMENT=preview`
 
-Exact URLs and values are placeholders above and still need to be filled in
-once the preview Render service has been created from the dashboard - see
-the repo root `AGENTS.md` "Environments" note for the overall `main` vs
-`preview` flow.
+Preview backend URL: `https://followoo-api-preview.onrender.com`
+Preview frontend URL: `https://followoo-git-preview-daevels-projects.vercel.app`
+
+On Vercel, `VITE_API_BASE_URL` is set as a "Preview"-scoped variable to the
+preview backend URL above.
+
+See the repo root `AGENTS.md` "Environments" note for the overall `main`
+vs `preview` flow.
 
 Start the API from `backend/`:
 
