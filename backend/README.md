@@ -11,12 +11,17 @@ FOLLOWOO_DATABASE_URL="postgresql://..."
 FOLLOWOO_CORS_ORIGINS="http://localhost:5173,http://127.0.0.1:5173"
 FOLLOWOO_SENTRY_DSN=""
 FOLLOWOO_ENVIRONMENT="development"
+FOLLOWOO_CLERK_JWKS_URL=""
 ```
 
 `FOLLOWOO_SENTRY_DSN` and `FOLLOWOO_ENVIRONMENT` are optional - see
 [Error Tracking (Sentry)](#error-tracking-sentry) below. Never commit a real
 DSN; leave it unset/empty locally unless you are deliberately testing
 against your own Sentry project.
+
+`FOLLOWOO_CLERK_JWKS_URL` is required for `/auth/me` (and any future
+Clerk-protected endpoint) to work - see
+[Authentication (Clerk)](#authentication-clerk) below.
 
 In production, configure `FOLLOWOO_CORS_ORIGINS` on the backend host with the
 public frontend origins:
@@ -66,6 +71,16 @@ Updates endpoint:
 GET http://localhost:8000/updates
 ```
 
+Run the test suite (`tests/`, mirroring `app/`) and dev-tool checks from
+`backend/` with the dev extras installed (`pip install -e ".[dev]"` or
+`pip install -r requirements.txt pytest ruff mypy httpx`):
+
+```bash
+./.venv/bin/python -m pytest
+./.venv/bin/python -m ruff check app
+./.venv/bin/python -m mypy app
+```
+
 ## Database Connections
 
 `app/db.py` keeps a `psycopg_pool.ConnectionPool` (min 1, max 5 connections)
@@ -78,13 +93,55 @@ it now borrows/returns a pooled connection instead of opening/closing one.
 
 ## Rate Limiting
 
-Public GET endpoints (currently `/updates`) are rate limited per client IP
-with `slowapi` at 30 requests/minute, using the shared limiter in
-`app/core/limiter.py`. Exceeding the limit returns `429` with a JSON body.
-`/health` is intentionally not rate limited so uptime checks stay cheap and
-reliable. When a backend-side support/contact endpoint is added, apply the
-same `@limiter.limit(PUBLIC_RATE_LIMIT)` decorator to it - it does not exist
-in the backend yet (the support form is still frontend-only).
+Public GET endpoints (currently `/updates` and `/auth/me`) are rate limited
+per client IP with `slowapi` at 30 requests/minute, using the shared limiter
+in `app/core/limiter.py`. Exceeding the limit returns `429` with a JSON
+body. `/health` is intentionally not rate limited so uptime checks stay
+cheap and reliable. When a backend-side support/contact endpoint is added,
+apply the same `@limiter.limit(PUBLIC_RATE_LIMIT)` decorator to it - it does
+not exist in the backend yet (the support form is still frontend-only).
+
+## Authentication (Clerk)
+
+`app/auth/clerk.py` verifies Clerk session JWTs locally against Clerk's
+public JWKS - no call to Clerk's API happens per request, and no Clerk
+Secret Key is needed (JWKS signature verification only needs public keys).
+`get_current_clerk_user_id` is a FastAPI dependency (`Depends(...)`) that
+reads the `Authorization: Bearer <token>` header, verifies the signature
+(RS256) via `PyJWT`'s `PyJWKClient` (which fetches and caches the JWKS
+document itself), checks expiry, and validates the `azp` claim against
+`FOLLOWOO_CORS_ORIGINS` - the same origin(s) already trusted for CORS are,
+for this app's single-SPA setup, the same origin(s) Clerk mints tokens for.
+On any failure it raises a `401` with a structured
+`{"code": "...", "message": "..."}` body (`AUTH_TOKEN_MISSING`,
+`AUTH_TOKEN_EXPIRED`, or `AUTH_TOKEN_INVALID`) instead of a bare exception -
+there is no dedicated `AppError`/`ERROR_CODES` class in this Python backend
+the way there is in `src/errors/` on the frontend, so this mirrors that
+pattern's intent on top of the existing `HTTPException` convention.
+
+**Setup**: in the Clerk dashboard for your application, find the JWKS URL
+under API Keys (or use `<your Frontend API URL>/.well-known/jwks.json`) and
+set it as `FOLLOWOO_CLERK_JWKS_URL`. For now, both `main` and `preview` use
+the same single Clerk application in development mode (see the repo root
+`AGENTS.md`), so this is the same value on both Render services - splitting
+Clerk environments the way `FOLLOWOO_DATABASE_URL` is split per branch is
+future work, not required today.
+
+`GET /auth/me` (`app/auth/router.py`) is a temporary end-to-end
+verification endpoint for v3.0.0 Task 1 - it only proves the login -> JWT ->
+backend verification chain works, returning `{"user_id": "<sub>"}` for a
+valid token. v3.0.0 Task 2 replaces it with real endpoints backed by
+persisted users/entitlements.
+
+**Testing it locally**: sign in on the frontend (with `VITE_CLERK_PUBLISHABLE_KEY`
+configured), get a session token from Clerk client-side (e.g.
+`await window.Clerk.session.getToken()` in the browser console), and call:
+
+```bash
+curl -H "Authorization: Bearer <token>" http://localhost:8000/auth/me
+```
+
+A missing, expired, or tampered-with token should get a `401` instead.
 
 ## Error Tracking (Sentry)
 

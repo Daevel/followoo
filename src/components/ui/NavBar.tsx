@@ -1,3 +1,4 @@
+import { Show, SignInButton, UserButton } from "@clerk/react";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
@@ -10,6 +11,26 @@ const navLinks = [
   { to: "/support", label: "Support" },
   { to: "/updates", label: "Updates" },
 ];
+
+function NavAuthEntry() {
+  return (
+    <Show
+      when="signed-in"
+      fallback={
+        <SignInButton mode="modal">
+          <button
+            type="button"
+            className="bg-primary text-foreground hover:bg-primary/90 inline-flex items-center rounded-[10px] px-4 py-2 text-sm font-semibold transition-colors"
+          >
+            Sign in
+          </button>
+        </SignInButton>
+      }
+    >
+      <UserButton />
+    </Show>
+  );
+}
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -111,6 +132,10 @@ export function NavBar() {
               )}
             />
           </Link>
+
+          <div className="ml-6">
+            <NavAuthEntry />
+          </div>
         </div>
 
         <Link
@@ -167,6 +192,10 @@ export function NavBar() {
                 </Link>
               );
             })}
+
+            <div className="mt-2 border-t border-white/10 px-4 pt-3">
+              <NavAuthEntry />
+            </div>
           </div>
         </div>
       </nav>

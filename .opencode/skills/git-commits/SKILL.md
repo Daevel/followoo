@@ -78,6 +78,7 @@ ui           -> reusable components under src/components/ui
 analytics    -> src/analytics
 animations   -> src/animations
 errors       -> src/errors and error UI/modeling
+auth         -> authentication/session/JWT verification (frontend Clerk integration, backend/app/auth)
 pwa          -> service worker and install behavior
 instagram    -> Instagram export parsing and ZIP handling
 relationship -> relationship analysis, personas, health, engagement insights

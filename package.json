@@ -17,6 +17,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@clerk/react": "^6.16.1",
     "@gsap/react": "^2.1.2",
     "@sentry/react": "^10.74.0",
     "@tailwindcss/vite": "^4.2.1",

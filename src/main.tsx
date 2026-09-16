@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
@@ -18,14 +19,24 @@ if (!rootElement) {
 void initializeSentry();
 void initializePostHog();
 
+const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!clerkPublishableKey) {
+  console.warn(
+    "Missing VITE_CLERK_PUBLISHABLE_KEY: sign-in/account UI will not work."
+  );
+}
+
 createRoot(rootElement).render(
   <StrictMode>
-    <HelmetProvider>
-      <BrowserRouter>
-        <ToastProvider>
-          <AppRoutes />
-        </ToastProvider>
-      </BrowserRouter>
-    </HelmetProvider>
+    <ClerkProvider publishableKey={clerkPublishableKey}>
+      <HelmetProvider>
+        <BrowserRouter>
+          <ToastProvider>
+            <AppRoutes />
+          </ToastProvider>
+        </BrowserRouter>
+      </HelmetProvider>
+    </ClerkProvider>
   </StrictMode>
 );

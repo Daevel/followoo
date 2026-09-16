@@ -146,9 +146,10 @@ npm install
 ### 3. Configure environment variables (optional)
 
 Copy `.env.example` to `.env` and fill in the values you need (PostHog,
-Sentry, EmailJS, backend API URL). Everything in it is optional for local
-development - the app runs without it. Never commit `.env` or a real DSN/API
-key.
+Sentry, EmailJS, Clerk, backend API URL). Everything in it is optional for
+local development - the app runs and the upload/analysis flow stays fully
+usable without any of it, though sign-in specifically needs a Clerk
+publishable key to render. Never commit `.env` or a real DSN/API key.
 
 ```bash
 cp .env.example .env
