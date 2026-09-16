@@ -13,6 +13,7 @@ A privacy-first tool that analyzes a user's Instagram data export locally to sho
 - CI/CD: GitHub Actions (`.github/workflows/ci.yml`) - lint, build, unit tests, Chromatic
 - Errors/observability: Sentry (frontend `@sentry/react`, backend `sentry_sdk`) with PII scrubbing
 - Deploy: Vercel (frontend), GitHub App preview deployments per PR
+- Environments: `main` = production; `preview` = shared staging (Vercel Preview deployment + dedicated Render service + dedicated Neon branch)
 
 ## Essential commands
 
@@ -32,6 +33,7 @@ A privacy-first tool that analyzes a user's Instagram data export locally to sho
 3. Commit messages: always English, Conventional Commits format - see the `git-commits` skill.
 4. Before `git push`: always run the `pre-push-sync-knowledge` flow.
 5. Public `/updates` entries: only for end-user-visible changes - see the `public-changelog` skill's decision rule before writing one.
+6. Branching: never push directly to `main`. Every change goes through `preview` first (staging branch, with its own Vercel deployment and its own Render backend) - merging into `main` is a separate, explicit decision made after validation on `preview`.
 
 ## Skills index
 

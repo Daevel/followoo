@@ -25,6 +25,23 @@ public frontend origins:
 FOLLOWOO_CORS_ORIGINS="https://followoo.app,https://www.followoo.app"
 ```
 
+### Preview environment
+
+Besides the production service, a second Render service exists (or is being
+set up) tracking the `preview` branch instead of `main`, with its own
+environment variables:
+
+```txt
+FOLLOWOO_DATABASE_URL="<preview Neon branch connection string - not the production database>"
+FOLLOWOO_CORS_ORIGINS="<the preview Vercel deployment's origin, e.g. https://followoo-git-preview-<team>.vercel.app - verify the exact URL once that deployment exists>"
+FOLLOWOO_ENVIRONMENT="preview"
+```
+
+Exact URLs and values are placeholders above and still need to be filled in
+once the preview Render service has been created from the dashboard - see
+the repo root `AGENTS.md` "Environments" note for the overall `main` vs
+`preview` flow.
+
 Start the API from `backend/`:
 
 ```bash
