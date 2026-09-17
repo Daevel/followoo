@@ -1,3 +1,4 @@
+import { SignInButton } from "@clerk/react";
 import { useRef } from "react";
 import { Link } from "react-router";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
@@ -32,6 +33,7 @@ export function InstagramExportUploadExperience({
     isTermsAccepted,
     hasValidFile,
     onElaborateFile,
+    needsAccountPrompt,
   } = useInstagramExportAnalysis({ isDemo });
 
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -40,6 +42,34 @@ export function InstagramExportUploadExperience({
 
   if (loading) {
     return <Loading ref={loadingRef} loading={loading} />;
+  }
+
+  if (needsAccountPrompt) {
+    return (
+      <section className="flex min-h-svh flex-col">
+        <NavBar />
+
+        <Container className="flex min-h-svh flex-col">
+          <div className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-6 px-4 py-16 text-center">
+            <h1 className="leading-headers text-foreground text-3xl font-semibold md:text-4xl">
+              Create a free account to continue
+            </h1>
+
+            <Callout title="Your first analysis was free" variant="info">
+              Signing in takes a few seconds and stays completely free - it just
+              lets us know it&apos;s you. Your Instagram data is still never
+              uploaded or stored anywhere.
+            </Callout>
+
+            <SignInButton mode="modal">
+              <Button background="accent" foreground="foreground">
+                Sign in or create a free account
+              </Button>
+            </SignInButton>
+          </div>
+        </Container>
+      </section>
+    );
   }
 
   return (
