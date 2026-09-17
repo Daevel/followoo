@@ -20,10 +20,10 @@ Followoo is independent and is not affiliated with Instagram or Meta.
 ## Product Principles
 
 - Privacy first: Instagram exports are processed locally in the browser.
-- No Instagram login: never ask for credentials or OAuth access.
+- No Instagram login: never ask for Instagram credentials or Instagram OAuth access. This is unrelated to the Followoo *account* system (Clerk, v3.0.0) - signing in to Followoo with Google/email is about identifying a Followoo user for entitlement purposes, never about authenticating against Instagram itself.
 - No Instagram API usage: analysis must rely on official export files only.
 - No file uploads for analysis: user ZIP content must not be sent to application servers.
-- No persistent storage of relationship data: uploaded data should disappear after refresh/close unless the user explicitly requests an export-oriented feature.
+- No persistent storage of relationship data: uploaded data should disappear after refresh/close unless the user explicitly requests an export-oriented feature. This still holds with accounts (v3.0.0): `users`/`subscriptions`/`usage_events` store identity, entitlement, and generic usage analytics only - never Instagram export or relationship data. Persisting actual analysis results (encrypted snapshots) is separate, opt-in, future work (v3.1.0).
 - Explainability: relationship results should be easy to understand and trace back to Instagram export data.
 - Mobile-first usability: upload, filtering, sorting, and results must remain usable on small screens.
 
@@ -111,14 +111,15 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - Shared UI lives in `src/components/ui`.
 - `src/services/`, `src/providers/`, and `src/lib/` hold shared services, React context providers, and technical utilities respectively; feature-owned services, hooks, schemas, and utils live under `src/features/<feature>/`. See the `project-scaffolding` skill for the full target structure and File Placement Decision Tree.
 - Cross-cutting folders already exist at `src/analytics`, `src/animations`, `src/errors`, `src/pwa`, `src/data`, and `src/types`.
-- Python FastAPI backend code lives under `backend/` and owns server-side public data endpoints such as `/updates`.
+- Python FastAPI backend code lives under `backend/` and owns server-side public data endpoints such as `/updates`, plus (v3.0.0) account/entitlement endpoints (`GET /users/me`, `POST /usage-events`) authenticated via Clerk JWTs (`backend/app/auth`, `backend/app/users`).
 - The React app calls the Python backend through `src/lib/api.ts` and `VITE_API_BASE_URL`; do not reintroduce the old `api/` and `server/` TypeScript updates path unless explicitly requested.
+- The anonymous-analysis-then-account gate (`src/features/instagram-export/hooks/useFreeAnalysisGate.ts`) and current-user/entitlement data (`src/features/users/`) are the frontend halves of the v3.0.0 account system; `useAuth`/`useClerk`/`SignInButton`/`UserButton` come from `@clerk/react`, initialized in `src/main.tsx`.
 
 ## Privacy And Analytics Rules
 
 - Never upload or log raw Instagram export contents.
-- Never send usernames, follower lists, relationship lists, or derived private relationship data to analytics **or error tracking** (PostHog, Sentry).
-- Analytics events should describe generic product interactions only, such as page visits or feature usage.
+- Never send usernames, follower lists, relationship lists, or derived private relationship data to analytics **or error tracking** (PostHog, Sentry) **or `usage_events`**.
+- Analytics events (PostHog, and backend `usage_events`) should describe generic product interactions only, such as page visits or feature usage - e.g. `analysis_run`, never anything about what was in the analyzed export.
 - Error reporting must avoid embedding raw parsed data or file contents. Concretely for Sentry: only send an `AppError`'s `code`/message/stack, never its `details` (see `src/errors/sentryInit.ts`'s `captureAppError`); keep error messages static/developer-authored rather than interpolating usernames or export content into them; the same rule applies to the Python SDK on the backend (`backend/app/core/sentry.py`).
 - If adding persistence, prefer explicit user-controlled exports/downloads over implicit browser storage.
 

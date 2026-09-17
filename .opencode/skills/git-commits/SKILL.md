@@ -79,6 +79,7 @@ analytics    -> src/analytics
 animations   -> src/animations
 errors       -> src/errors and error UI/modeling
 auth         -> authentication/session/JWT verification (frontend Clerk integration, backend/app/auth)
+users        -> user identity, Base/Pro entitlement, usage analytics (src/features/users, backend/app/users)
 pwa          -> service worker and install behavior
 instagram    -> Instagram export parsing and ZIP handling
 relationship -> relationship analysis, personas, health, engagement insights

@@ -4,13 +4,13 @@ Root-level entry point for any coding agent (OpenCode or otherwise) working in t
 
 ## What Followoo is
 
-A privacy-first tool that analyzes a user's Instagram data export locally to show followers/following, mutuals, recent unfollowers, and blocked users, plus persona/engagement insights. No backend processing of Instagram export content; the only server-side data today is the public `/updates` changelog and (from v3.1.0) opt-in encrypted sync.
+A privacy-first tool that analyzes a user's Instagram data export locally to show followers/following, mutuals, recent unfollowers, and blocked users, plus persona/engagement insights. No backend processing of Instagram export content. Server-side data today: the public `/updates` changelog, and (v3.0.0) user identity/entitlement/anonymous usage analytics for account-gated access (`backend/app/users`, `users`/`subscriptions`/`usage_events` tables) - never Instagram export or relationship data. Opt-in encrypted sync of analysis results is future work (v3.1.0), not built yet.
 
 ## Stack at a glance
 
 - Frontend: React + Vite (TypeScript), Tailwind CSS 4, Storybook, Vitest
 - Backend: Python FastAPI (`backend/`), Neon Postgres, Alembic migrations, psycopg_pool, slowapi rate limiting
-- CI/CD: GitHub Actions (`.github/workflows/ci.yml`) - lint, build, unit tests, Chromatic
+- CI/CD: GitHub Actions (`.github/workflows/ci.yml`) - frontend lint/build/unit tests, backend lint/typecheck/pytest against a real Postgres service container, Chromatic
 - Errors/observability: Sentry (frontend `@sentry/react`, backend `sentry_sdk`) with PII scrubbing
 - Deploy: Vercel (frontend), GitHub App preview deployments per PR
 - Environments: `main` = production; `preview` = shared staging (Vercel Preview deployment + dedicated Render service + dedicated Neon branch)
@@ -25,6 +25,7 @@ A privacy-first tool that analyzes a user's Instagram data export locally to sho
     backend/.venv/bin/python -m uvicorn app.main:app --reload --port 8000
     backend/.venv/bin/python -m ruff check app
     backend/.venv/bin/python -m mypy app
+    backend/.venv/bin/python -m pytest   # needs FOLLOWOO_DATABASE_URL pointed at a real (test) Postgres
 
 ## Non-negotiable rules (apply regardless of task)
 

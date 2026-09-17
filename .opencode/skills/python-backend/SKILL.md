@@ -35,7 +35,7 @@ The Python backend owns server-side public data endpoints such as release update
 
 ## Current Backend Structure
 
-Use this structure as the baseline:
+This is the actual current shape, not an aspiration:
 
 ```txt
 backend/
@@ -43,11 +43,16 @@ backend/
 │   ├── __init__.py
 │   ├── main.py
 │   ├── db.py
+│   ├── core/            -> limiter.py, sentry.py: shared cross-cutting setup
+│   ├── auth/             -> clerk.py: Clerk JWT verification (no router - see app/users)
+│   ├── users/             -> identity/entitlement: router, service, repository, schemas, dependencies
 │   └── updates/
 │       ├── __init__.py
 │       ├── router.py
 │       ├── service.py
 │       └── repository.py
+├── alembic/              -> schema migrations, see backend/README.md
+├── tests/                -> pytest, mirrors app/ (tests/auth/, tests/users/, ...)
 ├── pyproject.toml
 └── README.md
 ```
@@ -142,6 +147,7 @@ FOLLOWOO_DATABASE_URL="postgresql://..."
 FOLLOWOO_CORS_ORIGINS="http://localhost:5173,https://followoo.app"
 FOLLOWOO_SENTRY_DSN=""              # optional, Sentry disabled when unset
 FOLLOWOO_ENVIRONMENT="development"  # optional, tags Sentry events
+FOLLOWOO_CLERK_JWKS_URL=""          # required for any Clerk-protected route
 ```
 
 Rules:
@@ -218,18 +224,20 @@ pydantic-settings
 python-dotenv
 slowapi
 sentry-sdk
+pyjwt[crypto]
 alembic
 sqlalchemy
 ```
 
-`alembic` and `sqlalchemy` are for schema migrations only (see backend/README.md); `sqlalchemy` is not used as an ORM by `app/`. `slowapi` is the public-endpoint rate limiter (see FastAPI Rules above).
+`alembic` and `sqlalchemy` are for schema migrations only (see backend/README.md); `sqlalchemy` is not used as an ORM by `app/`. `slowapi` is the public-endpoint rate limiter (see FastAPI Rules above). `pyjwt[crypto]` is Clerk JWT verification (`app/auth/clerk.py`) - the `[crypto]` extra pulls in `cryptography`, required for RS256.
 
-Development dependencies currently used:
+Development dependencies, declared in `pyproject.toml`'s `[project.optional-dependencies].dev`:
 
 ```txt
 ruff
 mypy
 pytest
+httpx    # required for fastapi.testclient.TestClient
 ```
 
 Before adding a dependency, prefer the standard library if it keeps the code clear. Add a package only when it removes real complexity or provides a capability that should not be implemented locally.
@@ -239,10 +247,24 @@ Before adding a dependency, prefer the standard library if it keeps the code cle
 Run backend checks from `backend/` using the virtual environment:
 
 ```bash
-./.venv/bin/python -m ruff check app
+./.venv/bin/python -m ruff check app tests
 ./.venv/bin/python -m mypy app
-./.venv/bin/python -m compileall app
+./.venv/bin/python -m mypy tests
 ```
+
+Tests need a real Postgres: `tests/auth/` stubs the JWKS fetch and needs
+none, but `tests/users/` exercises real SQL (upserts, JSONB) against
+`FOLLOWOO_DATABASE_URL` with migrations applied
+(`./.venv/bin/alembic upgrade head`), and can't be meaningfully faked with
+a mocked connection.
+
+```bash
+./.venv/bin/python -m pytest
+```
+
+CI (`.github/workflows/ci.yml`'s `backend-verify` job) runs all of the
+above against a `postgres:16` service container automatically - see
+`docs/CI.md`.
 
 When frontend integration changes, also run from the repo root:
 
@@ -286,20 +308,22 @@ Rules:
 
 ## Growth Path
 
-When the backend grows beyond one or two endpoints, introduce structure incrementally:
+`backend/app/core/` (shared cross-cutting setup: limiter, Sentry),
+`backend/app/<feature>/` (feature router/service/repository/schemas/
+dependencies), and `backend/tests/` (pytest mirroring `app/`) already
+exist - this is the pattern to keep following, not a future state.
 
-```txt
-backend/app/core/       -> shared settings, app config, errors if needed
-backend/app/db.py       -> database connection until it becomes too broad
-backend/app/<feature>/  -> feature router/service/repository/schemas
-backend/tests/          -> pytest tests mirroring app features
-```
+Do not create `common/` or `utils/` folders preemptively. Add them only when there are multiple real call sites.
 
-Do not create `core/`, `common/`, or `utils/` folders preemptively. Add them only when there are multiple real call sites.
+Existing features:
+
+- `updates` - public release notes;
+- `auth` - Clerk JWT verification (`clerk.py`; no router - other features' routers depend on it directly);
+- `users` - user identity, Base/Pro entitlement, anonymous usage analytics (v3.0.0 Task 2).
 
 Potential future features:
 
-- `updates` for public release notes;
+- `billing` - Stripe integration writing to `subscriptions` (v3.0.0 Task 3);
 - `admin_updates` for authenticated content management;
 - `health` or `system` for operational checks;
 - `support` only if the existing frontend support flow moves server-side.
@@ -311,6 +335,8 @@ Before deployment, confirm:
 - Python runtime/version matches `pyproject.toml`;
 - `FOLLOWOO_DATABASE_URL` is set in the backend host;
 - `FOLLOWOO_CORS_ORIGINS` includes the production frontend domain;
+- `FOLLOWOO_CLERK_JWKS_URL` is set (required for `/users/me`, `/usage-events`, and any other Clerk-protected route);
+- pending Alembic migrations have been applied (`alembic upgrade head`, or `alembic stamp head` for the one-time baseline - see backend/README.md);
 - frontend `VITE_API_BASE_URL` points to the deployed Python API;
 - `/health` and `/updates` respond successfully;
 - no secrets are committed.
