@@ -81,6 +81,15 @@ Run the test suite (`tests/`, mirroring `app/`) and dev-tool checks from
 ./.venv/bin/python -m mypy app
 ```
 
+`tests/auth/` stubs the JWKS fetch and needs no database. `tests/users/`
+does: it exercises real SQL (upserts, JSONB) against `FOLLOWOO_DATABASE_URL`,
+so point that at a real local/test Postgres with migrations applied
+(`alembic upgrade head`) before running `pytest` - see
+[Users & Entitlement](#users--entitlement) and
+[Database Migrations](#database-migrations-alembic) below. CI does this
+automatically against a `postgres:16` service container (see
+`docs/CI.md`).
+
 ## Database Connections
 
 `app/db.py` keeps a `psycopg_pool.ConnectionPool` (min 1, max 5 connections)
@@ -93,13 +102,14 @@ it now borrows/returns a pooled connection instead of opening/closing one.
 
 ## Rate Limiting
 
-Public GET endpoints (currently `/updates` and `/auth/me`) are rate limited
-per client IP with `slowapi` at 30 requests/minute, using the shared limiter
-in `app/core/limiter.py`. Exceeding the limit returns `429` with a JSON
-body. `/health` is intentionally not rate limited so uptime checks stay
-cheap and reliable. When a backend-side support/contact endpoint is added,
-apply the same `@limiter.limit(PUBLIC_RATE_LIMIT)` decorator to it - it does
-not exist in the backend yet (the support form is still frontend-only).
+Public endpoints (currently `/updates`, `/users/me`, and `/usage-events`)
+are rate limited per client IP with `slowapi` at 30 requests/minute, using
+the shared limiter in `app/core/limiter.py`. Exceeding the limit returns
+`429` with a JSON body. `/health` is intentionally not rate limited so
+uptime checks stay cheap and reliable. When a backend-side support/contact
+endpoint is added, apply the same `@limiter.limit(PUBLIC_RATE_LIMIT)`
+decorator to it - it does not exist in the backend yet (the support form is
+still frontend-only).
 
 ## Authentication (Clerk)
 
@@ -127,21 +137,65 @@ the same single Clerk application in development mode (see the repo root
 Clerk environments the way `FOLLOWOO_DATABASE_URL` is split per branch is
 future work, not required today.
 
-`GET /auth/me` (`app/auth/router.py`) is a temporary end-to-end
-verification endpoint for v3.0.0 Task 1 - it only proves the login -> JWT ->
-backend verification chain works, returning `{"user_id": "<sub>"}` for a
-valid token. v3.0.0 Task 2 replaces it with real endpoints backed by
-persisted users/entitlements.
+`get_current_clerk_claims` is the same check, returning the full claim set
+(e.g. for an `email` claim, if the Clerk JWT template has been customized
+to include one) instead of just `sub` - `app/users/router.py` uses it for
+`GET /users/me`.
 
 **Testing it locally**: sign in on the frontend (with `VITE_CLERK_PUBLISHABLE_KEY`
 configured), get a session token from Clerk client-side (e.g.
 `await window.Clerk.session.getToken()` in the browser console), and call:
 
 ```bash
-curl -H "Authorization: Bearer <token>" http://localhost:8000/auth/me
+curl -H "Authorization: Bearer <token>" http://localhost:8000/users/me
 ```
 
 A missing, expired, or tampered-with token should get a `401` instead.
+
+## Users & Entitlement
+
+`backend/app/users/` (router, service, repository, schemas, dependencies -
+the same feature-module shape as `app/auth/` and `app/updates/`) owns user
+identity and the Base/Pro entitlement model, added for v3.0.0 Task 2:
+
+- `users.id` is the Clerk JWT `sub` claim directly - no separate internal
+  id. A row is lazily created on a user's first verified request
+  (`get_or_create_user`); there is no Clerk webhook for this.
+- `subscriptions` is the entitlement source of truth. `get_entitlement`
+  resolves `"pro"` when a row with `status` `active` or `trialing` exists
+  for that user, otherwise `"base"` - never from a stored `plan` field on
+  `users`, so it can't drift from what Stripe actually reports.
+  `subscriptions` stays empty until v3.0.0 Task 3 wires up Stripe, so
+  **every user resolves to `"base"` today - that is the expected state,
+  not a bug**.
+- `usage_events` is analytics only (e.g. `analysis_run`), never a usage
+  cap - a Base account can run unlimited analyses. Never accept Instagram
+  export/relationship data in `metadata` - see
+  `.opencode/skills/project-context/SKILL.md`.
+- `require_entitlement(min_level)` is a dependency factory for gating a
+  route behind a minimum plan (`Depends(require_entitlement("pro"))`),
+  raising `403` (`ENTITLEMENT_INSUFFICIENT`) otherwise. No route uses
+  `min_level="pro"` yet - the first Pro-only feature ships in v3.1.0 - but
+  the check is built and tested now so that feature doesn't have to design
+  and test the gate itself too.
+
+Endpoints:
+
+- `GET /users/me` - `get_or_create_user`s the caller, returns
+  `{"user_id", "email", "plan"}`. Replaces the temporary `GET /auth/me`
+  from Task 1 (removed, not kept alongside this).
+- `POST /usage-events` - body `{"event_type": "analysis_run"}` (or any
+  other free-form event name), logs one row. Also lazily provisions the
+  user first, since a client's first backend call could plausibly be this
+  endpoint rather than `GET /users/me`.
+
+The account gate itself - free anonymous analyses vs. requiring sign-in
+from the second one on - lives on the frontend
+(`src/features/instagram-export/hooks/useFreeAnalysisGate.ts`): a
+`localStorage` flag is a deliberately soft, bypassable signal (the
+anonymous analysis costs the backend nothing, so a bypass is a lost funnel
+opportunity, not a security issue), but every authenticated backend call
+still goes through the real JWT check above regardless.
 
 ## Error Tracking (Sentry)
 

@@ -1,4 +1,6 @@
+from collections.abc import Mapping
 from functools import lru_cache
+from typing import Any
 
 import jwt
 from fastapi import Header, HTTPException
@@ -51,10 +53,8 @@ def _unauthorized(code: str, message: str) -> HTTPException:
     )
 
 
-def get_current_clerk_user_id(
-    authorization: str | None = Header(default=None),
-) -> str:
-    """FastAPI dependency: verify a Clerk session JWT and return its user id.
+def _verify_token(authorization: str | None) -> Mapping[str, Any]:
+    """Shared verification core for both dependencies below.
 
     Verification is local/stateless against Clerk's public JWKS - no call to
     Clerk's API happens per request (see `_get_jwk_client`), and no Clerk
@@ -95,4 +95,22 @@ def get_current_clerk_user_id(
             "AUTH_TOKEN_INVALID", "Token is missing a subject claim."
         )
 
-    return user_id
+    return payload
+
+
+def get_current_clerk_user_id(
+    authorization: str | None = Header(default=None),
+) -> str:
+    """FastAPI dependency: verify a Clerk session JWT and return its user id."""
+    payload = _verify_token(authorization)
+    return payload["sub"]  # type: ignore[no-any-return]
+
+
+def get_current_clerk_claims(
+    authorization: str | None = Header(default=None),
+) -> Mapping[str, Any]:
+    """FastAPI dependency: verify a Clerk session JWT and return its full
+    claim set (e.g. for an `email` claim, if the Clerk JWT template has been
+    customized to include one - see backend/README.md).
+    """
+    return _verify_token(authorization)
