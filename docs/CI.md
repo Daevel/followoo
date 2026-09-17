@@ -1,10 +1,10 @@
 # CI Pipeline
 
-Defined in [`.github/workflows/ci.yml`](../.github/workflows/ci.yml). Runs on every pull request targeting `main` and on every push to `main`.
+Defined in [`.github/workflows/ci.yml`](../.github/workflows/ci.yml). Runs on every pull request targeting `main` or `preview`, and on every push to `main` or `preview` (see `AGENTS.md`'s "Environments" note for what those two branches are).
 
 ## `verify` job
 
-Always runs, no secrets required:
+Frontend checks. Always runs, no secrets required:
 
 1. `actions/checkout`
 2. `actions/setup-node` (Node 24 - the repo has no `.nvmrc` or `package.json` `engines` field yet; this pins to the Node major version used locally, see `devDependencies["@types/node"]`)
@@ -12,6 +12,18 @@ Always runs, no secrets required:
 4. `npm run lint` (Biome)
 5. `npm run build` (`tsc -b` + Vite client/SSR build + static prerender)
 6. `npx vitest run --project unit` - runs only the `unit` Vitest project (pure parsing/relationship-analysis logic). The `storybook` Vitest project (`@storybook/addon-vitest`) needs Playwright browsers installed in the runner and is intentionally left out of this base pipeline.
+
+## `backend-verify` job
+
+Backend checks, running against a real `postgres:16` service container (`app/users/repository.py` is raw SQL - upserts, JSONB - that a mocked connection couldn't prove correct, and `backend/tests/users/` exercises it for real). Always runs, no secrets required:
+
+1. `actions/checkout`
+2. `actions/setup-python` (3.13, pip cache keyed on `backend/requirements.txt`)
+3. `pip install -r requirements.txt ruff mypy pytest httpx` (mirrors local dev - see `backend/README.md`)
+4. `ruff check app tests`
+5. `mypy app` and `mypy tests`
+6. `alembic upgrade head` against the service container's empty database
+7. `pytest` (`backend/tests/`)
 
 ## `chromatic` job
 
