@@ -1,7 +1,15 @@
 import { useAuth } from "@clerk/react";
 import { useCallback, useEffect, useState } from "react";
+import { useFeatureFlag } from "@/analytics";
 
 export const FREE_ANALYSIS_FLAG_KEY = "followoo_free_analysis_used";
+
+// Operational kill-switch for the Task 2 account gate, not an experiment:
+// off means every analysis is free/anonymous again, exactly like before
+// Task 2. Default true - the gate stays enforced if PostHog is
+// unreachable or hasn't responded yet, matching current production
+// behavior. See backend/README.md's "Users & Entitlement" section.
+const ACCOUNT_GATE_FLAG_KEY = "followoo-account-gate-enabled";
 
 export function hasUsedFreeAnalysis(): boolean {
   try {
@@ -31,22 +39,23 @@ export function markFreeAnalysisUsed(): void {
  */
 export function useFreeAnalysisGate() {
   const { isSignedIn } = useAuth();
+  const isAccountGateEnabled = useFeatureFlag(ACCOUNT_GATE_FLAG_KEY, true);
   const [needsAccountPrompt, setNeedsAccountPrompt] = useState(false);
 
   useEffect(() => {
-    if (isSignedIn) {
+    if (isSignedIn || !isAccountGateEnabled) {
       setNeedsAccountPrompt(false);
     }
-  }, [isSignedIn]);
+  }, [isSignedIn, isAccountGateEnabled]);
 
   const requestAnalysis = useCallback(() => {
-    if (!isSignedIn && hasUsedFreeAnalysis()) {
+    if (isAccountGateEnabled && !isSignedIn && hasUsedFreeAnalysis()) {
       setNeedsAccountPrompt(true);
       return false;
     }
 
     return true;
-  }, [isSignedIn]);
+  }, [isSignedIn, isAccountGateEnabled]);
 
   const markAnalysisCompleted = useCallback(() => {
     if (!isSignedIn) {

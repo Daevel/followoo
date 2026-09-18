@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { usePostHogIdentity } from "@/analytics";
 import { AppRouteTree } from "./AppRouteTree";
 
 const Home = lazy(() => import("./App"));
@@ -39,6 +40,8 @@ const Updates = lazy(() =>
 );
 
 export function AppRoutes() {
+  usePostHogIdentity();
+
   return (
     <AppRouteTree
       components={{

@@ -94,7 +94,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - Storybook for component documentation and visual development.
 - Biome 2.5 for formatting and lint checks.
 - Vite PWA plugin for installable app behavior.
-- PostHog is present for product analytics initialization; do not use it to track private Instagram relationship data.
+- PostHog is present for product analytics initialization; do not use it to track private Instagram relationship data. Feature flags (v3.0.0) use the same `posthog-js` instance via `useFeatureFlag(key, defaultValue)` (`src/analytics/useFeatureFlag.ts`) - always default-first (no server-side bootstrapping, this is a client-rendered SPA), and the default must match today's real behavior so a slow/unreachable PostHog changes nothing for the user. `usePostHogIdentity` (`src/analytics/`, mounted once in `src/AppRoutes.tsx`) calls `posthog.identify(userId)` on Clerk sign-in and `posthog.reset()` on sign-out, using the same Clerk `sub` as `users.id` on the backend - never re-invent a different id.
 - Sentry (`@sentry/react`, initialized in `src/errors/sentryInit.ts`) is present for error tracking, wired through `src/errors/errorService.ts`'s `handleAppError` and `AppErrorBoundary`; do not use it to track private Instagram relationship data either (see Privacy And Analytics Rules below).
 
 ## Runtime Shape
@@ -118,7 +118,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 ## Privacy And Analytics Rules
 
 - Never upload or log raw Instagram export contents.
-- Never send usernames, follower lists, relationship lists, or derived private relationship data to analytics **or error tracking** (PostHog, Sentry) **or `usage_events`**.
+- Never send usernames, follower lists, relationship lists, or derived private relationship data to analytics **or error tracking** (PostHog, Sentry) **or `usage_events`**. `posthog.identify()` (`usePostHogIdentity`) passes only the Clerk user id - no properties, no export/relationship data.
 - Analytics events (PostHog, and backend `usage_events`) should describe generic product interactions only, such as page visits or feature usage - e.g. `analysis_run`, never anything about what was in the analyzed export.
 - Error reporting must avoid embedding raw parsed data or file contents. Concretely for Sentry: only send an `AppError`'s `code`/message/stack, never its `details` (see `src/errors/sentryInit.ts`'s `captureAppError`); keep error messages static/developer-authored rather than interpolating usernames or export content into them; the same rule applies to the Python SDK on the backend (`backend/app/core/sentry.py`).
 - If adding persistence, prefer explicit user-controlled exports/downloads over implicit browser storage.

@@ -190,6 +190,21 @@ export default defineConfig(({ isSsrBuild }) => ({
           include: ["src/**/*.test.ts"],
         },
       },
+      {
+        extends: true,
+        test: {
+          // Separate from "unit": React hooks that use useState/useEffect
+          // (@testing-library/react's renderHook) need a real DOM, which
+          // "unit"'s Node environment doesn't have. Kept as its own
+          // project rather than switching "unit" to jsdom so the many
+          // pure-logic tests there stay fast and don't pay for a DOM they
+          // never touch. Matched by extension (.test.tsx, not .test.ts)
+          // so a file is picked up by exactly one project, never both.
+          name: "dom",
+          environment: "jsdom",
+          include: ["src/**/*.test.tsx"],
+        },
+      },
     ],
   },
 }));

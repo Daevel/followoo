@@ -12,6 +12,7 @@ A privacy-first tool that analyzes a user's Instagram data export locally to sho
 - Backend: Python FastAPI (`backend/`), Neon Postgres, Alembic migrations, psycopg_pool, slowapi rate limiting
 - CI/CD: GitHub Actions (`.github/workflows/ci.yml`) - frontend lint/build/unit tests, backend lint/typecheck/pytest against a real Postgres service container, Chromatic
 - Errors/observability: Sentry (frontend `@sentry/react`, backend `sentry_sdk`) with PII scrubbing
+- Feature flags: PostHog (`posthog-js`, no React provider) via `useFeatureFlag` (`src/analytics/`) - default-first, no server-side bootstrapping (client-rendered SPA); `usePostHogIdentity` links Clerk sign-in to `posthog.identify()`/`reset()`
 - Deploy: Vercel (frontend), GitHub App preview deployments per PR
 - Environments: `main` = production; `preview` = shared staging (Vercel Preview deployment + dedicated Render service + dedicated Neon branch)
 
@@ -20,7 +21,7 @@ A privacy-first tool that analyzes a user's Instagram data export locally to sho
     npm run dev                  # local frontend dev server
     npm run build                # typecheck + build + SEO prerender
     npm run lint / lint:fix      # Biome
-    npx vitest run --project unit
+    npx vitest run --project unit --project dom   # "dom" = React hooks via @testing-library/react + jsdom
     npm run storybook / build-storybook
     backend/.venv/bin/python -m uvicorn app.main:app --reload --port 8000
     backend/.venv/bin/python -m ruff check app

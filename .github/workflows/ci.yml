@@ -40,11 +40,11 @@ jobs:
         run: npm run build
 
       - name: Unit tests
-        # Runs only the "unit" Vitest project (pure parsing/relationship
-        # analysis logic, no browser needed). The "storybook" Vitest
-        # project requires Playwright browsers to be installed and is
-        # intentionally out of scope for this base pipeline.
-        run: npx vitest run --project unit
+        # Runs the "unit" (pure logic, Node) and "dom" (React hooks via
+        # @testing-library/react, jsdom) Vitest projects. The "storybook"
+        # Vitest project requires Playwright browsers to be installed and
+        # is intentionally out of scope for this base pipeline.
+        run: npx vitest run --project unit --project dom
 
   backend-verify:
     name: Backend lint, typecheck, test
