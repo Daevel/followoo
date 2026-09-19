@@ -1,6 +1,6 @@
 import { useAuth } from "@clerk/react";
 import { useEffect, useState } from "react";
-import { handleAppError } from "@/errors";
+import { AppError, ERROR_CODES, handleAppError } from "@/errors";
 import { type CurrentUser, fetchCurrentUser } from "../services/usersService";
 
 type UseCurrentUserResult = {
@@ -37,11 +37,42 @@ export function useCurrentUser(): UseCurrentUserResult {
       setIsLoading(true);
 
       try {
-        const token = await getToken();
+        let token: string | null;
 
-        if (!token) return;
+        try {
+          token = await getToken();
+        } catch (error) {
+          throw new AppError({
+            code: ERROR_CODES.AUTH_SESSION_UNAVAILABLE,
+            message: "Clerk failed to provide a session token",
+            userMessage:
+              "We couldn't verify your session. Please sign in again.",
+            details: error,
+          });
+        }
 
-        const user = await fetchCurrentUser(token);
+        if (!token) {
+          throw new AppError({
+            code: ERROR_CODES.AUTH_SESSION_UNAVAILABLE,
+            message: "Clerk returned no session token",
+            userMessage:
+              "We couldn't verify your session. Please sign in again.",
+          });
+        }
+
+        let user: CurrentUser;
+
+        try {
+          user = await fetchCurrentUser(token);
+        } catch (error) {
+          throw new AppError({
+            code: ERROR_CODES.ACCOUNT_FETCH_FAILED,
+            message: "Failed to load the current account",
+            userMessage:
+              "We couldn't load your account right now. Please try again shortly.",
+            details: error,
+          });
+        }
 
         if (isMounted) {
           setCurrentUser(user);
