@@ -4,7 +4,7 @@ Root-level entry point for any coding agent (OpenCode or otherwise) working in t
 
 ## What Followoo is
 
-A privacy-first tool that analyzes a user's Instagram data export locally to show followers/following, mutuals, recent unfollowers, and blocked users, plus persona/engagement insights. No backend processing of Instagram export content. Server-side data today: the public `/updates` changelog, and (v3.0.0) user identity/entitlement/anonymous usage analytics for account-gated access (`backend/app/users`, `users`/`subscriptions`/`usage_events` tables) - never Instagram export or relationship data. Opt-in encrypted sync of analysis results is future work (v3.1.0), not built yet.
+A privacy-first tool that analyzes a user's Instagram data export locally to show followers/following, mutuals, recent unfollowers, and blocked users, plus persona/engagement insights. No backend processing of Instagram export content. Server-side data today: the public `/updates` changelog, (v3.0.0) user identity/entitlement/anonymous usage analytics for account-gated access (`backend/app/users`, `users`/`subscriptions`/`usage_events` tables), and (v3.1.0 Task 1) opt-in encrypted history key management (`backend/app/sync`, `sync_keys` table) - the backend only ever stores a passphrase-wrapped and a recovery-code-wrapped copy of a client-generated master key, never Instagram export/relationship data or the master key itself. The feature this unlocks (actually storing/reviewing encrypted history snapshots, v3.1.0 Task 2) is not built yet, so activation is feature-flagged off by default.
 
 ## Stack at a glance
 
@@ -32,11 +32,12 @@ A privacy-first tool that analyzes a user's Instagram data export locally to sho
 
 1. Never send Instagram export content, usernames, follower/following lists, or relationship-analysis results to any third-party service (Sentry included) - see the `project-context` and `python-backend` skills for the exact scrubbing pattern already in place.
 2. Never send user account PII (email) to analytics or error tracking beyond the Clerk user id already used for `posthog.identify()` - see `project-context`.
-3. Never imply official Instagram/Meta affiliation in product copy.
-4. Commit messages: always English, Conventional Commits format - see the `git-commits` skill.
-5. Before `git push`: always run the `pre-push-sync-knowledge` flow.
-6. Public `/updates` entries: only for end-user-visible changes - see the `public-changelog` skill's decision rule before writing one.
-7. Branching: never push directly to `main`. Every change goes through `preview` first (staging branch, with its own Vercel deployment and its own Render backend) - merging into `main` is a separate, explicit decision made after validation on `preview`.
+3. Never log, send to Sentry/analytics, or persist server-side a passphrase, recovery code, or master key in plaintext for the encrypted history sync feature (v3.1.0 Task 1) - the backend (`backend/app/sync`) and the service layer (`src/features/sync/services/syncService.ts`) must only ever handle already-wrapped (ciphertext) forms; a wrong passphrase/recovery code during local unwrap is expected UI validation, not an error to report (see `src/features/sync/crypto/wrapping.ts`'s `MasterKeyUnwrapError`).
+4. Never imply official Instagram/Meta affiliation in product copy.
+5. Commit messages: always English, Conventional Commits format - see the `git-commits` skill.
+6. Before `git push`: always run the `pre-push-sync-knowledge` flow.
+7. Public `/updates` entries: only for end-user-visible changes - see the `public-changelog` skill's decision rule before writing one.
+8. Branching: never push directly to `main`. Every change goes through `preview` first (staging branch, with its own Vercel deployment and its own Render backend) - merging into `main` is a separate, explicit decision made after validation on `preview`.
 
 ## Skills index
 

@@ -10,6 +10,13 @@ export const ERROR_CODES = {
   // error registries.
   AUTH_SESSION_UNAVAILABLE: "AUTH_SESSION_UNAVAILABLE",
   ACCOUNT_FETCH_FAILED: "ACCOUNT_FETCH_FAILED",
+  // Encrypted history sync (v3.1.0 Task 1): network/server failures only.
+  // A wrong passphrase or recovery code during unwrap is a normal, expected
+  // UI validation outcome, not an AppError - see
+  // src/features/sync/crypto/wrapping.ts's MasterKeyUnwrapError.
+  SYNC_ACTIVATION_FAILED: "SYNC_ACTIVATION_FAILED",
+  SYNC_CREDENTIALS_FETCH_FAILED: "SYNC_CREDENTIALS_FETCH_FAILED",
+  SYNC_PASSPHRASE_ROTATION_FAILED: "SYNC_PASSPHRASE_ROTATION_FAILED",
   UNKNOWN_ERROR: "UNKNOWN_ERROR",
 } as const;
 

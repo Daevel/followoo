@@ -126,3 +126,47 @@ usage_events = sa.Table(
     ),
     sa.Column("metadata", JSONB(astext_type=sa.Text()), nullable=True),
 )
+
+# v3.1.0 Task 1: one row per user, holding only the client-wrapped master
+# key (never plaintext) for the opt-in encrypted history/sync feature. See
+# backend/app/sync/ and this migration's own docstring
+# (2ea9007f2d18_add_sync_keys_table.py) for the zero-knowledge design.
+sync_keys = sa.Table(
+    "sync_keys",
+    metadata,
+    sa.Column(
+        "id",
+        UUID(as_uuid=True),
+        primary_key=True,
+        server_default=sa.text("gen_random_uuid()"),
+    ),
+    sa.Column(
+        "user_id",
+        sa.Text(),
+        sa.ForeignKey("users.id"),
+        nullable=False,
+        unique=True,
+    ),
+    sa.Column("wrapped_master_key_passphrase", sa.Text(), nullable=False),
+    sa.Column("kdf_salt_passphrase", sa.Text(), nullable=False),
+    sa.Column(
+        "kdf_params_passphrase", JSONB(astext_type=sa.Text()), nullable=False
+    ),
+    sa.Column("wrapped_master_key_recovery", sa.Text(), nullable=False),
+    sa.Column("kdf_salt_recovery", sa.Text(), nullable=False),
+    sa.Column(
+        "kdf_params_recovery", JSONB(astext_type=sa.Text()), nullable=False
+    ),
+    sa.Column(
+        "created_at",
+        sa.DateTime(timezone=True),
+        nullable=False,
+        server_default=sa.text("now()"),
+    ),
+    sa.Column(
+        "updated_at",
+        sa.DateTime(timezone=True),
+        nullable=False,
+        server_default=sa.text("now()"),
+    ),
+)

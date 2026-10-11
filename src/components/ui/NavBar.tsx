@@ -2,6 +2,7 @@ import { Show, SignInButton, UserButton } from "@clerk/react";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
+import { SyncActivationWidget } from "@/features/sync/components/SyncActivationWidget";
 import { Icon } from "./Icon";
 
 const navLinks = [
@@ -27,7 +28,10 @@ function NavAuthEntry() {
         </SignInButton>
       }
     >
-      <UserButton />
+      <div className="flex items-center gap-4">
+        <SyncActivationWidget />
+        <UserButton />
+      </div>
     </Show>
   );
 }
