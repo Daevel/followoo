@@ -57,7 +57,7 @@ export function NavBar() {
   const isActiveLink = (to: string) => location.pathname === to;
 
   return (
-    <header className="px-5 md:px-10 lg:px-18">
+    <header className="px-5 pt-[env(safe-area-inset-top)] md:px-10 lg:px-18">
       <nav
         id="navbar-inner"
         className="text-foreground relative flex h-20 items-center justify-between md:h-24"
