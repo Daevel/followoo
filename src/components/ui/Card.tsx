@@ -10,6 +10,13 @@ type CardProps = {
   opacity?: boolean;
 };
 
+const backgroundMap: Record<NonNullable<CardProps["color"]>, string> = {
+  primary: "bg-primary",
+  accent: "bg-accent",
+  bg: "bg-bg",
+  foreground: "bg-foreground",
+};
+
 const textColorMap: Record<NonNullable<CardProps["color"]>, string> = {
   primary: "text-foreground",
   accent: "text-foreground",
@@ -43,6 +50,7 @@ export function Card({
   opacity = false,
   children,
 }: CardProps) {
+  const backgroundClass = backgroundMap[color];
   const textColorClass = textColorMap[color];
   const iconWrapperBg = iconWrapperBgMap[color];
   const iconColor = iconColorMap[color];
@@ -51,7 +59,7 @@ export function Card({
   return (
     <div
       key={title}
-      className={`bg-${color} ${opacityClass} ${textColorClass} rounded-[10px] px-6 py-8 text-center sm:px-8 sm:py-10 ${className}`}
+      className={`${backgroundClass} ${opacityClass} ${textColorClass} rounded-[10px] px-6 py-8 text-center sm:px-8 sm:py-10 ${className}`}
     >
       {iconName && (
         <div
