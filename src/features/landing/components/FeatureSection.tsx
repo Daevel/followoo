@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { Link } from "react-router";
 import { Card } from "@/components/ui/Card";
+import { Container } from "@/components/ui/Container";
 import type { IconName } from "@/components/ui/Icon";
 
 const cards = [
@@ -25,43 +26,47 @@ export function FeaturesSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
 
   return (
-    <section ref={sectionRef} data-section="features" className="pt-20 pb-10">
-      <div className="mx-auto max-w-6xl text-center">
-        <div className="text-foreground mx-auto max-w-2xl">
-          <h2
-            data-animate="section-heading"
-            className="section-heading text-4xl font-semibold"
-          >
-            No more guessing who's real and who&apos;s not
-          </h2>
+    <section
+      ref={sectionRef}
+      data-section="features"
+      className="border-line-subtle border-t py-20 md:py-24"
+    >
+      <Container size="app" className="text-start">
+        <p className="text-brand-fg text-[13px] font-medium">How it works</p>
+        <h2
+          data-animate="section-heading"
+          className="text-fg mt-2 max-w-2xl text-[28px] leading-tight font-semibold tracking-[-0.03em] sm:text-4xl"
+        >
+          No more guessing who&apos;s real and who&apos;s not
+        </h2>
 
-          <p
-            data-animate="section-subheading"
-            className="section-subheading mt-4"
+        <p
+          data-animate="section-subheading"
+          className="text-fg-muted mt-4 max-w-xl text-base leading-7"
+        >
+          Get started in a few minutes by following the step-by-step{" "}
+          <Link
+            to="/instructions-to-start"
+            className="text-brand-fg underline-offset-2 hover:underline"
           >
-            Get started in a few minutes by following the step-by-step{" "}
-            <Link
-              to="/instructions-to-start"
-              className="hover:text-primary transition-colors"
-            >
-              <b>guide</b>
-            </Link>
-            .
-          </p>
-        </div>
+            guide
+          </Link>
+          .
+        </p>
 
-        <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map((card) => (
             <div key={card.title} data-animate="feature-card">
               <Card
                 title={card.title}
                 description={card.text}
                 iconName={card.iconName}
+                tone="brand"
               />
             </div>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

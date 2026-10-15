@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { Container } from "@/components/ui/Container";
 import { DropdownCard } from "@/components/ui/DropdownCard.tsx";
 import { Icon } from "@/components/ui/Icon";
 
@@ -32,47 +33,51 @@ export function Questions() {
     <section
       ref={sectionRef}
       data-section="faq"
-      className="bg-accent/90 from-primary to-accent/90 flex w-full flex-col items-center rounded-b-[60px] bg-linear-to-b"
+      className="border-line-subtle border-t py-20 md:py-24"
     >
-      <div className="px-8 py-16">
-        <div className="text-foreground mx-auto max-w-5xl text-center">
-          <div className="flex justify-center">
-            <div
+      <Container
+        size="app"
+        className="grid gap-10 text-start lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-16"
+      >
+        <div>
+          <div className="flex items-center gap-2.5">
+            <span
               data-animate="section-icon"
-              className="faq-icon border-foreground/90 bg-primary shadow-primary-hover flex h-15 w-15 items-center justify-center rounded-full border"
+              className="border-brand-fg/20 bg-brand-fg/10 text-brand-fg flex size-8 items-center justify-center rounded-control border"
             >
-              <Icon name="help" color="foreground" width={30} height={30} />
-            </div>
+              <Icon
+                name="help"
+                color="current"
+                width={16}
+                height={16}
+                aria-hidden="true"
+              />
+            </span>
+            <p className="text-brand-fg text-[13px] font-medium">FAQ</p>
           </div>
-          <h1
+
+          <h2
             data-animate="section-heading"
-            className="faq-heading hero-h1 mt-6 font-semibold"
+            className="text-fg mt-4 text-[28px] leading-tight font-semibold tracking-[-0.03em] sm:text-[32px]"
           >
             Got questions?
-          </h1>
-          <h2
+          </h2>
+          <p
             data-animate="section-subheading"
-            className="faq-heading mt-6 font-semibold"
+            className="text-fg-muted mt-3 text-base leading-7"
           >
             Here&apos;s the answers.
-          </h2>
-
-          <div className="mt-12 flex flex-col justify-center gap-y-2">
-            {faqCards.map((card) => (
-              <div
-                key={card.title}
-                data-animate="faq-card"
-                className="faq-card w-full items-center justify-center"
-              >
-                <DropdownCard
-                  title={card.title}
-                  description={card.description}
-                />
-              </div>
-            ))}
-          </div>
+          </p>
         </div>
-      </div>
+
+        <div className="flex min-w-0 flex-col gap-2">
+          {faqCards.map((card) => (
+            <div key={card.title} data-animate="faq-card">
+              <DropdownCard title={card.title} description={card.description} />
+            </div>
+          ))}
+        </div>
+      </Container>
     </section>
   );
 }
