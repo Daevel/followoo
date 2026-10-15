@@ -2,11 +2,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { useResultsPageAnimation } from "@/animations/pages/useResultsPageAnimation";
 import { Container } from "@/components/ui/Container";
+import { ChartStats } from "@/components/ui/charts/ChartCard";
 import { NetworkVolatilityCard } from "@/components/ui/charts/NetworkVolatilityCard";
 import { RecentUnfollowActivityChart } from "@/components/ui/charts/RecentUnfollowActivityChart";
 import { ResultsPieChart } from "@/components/ui/charts/ResultPieChart";
-import { DropdownTabButton } from "@/components/ui/DropdownTabButton";
 import { Field } from "@/components/ui/Field";
+import { Icon } from "@/components/ui/Icon";
 import { Input } from "@/components/ui/Input";
 import { NavBar } from "@/components/ui/NavBar";
 import { Paginator } from "@/components/ui/Paginator";
@@ -31,6 +32,7 @@ import type {
   InstagramAnalysisResult,
   UserPersona,
 } from "@/types/instagram.types";
+import { ResultsListSwitcher } from "./ResultsListSwitcher";
 
 export function ResultsExperience({
   analysis,
@@ -229,104 +231,103 @@ export function ResultsExperience({
       <section className="flex min-h-svh flex-col">
         <NavBar />
 
-        <Container className="flex min-h-svh max-w-6xl flex-col overflow-x-hidden">
+        <Container size="app" className="flex min-h-svh flex-col">
           <div
             ref={rootRef}
-            className="mx-auto flex w-full min-w-0 flex-1 flex-col items-center px-3 pt-14 pb-8 text-center sm:px-4 md:px-6 md:pt-20"
+            className="flex w-full min-w-0 flex-1 flex-col gap-6 pt-8 pb-12 text-start md:pt-12"
           >
-            <h1
-              data-animate="hero-item"
-              className="leading-headers text-foreground max-w-4xl text-balance text-3xl font-semibold sm:text-4xl md:text-5xl"
-            >
-              Your Instagram network analysis
-            </h1>
+            <header data-animate="hero-item" className="flex flex-col gap-2">
+              <p className="text-success inline-flex items-center gap-1.5 text-xs font-medium">
+                <Icon
+                  name="lock"
+                  color="current"
+                  width={12}
+                  height={12}
+                  aria-hidden="true"
+                />
+                Processed in your browser
+              </p>
+              <h1 className="text-fg text-[28px] leading-tight font-semibold tracking-[-0.025em] text-balance sm:text-[32px]">
+                Your Instagram network analysis
+              </h1>
+              <p className="text-fg-muted max-w-2xl text-sm leading-6 text-pretty">
+                A quick overview of your relationship groups, patterns, and
+                account insights.
+              </p>
+            </header>
 
-            <p
-              data-animate="hero-item"
-              className="text-foreground/70 mt-4 max-w-2xl text-pretty text-sm leading-6 sm:text-base md:text-lg md:leading-7"
-            >
-              A quick overview of your relationship groups, patterns, and
-              account insights.
-            </p>
+            <div data-animate="hero-item">
+              <ChartStats
+                stats={[
+                  {
+                    label: "Followers",
+                    value: analysis.sourceCounts.followers,
+                  },
+                  {
+                    label: "Following",
+                    value: analysis.sourceCounts.following,
+                  },
+                  { label: "Mutual", value: analysis.mutual.length },
+                  {
+                    label: "Recent unfollowers",
+                    value: analysis.recentUnfollowers.length,
+                  },
+                ]}
+              />
+            </div>
 
             <div
               data-animate="hero-item"
-              className="border-foreground/10 bg-foreground/5 mt-5 flex w-full flex-wrap items-center justify-center gap-2 rounded-[18px] border px-3 py-2 text-xs text-foreground/75 sm:w-auto sm:gap-3 sm:rounded-full sm:px-4 sm:text-sm"
+              className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2"
             >
-              <span>Imported source records</span>
-              <span className="text-foreground font-semibold">
-                {analysis.sourceCounts.followers} followers
-              </span>
-              <span className="text-foreground/30">/</span>
-              <span className="text-foreground font-semibold">
-                {analysis.sourceCounts.following} following
-              </span>
-            </div>
-
-            <div data-animate="hero-item" className="mt-6 flex w-full flex-row">
               <RelationshipHealthInsight insight={relationshipHealthInsight} />
-            </div>
-
-            <div
-              data-animate="hero-item"
-              className="mt-8 grid w-full min-w-0 grid-cols-1 gap-5 lg:mt-10 lg:grid-cols-2"
-            >
               <ResultsPieChart
                 data={chartData}
                 title="Relationship breakdown"
               />
+            </div>
+
+            <div
+              data-animate="hero-item"
+              className="grid min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-2"
+            >
               <RecentUnfollowActivityChart
                 recentUnfollowers={analysis.recentUnfollowers}
               />
-            </div>
-
-            <div data-animate="hero-item" className="mt-8 w-full">
               <NetworkVolatilityCard volatility={networkVolatility} />
             </div>
 
-            <div data-animate="hero-item" className="mt-8 w-full">
-              <DropdownTabButton
-                title="Explore your connections"
-                activeTab={activeTab}
-                analysis={analysis}
-                setActiveTab={handleActiveTabChange}
-              />
-            </div>
+            <section
+              data-animate="hero-item"
+              className="border-line-subtle bg-surface-1 shadow-elev-1 flex min-w-0 flex-col rounded-card border"
+            >
+              <div className="border-line-subtle flex flex-col gap-4 border-b p-4 sm:p-5">
+                <ResultsListSwitcher
+                  activeTab={activeTab}
+                  analysis={analysis}
+                  onChange={handleActiveTabChange}
+                />
 
-            <div className="border-foreground/10 bg-foreground/5 text-foreground mt-6 w-full min-w-0 rounded-[10px] border p-4 sm:p-5 md:p-8">
-              <div className="w-full">
-                <div className="flex w-full flex-col items-center gap-y-2 text-center max-sm:items-start max-sm:text-start">
-                  <h3
-                    data-animate="hero-item"
-                    className="text-foreground text-xl font-semibold sm:text-2xl"
-                  >
+                <div>
+                  <h2 className="text-fg text-base leading-snug font-semibold tracking-[-0.01em]">
                     {tabInfos.sectionTitle}
-                  </h3>
-
-                  <p
-                    data-animate="hero-item"
-                    className="text-foreground/75 max-w-2xl text-pretty text-sm leading-6 md:text-base"
-                  >
+                  </h2>
+                  <p className="text-fg-muted mt-1 max-w-2xl text-[13px] leading-[1.55] text-pretty">
                     {tabInfos.description}
                   </p>
                 </div>
 
-                <div data-animate="hero-item" className="mt-6 w-full px-0">
-                  <PersonaFilter
-                    personaCounts={personaCounts}
-                    selectedPersona={selectedPersona}
-                    onPersonaChange={handlePersonaChange}
-                  />
-                </div>
+                <PersonaFilter
+                  personaCounts={personaCounts}
+                  selectedPersona={selectedPersona}
+                  onPersonaChange={handlePersonaChange}
+                />
 
-                <div
-                  data-animate="hero-item"
-                  className="mt-8 flex w-full flex-col gap-4 sm:gap-5 md:flex-row md:items-end md:justify-between"
-                >
+                <div className="flex w-full flex-col gap-3 md:flex-row md:items-end md:justify-between">
                   <Field
                     label="Search username"
                     htmlFor="search-users"
-                    className="md:max-w-lg"
+                    className="md:max-w-sm"
                   >
                     <Input
                       id="search-users"
@@ -337,67 +338,69 @@ export function ResultsExperience({
                     />
                   </Field>
 
-                  <div className="w-full md:w-auto">
-                    <SortSelect
-                      label="Sort by"
-                      value={sortBy}
-                      onChange={handleSortChange}
-                      options={[
-                        { label: "A-Z", value: "alphabeticalAsc" },
-                        { label: "Z-A", value: "alphabeticalDesc" },
-                        { label: "Most recent", value: "recentDesc" },
-                        { label: "Oldest", value: "recentAsc" },
-                      ]}
-                      className="w-full md:w-auto"
-                    />
-                  </div>
+                  <SortSelect
+                    label="Sort by"
+                    value={sortBy}
+                    onChange={handleSortChange}
+                    options={[
+                      { label: "A-Z", value: "alphabeticalAsc" },
+                      { label: "Z-A", value: "alphabeticalDesc" },
+                      { label: "Most recent", value: "recentDesc" },
+                      { label: "Oldest", value: "recentAsc" },
+                    ]}
+                    className="w-full md:w-auto"
+                  />
                 </div>
+              </div>
 
+              <div className="p-2 sm:p-3">
                 <p
-                  data-animate="hero-item"
-                  className="text-foreground/60 mt-6 text-start text-sm"
+                  aria-live="polite"
+                  className="text-fg-muted px-2 pt-1 pb-2 text-[13px] tabular-nums"
                 >
                   {filteredUsers.length} result
                   {filteredUsers.length === 1 ? "" : "s"}
                 </p>
 
-                <div data-animate="hero-item" className="mt-6">
-                  {emptyState ? (
-                    <div className="border-foreground/10 bg-foreground/5 flex min-h-56 w-full flex-col items-center justify-center rounded-[10px] border px-4 py-10 text-center sm:px-6">
-                      <h4 className="text-foreground text-lg font-semibold sm:text-xl">
-                        {emptyState.title}
-                      </h4>
-
-                      <p className="text-foreground/80 mt-3 max-w-md text-sm leading-6">
-                        {emptyState.description}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 xl:gap-5">
-                      {paginatedUsers.map((user) => (
-                        <div key={user.username} data-animate="list-item">
-                          <UserListItem
-                            user={user}
-                            formatDate={formatDate}
-                            persona={classifyUserPersona(user, analysis)}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {!emptyState && totalPages > 1 && (
-                  <div data-animate="hero-item" className="mt-8">
-                    <Paginator
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={setCurrentPage}
-                    />
+                {emptyState ? (
+                  <div className="flex min-h-48 w-full flex-col items-center justify-center px-4 py-10 text-center sm:px-6">
+                    <h3 className="text-fg text-base font-semibold">
+                      {emptyState.title}
+                    </h3>
+                    <p className="text-fg-muted mt-2 max-w-md text-[13px] leading-[1.55]">
+                      {emptyState.description}
+                    </p>
                   </div>
+                ) : (
+                  <ul className="divide-line-subtle flex flex-col divide-y">
+                    {paginatedUsers.map((user) => (
+                      <li
+                        key={user.username}
+                        data-animate="list-item"
+                        className="py-0.5"
+                      >
+                        <UserListItem
+                          user={user}
+                          formatDate={formatDate}
+                          persona={classifyUserPersona(user, analysis)}
+                          appearance="row"
+                        />
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </div>
-            </div>
+
+              {!emptyState && totalPages > 1 && (
+                <div className="border-line-subtle border-t px-4 pb-4 sm:px-5">
+                  <Paginator
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              )}
+            </section>
           </div>
         </Container>
       </section>

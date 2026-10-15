@@ -47,30 +47,34 @@ export function ChartCard({
 type Stat = { label: string; value: ReactNode; detail?: ReactNode };
 
 // Stats in one bordered block split by hairlines (gap-px over line-subtle).
+// Columns follow the block's own width (container query), not the viewport,
+// so four stats don't get squeezed inside a half-width card.
 export function ChartStats({ stats }: { stats: Stat[] }) {
   return (
-    <dl
-      className={clsx(
-        "border-line-subtle bg-line-subtle grid gap-px overflow-hidden rounded-control border",
-        stats.length === 4
-          ? "grid-cols-2 sm:grid-cols-4"
-          : "grid-cols-1 sm:grid-cols-3"
-      )}
-    >
-      {stats.map((stat) => (
-        <div
-          key={stat.label}
-          className="bg-surface-1 flex flex-col gap-1.5 p-4"
-        >
-          <dt className="text-fg-muted text-xs font-medium">{stat.label}</dt>
-          <dd className="text-fg text-xl leading-tight font-semibold tracking-[-0.02em] tabular-nums">
-            {stat.value}
-          </dd>
-          {stat.detail && (
-            <dd className="text-fg-muted text-xs leading-5">{stat.detail}</dd>
-          )}
-        </div>
-      ))}
-    </dl>
+    <div className="@container">
+      <dl
+        className={clsx(
+          "border-line-subtle bg-line-subtle grid gap-px overflow-hidden rounded-control border",
+          stats.length === 4
+            ? "grid-cols-2 @2xl:grid-cols-4"
+            : "grid-cols-1 @lg:grid-cols-3"
+        )}
+      >
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="bg-surface-1 flex flex-col gap-1.5 p-4"
+          >
+            <dt className="text-fg-muted text-xs font-medium">{stat.label}</dt>
+            <dd className="text-fg text-xl leading-tight font-semibold tracking-[-0.02em] tabular-nums">
+              {stat.value}
+            </dd>
+            {stat.detail && (
+              <dd className="text-fg-muted text-xs leading-5">{stat.detail}</dd>
+            )}
+          </div>
+        ))}
+      </dl>
+    </div>
   );
 }
