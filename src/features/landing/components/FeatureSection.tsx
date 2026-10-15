@@ -54,7 +54,6 @@ export function FeaturesSection() {
           {cards.map((card) => (
             <div key={card.title} data-animate="feature-card">
               <Card
-                className="shadow-primary"
                 title={card.title}
                 description={card.text}
                 iconName={card.iconName}

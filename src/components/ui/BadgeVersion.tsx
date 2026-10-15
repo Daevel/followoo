@@ -1,9 +1,11 @@
-// Colors arrive as free strings from the updates API (backend default: "accent"),
-// so they are mapped to static classes Tailwind can see at build time.
-const backgroundClasses: Record<string, string> = {
-  primary: "bg-primary",
-  accent: "bg-accent",
-  bg: "bg-bg",
+import { Badge, type BadgeTone } from "./Badge";
+
+// Colors arrive as free strings from the updates API (backend default:
+// "accent"); the former color names map to badge tones.
+const toneByColor: Record<string, BadgeTone> = {
+  primary: "brand",
+  accent: "brand",
+  bg: "neutral",
 };
 
 export function BadgeVersion({
@@ -13,14 +15,12 @@ export function BadgeVersion({
   version: string;
   backgroundColor?: string;
 }) {
-  const backgroundClass =
-    (backgroundColor && backgroundClasses[backgroundColor]) ?? "bg-bg";
+  const tone: BadgeTone =
+    (backgroundColor ? toneByColor[backgroundColor] : undefined) ?? "neutral";
 
   return (
-    <div
-      className={`p1-b inline-flex h-7 w-20 items-center justify-center rounded-[10px] px-5 py-2 align-middle ${backgroundClass}`}
-    >
-      <span className="font-bold">v{version}</span>
-    </div>
+    <Badge tone={tone} className="tabular-nums">
+      v{version}
+    </Badge>
   );
 }

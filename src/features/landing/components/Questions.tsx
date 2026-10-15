@@ -57,7 +57,7 @@ export function Questions() {
             Here&apos;s the answers.
           </h2>
 
-          <div className="mt-12 flex flex-col justify-center gap-y-5">
+          <div className="mt-12 flex flex-col justify-center gap-y-2">
             {faqCards.map((card) => (
               <div
                 key={card.title}

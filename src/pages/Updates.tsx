@@ -226,9 +226,7 @@ export function Updates() {
                     />
 
                     {index < updates.length - 1 ? (
-                      <div className="mt-8">
-                        <Separator variant="foreground" />
-                      </div>
+                      <Separator className="mt-8" />
                     ) : null}
                   </div>
                 ))

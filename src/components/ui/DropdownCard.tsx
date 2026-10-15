@@ -10,16 +10,19 @@ export function DropdownCard({ title, description }: DropdownCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="bg-foreground text-bg w-full max-w-190 rounded-[10px] px-8 py-7 transition-all duration-300 ease-out">
+    <div className="border-line-subtle bg-surface-1 w-full max-w-190 rounded-card border transition-colors">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex w-full cursor-pointer items-center justify-between gap-6"
+        className="focus-visible:shadow-ring flex w-full cursor-pointer items-center justify-between gap-6 rounded-card px-5 py-4 focus-visible:outline-none"
         aria-expanded={isOpen}
       >
-        <h4 className="pr-4 text-start">{title}</h4>
+        {/* `!`: the global unlayered h4 size in index.css beats utilities */}
+        <h4 className="text-fg pr-4 text-start text-[15px]! leading-snug font-medium">
+          {title}
+        </h4>
 
-        <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-transform duration-300 ease-out">
+        <div className="text-fg-muted flex shrink-0 items-center justify-center">
           <div
             className={
               isOpen
@@ -29,19 +32,22 @@ export function DropdownCard({ title, description }: DropdownCardProps) {
           >
             <Icon
               name="singleArrowDown"
-              color="foreground"
-              width={18}
-              height={18}
+              color="current"
+              width={16}
+              height={16}
+              aria-hidden="true"
             />
           </div>
         </div>
       </button>
 
       <div
-        className={`grid overflow-hidden transition-all duration-300 ease-out ${isOpen ? "mt-6 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"} `}
+        className={`grid overflow-hidden transition-all duration-300 ease-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"} `}
       >
         <div className="min-h-0 text-start">
-          <p className="p1-r">{description}</p>
+          <p className="text-fg-muted px-5 pb-4 text-sm leading-relaxed">
+            {description}
+          </p>
         </div>
       </div>
     </div>

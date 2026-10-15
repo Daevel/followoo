@@ -6,10 +6,9 @@ const meta: Meta<typeof Separator> = {
   component: Separator,
   tags: ["autodocs"],
   argTypes: {
-    variant: {
-      control: { type: "select" },
-      options: ["primary", "accent", "foreground"],
-      description: "Colore separatore",
+    className: {
+      control: "text",
+      description: "Spaziatura decisa dal contenitore, es. my-8",
     },
   },
 };
@@ -17,43 +16,13 @@ const meta: Meta<typeof Separator> = {
 export default meta;
 type Story = StoryObj<typeof Separator>;
 
-export const Primary: Story = {
-  args: {
-    variant: "primary",
-  },
-};
-
-export const Accent: Story = {
-  args: {
-    variant: "accent",
-  },
-};
-
-export const Foreground: Story = {
-  args: {
-    variant: "foreground",
-  },
-};
-
-export const AllVariants: Story = {
-  name: "Tutte le varianti",
-  render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <div>
-        <p>Top content</p>
-        <Separator variant="primary" />
-        <p>Bottom content</p>
-      </div>
-      <div>
-        <p>Top content</p>
-        <Separator variant="accent" />
-        <p>Bottom content</p>
-      </div>
-      <div>
-        <p>Top content</p>
-        <Separator variant="foreground" />
-        <p>Bottom content</p>
-      </div>
+export const SeparatorStory: Story = {
+  name: "Separator",
+  render: (args) => (
+    <div>
+      <p>Contenuto sopra</p>
+      <Separator className="my-6" {...args} />
+      <p>Contenuto sotto</p>
     </div>
   ),
 };

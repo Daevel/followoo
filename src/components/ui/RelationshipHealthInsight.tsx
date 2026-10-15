@@ -3,110 +3,92 @@ import type {
   RelationshipHealthLevel,
   RelationshipHealthResult,
 } from "@/features/relationship/services/relationshipHealthService";
-import { Icon, type IconColor, type IconName } from "./Icon";
+import { Badge, type BadgeTone } from "./Badge";
+import { Icon, type IconName } from "./Icon";
 
 type RelationshipHealthInsightProps = {
   insight: RelationshipHealthResult;
 };
 
-function HealthFace({ level }: { level: RelationshipHealthLevel }) {
-  const faceColorClass = {
-    healthy: "text-primary border-primary/30 bg-primary/10",
-    average: "text-foreground border-foreground/20 bg-foreground/5",
-    critical: "text-accent border-accent/30 bg-accent/10",
-  }[level];
-
-  const iconName = {
-    healthy: "happyFace",
-    average: "neutralFace",
-    critical: "sadFace",
-  }[level] as IconName;
-
-  const iconColor = {
-    healthy: "primary",
-    average: "foreground",
-    critical: "accent",
-  }[level] as IconColor;
-
-  return (
-    <div
-      className={clsx(
-        "flex h-16 w-16 shrink-0 items-center justify-center rounded-full border md:h-18 md:w-18",
-        faceColorClass
-      )}
-      aria-hidden="true"
-    >
-      <Icon name={iconName} width={80} height={80} color={iconColor} />
-    </div>
-  );
-}
+// The level is told by word + face icon in the badge, color only reinforces it.
+const levelStyles: Record<
+  RelationshipHealthLevel,
+  { label: string; icon: IconName; tone: BadgeTone; barClass: string }
+> = {
+  healthy: {
+    label: "Good",
+    icon: "happyFace",
+    tone: "success",
+    barClass: "bg-success",
+  },
+  average: {
+    label: "Intermediate",
+    icon: "neutralFace",
+    tone: "warning",
+    barClass: "bg-warning",
+  },
+  critical: {
+    label: "Critical",
+    icon: "sadFace",
+    tone: "danger",
+    barClass: "bg-danger",
+  },
+};
 
 export function RelationshipHealthInsight({
   insight,
 }: RelationshipHealthInsightProps) {
-  const accentClass = {
-    healthy: "text-primary",
-    average: "text-foreground",
-    critical: "text-accent",
-  }[insight.level];
-
-  const badgeClass = {
-    healthy: "border-primary/20 bg-primary/10 text-primary",
-    average: "border-foreground/15 bg-foreground/5 text-foreground",
-    critical: "border-accent/20 bg-accent/10 text-accent",
-  }[insight.level];
+  const { label, icon, tone, barClass } = levelStyles[insight.level];
+  const score = Math.max(0, Math.min(100, insight.score));
 
   return (
-    <div className="border-foreground/10 bg-foreground/5 w-full min-w-0 rounded-[10px] border p-4 sm:p-5 md:p-6">
-      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-        <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center">
-          <HealthFace level={insight.level} />
+    <div className="border-line-subtle bg-surface-1 shadow-elev-1 w-full min-w-0 rounded-card border p-5 text-start sm:p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-fg-muted text-xs font-medium">Network health</p>
 
-          <div className="min-w-0 text-start">
-            <p className="text-foreground/60 text-xs tracking-[0.18em] uppercase">
-              Network health
-            </p>
-
-            <h3 className="text-foreground mt-1 text-xl font-semibold break-words">
-              {insight.title}
-            </h3>
-
-            <p className="text-foreground/75 mt-2 max-w-xl text-sm leading-6">
-              {insight.description}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between md:flex-col md:items-end">
-          <div
-            className={clsx(
-              "rounded-[10px] border px-4 py-2 text-sm font-medium",
-              badgeClass
-            )}
-          >
-            {insight.level === "healthy" && "Good"}
-            {insight.level === "average" && "Intermediate"}
-            {insight.level === "critical" && "Critical"}
-          </div>
-
-          <div className="text-start md:text-end">
-            <p className="text-foreground/60 text-xs tracking-[0.18em] uppercase">
-              Score
-            </p>
-            <p
-              className={clsx(
-                "text-4xl font-semibold sm:text-5xl",
-                accentClass
-              )}
-            >
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-fg text-[32px] leading-none font-semibold tracking-[-0.03em] tabular-nums">
               {insight.score}
-              <span className="text-foreground/50 ml-1 text-base font-medium">
-                /100
-              </span>
-            </p>
+            </span>
+            <span className="text-fg-faint text-sm">/100</span>
           </div>
         </div>
+
+        <Badge
+          tone={tone}
+          icon={
+            <Icon
+              name={icon}
+              color="current"
+              width={14}
+              height={14}
+              aria-hidden="true"
+            />
+          }
+        >
+          {label}
+        </Badge>
       </div>
+
+      {/* decorative: the score is already readable as text above */}
+      <div
+        aria-hidden="true"
+        className="bg-surface-2 mt-4 h-1.5 w-full overflow-hidden rounded-full"
+      >
+        <div
+          className={clsx("h-full rounded-full", barClass)}
+          style={{ width: `${score}%` }}
+        />
+      </div>
+
+      {/* `!`: the global unlayered h3 size in index.css beats utilities */}
+      <h3 className="text-fg mt-4 text-base! leading-snug font-semibold break-words">
+        {insight.title}
+      </h3>
+      <p className="text-fg-muted mt-1 max-w-xl text-[13px] leading-[1.55]">
+        {insight.description}
+      </p>
     </div>
   );
 }
