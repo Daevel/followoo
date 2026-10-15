@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { getInstagramProfileUrl } from "@/features/instagram-export/utils/instagramUtils";
 import { extractFirstNameLetter } from "@/lib/searchUtils";
 import type { InstagramUser, UserPersona } from "../../types/instagram.types";
@@ -8,9 +9,16 @@ type UserListItemProps = {
   user: InstagramUser;
   formatDate: (timestamp?: number) => string | null;
   persona?: UserPersona;
+  /** `row` drops border and fill, for lists already inside a card. */
+  appearance?: "card" | "row";
 };
 
-export function UserListItem({ user, formatDate, persona }: UserListItemProps) {
+export function UserListItem({
+  user,
+  formatDate,
+  persona,
+  appearance = "card",
+}: UserListItemProps) {
   const href = getInstagramProfileUrl(user);
   const initial = extractFirstNameLetter(user.username.toUpperCase());
   const formattedDate = formatDate(user.timestamp);
@@ -21,7 +29,10 @@ export function UserListItem({ user, formatDate, persona }: UserListItemProps) {
       target="_blank"
       rel="noreferrer"
       title={`Open @${user.username} on Instagram`}
-      className="group border-line-subtle bg-surface-1 hover:bg-surface-2 focus-visible:shadow-ring flex min-w-0 items-center gap-3 rounded-control border px-3 py-2.5 transition-colors focus-visible:outline-none"
+      className={clsx(
+        "group hover:bg-surface-2 focus-visible:shadow-ring flex min-w-0 items-center gap-3 rounded-control px-3 py-2.5 transition-colors focus-visible:outline-none",
+        appearance === "card" && "border-line-subtle bg-surface-1 border"
+      )}
     >
       <div className="border-line-strong bg-surface-2 text-fg flex size-9 shrink-0 items-center justify-center rounded-full border text-[13px] font-semibold">
         {initial}
