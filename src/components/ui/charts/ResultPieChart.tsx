@@ -1,4 +1,6 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { ChartCard } from "./ChartCard";
+import { chartTheme } from "./chartTheme";
 
 export type PieChartDatum = {
   name: string;
@@ -10,13 +12,7 @@ type ResultsPieChartProps = {
   title?: string;
 };
 
-const CHART_COLORS = [
-  "#6366f1",
-  "#f43f5e",
-  "rgba(99, 102, 241, 0.75)",
-  "rgba(244, 63, 94, 0.75)",
-  "rgba(254, 254, 254, 0.22)",
-];
+const CHART_COLORS = chartTheme.series;
 
 function buildCompactChartData(data: PieChartDatum[]): PieChartDatum[] {
   const filtered = data
@@ -50,28 +46,23 @@ export function ResultsPieChart({
   }
 
   return (
-    <div className="border-foreground/10 w-full min-w-0 rounded-[10px] border bg-white/5 p-4 sm:p-5 md:p-6">
-      <div className="mb-5 items-center">
-        <h3 className="text-foreground text-lg font-semibold sm:text-xl">
-          {title}
-        </h3>
-        <p className="text-foreground/70 mt-1 text-sm">
-          A quick overview of your relationship groups.
-        </p>
-      </div>
-
-      <div className="flex flex-col items-center gap-6 md:gap-8 lg:gap-10">
-        <div className="relative h-[220px] w-full sm:h-[260px] lg:h-[320px]">
+    <ChartCard
+      title={title}
+      description="A quick overview of your relationship groups."
+    >
+      <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-8">
+        <div className="relative size-[200px] shrink-0 sm:size-[220px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={chartData}
                 dataKey="value"
                 nameKey="name"
-                innerRadius="58%"
-                outerRadius="82%"
-                stroke="rgba(254,254,254,0.16)"
-                strokeWidth={1}
+                innerRadius="70%"
+                outerRadius="92%"
+                paddingAngle={1}
+                stroke={chartTheme.surface1}
+                strokeWidth={2}
                 label={false}
                 labelLine={false}
               >
@@ -84,12 +75,9 @@ export function ResultsPieChart({
               </Pie>
 
               <Tooltip
-                contentStyle={{
-                  backgroundColor: "#0f172a",
-                  border: "1px solid rgba(254,254,254,0.12)",
-                  borderRadius: "16px",
-                  color: "#fefefe",
-                }}
+                contentStyle={chartTheme.tooltip.contentStyle}
+                labelStyle={chartTheme.tooltip.labelStyle}
+                itemStyle={chartTheme.tooltip.itemStyle}
                 formatter={(value, name) => {
                   const numericValue = typeof value === "number" ? value : 0;
                   const label = typeof name === "string" ? name : "";
@@ -106,51 +94,46 @@ export function ResultsPieChart({
 
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <p className="text-foreground/60 text-xs tracking-wide uppercase">
-                Total
-              </p>
-              <p className="text-foreground text-2xl font-semibold sm:text-3xl">
+              <p className="text-fg text-2xl leading-none font-semibold tracking-[-0.03em] tabular-nums">
                 {total}
               </p>
+              <p className="text-fg-muted mt-1 text-xs">Total</p>
             </div>
           </div>
         </div>
 
-        <div className="flex w-full flex-col gap-3">
+        <ul className="flex w-full min-w-0 flex-col gap-2.5">
           {chartData.map((item, index) => {
             const percentage = total
               ? Math.round((item.value / total) * 100)
               : 0;
 
             return (
-              <div
+              <li
                 key={item.name}
-                className="border-foreground/10 bg-foreground/5 flex min-w-0 items-center justify-between gap-3 rounded-[10px] border px-3 py-3 sm:px-4"
+                className="flex min-w-0 items-center gap-2.5 text-[13px]"
               >
-                <div className="flex min-w-0 items-center gap-3">
-                  <span
-                    className="h-3 w-3 rounded-full"
-                    style={{
-                      backgroundColor:
-                        CHART_COLORS[index % CHART_COLORS.length],
-                    }}
-                  />
-                  <span className="text-foreground truncate text-sm font-medium">
-                    {item.name}
-                  </span>
-                </div>
-
-                <div className="text-end">
-                  <p className="text-foreground text-sm font-semibold">
-                    {item.value}
-                  </p>
-                  <p className="text-foreground/60 text-xs">{percentage}%</p>
-                </div>
-              </div>
+                <span
+                  aria-hidden="true"
+                  className="size-2 shrink-0 rounded-[2px]"
+                  style={{
+                    backgroundColor: CHART_COLORS[index % CHART_COLORS.length],
+                  }}
+                />
+                <span className="text-fg-muted min-w-0 flex-1 truncate">
+                  {item.name}
+                </span>
+                <span className="text-fg font-medium tabular-nums">
+                  {item.value}
+                </span>
+                <span className="text-fg-faint w-9 text-end tabular-nums">
+                  {percentage}%
+                </span>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
-    </div>
+    </ChartCard>
   );
 }
