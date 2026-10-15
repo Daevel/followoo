@@ -682,8 +682,7 @@ export function InstructionsToStart() {
                 className="mt-3 flex flex-row items-center gap-4"
               >
                 <Button
-                  background="primary"
-                  foreground="foreground"
+                  variant="secondary"
                   onClick={goToPreviousStep}
                   disabled={currentStep === 1}
                 >
@@ -691,18 +690,10 @@ export function InstructionsToStart() {
                 </Button>
 
                 {currentStep < totalSteps ? (
-                  <Button
-                    background="accent"
-                    foreground="foreground"
-                    onClick={goToNextStep}
-                  >
-                    Next
-                  </Button>
+                  <Button onClick={goToNextStep}>Next</Button>
                 ) : (
                   <Link to="/get-started">
-                    <Button background="accent" foreground="foreground">
-                      Continue
-                    </Button>
+                    <Button>Continue</Button>
                   </Link>
                 )}
               </div>

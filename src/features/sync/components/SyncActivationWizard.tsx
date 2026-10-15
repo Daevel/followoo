@@ -175,16 +175,11 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
             </p>
 
             <div className="flex gap-3">
-              <Button
-                background="bg"
-                foreground="foreground"
-                onClick={handleCopyRecoveryCode}
-              >
+              <Button variant="secondary" onClick={handleCopyRecoveryCode}>
                 {hasCopied ? "Copied" : "Copy"}
               </Button>
               <Button
-                background="bg"
-                foreground="foreground"
+                variant="secondary"
                 icon="download"
                 onClick={handleDownloadRecoveryCode}
               >
@@ -228,7 +223,7 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
             )}
 
             <div>
-              <Button onClick={handleActivate} disabled={isBusy}>
+              <Button onClick={handleActivate} loading={isBusy}>
                 {isBusy ? "Activating..." : "Activate"}
               </Button>
             </div>

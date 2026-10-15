@@ -5,7 +5,6 @@ import { Container } from "@/components/ui/Container";
 import { Input } from "@/components/ui/Input";
 import { NavBar } from "@/components/ui/NavBar";
 import Seo from "@/components/ui/Seo";
-import { SkeletonLoaderCircle } from "@/components/ui/SkeletonLoaderCircle";
 import { useSupportForm } from "@/features/support/hooks/useSupportForm";
 import { toastService } from "@/services/toastService";
 
@@ -138,20 +137,13 @@ function SupportContent() {
                   </div>
 
                   <Button
-                    background="primary"
-                    foreground="foreground"
-                    icon={isSubmitting ? undefined : "sendMail"}
+                    icon="sendMail"
                     iconPosition="right"
                     type="submit"
-                    disabled={!isValid || isSubmitting}
+                    disabled={!isValid}
+                    loading={isSubmitting}
                   >
-                    {isSubmitting ? (
-                      <div className="flex flex-row items-center text-center align-middle">
-                        <SkeletonLoaderCircle size="md" color="foreground" />
-                      </div>
-                    ) : (
-                      "Send message"
-                    )}
+                    {isSubmitting ? "Sending..." : "Send message"}
                   </Button>
                 </form>
               </div>

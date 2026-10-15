@@ -60,9 +60,7 @@ export function HeroSection() {
             className="hero-actions mt-6 flex w-full max-w-sm flex-col justify-center gap-3 sm:mt-8 sm:max-w-none sm:flex-row sm:gap-2"
           >
             <Button
-              className="shadow-accent-hover"
-              background="accent"
-              foreground="foreground"
+              size="lg"
               onClick={() =>
                 navigate("/get-started", { state: { isDemo: false } })
               }
@@ -71,9 +69,8 @@ export function HeroSection() {
             </Button>
 
             <Button
-              className="shadow-primary-hover"
-              background="primary"
-              foreground="foreground"
+              variant="secondary"
+              size="lg"
               onClick={() =>
                 navigate("/get-started", { state: { isDemo: true } })
               }

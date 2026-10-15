@@ -39,17 +39,18 @@ export function Paginator({
   return (
     <nav
       aria-label="Paginator"
-      className="mt-10 flex items-center justify-center gap-2 sm:gap-3"
+      className="mt-10 flex items-center justify-center gap-1"
     >
       <FabIcon
-        icon="chevronDoubleLeft"
+        icon="singleArrowLeft"
+        aria-label="Previous page"
+        variant="ghost"
+        size="sm"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={!canGoPrevious}
-        background="primary"
-        foreground="foreground"
       />
 
-      <div className="flex items-center gap-1.5 sm:gap-2">
+      <div className="flex items-center gap-1">
         {pages.map((page, index) => {
           const isEllipsis = page === "...";
           const previousPage = pages[index - 1];
@@ -59,7 +60,7 @@ export function Paginator({
             return (
               <span
                 key={`ellipsis-${previousPage}-${nextPage}`}
-                className="text-foreground inline-flex h-9 min-w-8 items-center justify-center text-sm sm:h-10 sm:min-w-10"
+                className="text-fg-faint inline-flex h-8 min-w-6 items-center justify-center text-[13px]"
               >
                 ...
               </span>
@@ -75,10 +76,11 @@ export function Paginator({
               onClick={() => typeof page === "number" && onPageChange(page)}
               aria-current={isActive ? "page" : undefined}
               className={clsx(
-                "inline-flex h-9 min-w-9 items-center justify-center rounded-[10px] px-2.5 text-sm transition-colors sm:h-10 sm:min-w-10 sm:px-3",
+                "inline-flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-lg border px-2 text-[13px] font-medium tabular-nums transition-colors",
+                "focus-visible:shadow-ring focus-visible:outline-none",
                 isActive
-                  ? "bg-accent text-foreground"
-                  : "bg-primary text-foreground hover:opacity-90"
+                  ? "border-line-strong bg-surface-2 text-fg"
+                  : "text-fg-muted hover:bg-surface-2 hover:text-fg border-transparent"
               )}
             >
               {page}
@@ -88,11 +90,12 @@ export function Paginator({
       </div>
 
       <FabIcon
-        icon="chevronDoubleRight"
+        icon="singleArrowRight"
+        aria-label="Next page"
+        variant="ghost"
+        size="sm"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={!canGoNext}
-        background="primary"
-        foreground="foreground"
       />
     </nav>
   );

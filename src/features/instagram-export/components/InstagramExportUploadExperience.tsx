@@ -62,9 +62,7 @@ export function InstagramExportUploadExperience({
             </Callout>
 
             <SignInButton mode="modal">
-              <Button background="accent" foreground="foreground">
-                Sign in or create a free account
-              </Button>
+              <Button>Sign in or create a free account</Button>
             </SignInButton>
           </div>
         </Container>
@@ -227,8 +225,6 @@ export function InstagramExportUploadExperience({
 
             <div data-page-animate="item">
               <Button
-                background="accent"
-                foreground="foreground"
                 icon="arrowRight"
                 iconPosition="right"
                 disabled={
