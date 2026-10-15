@@ -426,6 +426,8 @@ Rules:
 - Color is reserved for meaning: hierarchy comes from surfaces and lines; status colors always come with an icon or word; `fg-faint` and `data-5` are never used for essential text.
 - Never build Tailwind class names at runtime (`bg-${color}`): map props to full, static class strings so Tailwind can see them.
 - Actions: `Button` takes a role, never colors: `variant` (`primary` | `secondary` | `ghost` | `danger`), `size` (`sm` | `md` | `lg`), `loading`. Keep a single `primary` per view. Icon-only actions use `FabIcon`, which requires an `aria-label` and shares Button's variants via `buttonClasses`. Every interactive control shows `focus-visible:shadow-ring`.
+- Messages: `Callout` and `Toast` share `feedbackVariants` (`info` | `success` | `warning` | `danger`); surfaces stay neutral and the variant lives in the icon. Only an inline `Callout variant="danger"` is tinted, for errors that block the user, placed next to their cause. Toasts (`toastService.info/success/warning/danger`) are always neutral and only for transient outcomes; a blocking error is never only a toast.
+- Known cascade gotcha: the global `h1`–`h5` sizes in `src/index.css` are unlayered, so they beat Tailwind utilities on heading elements (`text-xl` on an `<h2>` has no effect). Use the important modifier (`text-xl!`) on headings until those rules move into `@layer base`.
 - Shared UI components should expose `className` when composition needs it.
 - Do not introduce a second styling system without explicit approval.
 
