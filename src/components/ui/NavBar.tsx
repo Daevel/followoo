@@ -43,7 +43,15 @@ function navLinkClass(isActive: boolean, size: "desktop" | "mobile") {
   );
 }
 
-export function NavBar() {
+type NavBarProps = {
+  /** Pins the bar to the top with a translucent background (homepage). */
+  sticky?: boolean;
+  /** Primary action shown in the bar only while `showCta` is true. */
+  cta?: { label: string; onClick: () => void };
+  showCta?: boolean;
+};
+
+export function NavBar({ sticky = false, cta, showCta = false }: NavBarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -64,7 +72,13 @@ export function NavBar() {
   const isActiveLink = (to: string) => location.pathname === to;
 
   return (
-    <header className="px-5 pt-[env(safe-area-inset-top)] md:px-10 lg:px-18">
+    <header
+      className={clsx(
+        "px-5 pt-[env(safe-area-inset-top)] md:px-10 lg:px-18",
+        sticky &&
+          "border-line-subtle bg-surface-0/80 sticky top-0 z-40 border-b backdrop-blur-md"
+      )}
+    >
       <nav
         id="navbar-inner"
         className="text-fg relative flex h-16 items-center justify-between md:h-20"
@@ -115,6 +129,7 @@ export function NavBar() {
             Updates
           </Link>
           <NavAuthEntry />
+          {cta && <NavCta cta={cta} visible={showCta} />}
         </div>
 
         <Link
@@ -127,6 +142,12 @@ export function NavBar() {
             Followoo
           </span>
         </Link>
+
+        {cta && (
+          <div className="ml-auto pr-2 lg:hidden">
+            <NavCta cta={cta} visible={showCta} />
+          </div>
+        )}
 
         <FabIcon
           icon={isMenuOpen ? "close" : "menu"}
@@ -168,5 +189,29 @@ export function NavBar() {
         </div>
       </nav>
     </header>
+  );
+}
+
+// Fades in once the page's own primary action has scrolled away, so there is
+// never more than one primary CTA on screen.
+function NavCta({
+  cta,
+  visible,
+}: {
+  cta: { label: string; onClick: () => void };
+  visible: boolean;
+}) {
+  return (
+    <div
+      inert={!visible}
+      className={clsx(
+        "transition-opacity duration-200",
+        visible ? "opacity-100" : "pointer-events-none opacity-0"
+      )}
+    >
+      <Button size="sm" onClick={cta.onClick}>
+        {cta.label}
+      </Button>
+    </div>
   );
 }
