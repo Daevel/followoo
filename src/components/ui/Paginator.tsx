@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { generatePaginator } from "@/lib";
 import { FabIcon } from "./FabIcon";
@@ -65,8 +66,21 @@ export function Paginator({
             );
           }
 
+          const isActive = page === currentPage;
+
           return (
-            <button key={`page-${page}`} type="button">
+            <button
+              key={`page-${page}`}
+              type="button"
+              onClick={() => typeof page === "number" && onPageChange(page)}
+              aria-current={isActive ? "page" : undefined}
+              className={clsx(
+                "inline-flex h-9 min-w-9 items-center justify-center rounded-[10px] px-2.5 text-sm transition-colors sm:h-10 sm:min-w-10 sm:px-3",
+                isActive
+                  ? "bg-accent text-foreground"
+                  : "bg-primary text-foreground hover:opacity-90"
+              )}
+            >
               {page}
             </button>
           );
