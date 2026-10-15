@@ -422,6 +422,9 @@ Rules:
 - Preserve the existing visual language unless the user asks for redesign.
 - Keep responsive behavior explicit for desktop and mobile.
 - Use existing design tokens/classes where present in `src/index.css`.
+- During the redesign two token layers coexist in `src/index.css`: the legacy one (`color-primary`, `color-accent`, `color-bg`, `color-foreground`) and the semantic one (`surface-0/1/2`, `line-subtle/strong`, `fg`/`fg-muted`/`fg-faint`, `brand`/`brand-hover`/`brand-fg`/`on-brand`, `success`/`warning`/`danger`/`danger-fill`, `data-1…5`, `radius-control`/`radius-card`, `shadow-elev-1`/`shadow-elev-2`/`shadow-ring`). New or redesigned components use only the semantic layer; a legacy token is removed once nothing references it. `src/stories/DesignTokens.stories.tsx` shows the semantic layer.
+- Color is reserved for meaning: hierarchy comes from surfaces and lines; status colors always come with an icon or word; `fg-faint` and `data-5` are never used for essential text.
+- Never build Tailwind class names at runtime (`bg-${color}`): map props to full, static class strings so Tailwind can see them.
 - Shared UI components should expose `className` when composition needs it.
 - Do not introduce a second styling system without explicit approval.
 

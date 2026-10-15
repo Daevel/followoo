@@ -12,8 +12,8 @@ Generi story Storybook per i componenti UI di Followoo. Ogni file di story DEVE 
 - **Storybook** con framework `@storybook/react-vite`
 - **CSF 3** (Component Story Format) — story basate su oggetti, niente `Template.bind({})` di CSF 2
 - Tipi importati da `@storybook/react-vite`: `Meta`, `StoryObj`
-- Styling: **Tailwind CSS 4**, con i design token definiti in `src/index.css` (blocco `@theme inline`: `--color-primary`, `--color-bg`, `--color-accent`, `--color-foreground`, font, tipografia, breakpoint)
-- Il preview (`.storybook/preview.tsx`) importa `../src/index.css`, avvolge ogni story in `MemoryRouter` e applica `bg-background text-foreground p-6`
+- Styling: **Tailwind CSS 4**, con i design token definiti in `src/index.css` (blocco `@theme inline`): i token storici (`--color-primary`, `--color-bg`, `--color-accent`, `--color-foreground`, font, tipografia, breakpoint) e il livello semantico del redesign (`surface-*`, `line-*`, `fg*`, `brand*`, stati, `data-1…5`, raggi, ombre), visibile nella story `Foundations/DesignTokens`
+- Il preview (`.storybook/preview.tsx`) importa `../src/index.css`, avvolge ogni story in `MemoryRouter` e applica `bg-bg text-foreground p-6`
 
 ## File Naming e Posizione
 
