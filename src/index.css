@@ -168,16 +168,6 @@
   }
 }
 
-/* DISPLAY SIZES: intentional unlayered overrides for landing hero titles */
-
-.h1-60 {
-  font-size: var(--h1-60);
-}
-
-.h1-128 {
-  font-size: var(--h1-128);
-}
-
 /* TEXT STYLES: in @layer components so utilities can refine them */
 @layer components {
   /* BODY SIZES */
@@ -285,18 +275,6 @@
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(99, 102, 241, 0.8) rgba(255, 255, 255, 0.05);
-}
-
-/* HERO SECTION*/
-
-.hero-h1 {
-  font-size: clamp(40px, 5vw, 60px);
-  line-height: var(--lh-headers);
-}
-
-.hero-h3 {
-  font-size: clamp(20px, 2.5vw, 24px);
-  line-height: var(--lh-headers);
 }
 
 /* SKELETON ANIMATIONS */

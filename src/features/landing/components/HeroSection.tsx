@@ -1,66 +1,67 @@
-import { useRef } from "react";
+import type { RefObject } from "react";
 import { useNavigate } from "react-router";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Icon, type IconName } from "@/components/ui/Icon";
+import { Container } from "@/components/ui/Container";
+import { Icon } from "@/components/ui/Icon";
+import { ProductPreview } from "./ProductPreview";
 
-export function HeroSection() {
+const proofPoints = ["100% local", "No API calls", "Open Source (MIT)"];
+
+type HeroSectionProps = {
+  /** Wraps the hero actions; the homepage watches it to reveal the nav CTA. */
+  ctaRef?: RefObject<HTMLDivElement | null>;
+};
+
+export function HeroSection({ ctaRef }: HeroSectionProps) {
   const navigate = useNavigate();
-  const sectionRef = useRef<HTMLElement | null>(null);
-
-  const coinTags = [
-    {
-      description: "100% local",
-      iconName: "laptop" as IconName,
-    },
-    {
-      description: "No API calls",
-      iconName: "linkOff" as IconName,
-    },
-    {
-      description: "Open Source (MIT)",
-      iconName: "code" as IconName,
-    },
-  ];
 
   return (
-    <section ref={sectionRef} data-section="hero" className="pt-16 md:pt-28">
-      <div className="mx-auto flex max-w-6xl flex-col items-center px-4 text-center">
-        <div className="hero-copy max-w-4xl">
-          <h1
-            data-animate="hero-title"
-            className="hero-title hero-h1 max-w-2xl text-3xl leading-[1.08] font-semibold sm:text-4xl sm:leading-tight md:text-6xl"
-          >
-            <span className="sm:hidden">
-              See who doesn&apos;t follow you back on{" "}
-              <span className="from-accent/90 to-primary bg-linear-to-r bg-clip-text text-transparent">
-                Instagram
-              </span>
-            </span>
-
-            <span className="hidden sm:inline">
-              Discover who doesn&apos;t follow you back on{" "}
-              <span className="from-accent/90 to-primary bg-linear-to-r bg-clip-text text-transparent">
-                Instagram
-              </span>
-            </span>
-          </h1>
-
-          <div
-            data-animate="hero-trust"
-            className="hero-trust text-accent mt-5 flex items-center justify-center gap-2 sm:mt-6 sm:gap-3"
-          >
-            <Icon name="shield" color="accent" width={24} height={24} />
-            <p className="text-lg font-semibold sm:text-xl">
+    <section data-section="hero" className="pt-12 pb-20 md:pt-20 md:pb-24">
+      <Container
+        size="app"
+        className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_520px] lg:gap-14"
+      >
+        <div className="flex min-w-0 flex-col items-start text-start">
+          <div data-animate="hero-trust">
+            <Badge
+              tone="brand"
+              icon={
+                <Icon
+                  name="shield"
+                  color="current"
+                  width={12}
+                  height={12}
+                  aria-hidden="true"
+                />
+              }
+            >
               Your data never leaves your device
-            </p>
+            </Badge>
           </div>
 
+          <h1
+            data-animate="hero-title"
+            className="text-fg mt-5 text-[40px] leading-[1.05] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-[56px]"
+          >
+            See who doesn&apos;t follow you back on{" "}
+            <span className="text-brand-fg">Instagram</span>.
+          </h1>
+
+          <p className="text-fg-muted mt-5 max-w-[470px] text-base leading-7 sm:text-lg">
+            Upload your official Instagram export: Followoo analyzes it in your
+            browser and shows followers, mutuals and recent unfollowers.
+          </p>
+
           <div
+            ref={ctaRef}
             data-animate="hero-actions"
-            className="hero-actions mt-6 flex w-full max-w-sm flex-col justify-center gap-3 sm:mt-8 sm:max-w-none sm:flex-row sm:gap-2"
+            className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row"
           >
             <Button
               size="lg"
+              icon="arrowRight"
+              iconPosition="right"
               onClick={() =>
                 navigate("/get-started", { state: { isDemo: false } })
               }
@@ -71,6 +72,7 @@ export function HeroSection() {
             <Button
               variant="secondary"
               size="lg"
+              icon="eye"
               onClick={() =>
                 navigate("/get-started", { state: { isDemo: true } })
               }
@@ -78,40 +80,32 @@ export function HeroSection() {
               Try demo
             </Button>
           </div>
-        </div>
 
-        <div
-          data-animate="hero-visual"
-          className="hero-visual mt-8 w-full max-w-3xl sm:mt-12"
-        >
-          <img
-            src="images/double-phone-hero-landing-page.svg"
-            alt="Preview of Followoo results on mobile"
-            className="mx-auto block h-auto w-[88%] max-w-85 sm:w-full sm:max-w-2xl md:max-w-3xl"
-          />
-        </div>
-
-        <div className="hero-coins mt-10 grid w-full max-w-5xl grid-cols-1 gap-6 md:mt-12 md:grid-cols-3 md:gap-8">
-          {coinTags.map((item) => (
-            <div
-              key={item.description}
-              data-animate="hero-coin"
-              className="hero-coin-item flex flex-col items-center gap-4 text-center"
-            >
-              <div className="bg-accent shadow-accent flex h-15 w-15 items-center justify-center rounded-full">
+          <ul className="text-fg-muted mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[13px]">
+            {proofPoints.map((point) => (
+              <li
+                key={point}
+                data-animate="hero-coin"
+                className="inline-flex items-center gap-1.5"
+              >
                 <Icon
-                  name={item.iconName}
-                  color="foreground"
-                  width={30}
-                  height={30}
+                  name="check"
+                  color="current"
+                  width={14}
+                  height={14}
+                  className="text-success"
+                  aria-hidden="true"
                 />
-              </div>
-
-              <h3>{item.description}</h3>
-            </div>
-          ))}
+                {point}
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
+
+        <div data-animate="hero-visual" className="min-w-0">
+          <ProductPreview />
+        </div>
+      </Container>
     </section>
   );
 }
