@@ -81,9 +81,7 @@ export function RelationshipHealthInsight({
           style={{ width: `${score}%` }}
         />
       </div>
-
-      {/* `!`: the global unlayered h3 size in index.css beats utilities */}
-      <h3 className="text-fg mt-4 text-base! leading-snug font-semibold break-words">
+      <h3 className="text-fg mt-4 text-base leading-snug font-semibold break-words">
         {insight.title}
       </h3>
       <p className="text-fg-muted mt-1 max-w-xl text-[13px] leading-[1.55]">

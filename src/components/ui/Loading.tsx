@@ -75,10 +75,9 @@ export const Loading = forwardRef<HTMLDivElement, LoadingProps>(
               </p>
 
               <div className="flex items-baseline justify-between gap-4">
-                {/* `!`: the global unlayered h2 size in index.css beats utilities */}
                 <h2
                   data-loading-title
-                  className="text-fg text-xl! leading-tight font-semibold tracking-[-0.02em]"
+                  className="text-fg text-xl leading-tight font-semibold tracking-[-0.02em]"
                 >
                   Analyzing your data
                 </h2>

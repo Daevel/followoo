@@ -27,8 +27,7 @@ export function ChartCard({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          {/* `!`: the global unlayered h3 size in index.css beats utilities */}
-          <h3 className="text-fg text-base! leading-snug font-semibold tracking-[-0.01em]">
+          <h3 className="text-fg text-base leading-snug font-semibold tracking-[-0.01em]">
             {title}
           </h3>
           {description && (
