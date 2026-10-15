@@ -43,8 +43,8 @@ function SupportContent() {
         description: "Email sent successfully.",
       });
     if (submitState.error)
-      return toastService.warning({
-        title: "Warning",
+      return toastService.danger({
+        title: "Message not sent",
         description: `An error has occurred: ${submitState.message.toString()}`,
       });
   }, [submitState]);

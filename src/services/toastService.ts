@@ -1,4 +1,4 @@
-type ToastVariant = "info" | "success" | "warning";
+type ToastVariant = "info" | "success" | "warning" | "danger";
 
 export type ToastPayload = {
   title: string;
@@ -47,5 +47,10 @@ export const toastService = {
 
   warning(payload: Omit<ToastPayload, "variant">) {
     emit({ ...payload, variant: "warning" });
+  },
+
+  /** A failed action the user can retry. Errors that block the flow belong in an inline danger Callout, not a toast. */
+  danger(payload: Omit<ToastPayload, "variant">) {
+    emit({ ...payload, variant: "danger" });
   },
 };

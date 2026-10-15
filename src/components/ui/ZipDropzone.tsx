@@ -28,7 +28,7 @@ export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
 
         if (firstError?.code === "file-invalid-type") {
           onError?.("Please upload a valid ZIP file.");
-          toastService.warning({
+          toastService.danger({
             title: "Invalid file",
             description: "Please upload a valid ZIP file.",
           });
@@ -37,7 +37,7 @@ export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
 
         if (firstError?.code === "too-many-files") {
           onError?.("You can upload only one ZIP file.");
-          toastService.warning({
+          toastService.danger({
             title: "Too many files",
             description: "You can upload only one ZIP file.",
           });
@@ -45,7 +45,7 @@ export function ZipDropzone({ file, onFileChange, onError }: ZipDropzoneProps) {
         }
 
         onError?.("File upload failed. Please try again.");
-        toastService.warning({
+        toastService.danger({
           title: "File upload failed",
           description: "Please try again.",
         });

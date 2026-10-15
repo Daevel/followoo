@@ -7,11 +7,11 @@ export type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-brand text-on-brand shadow-[inset_0_1px_0_rgb(255_255_255/0.16),0_1px_2px_rgb(0_0_0/0.4)] enabled:hover:bg-brand-hover",
+    "border-transparent bg-brand text-on-brand shadow-[inset_0_1px_0_rgb(255_255_255/0.16),0_1px_2px_rgb(0_0_0/0.4)] enabled:hover:bg-brand-hover",
   secondary:
     "border-line-strong bg-surface-2 text-fg enabled:hover:border-fg-faint",
   ghost:
-    "bg-transparent text-fg-muted enabled:hover:bg-surface-2 enabled:hover:text-fg",
+    "border-transparent bg-transparent text-fg-muted enabled:hover:bg-surface-2 enabled:hover:text-fg",
   danger:
     "border-danger/30 bg-danger/10 text-danger enabled:hover:bg-danger/15",
 };
@@ -34,7 +34,8 @@ export const buttonIconSize: Record<ButtonSize, number> = {
   lg: 18,
 };
 
-// Shared by Button and FabIcon so both stay one visual family.
+// Shared by Button and FabIcon so both stay one visual family. Each variant
+// sets its own border color: a base border color would override it.
 export function buttonClasses({
   variant,
   size,
@@ -45,7 +46,7 @@ export function buttonClasses({
   iconOnly?: boolean;
 }) {
   return clsx(
-    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-control border border-transparent font-medium tracking-[-0.005em] transition-colors",
+    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-control border font-medium tracking-[-0.005em] transition-colors",
     "focus-visible:shadow-ring focus-visible:outline-none",
     "disabled:cursor-not-allowed disabled:opacity-45",
     variantClasses[variant],

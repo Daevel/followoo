@@ -1,48 +1,15 @@
 import clsx from "clsx";
+import { type FeedbackVariant, feedbackVariants } from "./feedbackVariants";
 import { Icon, type IconName } from "./Icon";
-
-type CalloutVariant = "info" | "success" | "warning";
 
 interface CalloutProps {
   title: string;
   children: React.ReactNode;
-  variant?: CalloutVariant;
+  /** `danger` is only for errors that block the user; show it next to the cause. */
+  variant?: FeedbackVariant;
   icon?: IconName;
   className?: string;
 }
-
-const variantStyles: Record<
-  CalloutVariant,
-  {
-    container: string;
-    title: string;
-    body: string;
-    iconColor: "primary" | "accent" | "bg" | "foreground";
-    defaultIcon: IconName;
-  }
-> = {
-  info: {
-    container: "bg-primary/10 border border-primary ",
-    title: "text-primary",
-    body: "text-foreground",
-    iconColor: "primary",
-    defaultIcon: "help",
-  },
-  success: {
-    container: "bg-primary/10 border border-primary ",
-    title: "text-primary",
-    body: "text-foreground",
-    iconColor: "primary",
-    defaultIcon: "check",
-  },
-  warning: {
-    container: "bg-accent/10 border border-accent ",
-    title: "text-accent",
-    body: "text-foreground",
-    iconColor: "accent",
-    defaultIcon: "warning",
-  },
-};
 
 export function Callout({
   title,
@@ -51,31 +18,34 @@ export function Callout({
   icon,
   className,
 }: CalloutProps) {
-  const styles = variantStyles[variant];
-  const iconName = icon ?? styles.defaultIcon;
+  const { icon: defaultIcon, iconClass } = feedbackVariants[variant];
+  const isBlocking = variant === "danger";
 
   return (
     <div
-      className={clsx("w-full rounded-[10px] p-4", styles.container, className)}
+      role={isBlocking ? "alert" : undefined}
+      className={clsx(
+        "flex w-full items-start gap-3 rounded-control border px-4 py-3.5",
+        isBlocking
+          ? "border-danger/25 bg-danger/6"
+          : "border-line-subtle bg-surface-1",
+        className
+      )}
     >
-      <div className="flex items-start gap-3">
-        <Icon
-          name={iconName}
-          color={styles.iconColor}
-          width={24}
-          height={24}
-          className="mt-0.5 shrink-0"
-          aria-hidden="true"
-        />
+      <Icon
+        name={icon ?? defaultIcon}
+        color="current"
+        width={18}
+        height={18}
+        className={clsx("mt-px shrink-0", iconClass)}
+        aria-hidden="true"
+      />
 
-        <div className="flex flex-col gap-1">
-          <p className={clsx("text-base font-semibold", styles.title)}>
-            {title}
-          </p>
+      <div className="flex min-w-0 flex-col gap-0.5">
+        <p className="text-fg text-sm font-semibold">{title}</p>
 
-          <div className={clsx("text-sm leading-6", styles.body)}>
-            {children}
-          </div>
+        <div className="text-fg-muted text-[13px] leading-[1.55]">
+          {children}
         </div>
       </div>
     </div>

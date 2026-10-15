@@ -153,7 +153,7 @@ export function InstagramExportUploadExperience({
               (fileValidationState === "invalid" || uploadError) &&
               fileValidationMessage && (
                 <div data-page-animate="item" className="w-full">
-                  <Callout title="Invalid file" variant="warning">
+                  <Callout title="Invalid file" variant="danger">
                     {fileValidationMessage}
                   </Callout>
                 </div>

@@ -1,9 +1,13 @@
 import clsx from "clsx";
 import { useCallback, useEffect, useRef } from "react";
 import { useDismissibleNotificationAnimation } from "@/animations/hooks/useDismissibleNotificationAnimation";
-import { Icon, type IconName } from "./Icon";
+import { Button } from "./Button";
+import { type FeedbackVariant, feedbackVariants } from "./feedbackVariants";
+import { Icon } from "./Icon";
 
-export type ToastVariant = "info" | "success" | "warning";
+// Toasts float over unpredictable content, so every variant (errors too)
+// stays on an opaque, neutral surface: the variant shows only in the icon.
+export type ToastVariant = FeedbackVariant;
 
 export type ToastItem = {
   id: string;
@@ -21,39 +25,6 @@ type ToastProps = {
   toast: ToastItem;
   onClose: (id: string) => void;
   duration?: number;
-};
-
-const variantStyles: Record<
-  ToastVariant,
-  {
-    container: string;
-    title: string;
-    body: string;
-    iconColor: "primary" | "accent" | "bg" | "foreground";
-    defaultIcon: IconName;
-  }
-> = {
-  info: {
-    container: "border border-primary bg-primary/10",
-    title: "text-primary",
-    body: "text-foreground",
-    iconColor: "primary",
-    defaultIcon: "help",
-  },
-  success: {
-    container: "border border-primary bg-primary/10",
-    title: "text-primary",
-    body: "text-foreground",
-    iconColor: "primary",
-    defaultIcon: "check",
-  },
-  warning: {
-    container: "border border-accent bg-accent/10",
-    title: "text-accent",
-    body: "text-foreground",
-    iconColor: "accent",
-    defaultIcon: "warning",
-  },
 };
 
 export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
@@ -94,69 +65,57 @@ export function Toast({ toast, onClose, duration = 4000 }: ToastProps) {
     };
   }, [duration, handleClose]);
 
-  const styles = variantStyles[toast.variant];
+  const { icon, iconClass } = feedbackVariants[toast.variant];
 
   return (
     <div
       ref={rootRef}
       role="status"
       aria-live="polite"
-      className={clsx(
-        "pointer-events-auto box-border w-full rounded-[10px] p-4 shadow-lg backdrop-blur-sm",
-        styles.container
-      )}
+      className="border-line-strong bg-surface-2 shadow-elev-2 pointer-events-auto box-border w-full rounded-xl border p-4"
     >
       <div className="grid grid-cols-[auto_1fr_auto] items-start gap-3">
         <Icon
-          name={styles.defaultIcon}
-          color={styles.iconColor}
-          width={24}
-          height={24}
-          className="mt-0.5 shrink-0"
+          name={icon}
+          color="current"
+          width={18}
+          height={18}
+          className={clsx("mt-px shrink-0", iconClass)}
           aria-hidden="true"
         />
 
         <div className="min-w-0">
-          <p className={clsx("text-sm font-semibold", styles.title)}>
-            {toast.title}
-          </p>
+          <p className="text-fg text-sm font-semibold">{toast.title}</p>
 
           {toast.description ? (
-            <p
-              className={clsx(
-                "mt-1 text-sm leading-5 break-words",
-                styles.body
-              )}
-            >
+            <p className="text-fg-muted mt-0.5 text-[13px] leading-5 break-words">
               {toast.description}
             </p>
           ) : null}
 
           {toast.action ? (
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={handleActionClick}
-              className={clsx(
-                "mt-3 cursor-pointer text-sm font-semibold underline underline-offset-4 transition hover:opacity-80",
-                styles.title
-              )}
+              className="mt-3"
             >
               {toast.action.label}
-            </button>
+            </Button>
           ) : null}
         </div>
 
         <button
           type="button"
           onClick={handleClose}
-          className="text-foreground/60 hover:text-foreground shrink-0 cursor-pointer transition"
+          className="text-fg-faint hover:text-fg focus-visible:shadow-ring shrink-0 cursor-pointer rounded-md transition-colors focus-visible:outline-none"
           aria-label="Dismiss notification"
         >
           <Icon
             name="close"
-            color="foreground"
-            width={24}
-            height={24}
+            color="current"
+            width={16}
+            height={16}
             aria-hidden="true"
           />
         </button>
