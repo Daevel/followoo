@@ -6,6 +6,7 @@ import { NetworkVolatilityCard } from "@/components/ui/charts/NetworkVolatilityC
 import { RecentUnfollowActivityChart } from "@/components/ui/charts/RecentUnfollowActivityChart";
 import { ResultsPieChart } from "@/components/ui/charts/ResultPieChart";
 import { DropdownTabButton } from "@/components/ui/DropdownTabButton";
+import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
 import { NavBar } from "@/components/ui/NavBar";
 import { Paginator } from "@/components/ui/Paginator";
@@ -322,23 +323,19 @@ export function ResultsExperience({
                   data-animate="hero-item"
                   className="mt-8 flex w-full flex-col gap-4 sm:gap-5 md:flex-row md:items-end md:justify-between"
                 >
-                  <div className="w-full md:max-w-lg">
-                    <label
-                      htmlFor="search-users"
-                      className="l2-r text-foreground/80 mb-2 block text-start"
-                    >
-                      Search username
-                    </label>
-
+                  <Field
+                    label="Search username"
+                    htmlFor="search-users"
+                    className="md:max-w-lg"
+                  >
                     <Input
                       id="search-users"
                       type="text"
                       placeholder="Type a username..."
                       value={searchQuery}
                       onChange={(e) => handleSearchQueryChange(e.target.value)}
-                      className="w-full"
                     />
-                  </div>
+                  </Field>
 
                   <div className="w-full md:w-auto">
                     <SortSelect

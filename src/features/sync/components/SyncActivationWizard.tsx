@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Field } from "@/components/ui/Field";
 import { Icon } from "@/components/ui/Icon";
 import { Input } from "@/components/ui/Input";
 import { generateRecoveryCode } from "@/features/sync/crypto";
@@ -118,31 +119,33 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
               history.
             </p>
 
-            <Input
-              type="password"
-              placeholder="Passphrase"
-              autoComplete="new-password"
-              hasError={!!passphraseForm.formState.errors.passphrase}
-              {...passphraseForm.register("passphrase")}
-            />
-            {passphraseForm.formState.errors.passphrase && (
-              <p className="text-accent text-xs">
-                {passphraseForm.formState.errors.passphrase.message}
-              </p>
-            )}
+            <Field
+              label="Passphrase"
+              htmlFor="sync-passphrase"
+              error={passphraseForm.formState.errors.passphrase?.message}
+            >
+              <Input
+                id="sync-passphrase"
+                type="password"
+                autoComplete="new-password"
+                hasError={!!passphraseForm.formState.errors.passphrase}
+                {...passphraseForm.register("passphrase")}
+              />
+            </Field>
 
-            <Input
-              type="password"
-              placeholder="Confirm passphrase"
-              autoComplete="new-password"
-              hasError={!!passphraseForm.formState.errors.confirmPassphrase}
-              {...passphraseForm.register("confirmPassphrase")}
-            />
-            {passphraseForm.formState.errors.confirmPassphrase && (
-              <p className="text-accent text-xs">
-                {passphraseForm.formState.errors.confirmPassphrase.message}
-              </p>
-            )}
+            <Field
+              label="Confirm passphrase"
+              htmlFor="sync-confirm-passphrase"
+              error={passphraseForm.formState.errors.confirmPassphrase?.message}
+            >
+              <Input
+                id="sync-confirm-passphrase"
+                type="password"
+                autoComplete="new-password"
+                hasError={!!passphraseForm.formState.errors.confirmPassphrase}
+                {...passphraseForm.register("confirmPassphrase")}
+              />
+            </Field>
 
             <div>
               <Button
