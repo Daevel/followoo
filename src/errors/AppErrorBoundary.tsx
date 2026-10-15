@@ -64,19 +64,13 @@ export class AppErrorBoundary extends React.Component<
                 </p>
 
                 <div className="mt-8 flex justify-center gap-3">
-                  <Button
-                    type="button"
-                    background="accent"
-                    foreground="foreground"
-                    onClick={this.handleReload}
-                  >
+                  <Button type="button" onClick={this.handleReload}>
                     Reload page
                   </Button>
 
                   <Button
                     type="button"
-                    background="primary"
-                    foreground="foreground"
+                    variant="secondary"
                     onClick={() => {
                       window.location.href = "/";
                     }}

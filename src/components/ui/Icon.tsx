@@ -66,13 +66,15 @@ const icons = {
 
 export type IconName = keyof typeof icons;
 
-export type IconColor = "primary" | "accent" | "bg" | "foreground";
+export type IconColor = "primary" | "accent" | "bg" | "foreground" | "current";
 
 const colorClasses: Record<IconColor, string> = {
   primary: "text-primary",
   accent: "text-accent",
   bg: "text-bg",
   foreground: "text-foreground",
+  // inherits the parent's text color (e.g. the variant of a Button)
+  current: "",
 };
 
 type Props = {

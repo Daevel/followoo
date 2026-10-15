@@ -21,9 +21,7 @@ export function UnknownErrorPage() {
             a moment.
           </p>
           <div className="flex flex-row gap-3 max-sm:flex-col">
-            <Button background="primary" onClick={() => navigate("/")}>
-              Back to homepage
-            </Button>
+            <Button onClick={() => navigate("/")}>Back to homepage</Button>
           </div>
         </div>
       </div>
