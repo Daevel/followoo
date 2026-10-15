@@ -86,7 +86,8 @@ export default function App() {
         <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[38%]">
           <div
             data-animate="footer-brand"
-            className="text-foreground text-[120px] leading-none font-semibold whitespace-nowrap md:text-[180px] lg:text-[220px]"
+            aria-hidden="true"
+            className="text-surface-2 text-[120px] leading-none font-semibold tracking-[-0.06em] whitespace-nowrap select-none md:text-[180px] lg:text-[220px]"
           >
             Followoo
           </div>
