@@ -54,7 +54,6 @@ export function PrivacySection() {
             {cards.map((card) => (
               <div key={card.title} data-animate="privacy-card">
                 <Card
-                  className="shadow-primary-hover"
                   title={card.title}
                   description={card.text}
                   iconName={card.iconName}
