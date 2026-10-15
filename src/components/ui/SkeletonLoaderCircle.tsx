@@ -1,31 +1,23 @@
 import clsx from "clsx";
 
 type SpinnerSize = "sm" | "md" | "lg";
-type SpinnerColor = "primary" | "accent" | "foreground" | "white";
 
 type SpinnerProps = {
   size?: SpinnerSize;
-  color?: SpinnerColor;
   className?: string;
   label?: string;
 };
 
+// One color everywhere: brand-fg arc on a surface-2 track. Inside a Button
+// use its `loading` prop instead of composing this spinner by hand.
 const sizeClasses: Record<SpinnerSize, string> = {
-  sm: "h-4 w-4 border-2",
-  md: "h-6 w-6 border-2",
-  lg: "h-10 w-10 border-[3px]",
-};
-
-const colorClasses: Record<SpinnerColor, string> = {
-  primary: "border-primary/20 border-t-primary",
-  accent: "border-accent/20 border-t-accent",
-  foreground: "border-foreground/20 border-t-foreground",
-  white: "border-white/20 border-t-white",
+  sm: "size-3.5 border-[1.5px]",
+  md: "size-5 border-2",
+  lg: "size-8 border-2",
 };
 
 export function SkeletonLoaderCircle({
   size = "md",
-  color = "primary",
   className,
   label = "Loading",
 }: SpinnerProps) {
@@ -37,9 +29,8 @@ export function SkeletonLoaderCircle({
     >
       <div
         className={clsx(
-          "animate-spin rounded-full border-solid",
-          sizeClasses[size],
-          colorClasses[color]
+          "border-surface-2 border-t-brand-fg animate-spin rounded-full border-solid [animation-duration:0.8s]",
+          sizeClasses[size]
         )}
       />
     </div>

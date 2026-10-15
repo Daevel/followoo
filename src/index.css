@@ -303,11 +303,7 @@ h5 {
 }
 
 .skeleton-base {
-  background-color: color-mix(
-    in srgb,
-    var(--color-foreground) 10%,
-    transparent
-  );
+  background-color: var(--color-surface-2);
 }
 
 .skeleton-wave-animation {
@@ -323,10 +319,10 @@ h5 {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    color-mix(in srgb, var(--color-foreground) 8%, transparent) 35%,
-    color-mix(in srgb, var(--color-foreground) 28%, transparent) 50%,
-    color-mix(in srgb, var(--color-foreground) 8%, transparent) 65%,
+    rgb(255 255 255 / 0.02) 35%,
+    rgb(255 255 255 / 0.06) 50%,
+    rgb(255 255 255 / 0.02) 65%,
     transparent 100%
   );
-  animation: skeletonWave 1.35s ease-in-out infinite;
+  animation: skeletonWave 1.6s ease-in-out infinite;
 }
