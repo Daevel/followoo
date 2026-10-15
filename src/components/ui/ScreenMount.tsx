@@ -12,12 +12,16 @@ export type ScreenMountPosition =
   | "center";
 
 const positionClassNameMap: Record<ScreenMountPosition, string> = {
-  "top-left": "top-4 left-4 items-start",
-  "top-right": "top-4 right-4 items-end",
-  "bottom-left": "bottom-4 left-4 items-start",
-  "bottom-right": "bottom-4 right-4 items-end",
-  "top-center": "top-4 left-1/2 -translate-x-1/2 items-center",
-  "bottom-center": "bottom-4 left-1/2 -translate-x-1/2 items-center",
+  "top-left": "top-[calc(1rem+env(safe-area-inset-top))] left-4 items-start",
+  "top-right": "top-[calc(1rem+env(safe-area-inset-top))] right-4 items-end",
+  "bottom-left":
+    "bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 items-start",
+  "bottom-right":
+    "bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 items-end",
+  "top-center":
+    "top-[calc(1rem+env(safe-area-inset-top))] left-1/2 -translate-x-1/2 items-center",
+  "bottom-center":
+    "bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 items-center",
   center: "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center",
 };
 

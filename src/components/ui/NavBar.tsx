@@ -57,7 +57,7 @@ export function NavBar() {
   const isActiveLink = (to: string) => location.pathname === to;
 
   return (
-    <header className="px-5 md:px-10 lg:px-18">
+    <header className="px-5 pt-[env(safe-area-inset-top)] md:px-10 lg:px-18">
       <nav
         id="navbar-inner"
         className="text-foreground relative flex h-20 items-center justify-between md:h-24"
@@ -171,7 +171,7 @@ export function NavBar() {
         <div
           id="mobile-navigation"
           className={clsx(
-            "bg-background/95 absolute top-full left-0 z-50 w-full overflow-hidden rounded-[10px] border border-white/10 shadow-lg backdrop-blur-md transition-all duration-300 lg:hidden",
+            "bg-bg/95 absolute top-full left-0 z-50 w-full overflow-hidden rounded-[10px] border border-white/10 shadow-lg backdrop-blur-md transition-all duration-300 lg:hidden",
             isMenuOpen
               ? "pointer-events-auto mt-2 opacity-100"
               : "pointer-events-none mt-0 opacity-0"

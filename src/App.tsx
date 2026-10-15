@@ -57,7 +57,7 @@ export default function App() {
   useLandingPageAnimations(rootRef);
 
   return (
-    <div ref={rootRef} className="bg-background w-full min-h-screen">
+    <div ref={rootRef} className="bg-bg w-full min-h-screen">
       <Seo
         title="Followoo - Private Instagram Followers Analyzer"
         description="Analyze your Instagram export locally in your browser. Compare followers, following, mutuals and unfollowers without login or server-side file uploads."
@@ -77,7 +77,7 @@ export default function App() {
 
       <section
         data-section="footer-signature"
-        className="bg-background text-foreground relative h-180 overflow-hidden px-18 pt-10 lg:h-130"
+        className="bg-bg text-foreground relative h-180 overflow-hidden px-18 pt-10 lg:h-130"
       >
         <div data-animate="footer-signature">
           <FooterSignature />

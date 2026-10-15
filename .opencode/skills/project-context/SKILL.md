@@ -106,6 +106,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - Vercel should serve prerendered public SEO routes from the generated static files; only SPA-only routes such as `/results` should rewrite to `/index.html`.
 - PWA service worker registration, update prompts, and manifest injection are handled by `vite-plugin-pwa`; do not add a manual `public/sw.js` or manual `/manifest.json` link.
 - PWA install and update prompts use the global toast system via `src/features/pwa-install/hooks/usePwaInstallPrompt.ts` and `src/pwa/usePwaUpdateToast.ts`.
+- The viewport uses `viewport-fit=cover` with the iOS `black-translucent` status bar, so in the installed app the page extends under the notch/Dynamic Island and home indicator: anything pinned to a screen edge (header, `ScreenMount` toasts, future bottom bars) must offset itself with `env(safe-area-inset-*)`. Manifest `background_color`/`theme_color` and `<meta name="theme-color">` match `color-bg`; change them together with that token.
 - `src/App.tsx` is the landing page composition.
 - Page-level routes live in `src/pages`.
 - Shared UI lives in `src/components/ui`.

@@ -6,7 +6,7 @@ const preview: Preview = {
   decorators: [
     (Story) => (
       <MemoryRouter>
-        <div className="min-h-screen bg-background text-foreground p-6">
+        <div className="min-h-screen bg-bg text-foreground p-6">
           <Story />
         </div>
       </MemoryRouter>
