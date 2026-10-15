@@ -70,7 +70,7 @@ export default function App() {
     <div ref={rootRef} className="bg-bg w-full min-h-screen">
       <Seo
         title="Followoo - Private Instagram Followers Analyzer"
-        description="Analyze your Instagram export locally in your browser. Compare followers, following, mutuals and unfollowers without login or server-side file uploads."
+        description="Analyze your Instagram export locally in your browser. Compare followers, following, mutuals and unfollowers without an Instagram login or server-side file uploads."
         image={`${SITE_URL}/icons/OG.png`}
         canonical={SITE_URL}
         schemaMarkup={homeSchemaMarkup}
