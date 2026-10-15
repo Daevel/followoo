@@ -1,132 +1,71 @@
-import clsx from "clsx";
-import { Icon } from "@/components/ui/Icon";
+import { Badge, type BadgeTone } from "@/components/ui/Badge";
+import { Icon, type IconName } from "@/components/ui/Icon";
 import type { NetworkVolatilityResult } from "@/types/instagram.types";
+import { ChartCard, ChartStats } from "./ChartCard";
 
 type NetworkVolatilityCardProps = {
   volatility: NetworkVolatilityResult;
 };
 
-function getVolatilityConfig(level: "stable" | "moderate" | "high") {
-  const config = {
-    stable: {
-      icon: "check" as const,
-      iconColor: "text-primary",
-      bgColor: "bg-primary/10",
-      borderColor: "border-primary/30",
-      labelColor: "text-primary",
-      label: "Stable",
-    },
-    moderate: {
-      icon: "warning" as const,
-      iconColor: "text-yellow-500",
-      bgColor: "bg-yellow-500/10",
-      borderColor: "border-yellow-500/30",
-      labelColor: "text-yellow-500",
-      label: "Moderate",
-    },
-    high: {
-      icon: "singleArrowUp" as const,
-      iconColor: "text-accent",
-      bgColor: "bg-accent/10",
-      borderColor: "border-accent/30",
-      labelColor: "text-accent",
-      label: "High",
-    },
-  };
-
-  return config[level];
-}
+// Level as icon + word in a badge; the numbers stay in neutral text.
+const levelStyles: Record<
+  "stable" | "moderate" | "high",
+  { label: string; icon: IconName; tone: BadgeTone }
+> = {
+  stable: { label: "Stable", icon: "check", tone: "success" },
+  moderate: { label: "Moderate", icon: "warning", tone: "warning" },
+  high: { label: "High", icon: "singleArrowUp", tone: "danger" },
+};
 
 export function NetworkVolatilityCard({
   volatility,
 }: NetworkVolatilityCardProps) {
-  const config = getVolatilityConfig(volatility.volatilityLevel);
+  const { label, icon, tone } = levelStyles[volatility.volatilityLevel];
 
   return (
-    <div
-      className={clsx(
-        "border-foreground/10 flex w-full min-w-0 flex-col rounded-[10px] border bg-white/5 p-4 sm:p-5 md:p-6",
-        config.borderColor
-      )}
+    <ChartCard
+      title="Network volatility"
+      description="Assess the stability and churn rate of your relationships."
     >
-      <div className="mb-6 flex flex-col">
-        <h3 className="text-foreground text-lg font-semibold sm:text-xl">
-          Network volatility
-        </h3>
-        <p className="text-foreground/70 mt-1 text-sm leading-6">
-          Assess the stability and churn rate of your relationships
-        </p>
-      </div>
+      <ChartStats
+        stats={[
+          {
+            label: "Instability index",
+            value: `${volatility.instabilityIndex.toFixed(1)}%`,
+            detail:
+              "Percentage of your following list linked to recent unfollow activity",
+          },
+          {
+            label: "Recent churn ratio",
+            value: `${volatility.recentUnfollowRatio.toFixed(1)}%`,
+            detail:
+              "Recent unfollows compared with people you follow who don't follow back",
+          },
+          {
+            label: "Assessment",
+            value: (
+              <Badge
+                tone={tone}
+                icon={
+                  <Icon
+                    name={icon}
+                    color="current"
+                    width={12}
+                    height={12}
+                    aria-hidden="true"
+                  />
+                }
+              >
+                {label}
+              </Badge>
+            ),
+          },
+        ]}
+      />
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-        {/* Instability Index */}
-        <div className={clsx("flex flex-col rounded-lg p-4", config.bgColor)}>
-          <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
-            Instability index
-          </p>
-          <div className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p
-              className={clsx(
-                "text-2xl font-bold sm:text-3xl",
-                config.labelColor
-              )}
-            >
-              {volatility.instabilityIndex.toFixed(1)}%
-            </p>
-            <p className="text-foreground/60 text-sm">of following</p>
-          </div>
-          <p className="text-foreground/70 mt-2 text-xs leading-5">
-            Percentage of your following list linked to recent unfollow activity
-          </p>
-        </div>
-
-        {/* Recent Unfollow Ratio */}
-        <div className={clsx("flex flex-col rounded-lg p-4", config.bgColor)}>
-          <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
-            Recent churn ratio
-          </p>
-          <div className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p
-              className={clsx(
-                "text-2xl font-bold sm:text-3xl",
-                config.labelColor
-              )}
-            >
-              {volatility.recentUnfollowRatio.toFixed(1)}%
-            </p>
-            <p className="text-foreground/60 text-sm">of following gap</p>
-          </div>
-          <p className="text-foreground/70 mt-2 text-xs leading-5">
-            Recent unfollows compared with people you follow who don't follow
-            back
-          </p>
-        </div>
-
-        {/* Volatility Level */}
-        <div className={clsx("flex flex-col rounded-lg p-4", config.bgColor)}>
-          <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
-            Assessment
-          </p>
-          <div className="mt-4 flex items-center gap-3">
-            <Icon
-              name={config.icon}
-              width={24}
-              height={24}
-              className={config.iconColor}
-            />
-            <p className={clsx("text-xl font-bold", config.labelColor)}>
-              {config.label}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Insight */}
-      <div className="border-foreground/10 bg-foreground/5 mt-6 flex flex-row rounded-lg border p-4">
-        <p className="text-foreground text-sm leading-6">
-          {volatility.insight}
-        </p>
-      </div>
-    </div>
+      <p className="text-fg-muted text-[13px] leading-[1.6]">
+        {volatility.insight}
+      </p>
+    </ChartCard>
   );
 }
