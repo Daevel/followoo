@@ -38,6 +38,14 @@ const warningToast: ToastItem = {
   variant: "warning",
 };
 
+const dangerToast: ToastItem = {
+  id: "toast-danger",
+  title: "Esportazione non riuscita",
+  description: "Non è stato possibile creare il file CSV.",
+  variant: "danger",
+  action: { label: "Riprova", onClick: () => {} },
+};
+
 export const InfoVariant: Story = {
   render: () => {
     const [visible, setVisible] = useState(true);
@@ -83,6 +91,21 @@ export const WarningVariant: Story = {
   },
 };
 
+export const DangerVariant: Story = {
+  render: () => {
+    const [visible, setVisible] = useState(true);
+    return visible ? (
+      <Toast
+        toast={dangerToast}
+        onClose={() => setVisible(false)}
+        duration={10000}
+      />
+    ) : (
+      <div className="text-foreground">Toast chiuso</div>
+    );
+  },
+};
+
 export const AllVariants: Story = {
   name: "Tutte le varianti",
   render: () => (
@@ -90,6 +113,7 @@ export const AllVariants: Story = {
       <Toast toast={infoToast} onClose={() => {}} duration={10000} />
       <Toast toast={successToast} onClose={() => {}} duration={10000} />
       <Toast toast={warningToast} onClose={() => {}} duration={10000} />
+      <Toast toast={dangerToast} onClose={() => {}} duration={10000} />
     </div>
   ),
 };

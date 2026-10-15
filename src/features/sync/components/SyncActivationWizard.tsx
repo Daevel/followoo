@@ -216,7 +216,7 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
             </p>
 
             {status === "error" && (
-              <Callout title="Activation failed" variant="warning">
+              <Callout title="Activation failed" variant="danger">
                 We couldn't activate encrypted history right now. Please try
                 again.
               </Callout>
