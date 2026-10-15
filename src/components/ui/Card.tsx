@@ -44,9 +44,7 @@ export function Card({
           />
         </div>
       )}
-
-      {/* `!`: the global unlayered h3 size in index.css beats utilities */}
-      <h3 className="text-fg text-base! leading-snug font-semibold tracking-[-0.01em]">
+      <h3 className="text-fg text-base leading-snug font-semibold tracking-[-0.01em]">
         {title}
       </h3>
       <p className="text-fg-muted mt-1.5 text-sm leading-[1.55]">

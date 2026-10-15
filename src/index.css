@@ -4,7 +4,7 @@
 
 @theme inline {
   --color-primary: #6366f1;
-  --color-bg: #0f172a;
+  --color-bg: #0b0d17; /* legacy alias of surface-0 */
   --color-accent: #f43f5e;
   --color-foreground: #fefefe;
 
@@ -121,28 +121,54 @@
   }
 }
 
-html {
-  font-size: 16px;
-  background-color: var(--color-bg);
+/* BASE: element defaults live in @layer base so Tailwind utilities on an
+   element (e.g. text-xl on an h2) win over them. */
+@layer base {
+  html {
+    font-size: 16px;
+    background-color: var(--color-bg);
+  }
+
+  body {
+    font-family: var(--font-inter);
+    font-size: var(--p1);
+    line-height: var(--lh-body);
+  }
+
+  /* HEADER SIZES */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-inter);
+    font-weight: var(--w-semibold); /* semibold */
+    line-height: var(--lh-headers); /* 125% */
+  }
+
+  h1 {
+    font-size: var(--h1);
+  }
+
+  h2 {
+    font-size: var(--h2);
+  }
+
+  h3 {
+    font-size: var(--h3);
+  }
+
+  h4 {
+    font-size: var(--h4);
+  }
+
+  h5 {
+    font-size: var(--h5);
+  }
 }
 
-body {
-  font-family: var(--font-inter);
-  font-size: var(--p1);
-  line-height: var(--lh-body);
-}
-
-/* HEADER SIZES */
-
-h1,
-h2,
-h3,
-h4,
-h5 {
-  font-family: var(--font-inter);
-  font-weight: var(--w-semibold); /* semibold */
-  line-height: var(--lh-headers); /* 125% */
-}
+/* DISPLAY SIZES: intentional unlayered overrides for landing hero titles */
 
 .h1-60 {
   font-size: var(--h1-60);
@@ -152,94 +178,77 @@ h5 {
   font-size: var(--h1-128);
 }
 
-h1 {
-  font-size: var(--h1);
-}
+/* TEXT STYLES: in @layer components so utilities can refine them */
+@layer components {
+  /* BODY SIZES */
 
-h2 {
-  font-size: var(--h2);
-}
+  .p1-r {
+    font-size: var(--p1);
+    line-height: var(--lh-body);
+    font-weight: var(--w-regular);
+  }
+  .p1-b {
+    font-size: var(--p1);
+    line-height: var(--lh-body);
+    font-weight: var(--w-medium);
+  }
 
-h3 {
-  font-size: var(--h3);
-}
+  .p2-r {
+    font-size: var(--p2);
+    line-height: var(--lh-body);
+    font-weight: var(--w-regular);
+  }
+  .p2-b {
+    font-size: var(--p2);
+    line-height: var(--lh-body);
+    font-weight: var(--w-medium);
+  }
 
-h4 {
-  font-size: var(--h4);
-}
+  .p3-r {
+    font-size: var(--p3);
+    line-height: var(--lh-body);
+    font-weight: var(--w-regular);
+  }
+  .p3-b {
+    font-size: var(--p3);
+    line-height: var(--lh-body);
+    font-weight: var(--w-medium);
+  }
 
-h5 {
-  font-size: var(--h5);
-}
+  /* LABELS SIZES */
 
-/* BODY SIZES */
+  .l1-r {
+    font-size: var(--l1);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-regular);
+  }
+  .l1-b {
+    font-size: var(--l1);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-semibold);
+  }
 
-.p1-r {
-  font-size: var(--p1);
-  line-height: var(--lh-body);
-  font-weight: var(--w-regular);
-}
-.p1-b {
-  font-size: var(--p1);
-  line-height: var(--lh-body);
-  font-weight: var(--w-medium);
-}
+  .l2-r {
+    font-size: var(--l2);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-regular);
+  }
+  .l2-b {
+    font-size: var(--l2);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-semibold);
+  }
 
-.p2-r {
-  font-size: var(--p2);
-  line-height: var(--lh-body);
-  font-weight: var(--w-regular);
-}
-.p2-b {
-  font-size: var(--p2);
-  line-height: var(--lh-body);
-  font-weight: var(--w-medium);
-}
-
-.p3-r {
-  font-size: var(--p3);
-  line-height: var(--lh-body);
-  font-weight: var(--w-regular);
-}
-.p3-b {
-  font-size: var(--p3);
-  line-height: var(--lh-body);
-  font-weight: var(--w-medium);
-}
-
-/* LABELS SIZES */
-
-.l1-r {
-  font-size: var(--l1);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-regular);
-}
-.l1-b {
-  font-size: var(--l1);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-semibold);
-}
-
-.l2-r {
-  font-size: var(--l2);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-regular);
-}
-.l2-b {
-  font-size: var(--l2);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-semibold);
-}
-
-.l3-r {
-  font-size: var(--l3);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-regular);
-}
-.l3-b {
-  font-size: var(--l3);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-semibold);
+  .l3-r {
+    font-size: var(--l3);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-regular);
+  }
+  .l3-b {
+    font-size: var(--l3);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-semibold);
+  }
 }
 
 .custom-scrollbar::-webkit-scrollbar {

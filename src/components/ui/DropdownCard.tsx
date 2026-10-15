@@ -17,8 +17,7 @@ export function DropdownCard({ title, description }: DropdownCardProps) {
         className="focus-visible:shadow-ring flex w-full cursor-pointer items-center justify-between gap-6 rounded-card px-5 py-4 focus-visible:outline-none"
         aria-expanded={isOpen}
       >
-        {/* `!`: the global unlayered h4 size in index.css beats utilities */}
-        <h4 className="text-fg pr-4 text-start text-[15px]! leading-snug font-medium">
+        <h4 className="text-fg pr-4 text-start text-[15px] leading-snug font-medium">
           {title}
         </h4>
 
