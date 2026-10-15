@@ -18,37 +18,39 @@ export function Checkbox({
   return (
     <label
       className={clsx(
-        "inline-flex items-center gap-3",
-        disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
+        "text-fg inline-flex items-center gap-2.5 text-sm",
+        disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
         className
       )}
     >
       <input
         type="checkbox"
-        className="sr-only peer"
+        className="peer sr-only"
         disabled={disabled}
         aria-invalid={hasError}
         checked={checked}
         {...props}
       />
 
-      {label && <span className="text-foreground">{label}</span>}
-
       <span
+        aria-hidden="true"
         className={clsx(
-          "flex h-5 w-5 items-center justify-center border transition-colors",
-          checked ? "bg-primary border-primary" : "bg-bg border-foreground/40",
-          hasError && checked && "bg-accent border-accent",
-          hasError && !checked && "border-accent",
-          "peer-focus:ring-2 peer-focus:ring-primary",
-          hasError && "peer-focus:ring-accent"
+          "flex size-[18px] shrink-0 items-center justify-center rounded-[5px] border transition-colors",
+          "peer-focus-visible:shadow-ring",
+          checked
+            ? hasError
+              ? "bg-danger-fill border-danger-fill text-on-brand"
+              : "bg-brand border-brand text-on-brand"
+            : hasError
+              ? "bg-surface-1 border-danger/60"
+              : "bg-surface-1 border-line-strong hover:border-fg-faint"
         )}
       >
         <Icon
           name="check"
-          color="foreground"
-          width={14}
-          height={14}
+          color="current"
+          width={12}
+          height={12}
           className={clsx(
             "transition-opacity",
             checked ? "opacity-100" : "opacity-0"
@@ -56,6 +58,8 @@ export function Checkbox({
           aria-hidden="true"
         />
       </span>
+
+      {label && <span className="text-start">{label}</span>}
     </label>
   );
 }
