@@ -42,14 +42,14 @@ function getPersonaConfig(persona: UserPersona) {
       emoji: "👀",
       label: "Lurker",
       bgColor: "bg-slate-500/15",
-      textColor: "text-slate-600",
+      textColor: "text-slate-400",
       borderColor: "border-slate-500/30",
     },
     DORMANT: {
       emoji: "😴",
       label: "Dormant",
       bgColor: "bg-gray-500/15",
-      textColor: "text-gray-600",
+      textColor: "text-gray-400",
       borderColor: "border-gray-500/30",
     },
   };
