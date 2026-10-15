@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
 import { NavBar } from "@/components/ui/NavBar";
 import Seo from "@/components/ui/Seo";
@@ -84,57 +85,45 @@ function SupportContent() {
                   className="flex w-full flex-col gap-6"
                   noValidate
                 >
-                  <label className="l1-b" htmlFor="fullName">
-                    Full name
-                  </label>
-                  <Input
-                    id="fullName"
-                    type="text"
-                    hasError={!!errors.fullName}
-                    {...register("fullName")}
-                  />
-                  {errors.fullName && (
-                    <p className="text-accent text-sm">
-                      {errors.fullName.message}
-                    </p>
-                  )}
+                  <Field
+                    label="Full name"
+                    htmlFor="fullName"
+                    error={errors.fullName?.message}
+                  >
+                    <Input
+                      id="fullName"
+                      type="text"
+                      hasError={!!errors.fullName}
+                      {...register("fullName")}
+                    />
+                  </Field>
 
-                  <label className="l1-b" htmlFor="email">
-                    Email
-                  </label>
-                  <Input
-                    id="email"
-                    type="email"
-                    hasError={!!errors.email}
-                    {...register("email")}
-                  />
-                  {errors.email && (
-                    <p className="text-accent text-sm">
-                      {errors.email.message}
-                    </p>
-                  )}
+                  <Field
+                    label="Email"
+                    htmlFor="email"
+                    error={errors.email?.message}
+                  >
+                    <Input
+                      id="email"
+                      type="email"
+                      hasError={!!errors.email}
+                      {...register("email")}
+                    />
+                  </Field>
 
-                  <label className="l1-b" htmlFor="message">
-                    Message
-                  </label>
-                  <div className="text-end">
+                  <Field
+                    label="Message"
+                    htmlFor="message"
+                    error={errors.message?.message}
+                    meta={`${messageValue.length}/500`}
+                  >
                     <Input
                       id="message"
                       variant="textarea"
                       hasError={!!errors.message}
                       {...register("message")}
                     />
-                    <span className="text-foreground/70 self-end text-xs">
-                      {messageValue.length}/500
-                    </span>
-                    <div className="text-start">
-                      {errors.message && (
-                        <p className="text-accent text-sm">
-                          {errors.message.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
+                  </Field>
 
                   <Button
                     icon="sendMail"

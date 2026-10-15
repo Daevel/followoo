@@ -149,12 +149,14 @@ export function InstagramExportUploadExperience({
               </div>
             )}
 
+            {/* A rejected drop only sets uploadError, so it must show here too:
+                a blocking error is never left to the transient toast alone. */}
             {!isDemo &&
               (fileValidationState === "invalid" || uploadError) &&
-              fileValidationMessage && (
+              (fileValidationMessage || uploadError) && (
                 <div data-page-animate="item" className="w-full">
                   <Callout title="Invalid file" variant="danger">
-                    {fileValidationMessage}
+                    {fileValidationMessage || uploadError}
                   </Callout>
                 </div>
               )}
