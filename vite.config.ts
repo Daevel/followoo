@@ -60,8 +60,8 @@ export default defineConfig(({ isSsrBuild }) => ({
         description:
           "Analyze your Instagram followers, following and unfollowers locally in your browser. No Instagram login and no server-side file upload.",
         lang: "en",
-        theme_color: "#0f172a",
-        background_color: "#0f172a",
+        theme_color: "#0b0d17",
+        background_color: "#0b0d17",
         display: "standalone",
         scope: "/",
         start_url: "/",

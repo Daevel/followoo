@@ -4,7 +4,7 @@
 
 @theme inline {
   --color-primary: #6366f1;
-  --color-bg: #0f172a;
+  --color-bg: #0b0d17; /* legacy alias of surface-0 */
   --color-accent: #f43f5e;
   --color-foreground: #fefefe;
 
