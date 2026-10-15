@@ -64,7 +64,10 @@ export function DropdownTabButton({
         }`}
       >
         <div className="overflow-hidden">
-          <div className="grid min-w-0 gap-2 text-start sm:gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <div
+            role="tablist"
+            className="border-line-subtle bg-surface-1 grid min-w-0 gap-1 rounded-card border p-1 text-start md:grid-cols-2 lg:grid-cols-3"
+          >
             <TabButton
               active={activeTab === "mutual"}
               onClick={() => setActiveTab("mutual")}
