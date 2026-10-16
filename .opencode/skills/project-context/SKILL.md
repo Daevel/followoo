@@ -123,6 +123,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - Analytics events (PostHog, and backend `usage_events`) should describe generic product interactions only, such as page visits or feature usage - e.g. `analysis_run`, never anything about what was in the analyzed export.
 - Error reporting must avoid embedding raw parsed data or file contents. Concretely for Sentry: only send an `AppError`'s `code`/message/stack, never its `details` (see `src/errors/sentryInit.ts`'s `captureAppError`); keep error messages static/developer-authored rather than interpolating usernames or export content into them; the same rule applies to the Python SDK on the backend (`backend/app/core/sentry.py`).
 - If adding persistence, prefer explicit user-controlled exports/downloads over implicit browser storage.
+- The public Privacy Policy (`src/pages/PrivacyPolicy.tsx`, updated October 2026) names every third-party provider (Clerk, PostHog, Sentry, EmailJS, hosting) and every kind of stored data (account id + email, usage events, local storage keys, support messages). When a change adds a provider or a new kind of stored or sent data, update that page in the same change and bump its "Last updated".
 
 ## Product Copy Rules
 
