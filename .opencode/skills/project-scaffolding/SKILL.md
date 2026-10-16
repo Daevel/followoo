@@ -190,6 +190,7 @@ features/upload            -> upload flow UI and hooks when it grows beyond a th
 features/instructions      -> instruction page sections and instruction-step data
 features/support           -> support form, schema, service integration
 features/updates           -> changelog/update display
+features/legal             -> shared legal page layout (LegalDocument: summary, sticky table of contents, numbered sections)
 features/pwa-install       -> install prompt UX if it grows beyond app-level behavior
 ```
 
@@ -431,7 +432,7 @@ Rules:
 - Small labels (versions, statuses, personas) use `Badge` (`tone`: `neutral` | `brand` | `success` | `warning` | `danger`, optional `dotClass`/`icon`); `PersonaBadge` and `BadgeVersion` are thin wrappers over it. `Separator` is one hairline with no margin: spacing comes from the parent.
 - Charts: wrap them in `ChartCard` (and `ChartStats` for stat blocks) from `src/components/ui/charts/ChartCard.tsx`; take Recharts colors only from `chartTheme.ts`, which mirrors the semantic tokens (SVG props can't rely on CSS variables) and must be updated with `src/index.css`. Series use the data palette in order; highlight only the data point that matters.
 - CSS layers in `src/index.css`: element defaults (`html`, `body`, `h1`–`h5`) are in `@layer base` and the text styles (`p1-r`, `l2-b`, …) in `@layer components`, so Tailwind utilities always refine them — never use the important modifier (`!`) to beat them. `color-bg` is a legacy alias of `surface-0`.
-- Page width: `Container size="prose"` (768px, default) for reading pages, `size="app"` (1120px) for dashboards and charts. Toasts mount with `ScreenMount position="toast"`: bottom and full width on phones (clear of the header), top-right from `sm`.
+- Page width: `Container size="prose"` (768px, default) for single-column reading, `size="app"` (1120px) for dashboards, charts and pages with a side column (support, legal, updates), whose text column stays at about 680px. Content pages open with `PageHeader` (`kicker`, `title`, optional `description`/`meta`/`actions`, `flush`), which carries the `data-page-animate` hooks; legal pages render through `LegalDocument` with sections as data, so the legal text stays verbatim. Toasts mount with `ScreenMount position="toast"`: bottom and full width on phones (clear of the header), top-right from `sm`.
 - Shared UI components should expose `className` when composition needs it.
 - Do not introduce a second styling system without explicit approval.
 
