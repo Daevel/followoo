@@ -8,6 +8,7 @@ import { initializePostHog } from "./analytics/posthogInit";
 import { initializeSentry } from "./errors/sentryInit";
 import "./index.css";
 
+import { SyncKeyProvider } from "./providers/SyncKeyProvider.tsx";
 import { ToastProvider } from "./providers/ToastProvider.tsx";
 
 const rootElement = document.getElementById("root");
@@ -33,7 +34,9 @@ createRoot(rootElement).render(
       <HelmetProvider>
         <BrowserRouter>
           <ToastProvider>
-            <AppRoutes />
+            <SyncKeyProvider>
+              <AppRoutes />
+            </SyncKeyProvider>
           </ToastProvider>
         </BrowserRouter>
       </HelmetProvider>

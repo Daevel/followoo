@@ -37,7 +37,7 @@ describe("useSyncActivation", () => {
 
     const { result } = renderHook(() => useSyncActivation());
 
-    let activated = false;
+    let activated: Uint8Array<ArrayBuffer> | null = null;
     await act(async () => {
       activated = await result.current.activate(
         "a dedicated passphrase",
@@ -45,7 +45,8 @@ describe("useSyncActivation", () => {
       );
     });
 
-    expect(activated).toBe(true);
+    expect(activated).toBeInstanceOf(Uint8Array);
+    expect(activated).toHaveLength(32);
     expect(result.current.status).toBe("success");
     expect(handleAppErrorMock).not.toHaveBeenCalled();
 
@@ -68,12 +69,12 @@ describe("useSyncActivation", () => {
 
     const { result } = renderHook(() => useSyncActivation());
 
-    let activated = true;
+    let activated: Uint8Array<ArrayBuffer> | null = new Uint8Array();
     await act(async () => {
       activated = await result.current.activate("a passphrase here", "code");
     });
 
-    expect(activated).toBe(false);
+    expect(activated).toBeNull();
     expect(result.current.status).toBe("error");
     expect(activateSyncMock).not.toHaveBeenCalled();
 
@@ -105,12 +106,12 @@ describe("useSyncActivation", () => {
 
     const { result } = renderHook(() => useSyncActivation());
 
-    let activated = true;
+    let activated: Uint8Array<ArrayBuffer> | null = new Uint8Array();
     await act(async () => {
       activated = await result.current.activate("a passphrase here", "code");
     });
 
-    expect(activated).toBe(false);
+    expect(activated).toBeNull();
     expect(result.current.status).toBe("error");
 
     const [error] = handleAppErrorMock.mock.calls[0];

@@ -6,6 +6,7 @@ import { RouteAwareErrorBoundary } from "./errors";
 type AppRouteComponents = {
   Home: ComponentType;
   GetStarted: ComponentType;
+  History: ComponentType;
   InstructionsToStart: ComponentType;
   PrivacyPolicy: ComponentType;
   ResultPage: ComponentType;
@@ -23,6 +24,7 @@ export function AppRouteTree({ components, wrapper }: AppRouteTreeProps) {
   const {
     Home,
     GetStarted,
+    History,
     InstructionsToStart,
     PrivacyPolicy,
     ResultPage,
@@ -41,6 +43,7 @@ export function AppRouteTree({ components, wrapper }: AppRouteTreeProps) {
       <Route path="/privacy-and-policy" element={<PrivacyPolicy />} />
       <Route path="/support" element={<SupportSection />} />
       <Route path="/results" element={<ResultPage />} />
+      <Route path="/history" element={<History />} />
       <Route path="/updates" element={<Updates />} />
     </Routes>
   );

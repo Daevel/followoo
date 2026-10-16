@@ -17,6 +17,16 @@ export const ERROR_CODES = {
   SYNC_ACTIVATION_FAILED: "SYNC_ACTIVATION_FAILED",
   SYNC_CREDENTIALS_FETCH_FAILED: "SYNC_CREDENTIALS_FETCH_FAILED",
   SYNC_PASSPHRASE_ROTATION_FAILED: "SYNC_PASSPHRASE_ROTATION_FAILED",
+  // Encrypted history (v3.1.0 Task 2): network/server failures for saving
+  // and reading snapshots. A failed decrypt is different from Task 1's
+  // wrong-passphrase case: the master key is already unlocked and correct
+  // for this session, so a decrypt failure here means the stored data
+  // itself is wrong - a real error to report, not UI validation.
+  HISTORY_SNAPSHOT_SAVE_FAILED: "HISTORY_SNAPSHOT_SAVE_FAILED",
+  HISTORY_LIST_FETCH_FAILED: "HISTORY_LIST_FETCH_FAILED",
+  HISTORY_SNAPSHOT_FETCH_FAILED: "HISTORY_SNAPSHOT_FETCH_FAILED",
+  HISTORY_SNAPSHOT_DECRYPT_FAILED: "HISTORY_SNAPSHOT_DECRYPT_FAILED",
+  HISTORY_SNAPSHOT_DELETE_FAILED: "HISTORY_SNAPSHOT_DELETE_FAILED",
   UNKNOWN_ERROR: "UNKNOWN_ERROR",
 } as const;
 

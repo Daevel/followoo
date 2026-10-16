@@ -36,12 +36,12 @@ export default defineConfig(({ isSsrBuild }) => ({
     sitemapPlugin({
       hostname: "https://followoo.app",
       dynamicRoutes: routes,
-      exclude: ["/results"],
+      exclude: ["/results", "/history"],
       robots: [
         {
           userAgent: "*",
           allow: "/",
-          disallow: "/results",
+          disallow: ["/results", "/history"],
         },
       ],
     }),

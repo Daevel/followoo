@@ -15,13 +15,22 @@ export type SyncActivationStatus = "idle" | "activating" | "success" | "error";
  * recovery code is not a failure mode here at all, since both secrets
  * are freshly chosen/generated in this same flow, never re-entered
  * against an existing wrap.
+ *
+ * `activate` resolves to the freshly generated master key on success (or
+ * `null` on failure) so the caller can immediately mark the session as
+ * unlocked (see SyncKeyProvider.setUnlockedAfterActivation) - no reason
+ * to make the user re-enter their brand-new passphrase to unlock what
+ * they just activated.
  */
 export function useSyncActivation() {
   const { getToken } = useAuth();
   const [status, setStatus] = useState<SyncActivationStatus>("idle");
 
   const activate = useCallback(
-    async (passphrase: string, recoveryCode: string): Promise<boolean> => {
+    async (
+      passphrase: string,
+      recoveryCode: string
+    ): Promise<Uint8Array<ArrayBuffer> | null> => {
       setStatus("activating");
 
       try {
@@ -75,13 +84,13 @@ export function useSyncActivation() {
         }
 
         setStatus("success");
-        return true;
+        return masterKey;
       } catch (error) {
         handleAppError(error, {
           fallbackTitle: "Unable to activate encrypted history",
         });
         setStatus("error");
-        return false;
+        return null;
       }
     },
     [getToken]

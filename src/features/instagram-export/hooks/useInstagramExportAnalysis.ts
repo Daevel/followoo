@@ -5,6 +5,7 @@ import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { animateLoadingOut } from "@/animations/loading/useAnimateLoadingOut";
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import { handleAppError } from "@/errors";
+import { useAutoSaveSnapshot } from "@/features/history/hooks/useAutoSaveSnapshot";
 import { analyzeInstagramExport } from "@/features/relationship/services/instagramAnalysisService";
 import { logUsageEvent } from "@/features/users/services/usersService";
 import { parseInstagramExport } from "../services/instagramExportService";
@@ -36,6 +37,7 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
   const { isSignedIn, getToken } = useAuth();
   const { needsAccountPrompt, requestAnalysis, markAnalysisCompleted } =
     useFreeAnalysisGate();
+  const { saveSnapshot } = useAutoSaveSnapshot();
 
   const [selectedZipFile, setSelectedZipFile] = useState<File | null>(null);
   const [uploadError, setUploadError] = useState("");
@@ -170,6 +172,9 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
 
         if (isSignedIn) {
           void reportAnalysisUsage(getToken);
+          // Fire-and-forget (see useAutoSaveSnapshot) - a no-op unless
+          // encrypted history is activated and unlocked for this session.
+          saveSnapshot(analysis);
         }
       }
 

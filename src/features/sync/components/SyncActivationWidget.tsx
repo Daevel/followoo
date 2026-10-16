@@ -1,15 +1,11 @@
 import { useAuth } from "@clerk/react";
 import { lazy, Suspense, useState } from "react";
+import { Link } from "react-router";
 import { useFeatureFlag } from "@/analytics";
+import { SYNC_FEATURE_FLAG_KEY } from "@/features/sync/constants";
+import { useSyncKey } from "@/providers/SyncKeyProvider";
 
-// Default false: history review (v3.1.0 Task 2) doesn't exist yet, so this
-// entry point must stay invisible to real users until explicitly turned on
-// per-user/cohort in PostHog. See this feature's README-equivalent context
-// in the v3.1.0 Task 1 prompt - activation must never auto-trigger from
-// sign-in/account creation, only from this explicit button.
-const SYNC_ACTIVATION_FLAG_KEY = "followoo-encrypted-history-sync-enabled";
-
-// Lazy: the wizard pulls in react-hook-form, zod, and this feature's
+// Lazy: both wizards pull in react-hook-form, zod, and this feature's
 // crypto module. This widget itself is mounted in NavBar - on every page,
 // for every visitor - so none of that should be in the main bundle until
 // a signed-in, flagged-in user actually clicks the button below.
@@ -18,17 +14,38 @@ const SyncActivationWizard = lazy(() =>
     default: module.SyncActivationWizard,
   }))
 );
+const SyncUnlockWizard = lazy(() =>
+  import("./SyncUnlockWizard").then((module) => ({
+    default: module.SyncUnlockWizard,
+  }))
+);
+
+const linkClassName =
+  "text-fg-muted hover:text-fg text-sm font-semibold underline-offset-2 hover:underline";
 
 export function SyncActivationWidget() {
   const { isSignedIn } = useAuth();
-  const isSyncActivationEnabled = useFeatureFlag(
-    SYNC_ACTIVATION_FLAG_KEY,
-    false
-  );
+  const isSyncActivationEnabled = useFeatureFlag(SYNC_FEATURE_FLAG_KEY, false);
+  const { status } = useSyncKey();
   const [isWizardOpen, setIsWizardOpen] = useState(false);
 
   if (!isSignedIn || !isSyncActivationEnabled) {
     return null;
+  }
+
+  // Fail soft: no broken-looking button while the status is still being
+  // checked, or if checking it failed (already reported via Sentry by
+  // SyncKeyProvider) - same default-first philosophy as useFeatureFlag.
+  if (status === "checking" || status === "unavailable") {
+    return null;
+  }
+
+  if (status === "unlocked") {
+    return (
+      <Link to="/history" className={linkClassName}>
+        Encrypted history
+      </Link>
+    );
   }
 
   return (
@@ -36,14 +53,18 @@ export function SyncActivationWidget() {
       <button
         type="button"
         onClick={() => setIsWizardOpen(true)}
-        className="text-fg-muted hover:text-fg text-sm font-semibold underline-offset-2 hover:underline"
+        className={linkClassName}
       >
-        Encrypted history
+        {status === "locked" ? "Unlock encrypted history" : "Encrypted history"}
       </button>
 
       {isWizardOpen && (
         <Suspense fallback={null}>
-          <SyncActivationWizard onClose={() => setIsWizardOpen(false)} />
+          {status === "locked" ? (
+            <SyncUnlockWizard onClose={() => setIsWizardOpen(false)} />
+          ) : (
+            <SyncActivationWizard onClose={() => setIsWizardOpen(false)} />
+          )}
         </Suspense>
       )}
     </>

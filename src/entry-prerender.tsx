@@ -3,6 +3,7 @@ import { renderToString } from "react-dom/server";
 import { HelmetProvider, type HelmetServerState } from "react-helmet-async";
 import { MemoryRouter } from "react-router";
 import { AppRoutesPrerender } from "./AppRoutesPrerender";
+import { SyncKeyProvider } from "./providers/SyncKeyProvider";
 import { ToastProvider } from "./providers/ToastProvider";
 
 HelmetProvider.canUseDOM = false;
@@ -23,7 +24,9 @@ export function render(route: string) {
       >
         <MemoryRouter initialEntries={[route]}>
           <ToastProvider>
-            <AppRoutesPrerender />
+            <SyncKeyProvider>
+              <AppRoutesPrerender />
+            </SyncKeyProvider>
           </ToastProvider>
         </MemoryRouter>
       </ClerkProvider>

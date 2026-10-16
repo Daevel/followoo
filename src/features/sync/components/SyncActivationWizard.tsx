@@ -13,6 +13,7 @@ import {
   type SyncActivationPassphraseValues,
   syncActivationPassphraseSchema,
 } from "@/features/sync/schemas/syncActivation.schema";
+import { useSyncKey } from "@/providers/SyncKeyProvider";
 
 type WizardStep = "intro" | "passphrase" | "recovery-code" | "confirm";
 
@@ -27,6 +28,7 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
   const [hasSavedRecoveryCode, setHasSavedRecoveryCode] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
   const { status, activate } = useSyncActivation();
+  const { setUnlockedAfterActivation } = useSyncKey();
 
   const passphraseForm = useForm<SyncActivationPassphraseValues>({
     resolver: zodResolver(syncActivationPassphraseSchema),
@@ -75,7 +77,14 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
   }
 
   async function handleActivate() {
-    await activate(passphrase, recoveryCode);
+    const generatedMasterKey = await activate(passphrase, recoveryCode);
+
+    if (generatedMasterKey) {
+      // The master key was just generated client-side for this exact
+      // session - no reason to make the user re-enter the passphrase
+      // they just chose to "unlock" what they just activated.
+      setUnlockedAfterActivation(generatedMasterKey);
+    }
   }
 
   return (

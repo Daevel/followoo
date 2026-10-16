@@ -8,8 +8,13 @@ import {
 import { base64ToBytes, bytesToBase64 } from "./encoding";
 
 export type KdfParams = {
-  algorithm: typeof KDF_ALGORITHM;
-  hash: typeof KDF_HASH;
+  // Plain `string` (not `typeof KDF_ALGORITHM`/`typeof KDF_HASH` literals):
+  // this same shape travels through JSON over the wire and back
+  // (src/features/sync/services/syncService.ts, the backend's jsonb
+  // column), so it must structurally match that looser round-tripped
+  // type, not just what this module itself produces.
+  algorithm: string;
+  hash: string;
   iterations: number;
   // base64 AES-GCM IV used for this particular wrap. Lives in kdfParams
   // rather than its own field: it is derivation/decryption metadata, not

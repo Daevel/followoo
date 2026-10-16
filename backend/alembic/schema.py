@@ -170,3 +170,34 @@ sync_keys = sa.Table(
         server_default=sa.text("now()"),
     ),
 )
+
+# v3.1.0 Task 2: one row per saved analysis. `created_at` is the only
+# plaintext metadata (used to list/order entries); `encrypted_blob` is the
+# client-encrypted (AES-GCM, with the unlocked master key from
+# v3.1.0 Task 1) JSON of an InstagramAnalysisResult, `iv` is the nonce used
+# for that encryption (not a secret). See backend/app/snapshots/ and this
+# migration's own docstring (d360b3e3c411_add_analysis_snapshots_table.py).
+analysis_snapshots = sa.Table(
+    "analysis_snapshots",
+    metadata,
+    sa.Column(
+        "id",
+        UUID(as_uuid=True),
+        primary_key=True,
+        server_default=sa.text("gen_random_uuid()"),
+    ),
+    sa.Column(
+        "user_id", sa.Text(), sa.ForeignKey("users.id"), nullable=False, index=True
+    ),
+    sa.Column(
+        "created_at",
+        sa.DateTime(timezone=True),
+        nullable=False,
+        server_default=sa.text("now()"),
+    ),
+    sa.Column("encrypted_blob", sa.Text(), nullable=False),
+    sa.Column("iv", sa.Text(), nullable=False),
+    sa.Column(
+        "schema_version", sa.Integer(), nullable=False, server_default=sa.text("1")
+    ),
+)

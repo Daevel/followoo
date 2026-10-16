@@ -8,6 +8,11 @@ const GetStarted = lazy(() =>
     default: module.GetStarted,
   }))
 );
+const History = lazy(() =>
+  import("./pages/History").then((module) => ({
+    default: module.History,
+  }))
+);
 const InstructionsToStart = lazy(() =>
   import("./pages/InstructionsToStart").then((module) => ({
     default: module.InstructionsToStart,
@@ -47,6 +52,7 @@ export function AppRoutes() {
       components={{
         Home,
         GetStarted,
+        History,
         InstructionsToStart,
         PrivacyPolicy,
         ResultPage,
