@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import clsx from "clsx";
+import { useEffect, useId, useRef, useState } from "react";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
-import { BadgeVersion } from "@/components/ui/BadgeVersion";
+import { Badge } from "@/components/ui/Badge";
 import { Container } from "@/components/ui/Container";
+import { Icon } from "@/components/ui/Icon";
 import { NavBar } from "@/components/ui/NavBar";
+import { PageHeader } from "@/components/ui/PageHeader";
 import Seo from "@/components/ui/Seo";
-import { Separator } from "@/components/ui/Separator";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { handleAppError, UnknownErrorPage } from "@/errors";
 import { getApiUrl } from "@/lib/api";
@@ -30,64 +32,141 @@ type UpdatesApiResponse = {
   data: UpdateEntry[];
 };
 
-function UpdateSection({
-  title,
-  description,
-  groups,
-  badgeVersion,
-  badgeBackgroundColor,
-  releaseDate,
-  className,
+// The stored descriptions open with "Version X.Y.Z"; the version is already
+// shown next to the entry, so it is dropped from the sentence.
+function describe(description: string, version: string) {
+  const text = description.replace(`Version ${version} `, "").trim();
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function firstSentence(text: string) {
+  const end = text.indexOf(". ");
+  return end === -1 ? text : text.slice(0, end + 1);
+}
+
+// Entries open by default: the newest ones. Older ones start as a one-line row.
+const OPEN_BY_DEFAULT = 2;
+
+function ReleaseEntry({
+  update,
+  isLatest,
+  defaultOpen,
 }: {
-  title: string;
-  description: string;
-  groups: UpdateChangeGroup[];
-  badgeVersion: string;
-  badgeBackgroundColor?: string;
-  releaseDate: string;
-  className?: string;
+  update: UpdateEntry;
+  isLatest: boolean;
+  defaultOpen: boolean;
 }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const panelId = useId();
+  const description = describe(update.description, update.version);
+  const changes = update.groups.reduce(
+    (total, group) => total + group.items.length,
+    0
+  );
+
+  const when = (
+    <>
+      <span className="text-fg font-semibold tabular-nums">
+        v{update.version}
+      </span>
+      <time className="text-fg-muted text-[13px]">{update.releaseDate}</time>
+    </>
+  );
+
+  if (!isOpen) {
+    return (
+      <article className="border-line-subtle border-t text-start">
+        <button
+          type="button"
+          aria-expanded={false}
+          aria-controls={panelId}
+          disabled={changes === 0}
+          onClick={() => setIsOpen(true)}
+          className="focus-visible:shadow-ring group grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-1 rounded-control py-5 text-start outline-none disabled:cursor-default md:grid-cols-[200px_minmax(0,1fr)_auto] md:gap-x-10"
+        >
+          <span className="col-start-1 row-start-1 flex flex-col gap-0.5 text-base">
+            {when}
+          </span>
+          <span className="text-fg-muted col-span-2 col-start-1 row-start-2 text-sm leading-[1.55] md:col-span-1 md:col-start-2 md:row-start-1">
+            {firstSentence(description)}
+          </span>
+          <span className="text-fg-muted group-hover:text-fg col-start-2 row-start-1 inline-flex items-center gap-1.5 justify-self-end text-[13px] whitespace-nowrap md:col-start-3">
+            {changes === 0 ? (
+              "First beta"
+            ) : (
+              <>
+                {changes} {changes === 1 ? "change" : "changes"}
+                <Icon
+                  name="singleArrowDown"
+                  color="current"
+                  width={14}
+                  height={14}
+                  aria-hidden="true"
+                />
+              </>
+            )}
+          </span>
+        </button>
+      </article>
+    );
+  }
+
   return (
-    <section className={`text-foreground w-full ${className ?? ""}`}>
-      <div className="flex flex-row items-center gap-3">
-        <h2 className="l1-b">{title}</h2>
-        <BadgeVersion
-          version={badgeVersion}
-          backgroundColor={badgeBackgroundColor}
-        />
+    <article
+      className={clsx(
+        "grid gap-4 py-10 text-start md:grid-cols-[200px_minmax(0,1fr)] md:gap-10",
+        isLatest ? "pt-0" : "border-line-subtle border-t"
+      )}
+    >
+      <div className="flex flex-row flex-wrap items-center gap-x-3 gap-y-2 self-start md:sticky md:top-24 md:flex-col md:items-start">
+        <span className="flex flex-row items-baseline gap-3 text-[22px] tracking-[-0.02em] md:flex-col md:gap-2">
+          {when}
+        </span>
+        {isLatest && (
+          <Badge tone="brand" size="sm">
+            Latest
+          </Badge>
+        )}
       </div>
 
-      <div className="flex">
-        <span className="text-foreground/80 mt-3 text-sm">{releaseDate}</span>
-      </div>
+      <div id={panelId} className="min-w-0">
+        <p className="text-fg max-w-[640px] text-base leading-relaxed">
+          {description}
+        </p>
 
-      <div className="flex">
-        <div className="p1-r mt-5 w-full">
-          <p>{description}</p>
-
-          {groups.map((group) => {
-            const toneClass =
-              group.tone === "primary"
-                ? "text-primary/80"
-                : group.tone === "accent"
-                  ? "text-accent/80"
-                  : "text-foreground/80";
-
-            return (
-              <div key={group.label}>
-                <p className={`${toneClass} mt-4 font-medium`}>{group.label}</p>
-
-                <ul className="mt-2 list-disc space-y-2 pl-5">
+        {update.groups.length > 0 && (
+          <div className="mt-6 grid gap-3 md:grid-cols-2">
+            {update.groups.map((group) => (
+              <section
+                key={group.label}
+                className="border-line-subtle bg-surface-1 shadow-elev-1 rounded-card border px-5 py-[18px]"
+              >
+                <h3 className="text-fg flex items-center justify-between text-[13px] font-semibold">
+                  {group.label}
+                  <span className="text-fg-faint text-xs font-medium tabular-nums">
+                    {group.items.length}
+                  </span>
+                </h3>
+                <ul className="mt-3 flex flex-col gap-2">
                   {group.items.map((item) => (
-                    <li key={item}>{item}</li>
+                    <li
+                      key={item}
+                      className="text-fg-muted flex gap-2.5 text-sm leading-normal"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="bg-fg-faint mt-[9px] size-1 shrink-0 rounded-full"
+                      />
+                      {item}
+                    </li>
                   ))}
                 </ul>
-              </div>
-            );
-          })}
-        </div>
+              </section>
+            ))}
+          </div>
+        )}
       </div>
-    </section>
+    </article>
   );
 }
 
@@ -166,30 +245,15 @@ export function Updates() {
       <section className="flex min-h-svh flex-col">
         <NavBar />
 
-        <Container className="flex min-h-svh flex-col">
-          <div
-            ref={rootRef}
-            className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start pt-16 pb-10"
-          >
-            <h1
-              data-page-animate="heading"
-              className="leading-headers text-foreground text-4xl font-semibold md:text-5xl"
-            >
-              Followoo updates
-            </h1>
+        <Container size="app" className="flex flex-1 flex-col">
+          <div ref={rootRef} className="flex-1 pb-20">
+            <PageHeader
+              kicker="Updates"
+              title="What's new in Followoo."
+              description="Every release, newest first: what changed and why it matters to you."
+            />
 
-            <p
-              data-page-animate="subheading"
-              className="text-foreground/70 mt-3"
-            >
-              Here you can find the latest improvements and features added to
-              Followoo.
-            </p>
-
-            <div
-              data-page-animate="content"
-              className="mt-10 flex w-full flex-col gap-8"
-            >
+            <div data-page-animate="content" className="flex w-full flex-col">
               {isLoading ? (
                 <Skeleton
                   variant="list"
@@ -205,29 +269,17 @@ export function Updates() {
                   <UnknownErrorPage />
                 </div>
               ) : updates.length === 0 ? (
-                <div className="text-foreground/70">
+                <p className="text-fg-muted text-start">
                   No updates available yet.
-                </div>
+                </p>
               ) : (
                 updates.map((update, index) => (
-                  <div
-                    key={update.id}
-                    data-page-animate="item"
-                    className="update-heading w-full"
-                  >
-                    <UpdateSection
-                      className="update-card"
-                      title={update.productName}
-                      description={update.description}
-                      groups={update.groups}
-                      badgeVersion={update.version}
-                      badgeBackgroundColor={update.badgeBackgroundColor}
-                      releaseDate={update.releaseDate}
+                  <div key={update.id} data-page-animate="item">
+                    <ReleaseEntry
+                      update={update}
+                      isLatest={index === 0}
+                      defaultOpen={index < OPEN_BY_DEFAULT}
                     />
-
-                    {index < updates.length - 1 ? (
-                      <Separator className="mt-8" />
-                    ) : null}
                   </div>
                 ))
               )}
