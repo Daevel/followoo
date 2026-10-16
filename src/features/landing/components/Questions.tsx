@@ -17,7 +17,7 @@ export const faqCards = [
   {
     title: "Do I need to log in?",
     description:
-      "No login is required. You don't need to connect your Instagram account — just upload your exported data and start analyzing it instantly.",
+      "You never need to connect your Instagram account. Your first analysis works without signing up; after that, a free Followoo account is required. Your export is still analyzed only in your browser.",
   },
   {
     title: "Why do I need to download my data?",
@@ -66,7 +66,7 @@ export function Questions() {
             data-animate="section-subheading"
             className="text-fg-muted mt-3 text-base leading-7"
           >
-            Here&apos;s the answers.
+            Here are the answers.
           </p>
         </div>
 
