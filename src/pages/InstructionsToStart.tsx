@@ -1,12 +1,15 @@
 import clsx from "clsx";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
-import { Button } from "@/components/ui/Button";
+import { Button, buttonClasses } from "@/components/ui/Button";
+import { Callout } from "@/components/ui/Callout";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { NavBar } from "@/components/ui/NavBar";
+import { PageHeader } from "@/components/ui/PageHeader";
 import Seo from "@/components/ui/Seo";
+import { TabButton } from "@/components/ui/TabButton";
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 
 type DeviceType = "laptop" | "smartPhone";
@@ -14,117 +17,124 @@ type DeviceType = "laptop" | "smartPhone";
 type InstructionStep = {
   id: number;
   title: string;
-  description: React.ReactNode;
+  /** One action per item, in order. */
+  actions: ReactNode[];
+  /** Reassurance shown after the actions. */
+  note?: string;
+  /** Show the "don't extract the ZIP" warning (download and upload steps). */
+  zipWarning?: boolean;
   mediaSrc?: string;
   mediaAlt?: string;
 };
+
+// The name of a button or menu as it appears in Instagram, so it can be
+// spotted on screen.
+function UiLabel({ children }: { children: ReactNode }) {
+  return (
+    <span className="border-line-subtle bg-surface-2 text-fg rounded-md border px-1.5 py-px text-[13px] font-medium whitespace-nowrap">
+      {children}
+    </span>
+  );
+}
 
 const desktopInstructionSteps: InstructionStep[] = [
   {
     id: 1,
     title: "Open Instagram Settings",
-    description: (
+    actions: [
       <>
-        Open Instagram and go to your <b>profile</b> (bottom-left corner).
-        <br />
-        Then tap <b>Settings</b> and open <b>Accounts Center</b>.
-      </>
-    ),
+        Open Instagram and go to your <UiLabel>Profile</UiLabel> (bottom-left
+        corner).
+      </>,
+      <>
+        Tap <UiLabel>Settings</UiLabel> and open{" "}
+        <UiLabel>Accounts Center</UiLabel>.
+      </>,
+    ],
     mediaSrc: vercelBlobStructure.videos.desktop.step01,
     mediaAlt: "Instagram settings screen",
   },
   {
     id: 2,
     title: "Find your data settings",
-    description: (
+    actions: [
       <>
-        Inside <b>Accounts Center</b>:
-        <br />
-        <br />👉 Tap <b>Your information and permissions</b>
-        <br />👉 Then select <b>Export your information</b>
-      </>
-    ),
+        Inside <UiLabel>Accounts Center</UiLabel>, tap{" "}
+        <UiLabel>Your information and permissions</UiLabel>.
+      </>,
+      <>
+        Then select <UiLabel>Export your information</UiLabel>.
+      </>,
+    ],
     mediaSrc: vercelBlobStructure.videos.desktop.step02,
     mediaAlt: "Your information and permissions section",
   },
   {
     id: 3,
     title: "Start a new export",
-    description: (
+    actions: [
       <>
-        Tap <b>Create export</b>.
-        <br />
-        <br />
-        If you have multiple accounts:
-        <br />👉 Select your <b>Instagram account</b>
-        <br />
-        <br />
-        Then choose:
-        <br />• <b>Export to device</b> (recommended)
-        <br />• or <b>Export to external service</b>
-      </>
-    ),
+        Tap <UiLabel>Create export</UiLabel>.
+      </>,
+      <>
+        If you have multiple accounts, select your{" "}
+        <UiLabel>Instagram account</UiLabel>.
+      </>,
+      <>
+        Choose <UiLabel>Export to device</UiLabel> (recommended) or{" "}
+        <UiLabel>Export to external service</UiLabel>.
+      </>,
+    ],
     mediaSrc: vercelBlobStructure.videos.desktop.step03,
     mediaAlt: "Create export flow",
   },
   {
     id: 4,
     title: "Choose what to export",
-    description: (
+    actions: [
       <>
-        Now customize your export:
-        <br />
-        <br />👉 Deselect everything
-        <br />👉 Select only <b>Followers and Following</b>
-        <br />
-        <br />
-        Then set:
-        <br />
-        <b>Format:</b> JSON
-        <br />
-        <b>Date range:</b> All time
-        <br />
-        <b>Media quality:</b> Any option is fine
-        <br />
-        <br />
-        Tap <b>Save</b>, then <b>Create export</b>.
-        <br />
-        <br />💡 Don't worry: you can't break anything here.
-      </>
-    ),
+        Deselect everything, then select only{" "}
+        <UiLabel>Followers and following</UiLabel>.
+      </>,
+      <>
+        Set <UiLabel>Format: JSON</UiLabel> and{" "}
+        <UiLabel>Date range: All time</UiLabel>. Any media quality is fine.
+      </>,
+      <>
+        Tap <UiLabel>Save</UiLabel>, then <UiLabel>Create export</UiLabel>.
+      </>,
+    ],
+    note: "Don't worry: you can't break anything here.",
     mediaSrc: vercelBlobStructure.videos.desktop.step04,
     mediaAlt: "Some of your information option",
   },
   {
     id: 5,
     title: "Download your file",
-    description: (
+    actions: [
       <>
-        When Instagram notifies you:
-        <br />
-        <br />👉 Go back to <b>Accounts Center</b>
-        <br />👉 Tap <b>Download file</b>
-        <br />
-        <br />
-        This will download a <b>ZIP file</b> to your device.
-      </>
-    ),
+        When Instagram notifies you, go back to{" "}
+        <UiLabel>Accounts Center</UiLabel>.
+      </>,
+      <>
+        Tap <UiLabel>Download file</UiLabel>: a ZIP file is saved to your
+        device.
+      </>,
+    ],
+    zipWarning: true,
     mediaSrc: vercelBlobStructure.videos.desktop.step05,
     mediaAlt: "Create export confirmation",
   },
   {
     id: 6,
     title: "Upload the ZIP file",
-    description: (
+    actions: [
       <>
-        Click the <b>Continue</b> button in this app.
-        <br />
-        Then upload the ZIP file you downloaded.
-        <br />
-        <br />
-        ⚠️ <b>Important:</b> Do NOT extract the ZIP file.
-      </>
-    ),
+        Click <UiLabel>Continue</UiLabel> below.
+      </>,
+      "Upload the ZIP file you downloaded.",
+    ],
+    zipWarning: true,
     mediaAlt: "ZIP upload inside the app",
   },
 ];
@@ -133,122 +143,77 @@ const mobileInstructionSteps: InstructionStep[] = [
   {
     id: 1,
     title: "Go to Export your information",
-    description: (
+    actions: [
       <>
-        Open Instagram and go to your <b>profile</b> (bottom-right corner).
-        <br />
-        <br />
-        Tap the <b>menu (☰)</b> → <b>Settings</b> → <b>Accounts Center</b>.
-        <br />
-        <br />👉 Tap <b>Your information and permissions</b>
-        <br />👉 Tap <b>Export your information</b>
-      </>
-    ),
+        Open Instagram and go to your <UiLabel>Profile</UiLabel> (bottom-right
+        corner).
+      </>,
+      <>
+        Tap the menu <UiLabel>☰</UiLabel>, then <UiLabel>Settings</UiLabel> and{" "}
+        <UiLabel>Accounts Center</UiLabel>.
+      </>,
+      <>
+        Tap <UiLabel>Your information and permissions</UiLabel>, then{" "}
+        <UiLabel>Export your information</UiLabel>.
+      </>,
+    ],
     mediaSrc: vercelBlobStructure.videos.mobile.step01,
     mediaAlt: "Navigate to export your information",
   },
   {
     id: 2,
     title: "Start the export",
-    description: (
+    actions: [
       <>
-        Tap <b>Create export</b>.
-        <br />
-        <br />
-        If you have multiple accounts:
-        <br />👉 Select your <b>Instagram account</b>
-        <br />
-        <br />
-        Choose how to export:
-        <br />• <b>Export to device</b> (recommended)
-        <br />• or <b>Export to external service</b>
-      </>
-    ),
+        Tap <UiLabel>Create export</UiLabel>.
+      </>,
+      <>
+        If you have multiple accounts, select your{" "}
+        <UiLabel>Instagram account</UiLabel>.
+      </>,
+      <>
+        Choose <UiLabel>Export to device</UiLabel> (recommended) or{" "}
+        <UiLabel>Export to external service</UiLabel>.
+      </>,
+    ],
     mediaSrc: vercelBlobStructure.videos.mobile.step02,
     mediaAlt: "Choose export method",
   },
   {
     id: 3,
     title: "Choose what to export",
-    description: (
+    actions: [
       <>
-        Customize your export:
-        <br />
-        <br />👉 Deselect everything
-        <br />👉 Select only <b>Followers and Following</b>
-        <br />
-        <br />
-        Then set:
-        <br />
-        <b>Format:</b> JSON
-        <br />
-        <b>Date range:</b> All time
-        <br />
-        <b>Media quality:</b> Any option is fine
-        <br />
-        <br />
-        Tap <b>Save</b>, then <b>Create export</b>.
-        <br />
-        <br />💡 Don't worry: you can't break anything here.
-      </>
-    ),
+        Deselect everything, then select only{" "}
+        <UiLabel>Followers and following</UiLabel>.
+      </>,
+      <>
+        Set <UiLabel>Format: JSON</UiLabel> and{" "}
+        <UiLabel>Date range: All time</UiLabel>. Any media quality is fine.
+      </>,
+      <>
+        Tap <UiLabel>Save</UiLabel>, then <UiLabel>Create export</UiLabel>.
+      </>,
+    ],
+    note: "Don't worry: you can't break anything here.",
     mediaSrc: vercelBlobStructure.videos.mobile.step03,
     mediaAlt: "Customize export settings",
   },
   {
     id: 4,
     title: "Upload the ZIP file",
-    description: (
+    actions: [
       <>
-        When your file is ready:
-        <br />
-        <br />👉 Download the <b>ZIP file</b>
-        <br />👉 Upload it here
-        <br />
-        <br />
-        ⚠️ <b>Important:</b> Do NOT extract the file.
-      </>
-    ),
+        When your file is ready, download the <UiLabel>ZIP file</UiLabel>.
+      </>,
+      <>
+        Tap <UiLabel>Continue</UiLabel> below and upload it.
+      </>,
+    ],
+    zipWarning: true,
     mediaAlt: "ZIP upload inside the app",
   },
 ];
-
-type StepperProps = {
-  steps: InstructionStep[];
-  currentStep: number;
-  onStepClick: (stepId: number) => void;
-};
-
-function Stepper({ steps, currentStep, onStepClick }: StepperProps) {
-  return (
-    <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
-      {steps.map((step) => {
-        const isActive = step.id === currentStep;
-        const isCompleted = step.id < currentStep;
-
-        return (
-          <button
-            key={step.id}
-            type="button"
-            onClick={() => onStepClick(step.id)}
-            aria-label={`Go to step ${step.id}`}
-            aria-current={isActive ? "step" : undefined}
-            className={[
-              "flex h-12 w-12 items-center justify-center rounded-full border text-sm font-semibold transition-all duration-200",
-              isActive
-                ? "border-accent bg-accent text-foreground shadow-[0_0_0_4px_rgba(255,255,255,0.04)]"
-                : isCompleted
-                  ? "border-primary bg-primary text-foreground"
-                  : "border-foreground/40 text-foreground/80 hover:border-foreground/70 hover:text-foreground",
-            ].join(" ")}
-          >
-            {String(step.id).padStart(2, "0")}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 type StepMediaProps = {
   src: string;
@@ -399,7 +364,7 @@ export function StepMedia({ src, alt = "", poster }: StepMediaProps) {
     return (
       <div
         ref={wrapperRef}
-        className="border-primary bg-primary/10 flex items-center overflow-hidden rounded-[10px] border"
+        className="border-line-subtle bg-surface-1 shadow-elev-1 flex items-center overflow-hidden rounded-card border"
       >
         <div className="relative aspect-video w-full">
           <img src={src} alt={alt} className="h-full w-full object-cover" />
@@ -412,7 +377,7 @@ export function StepMedia({ src, alt = "", poster }: StepMediaProps) {
   return (
     <div
       ref={wrapperRef}
-      className="border-primary bg-primary/10 flex items-center overflow-hidden rounded-[10px] border"
+      className="border-line-subtle bg-surface-1 shadow-elev-1 flex items-center overflow-hidden rounded-card border"
     >
       <div className="group relative aspect-video w-full">
         <video
@@ -469,7 +434,7 @@ export function StepMedia({ src, alt = "", poster }: StepMediaProps) {
         <div className="pointer-events-none absolute right-0 bottom-0 left-0 px-4 pb-4">
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/20">
             <div
-              className="bg-accent h-full rounded-full transition-[width] duration-150"
+              className="bg-brand-fg h-full rounded-full transition-[width] duration-150"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
@@ -479,54 +444,221 @@ export function StepMedia({ src, alt = "", poster }: StepMediaProps) {
   );
 }
 
-type ActiveStepContentProps = {
-  step: InstructionStep;
+function ZipWarning() {
+  return (
+    <Callout variant="warning" title="Don't extract the ZIP">
+      Upload the file exactly as Instagram sends it.
+    </Callout>
+  );
+}
+
+type StepNavigationProps = {
+  currentStep: number;
   totalSteps: number;
+  onBack: () => void;
+  onNext: () => void;
+  size?: "sm" | "md";
+  className?: string;
 };
 
-function ActiveStepContent({ step, totalSteps }: ActiveStepContentProps) {
+function StepNavigation({
+  currentStep,
+  totalSteps,
+  onBack,
+  onNext,
+  size = "md",
+  className,
+}: StepNavigationProps) {
   return (
-    <div className="flex w-full max-w-3xl flex-col items-center text-left">
-      <p className="text-foreground/60 text-sm font-medium tracking-wide uppercase">
-        Step {step.id} of {totalSteps}
-      </p>
+    <div className={clsx("flex gap-2", className)}>
+      <Button
+        variant="secondary"
+        size={size}
+        icon="arrowLeft"
+        onClick={onBack}
+        disabled={currentStep === 1}
+        className="flex-1 lg:flex-none"
+      >
+        Back
+      </Button>
 
-      <h2 className="text-foreground mt-2 text-2xl font-semibold md:text-3xl">
-        {step.title}
-      </h2>
-
-      <div className="text-foreground/85 mt-4 max-w-xl text-base leading-7">
-        {step.description}
-      </div>
+      {currentStep < totalSteps ? (
+        <Button
+          size={size}
+          icon="arrowRight"
+          iconPosition="right"
+          onClick={onNext}
+          className="flex-1 lg:flex-none"
+        >
+          Next
+        </Button>
+      ) : (
+        <Link
+          to="/get-started"
+          state={{ isDemo: false }}
+          className={clsx(
+            buttonClasses({ variant: "primary", size }),
+            "flex-1 lg:flex-none"
+          )}
+        >
+          Continue
+          <Icon
+            name="arrowRight"
+            color="current"
+            width={16}
+            height={16}
+            aria-hidden="true"
+          />
+        </Link>
+      )}
     </div>
   );
 }
 
-type DeviceStepperContentProps = {
-  deviceIcon: DeviceType;
-  isActive: boolean;
-  onClick: () => void;
+type StepListProps = {
+  steps: InstructionStep[];
+  currentStep: number;
+  onStepClick: (stepId: number) => void;
+  navigation: ReactNode;
 };
 
-function DeviceStepperContent({
-  deviceIcon,
-  isActive,
-  onClick,
-}: DeviceStepperContentProps) {
+// Every step on one line; the current one opens with its actions. On phones
+// only the current step is shown and the navigation moves to a bottom bar.
+function StepList({
+  steps,
+  currentStep,
+  onStepClick,
+  navigation,
+}: StepListProps) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={isActive}
-      className={clsx(
-        "border-foreground flex h-15 w-15 items-center justify-center rounded-full border transition-all duration-200",
-        isActive
-          ? "bg-accent scale-105 shadow-[0_0_0_4px_rgba(255,255,255,0.04)]"
-          : "bg-bg hover:border-foreground/70"
-      )}
-    >
-      <Icon name={deviceIcon} color="foreground" width={30} height={30} />
-    </button>
+    <ol className="border-line-subtle bg-surface-1 shadow-elev-1 rounded-card border p-1.5 text-start">
+      {steps.map((step) => {
+        const isActive = step.id === currentStep;
+        const isDone = step.id < currentStep;
+
+        const marker = (
+          <span
+            aria-hidden="true"
+            className={clsx(
+              "flex size-[26px] shrink-0 items-center justify-center rounded-full border text-xs font-semibold tabular-nums",
+              isActive
+                ? "border-brand bg-brand text-on-brand"
+                : isDone
+                  ? "border-success/30 bg-success/10 text-success"
+                  : "border-line-strong text-fg-muted"
+            )}
+          >
+            {isDone ? (
+              <Icon
+                name="check"
+                color="current"
+                width={14}
+                height={14}
+                aria-hidden="true"
+              />
+            ) : (
+              step.id
+            )}
+          </span>
+        );
+
+        if (!isActive) {
+          return (
+            <li key={step.id} className="hidden lg:block">
+              <button
+                type="button"
+                onClick={() => onStepClick(step.id)}
+                className="text-fg-muted hover:text-fg focus-visible:shadow-ring flex w-full items-center gap-3 rounded-control px-3 py-2.5 text-start text-sm transition-colors outline-none"
+              >
+                {marker}
+                <span>
+                  <span className="sr-only">
+                    Step {step.id}
+                    {isDone ? ", done" : ""}:{" "}
+                  </span>
+                  {step.title}
+                </span>
+              </button>
+            </li>
+          );
+        }
+
+        return (
+          <li
+            key={step.id}
+            aria-current="step"
+            className="lg:bg-surface-2 lg:shadow-elev-1 rounded-control lg:my-1"
+          >
+            <div className="flex items-center gap-3 px-3 pt-3.5 pb-2.5">
+              {marker}
+              <h2 className="text-fg text-[17px] leading-snug font-semibold tracking-[-0.015em]">
+                <span className="text-fg-muted hidden text-xs font-medium tracking-normal lg:block">
+                  Step {step.id} of {steps.length}
+                </span>
+                {step.title}
+              </h2>
+            </div>
+
+            <div className="px-3.5 pb-3.5 lg:pl-[50px]">
+              <ol className="flex flex-col gap-2.5">
+                {step.actions.map((action, index) => (
+                  <li
+                    // biome-ignore lint/suspicious/noArrayIndexKey: static, ordered content
+                    key={index}
+                    className="text-fg-muted flex items-baseline gap-3 text-sm leading-[1.7]"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="bg-surface-2 text-fg-muted lg:bg-surface-0 flex size-5 shrink-0 -translate-y-px items-center justify-center rounded-md text-[11px] font-semibold"
+                    >
+                      {index + 1}
+                    </span>
+                    <span>{action}</span>
+                  </li>
+                ))}
+              </ol>
+
+              {step.note && (
+                <p className="text-fg-muted mt-3 text-[13px]">{step.note}</p>
+              )}
+
+              {step.zipWarning && (
+                <div className="mt-4">
+                  <ZipWarning />
+                </div>
+              )}
+
+              <div className="mt-4 hidden justify-end lg:flex">
+                {navigation}
+              </div>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+function StepDots({ total, current }: { total: number; current: number }) {
+  return (
+    <div aria-hidden="true" className="flex gap-1.5">
+      {Array.from({ length: total }, (_, index) => {
+        const id = index + 1;
+        return (
+          <span
+            key={id}
+            className={clsx(
+              "h-1 w-5 rounded-full",
+              id === current
+                ? "bg-brand-fg"
+                : id < current
+                  ? "bg-success/50"
+                  : "bg-surface-2"
+            )}
+          />
+        );
+      })}
+    </div>
   );
 }
 
@@ -554,21 +686,11 @@ export function InstructionsToStart() {
 
   useStandardPageAnimation(rootRef);
 
-  useEffect(() => {
-    let abortController: AbortController | null = null;
-
-    const runEffect = async () => {
-      setCurrentStep(1);
-    };
-
-    abortController = new AbortController();
-
-    void runEffect();
-
-    return () => {
-      abortController?.abort();
-    };
-  }, []);
+  // The two guides have a different number of steps: start over on switch.
+  const selectDevice = (device: DeviceType) => {
+    setSelectedDevice(device);
+    setCurrentStep(1);
+  };
 
   const goToPreviousStep = () => {
     setCurrentStep((prev) => Math.max(1, prev - 1));
@@ -576,6 +698,13 @@ export function InstructionsToStart() {
 
   const goToNextStep = () => {
     setCurrentStep((prev) => Math.min(totalSteps, prev + 1));
+  };
+
+  const navigationProps = {
+    currentStep,
+    totalSteps,
+    onBack: goToPreviousStep,
+    onNext: goToNextStep,
   };
 
   return (
@@ -589,117 +718,115 @@ export function InstructionsToStart() {
       <section className="flex min-h-svh flex-col">
         <NavBar />
 
-        <Container className="flex min-h-svh max-w-5xl flex-col">
-          <div
-            ref={rootRef}
-            className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-4 pt-16 pb-12 text-center md:px-6 md:pt-20"
-          >
-            <h1
-              data-page-animate="heading"
-              className="text-foreground mt-4 max-w-4xl text-4xl font-semibold md:text-6xl"
-            >
-              Get your Instagram data in a few steps
-            </h1>
-
-            <p
-              data-page-animate="subheading"
-              className="text-foreground/80 mt-5 max-w-2xl text-lg leading-8"
-            >
-              Follow these simple steps to download your Instagram data and
-              upload the correct ZIP file.
-            </p>
+        <Container size="app" className="flex flex-1 flex-col">
+          <div ref={rootRef} className="flex-1 pb-6 lg:pb-20">
+            <PageHeader
+              kicker="How to start"
+              title="Get your Instagram data in a few steps."
+              description="Download your Instagram export, then upload the ZIP here."
+              compact
+              actions={
+                <div
+                  role="tablist"
+                  aria-label="Your device"
+                  className="border-line-subtle bg-surface-1 grid grid-cols-2 gap-0.5 rounded-xl border p-[3px] md:inline-grid"
+                >
+                  <TabButton
+                    active={selectedDevice === "laptop"}
+                    onClick={() => selectDevice("laptop")}
+                  >
+                    <Icon
+                      name="laptop"
+                      color="current"
+                      width={14}
+                      height={14}
+                      aria-hidden="true"
+                    />
+                    Computer
+                  </TabButton>
+                  <TabButton
+                    active={selectedDevice === "smartPhone"}
+                    onClick={() => selectDevice("smartPhone")}
+                  >
+                    <Icon
+                      name="smartPhone"
+                      color="current"
+                      width={14}
+                      height={14}
+                      aria-hidden="true"
+                    />
+                    Phone
+                  </TabButton>
+                </div>
+              }
+            />
 
             <div
               data-page-animate="content"
-              className="mt-8 flex flex-col items-center gap-3"
+              className="grid items-start gap-4 lg:grid-cols-[380px_minmax(0,1fr)] lg:gap-8"
             >
-              <p className="text-foreground/60 text-xs font-medium tracking-wide uppercase">
-                Choose your device
-              </p>
-
-              <div className="flex flex-row gap-3">
-                <div data-page-animate="item">
-                  <DeviceStepperContent
-                    deviceIcon="laptop"
-                    isActive={selectedDevice === "laptop"}
-                    onClick={() => setSelectedDevice("laptop")}
-                  />
-                </div>
-
-                <div data-page-animate="item">
-                  <DeviceStepperContent
-                    deviceIcon="smartPhone"
-                    isActive={selectedDevice === "smartPhone"}
-                    onClick={() => setSelectedDevice("smartPhone")}
-                  />
-                </div>
+              <div className="-order-2 flex items-center justify-between lg:hidden">
+                <span className="text-fg-muted text-xs font-medium">
+                  Step {currentStep} of {totalSteps}
+                </span>
+                <StepDots total={totalSteps} current={currentStep} />
               </div>
-            </div>
 
-            <div data-page-animate="content" className="mt-10">
-              <Stepper
-                steps={instructionSteps}
-                currentStep={currentStep}
-                onStepClick={setCurrentStep}
-              />
-            </div>
+              <div className="flex flex-col gap-3 lg:col-start-1 lg:row-start-1">
+                <StepList
+                  steps={instructionSteps}
+                  currentStep={currentStep}
+                  onStepClick={setCurrentStep}
+                  navigation={<StepNavigation {...navigationProps} size="sm" />}
+                />
 
-            {hasMedia && activeStep.mediaSrc && (
-              <>
-                <div
-                  data-page-animate="content"
-                  className="mt-8 w-full max-w-220"
-                >
+                {currentStep < totalSteps && (
+                  <div className="flex items-center justify-between gap-3 px-1">
+                    <span className="text-fg-muted text-[13px]">
+                      Already have the ZIP?
+                    </span>
+                    <Link
+                      to="/get-started"
+                      state={{ isDemo: false }}
+                      className={buttonClasses({
+                        variant: "ghost",
+                        size: "sm",
+                      })}
+                    >
+                      <Icon
+                        name="upload"
+                        color="current"
+                        width={14}
+                        height={14}
+                        aria-hidden="true"
+                      />
+                      Upload it now
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {hasMedia && activeStep.mediaSrc && (
+                <div className="-order-1 lg:sticky lg:top-24 lg:order-none lg:col-start-2 lg:row-start-1">
                   <StepMedia
                     key={`${selectedDevice}-${activeStep.id}`}
                     src={activeStep.mediaSrc}
                     alt={activeStep.mediaAlt}
                   />
+                  <p className="text-fg-muted mt-2.5 text-xs lg:text-[13px]">
+                    Instagram may take from a few minutes to a few hours to
+                    prepare your file. Tap the video to pause, double tap for
+                    fullscreen.
+                  </p>
                 </div>
-
-                <p
-                  data-page-animate="item"
-                  className="text-foreground/50 mt-3 text-xs"
-                >
-                  Tap to pause • Double tap or use the button for fullscreen
-                </p>
-              </>
-            )}
-
-            <div
-              data-page-animate="content"
-              className="mt-8 flex w-full flex-col items-center justify-center gap-4"
-            >
-              <div data-page-animate="item">
-                <ActiveStepContent
-                  step={activeStep}
-                  totalSteps={instructionSteps.length}
-                />
-              </div>
-
-              <div
-                data-page-animate="item"
-                className="mt-3 flex flex-row items-center gap-4"
-              >
-                <Button
-                  variant="secondary"
-                  onClick={goToPreviousStep}
-                  disabled={currentStep === 1}
-                >
-                  Back
-                </Button>
-
-                {currentStep < totalSteps ? (
-                  <Button onClick={goToNextStep}>Next</Button>
-                ) : (
-                  <Link to="/get-started">
-                    <Button>Continue</Button>
-                  </Link>
-                )}
-              </div>
+              )}
             </div>
           </div>
         </Container>
+
+        <div className="border-line-subtle bg-surface-0/90 sticky bottom-0 z-10 border-t px-5 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
+          <StepNavigation {...navigationProps} />
+        </div>
       </section>
     </>
   );
