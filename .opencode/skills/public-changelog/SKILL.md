@@ -61,6 +61,15 @@ insert into updates (
 
 Insert with `is_published = false` and `published_at = null` first, so the entry can be reviewed before going live. Only flip `is_published` to `true` and set `published_at = now()` once the copy has been approved by the user - this is public, user-facing copy, distinct from internal Notion roadmap notes.
 
+### Keep preview in sync
+
+The preview environment has its own database (Neon project `followoo-database` / `quiet-bird-57080571`, branch `preview-backend` = `br-spring-recipe-ag4k05tz`, read by `followoo-api-preview`), while production reads the default branch `main`. The `updates` table on `preview-backend` must mirror production, so `/updates` behaves the same on both sites (decided by the owner, October 2026):
+
+- Every insert or update on production's `updates` is applied to `preview-backend` in the same step, with the same `id`, `slug` and content (use `insert ... on conflict (slug) do update`).
+- A draft (`is_published = false` on production) is **published on preview** (`is_published = true`, `published_at = now()`), so the copy can be reviewed on the preview site before release. Production stays unpublished until the owner approves.
+- When the entry goes live on production, keep the preview row as is (only align `release_date` and any copy edits).
+- After writing, compare `GET https://followoo-api.onrender.com/updates` and `GET https://followoo-api-preview.onrender.com/updates`: they must match except for drafts, which appear only on preview.
+
 A data-only insert does not need an `alembic revision`. If this manual-insert workflow is used often enough to become a bottleneck, consider building the `admin_updates` feature instead of continuing to insert rows by hand.
 
 ## When Not To Use This Skill
