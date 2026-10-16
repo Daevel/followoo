@@ -12,6 +12,8 @@ type PageHeaderProps = {
   actions?: ReactNode;
   /** Drops the bottom padding when the header shares a column with content. */
   flush?: boolean;
+  /** Tighter top and bottom padding, for task pages that must fit one screen. */
+  compact?: boolean;
   className?: string;
 };
 
@@ -24,13 +26,15 @@ export function PageHeader({
   meta,
   actions,
   flush = false,
+  compact = false,
   className,
 }: PageHeaderProps) {
   return (
     <header
       className={clsx(
-        "flex flex-col gap-6 pt-12 text-start md:flex-row md:items-end md:justify-between md:pt-16",
-        !flush && "pb-8 md:pb-10",
+        "flex flex-col gap-6 text-start md:flex-row md:items-end md:justify-between",
+        compact ? "pt-8 md:pt-10" : "pt-12 md:pt-16",
+        !flush && (compact ? "pb-6 md:pb-7" : "pb-8 md:pb-10"),
         className
       )}
     >
