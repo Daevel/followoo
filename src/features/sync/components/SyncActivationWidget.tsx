@@ -36,7 +36,7 @@ export function SyncActivationWidget() {
       <button
         type="button"
         onClick={() => setIsWizardOpen(true)}
-        className="text-foreground/70 hover:text-foreground text-sm font-semibold underline-offset-2 hover:underline"
+        className="text-fg-muted hover:text-fg text-sm font-semibold underline-offset-2 hover:underline"
       >
         Encrypted history
       </button>

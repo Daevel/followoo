@@ -56,7 +56,7 @@ export const InfoVariant: Story = {
         duration={10000}
       />
     ) : (
-      <div className="text-foreground">Toast chiuso</div>
+      <div className="text-fg">Toast chiuso</div>
     );
   },
 };
@@ -71,7 +71,7 @@ export const SuccessVariant: Story = {
         duration={10000}
       />
     ) : (
-      <div className="text-foreground">Toast chiuso</div>
+      <div className="text-fg">Toast chiuso</div>
     );
   },
 };
@@ -86,7 +86,7 @@ export const WarningVariant: Story = {
         duration={10000}
       />
     ) : (
-      <div className="text-foreground">Toast chiuso</div>
+      <div className="text-fg">Toast chiuso</div>
     );
   },
 };
@@ -101,7 +101,7 @@ export const DangerVariant: Story = {
         duration={10000}
       />
     ) : (
-      <div className="text-foreground">Toast chiuso</div>
+      <div className="text-fg">Toast chiuso</div>
     );
   },
 };

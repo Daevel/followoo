@@ -54,11 +54,11 @@ export class AppErrorBoundary extends React.Component<
           <Container className="flex min-h-svh flex-col">
             <div className="flex flex-1 flex-col items-center justify-center text-center">
               <div className="max-w-md">
-                <h1 className="leading-headers text-foreground text-3xl font-semibold md:text-4xl">
+                <h1 className="leading-headers text-fg text-3xl font-semibold md:text-4xl">
                   Something went wrong
                 </h1>
 
-                <p className="text-foreground/80 mt-4">
+                <p className="text-fg-muted mt-4">
                   An unexpected error occurred while rendering the page. Please
                   refresh and try again.
                 </p>
