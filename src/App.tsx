@@ -67,7 +67,7 @@ export default function App() {
   const tryDemo = () => navigate("/get-started", { state: { isDemo: true } });
 
   return (
-    <div ref={rootRef} className="bg-bg w-full min-h-screen">
+    <div ref={rootRef} className="bg-surface-0 w-full min-h-screen">
       <Seo
         title="Followoo - Private Instagram Followers Analyzer"
         description="Analyze your Instagram export locally in your browser. Compare followers, following, mutuals and unfollowers without an Instagram login or server-side file uploads."
@@ -117,7 +117,7 @@ export default function App() {
 
       <section
         data-section="footer-signature"
-        className="border-line-subtle bg-bg text-fg relative h-180 overflow-hidden border-t px-5 pt-12 md:px-10 lg:h-130 lg:px-18"
+        className="border-line-subtle bg-surface-0 text-fg relative h-180 overflow-hidden border-t px-5 pt-12 md:px-10 lg:h-130 lg:px-18"
       >
         <div data-animate="footer-signature">
           <FooterSignature />

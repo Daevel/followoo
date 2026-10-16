@@ -12,8 +12,8 @@ Generi story Storybook per i componenti UI di Followoo. Ogni file di story DEVE 
 - **Storybook** con framework `@storybook/react-vite`
 - **CSF 3** (Component Story Format) — story basate su oggetti, niente `Template.bind({})` di CSF 2
 - Tipi importati da `@storybook/react-vite`: `Meta`, `StoryObj`
-- Styling: **Tailwind CSS 4**, con i design token definiti in `src/index.css` (blocco `@theme inline`): i token storici (`--color-primary`, `--color-bg`, `--color-accent`, `--color-foreground`, font, tipografia, breakpoint) e il livello semantico del redesign (`surface-*`, `line-*`, `fg*`, `brand*`, stati, `data-1…5`, raggi, ombre), visibile nella story `Foundations/DesignTokens`
-- Il preview (`.storybook/preview.tsx`) importa `../src/index.css`, avvolge ogni story in `MemoryRouter` e applica `bg-bg text-foreground p-6`
+- Styling: **Tailwind CSS 4**, con i design token definiti in `src/index.css` (blocco `@theme inline`): font, tipografia, breakpoint e i token semantici dei colori (`surface-*`, `line-*`, `fg*`, `brand*`, stati, `data-1…5`, raggi, ombre; i vecchi `primary`/`accent`/`bg`/`foreground` sono stati rimossi), visibile nella story `Foundations/DesignTokens`
+- Il preview (`.storybook/preview.tsx`) importa `../src/index.css`, avvolge ogni story in `MemoryRouter` e applica `bg-surface-0 text-fg p-6`
 
 ## File Naming e Posizione
 
@@ -84,7 +84,7 @@ Definisci `argTypes` in meta per configurare i controlli di Storybook. Leggi il 
 - **Prop booleane**: usa `control: "boolean"`
 - **Prop testuali**: usa `control: "text"`
 - **Prop numeriche**: usa `control: { type: "number" }`
-- **Prop di colore basate su token** (es. `background`, `foreground`, `color`): usa `control: { type: "select" }` con `options` che elencano i valori validi (`"primary"`, `"accent"`, `"bg"`, `"foreground"`) — leggi il tipo delle props del componente per l'elenco esatto, non serve consultare `src/index.css` per ogni story
+- **Prop di colore basate su token** (es. `background`, `foreground`, `color`): usa `control: { type: "select" }` con `options` che elencano i valori validi (es. per `Icon`: `"fg"`, `"current"`) — leggi il tipo delle props del componente per l'elenco esatto, non serve consultare `src/index.css` per ogni story
 
 ### 4. Composizione con `render`
 

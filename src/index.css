@@ -3,11 +3,6 @@
 /* inline means that it can be used within other styles outside the @theme reference */
 
 @theme inline {
-  --color-primary: #6366f1;
-  --color-bg: #0b0d17; /* legacy alias of surface-0 */
-  --color-accent: #f43f5e;
-  --color-foreground: #fefefe;
-
   --font-inter: "Inter", sans-serif;
 
   /* typography tokens */
@@ -40,15 +35,6 @@
   --sm-mobile: 640px;
   --md-tablet: 768px;
   --lg-desktop: 1024px;
-
-  /* SHADOWS */
-  --shadow-primary:
-    0 8px 20px color-mix(in srgb, var(--color-primary) 28%, transparent),
-    0 2px 6px color-mix(in srgb, var(--color-primary) 18%, transparent);
-
-  --shadow-accent:
-    0 8px 20px color-mix(in srgb, var(--color-accent) 28%, transparent),
-    0 2px 6px color-mix(in srgb, var(--color-accent) 18%, transparent);
 
   /* REDESIGN TOKENS (semantic layer, adopted component by component) */
   /* contrast ratios are measured on surface-1 unless noted */
@@ -95,38 +81,12 @@
   --shadow-ring: 0 0 0 2px #0b0d17, 0 0 0 4px #a5b4fc;
 }
 
-@layer utilities {
-  .shadow-primary-hover {
-    box-shadow: 0 0 0 transparent;
-    transition:
-      box-shadow 250ms ease,
-      transform 250ms ease;
-  }
-
-  .shadow-primary-hover:hover {
-    box-shadow: var(--shadow-primary);
-    transform: translateY(-2px);
-  }
-
-  .shadow-accent-hover {
-    box-shadow: 0 0 0 transparent;
-    transition:
-      box-shadow 250ms ease,
-      transform 250ms ease;
-  }
-
-  .shadow-accent-hover:hover {
-    box-shadow: var(--shadow-accent);
-    transform: translateY(-2px);
-  }
-}
-
 /* BASE: element defaults live in @layer base so Tailwind utilities on an
    element (e.g. text-xl on an h2) win over them. */
 @layer base {
   html {
     font-size: 16px;
-    background-color: var(--color-bg);
+    background-color: var(--color-surface-0);
   }
 
   body {

@@ -29,7 +29,7 @@ const meta: Meta<typeof Icon> = {
     },
     color: {
       control: { type: "select" },
-      options: ["primary", "accent", "bg", "foreground"],
+      options: ["fg", "current"],
       description: "Icon color",
     },
     width: {
@@ -53,7 +53,7 @@ type Story = StoryObj<typeof Icon>;
 export const Primary: Story = {
   args: {
     name: "check",
-    color: "primary",
+    color: "fg",
     width: 32,
     height: 32,
   },
@@ -65,7 +65,7 @@ export const Gallery: Story = {
       {allIconNames.map((name) => (
         <div
           key={name}
-          className="border-foreground/10 bg-foreground/5 rounded-xl border p-4 text-center"
+          className="border-line-subtle bg-surface-1 rounded-xl border p-4 text-center"
         >
           <Icon name={name} width={32} height={32} />
           <p className="mt-3 text-sm">{name}</p>

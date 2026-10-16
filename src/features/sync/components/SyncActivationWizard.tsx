@@ -80,23 +80,23 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="bg-bg relative w-full max-w-lg rounded-[10px] border border-white/10 p-6">
+      <div className="border-line-strong bg-surface-1 shadow-elev-2 relative w-full max-w-lg rounded-card border p-6">
         <button
           type="button"
           onClick={handleClose}
           disabled={isBusy}
           aria-label="Close"
-          className="text-foreground/50 hover:text-foreground absolute top-4 right-4 disabled:cursor-not-allowed disabled:opacity-40"
+          className="text-fg-muted hover:text-fg focus-visible:shadow-ring rounded-control outline-none absolute top-4 right-4 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <Icon name="close" color="foreground" width={20} height={20} />
+          <Icon name="close" color="current" width={20} height={20} />
         </button>
 
         {step === "intro" && (
           <div className="flex flex-col gap-4">
-            <h2 className="text-foreground text-xl font-semibold">
+            <h2 className="text-fg text-xl font-semibold">
               Activate encrypted history
             </h2>
-            <p className="text-foreground/80 text-sm leading-6">
+            <p className="text-fg-muted text-sm leading-6">
               Encrypted history lets you keep past analyses and compare them
               over time. It is always free. Your history is encrypted in your
               browser before it ever reaches our servers - Followoo cannot read
@@ -110,10 +110,10 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
 
         {step === "passphrase" && (
           <form onSubmit={onSubmitPassphrase} className="flex flex-col gap-4">
-            <h2 className="text-foreground text-xl font-semibold">
+            <h2 className="text-fg text-xl font-semibold">
               Choose a passphrase
             </h2>
-            <p className="text-foreground/80 text-sm leading-6">
+            <p className="text-fg-muted text-sm leading-6">
               This passphrase is separate from your account password - it is the
               only way (besides your recovery code) to unlock your encrypted
               history.
@@ -160,7 +160,7 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
 
         {step === "recovery-code" && (
           <div className="flex flex-col gap-4">
-            <h2 className="text-foreground text-xl font-semibold">
+            <h2 className="text-fg text-xl font-semibold">
               Save your recovery code
             </h2>
 
@@ -171,7 +171,7 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
             </Callout>
 
             <p
-              className="border-foreground/20 text-foreground rounded-[10px] border bg-white/5 px-4 py-3 text-center font-mono text-lg tracking-wide"
+              className="border-line-strong text-fg rounded-control border bg-surface-2 px-4 py-3 text-center font-mono text-lg tracking-wide"
               data-testid="recovery-code"
             >
               {recoveryCode}
@@ -209,10 +209,10 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
 
         {step === "confirm" && status !== "success" && (
           <div className="flex flex-col gap-4">
-            <h2 className="text-foreground text-xl font-semibold">
+            <h2 className="text-fg text-xl font-semibold">
               Activate encrypted history
             </h2>
-            <p className="text-foreground/80 text-sm leading-6">
+            <p className="text-fg-muted text-sm leading-6">
               Your encrypted history will be activated using the passphrase and
               recovery code from the previous steps. Make sure you have saved
               your recovery code before continuing.
@@ -235,10 +235,10 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
 
         {status === "success" && (
           <div className="flex flex-col gap-4">
-            <h2 className="text-foreground text-xl font-semibold">
+            <h2 className="text-fg text-xl font-semibold">
               Encrypted history is active
             </h2>
-            <p className="text-foreground/80 text-sm leading-6">
+            <p className="text-fg-muted text-sm leading-6">
               Your encrypted history has been activated. Keep your passphrase
               and recovery code somewhere safe.
             </p>
