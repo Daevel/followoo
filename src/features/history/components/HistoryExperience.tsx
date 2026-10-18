@@ -4,38 +4,56 @@ import { useFeatureFlag } from "@/analytics";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Container } from "@/components/ui/Container";
 import { FabIcon } from "@/components/ui/FabIcon";
 import { NavBar } from "@/components/ui/NavBar";
 import { PageHeader } from "@/components/ui/PageHeader";
 import Seo from "@/components/ui/Seo";
 import { Skeleton } from "@/components/ui/Skeleton";
+import type { AnalysisComparison } from "@/features/relationship/services/analysisComparisonService";
 import { ResultsExperience } from "@/features/results/components/ResultsExperience";
 import { SYNC_FEATURE_FLAG_KEY } from "@/features/sync/constants";
 import { useSyncKey } from "@/providers/SyncKeyProvider";
 import type { InstagramAnalysisResult } from "@/types/instagram.types";
 import { useHistorySnapshots } from "../hooks/useHistorySnapshots";
 import { useOpenSnapshot } from "../hooks/useOpenSnapshot";
-
-function formatSnapshotDate(isoDate: string): string {
-  return new Date(isoDate).toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
+import { useSnapshotComparison } from "../hooks/useSnapshotComparison";
+import { formatSnapshotDate } from "../utils/formatSnapshotDate";
+import { SnapshotComparisonView } from "./SnapshotComparisonView";
 
 // Only mounted once encrypted history is unlocked - its own data fetch
 // (useHistorySnapshots) has no reason to run otherwise.
 function HistoryList({
   masterKey,
   onOpen,
+  onCompared,
 }: {
   masterKey: Uint8Array<ArrayBuffer>;
   onOpen: (analysis: InstagramAnalysisResult) => void;
+  onCompared: (comparison: AnalysisComparison) => void;
 }) {
   const { items, status, removeSnapshot } = useHistorySnapshots();
   const { openSnapshot, status: openStatus } = useOpenSnapshot();
+  const { status: comparisonStatus, compare } = useSnapshotComparison();
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const isComparing = comparisonStatus === "loading";
+
+  function toggleSelected(id: string) {
+    setSelectedIds((previous) => {
+      if (previous.includes(id)) {
+        return previous.filter((selectedId) => selectedId !== id);
+      }
+
+      if (previous.length >= 2) {
+        return previous;
+      }
+
+      return [...previous, id];
+    });
+  }
 
   async function handleOpen(id: string) {
     setPendingId(id);
@@ -55,6 +73,25 @@ function HistoryList({
     setPendingId(id);
     await removeSnapshot(id);
     setPendingId(null);
+    setSelectedIds((previous) =>
+      previous.filter((selectedId) => selectedId !== id)
+    );
+  }
+
+  async function handleCompare() {
+    if (selectedIds.length !== 2) return;
+
+    const [itemA, itemB] = selectedIds.map((id) =>
+      items.find((item) => item.id === id)
+    );
+
+    if (!itemA || !itemB) return;
+
+    const comparison = await compare(itemA, itemB, masterKey);
+
+    if (comparison) {
+      onCompared(comparison);
+    }
   }
 
   if (status === "loading") {
@@ -81,43 +118,78 @@ function HistoryList({
   }
 
   return (
-    <ul className="flex flex-col">
-      {items.map((item) => {
-        const isPending = pendingId === item.id && openStatus === "loading";
-        const isDeleting = pendingId === item.id;
-
-        return (
-          <li
-            key={item.id}
-            className="border-line-subtle flex items-center justify-between gap-4 border-t py-4 text-start"
+    <div className="flex flex-col gap-4">
+      {items.length < 2 ? (
+        <Callout title="Not enough history yet" variant="info">
+          Save at least one more analysis to be able to compare two snapshots.
+        </Callout>
+      ) : (
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-fg-muted text-[13px]">
+            Select exactly two entries to compare them.
+          </p>
+          <Button
+            size="sm"
+            disabled={selectedIds.length !== 2}
+            loading={isComparing}
+            onClick={handleCompare}
           >
-            <span className="text-fg text-sm font-medium">
-              {formatSnapshotDate(item.createdAt)}
-            </span>
+            Compare
+          </Button>
+        </div>
+      )}
 
-            <span className="flex items-center gap-2">
-              <Button
-                size="sm"
-                variant="secondary"
-                loading={isPending}
-                disabled={isDeleting}
-                onClick={() => handleOpen(item.id)}
-              >
-                View
-              </Button>
-              <FabIcon
-                size="sm"
-                variant="ghost"
-                icon="trash"
-                disabled={isPending || isDeleting}
-                onClick={() => handleDelete(item.id)}
-                aria-label="Delete this history entry"
-              />
-            </span>
-          </li>
-        );
-      })}
-    </ul>
+      <ul className="flex flex-col">
+        {items.map((item) => {
+          const isPending = pendingId === item.id && openStatus === "loading";
+          const isDeleting = pendingId === item.id;
+          const isSelected = selectedIds.includes(item.id);
+          const isSelectionDisabled =
+            isComparing || (!isSelected && selectedIds.length >= 2);
+
+          return (
+            <li
+              key={item.id}
+              className="border-line-subtle flex items-center justify-between gap-4 border-t py-4 text-start"
+            >
+              <span className="flex items-center gap-3">
+                {items.length >= 2 && (
+                  <Checkbox
+                    checked={isSelected}
+                    disabled={isSelectionDisabled}
+                    onChange={() => toggleSelected(item.id)}
+                    aria-label={`Select ${formatSnapshotDate(item.createdAt)} for comparison`}
+                  />
+                )}
+                <span className="text-fg text-sm font-medium">
+                  {formatSnapshotDate(item.createdAt)}
+                </span>
+              </span>
+
+              <span className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  loading={isPending}
+                  disabled={isDeleting}
+                  onClick={() => handleOpen(item.id)}
+                >
+                  View
+                </Button>
+                <FabIcon
+                  size="sm"
+                  variant="ghost"
+                  icon="trash"
+                  disabled={isPending || isDeleting}
+                  onClick={() => handleDelete(item.id)}
+                  aria-label="Delete this history entry"
+                />
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 
@@ -127,9 +199,13 @@ export function HistoryExperience() {
   const { status, masterKey } = useSyncKey();
   const [openedAnalysis, setOpenedAnalysis] =
     useState<InstagramAnalysisResult | null>(null);
+  const [comparisonResult, setComparisonResult] =
+    useState<AnalysisComparison | null>(null);
 
   const rootRef = useRef<HTMLDivElement | null>(null);
-  useStandardPageAnimation(rootRef, { animateItems: status === "unlocked" });
+  useStandardPageAnimation(rootRef, {
+    animateItems: status === "unlocked" && !comparisonResult,
+  });
 
   // Reusing ResultsExperience as-is (it renders its own NavBar, which
   // already carries a link back to /history once unlocked) instead of
@@ -188,7 +264,18 @@ export function HistoryExperience() {
                   bar to unlock your history for this session.
                 </Callout>
               ) : masterKey ? (
-                <HistoryList masterKey={masterKey} onOpen={setOpenedAnalysis} />
+                comparisonResult ? (
+                  <SnapshotComparisonView
+                    comparison={comparisonResult}
+                    onBack={() => setComparisonResult(null)}
+                  />
+                ) : (
+                  <HistoryList
+                    masterKey={masterKey}
+                    onOpen={setOpenedAnalysis}
+                    onCompared={setComparisonResult}
+                  />
+                )
               ) : null}
             </div>
           </div>
