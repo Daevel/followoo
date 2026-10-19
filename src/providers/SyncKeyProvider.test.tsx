@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ERROR_CODES } from "@/errors";
 import { generateMasterKey, wrapMasterKey } from "@/features/sync/crypto";
@@ -198,14 +198,12 @@ describe("SyncKeyProvider", () => {
       const { masterKey, result } = await setUpLockedSession();
 
       let unlocked = false;
-      await waitFor(async () => {
+      await act(async () => {
         unlocked = await result.current.unlockWithPassphrase("the-passphrase");
       });
 
       expect(unlocked).toBe(true);
-      await waitFor(() => {
-        expect(result.current.status).toBe("unlocked");
-      });
+      expect(result.current.status).toBe("unlocked");
       expect(result.current.masterKey).toEqual(masterKey);
       expect(result.current.unlockedVia).toBe("passphrase");
     });
@@ -214,7 +212,7 @@ describe("SyncKeyProvider", () => {
       const { result } = await setUpLockedSession();
 
       let unlocked = true;
-      await waitFor(async () => {
+      await act(async () => {
         unlocked =
           await result.current.unlockWithPassphrase("wrong-passphrase");
       });
@@ -229,7 +227,7 @@ describe("SyncKeyProvider", () => {
       const { masterKey, result } = await setUpLockedSession();
 
       let unlocked = false;
-      await waitFor(async () => {
+      await act(async () => {
         unlocked =
           await result.current.unlockWithRecoveryCode("the-recovery-code");
       });
@@ -243,7 +241,7 @@ describe("SyncKeyProvider", () => {
       const { result } = await setUpLockedSession();
 
       let unlocked = true;
-      await waitFor(async () => {
+      await act(async () => {
         unlocked = await result.current.unlockWithRecoveryCode("wrong-code");
       });
 
@@ -254,7 +252,7 @@ describe("SyncKeyProvider", () => {
     it("rotates to a new passphrase after a recovery-code unlock", async () => {
       const { result } = await setUpLockedSession();
 
-      await waitFor(async () => {
+      await act(async () => {
         await result.current.unlockWithRecoveryCode("the-recovery-code");
       });
       expect(result.current.unlockedVia).toBe("recovery");
@@ -262,7 +260,7 @@ describe("SyncKeyProvider", () => {
       rotateSyncPassphraseMock.mockResolvedValue(undefined);
 
       let rotated = false;
-      await waitFor(async () => {
+      await act(async () => {
         rotated = await result.current.setNewPassphrase(
           "a brand new passphrase"
         );
@@ -274,22 +272,20 @@ describe("SyncKeyProvider", () => {
       expect(token).toBe("token-123");
       expect(payload).not.toHaveProperty("newPassphrase");
       expect(payload.wrappedMasterKeyPassphrase).toBeTypeOf("string");
-      await waitFor(() => {
-        expect(result.current.unlockedVia).toBe("passphrase");
-      });
+      expect(result.current.unlockedVia).toBe("passphrase");
     });
 
     it("reports SYNC_PASSPHRASE_ROTATION_FAILED when rotation fails", async () => {
       const { result } = await setUpLockedSession();
 
-      await waitFor(async () => {
+      await act(async () => {
         await result.current.unlockWithRecoveryCode("the-recovery-code");
       });
 
       rotateSyncPassphraseMock.mockRejectedValue(new Error("status 500"));
 
       let rotated = true;
-      await waitFor(async () => {
+      await act(async () => {
         rotated = await result.current.setNewPassphrase(
           "a brand new passphrase"
         );
@@ -318,7 +314,7 @@ describe("SyncKeyProvider", () => {
     });
 
     const freshMasterKey = generateMasterKey();
-    await waitFor(() => {
+    act(() => {
       result.current.setUnlockedAfterActivation(freshMasterKey);
     });
 
