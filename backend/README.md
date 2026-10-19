@@ -311,31 +311,50 @@ Run this once, manually, against the production database before the
 first real deploy that includes Alembic.
 
 From then on, applying migrations against the real Render/Neon
-environments is **automatic**, not a manual step: both Render services
-(`followoo-api` for production, `followoo-api-preview` for `preview`)
-have a **Pre-Deploy Command** set to `alembic upgrade head` (configured
-in each service's Render dashboard - this repo has no `render.yaml`, so
-it is not something `git log` or a PR diff will ever show). Render runs
-it after the build succeeds and before the new version takes traffic,
-using the same environment variables already configured on that service
-(no secrets duplicated anywhere). It applies any migrations newer than
-whatever revision the database is currently stamped at, and is a no-op
-if the database is already at `head` - safe to run on every single
-deploy, migration or not. If the command fails, Render aborts the
-deploy and keeps the previous version serving traffic.
+environments is **automatic**, not a manual step - but not via Render's
+Pre-Deploy Command: that feature turned out to require a paid web
+service plan, and both `followoo-api` and `followoo-api-preview` are on
+the free tier (discovered only once actually trying to configure it, not
+known when this section was first written). Instead, the migration runs
+at the top of [`backend/start.sh`](start.sh), which is what both
+services' **Start Command** on Render invokes instead of calling
+`uvicorn` directly:
 
-This replaced what used to be a manual reminder ("run this after every
-deploy"), which is exactly the kind of step that eventually gets
-skipped: the `preview` database went for weeks without the
-`users`/`sync_keys`/`analysis_snapshots` tables even though those
-migrations were already written and passing in CI, simply because
-nobody ran `alembic upgrade head` against it by hand after a deploy.
-An automatic Pre-Deploy Command removes the human step entirely.
+```bash
+alembic upgrade head
+exec uvicorn app.main:app --host 0.0.0.0 --port "$PORT"
+```
+
+This runs on every boot of the instance - every real deploy, but also a
+plain manual restart or a scaling event - not only when new code ships.
+That is harmless: `alembic upgrade head` is a no-op once the database is
+already at `head`, so re-running it on a restart that doesn't include a
+new migration costs nothing.
+
+The zero-downtime safety is the same guarantee the Pre-Deploy Command
+would have given, just produced a different way: `start.sh` runs with
+`set -euo pipefail`, so if `alembic upgrade head` fails, the script stops
+right there - `uvicorn` never starts, the instance never passes Render's
+health check, and Render keeps routing traffic to the previous (working)
+version instead of cutting over to a broken one. The trailing `exec` is
+not decorative: without it, `uvicorn` would run as a child process of
+this script, and a `SIGTERM` (which Render sends for a clean shutdown on
+every deploy/restart) would reach the script instead of `uvicorn`
+directly; `exec` replaces the bash process with `uvicorn`'s, preserving
+the clean shutdown the original plain `uvicorn ...` Start Command had.
+
+Both Render services' **Start Command** must be set to `bash start.sh`
+(assuming each service's Root Directory is `backend`, consistent with
+the previous Start Command not using a `cd backend &&` prefix). Like the
+Pre-Deploy Command before it, updating that field is a manual step in
+the Render dashboard, outside this repo - this repo has no `render.yaml`,
+so neither the old nor the new value will ever show up in `git log` or a
+PR diff.
 
 A fresh database (a new local/test/staging environment that never had the
 `updates` table) should always use `alembic upgrade head` from the start,
 never `stamp` - `stamp` only makes sense for the one database that
 already had the table before Alembic existed. Running migrations
 locally (`./.venv/bin/alembic upgrade head`, see "Applying migrations
-locally" above) is unaffected by any of this - the Pre-Deploy Command
-only runs on Render, against the two real Render/Neon environments.
+locally" above) is unaffected by any of this - the Start Command only
+runs on Render, against the two real Render/Neon environments.
