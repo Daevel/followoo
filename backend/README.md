@@ -308,18 +308,34 @@ SQL:
 ```
 
 Run this once, manually, against the production database before the
-first real deploy that includes Alembic. From then on, every deploy
-should run:
+first real deploy that includes Alembic.
 
-```bash
-./.venv/bin/alembic upgrade head
-```
+From then on, applying migrations against the real Render/Neon
+environments is **automatic**, not a manual step: both Render services
+(`followoo-api` for production, `followoo-api-preview` for `preview`)
+have a **Pre-Deploy Command** set to `alembic upgrade head` (configured
+in each service's Render dashboard - this repo has no `render.yaml`, so
+it is not something `git log` or a PR diff will ever show). Render runs
+it after the build succeeds and before the new version takes traffic,
+using the same environment variables already configured on that service
+(no secrets duplicated anywhere). It applies any migrations newer than
+whatever revision the database is currently stamped at, and is a no-op
+if the database is already at `head` - safe to run on every single
+deploy, migration or not. If the command fails, Render aborts the
+deploy and keeps the previous version serving traffic.
 
-which applies any migrations newer than whatever revision the database is
-currently stamped at. This is safe to run on every deploy: if the
-database is already at `head`, it is a no-op.
+This replaced what used to be a manual reminder ("run this after every
+deploy"), which is exactly the kind of step that eventually gets
+skipped: the `preview` database went for weeks without the
+`users`/`sync_keys`/`analysis_snapshots` tables even though those
+migrations were already written and passing in CI, simply because
+nobody ran `alembic upgrade head` against it by hand after a deploy.
+An automatic Pre-Deploy Command removes the human step entirely.
 
 A fresh database (a new local/test/staging environment that never had the
 `updates` table) should always use `alembic upgrade head` from the start,
 never `stamp` - `stamp` only makes sense for the one database that
-already had the table before Alembic existed.
+already had the table before Alembic existed. Running migrations
+locally (`./.venv/bin/alembic upgrade head`, see "Applying migrations
+locally" above) is unaffected by any of this - the Pre-Deploy Command
+only runs on Render, against the two real Render/Neon environments.

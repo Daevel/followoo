@@ -42,3 +42,9 @@ Until that secret exists, the `chromatic` job is skipped (not failed) on every r
 This repo is already connected to Vercel through the Vercel GitHub App: production deployments are created by `vercel[bot]` and reported as a `Vercel` commit status (visible via the GitHub API, e.g. `GET /repos/daevel/followoo/commits/main/status`). The Vercel GitHub App automatically creates a preview deployment for every pull request as well.
 
 Because of this, **no deploy-preview job was added to `ci.yml`** - it would duplicate what Vercel already does automatically for every PR.
+
+## Database migrations against real environments
+
+`ci.yml`'s `backend-verify` job runs `alembic upgrade head` (step 6 above), but only against the ephemeral `postgres:16` service container it creates for that run - this only proves the migrations are valid and apply cleanly against a clean database. It never touches the real production or preview Neon databases, and no other job does either.
+
+Applying migrations against those two real databases is handled outside this repo entirely: both Render services (`followoo-api`, `followoo-api-preview`) run `alembic upgrade head` as a **Pre-Deploy Command**, configured in each service's Render dashboard, after every deploy's build and before the new version takes traffic. See `backend/README.md`'s "Applying migrations in deploy" section for the full explanation of why, and what happens if it fails.
