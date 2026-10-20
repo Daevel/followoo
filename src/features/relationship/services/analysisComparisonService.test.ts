@@ -6,10 +6,15 @@ import type {
 import {
   buildComparisonChartData,
   compareAnalysisSnapshots,
+  getAnalysisDataUntil,
 } from "./analysisComparisonService";
 
 function mkUser(username: string): InstagramUser {
   return { username };
+}
+
+function mkUserAt(username: string, isoDate: string): InstagramUser {
+  return { username, timestamp: Date.parse(isoDate) / 1000 };
 }
 
 function usernamesOf(users: InstagramUser[]): string[] {
@@ -36,6 +41,79 @@ function buildAnalysis(
 }
 
 describe("compareAnalysisSnapshots", () => {
+  it("orders by the data date, not the save date - an older export saved later is still the older side", () => {
+    // Saved first, but its data runs until October.
+    const recentExport = {
+      createdAt: "2026-10-18T09:00:00Z",
+      analysis: buildAnalysis({
+        mutual: [mkUserAt("alice", "2025-01-10T00:00:00Z")],
+        followersOnly: [
+          mkUserAt("bob", "2025-03-01T00:00:00Z"),
+          mkUserAt("dave", "2026-10-02T00:00:00Z"),
+        ],
+      }),
+    };
+    // Saved afterwards, but its data stops at August 31.
+    const augustExport = {
+      createdAt: "2026-10-18T10:00:00Z",
+      analysis: buildAnalysis({
+        mutual: [mkUserAt("alice", "2025-01-10T00:00:00Z")],
+        followersOnly: [
+          mkUserAt("bob", "2025-03-01T00:00:00Z"),
+          mkUserAt("carol", "2026-08-31T00:00:00Z"),
+        ],
+      }),
+    };
+
+    for (const comparison of [
+      compareAnalysisSnapshots(recentExport, augustExport),
+      compareAnalysisSnapshots(augustExport, recentExport),
+    ]) {
+      expect(comparison.older.createdAt).toBe("2026-10-18T10:00:00Z");
+      expect(comparison.newer.createdAt).toBe("2026-10-18T09:00:00Z");
+      expect(usernamesOf(comparison.newFollowers.users)).toEqual(["dave"]);
+      expect(usernamesOf(comparison.lostFollowers.users)).toEqual(["carol"]);
+    }
+  });
+
+  it("exposes how recent each side's data is", () => {
+    const comparison = compareAnalysisSnapshots(
+      {
+        createdAt: "2026-09-01T00:00:00Z",
+        analysis: buildAnalysis({
+          mutual: [mkUserAt("alice", "2026-08-31T00:00:00Z")],
+        }),
+      },
+      {
+        createdAt: "2026-10-01T00:00:00Z",
+        analysis: buildAnalysis({ mutual: [mkUser("alice")] }),
+      }
+    );
+
+    expect(comparison.older.dataUntil).toBe(
+      Date.parse("2026-08-31T00:00:00Z") / 1000
+    );
+    expect(comparison.newer.dataUntil).toBeNull();
+  });
+
+  it("falls back to createdAt when an export has no timestamps", () => {
+    const withDates = {
+      createdAt: "2026-10-01T00:00:00Z",
+      analysis: buildAnalysis({
+        followersOnly: [mkUserAt("bob", "2026-12-01T00:00:00Z")],
+      }),
+    };
+    const withoutDates = {
+      createdAt: "2026-09-01T00:00:00Z",
+      analysis: buildAnalysis({ followersOnly: [mkUser("carol")] }),
+    };
+
+    const comparison = compareAnalysisSnapshots(withDates, withoutDates);
+
+    expect(comparison.older.createdAt).toBe("2026-09-01T00:00:00Z");
+    expect(usernamesOf(comparison.newFollowers.users)).toEqual(["bob"]);
+  });
+
   it("sorts by createdAt internally - the result is the same regardless of argument order", () => {
     const earlier = {
       createdAt: "2026-09-01T00:00:00Z",
@@ -207,6 +285,26 @@ describe("compareAnalysisSnapshots", () => {
     const result = compareAnalysisSnapshots(snapshot, snapshot);
 
     expect(result.older.followersCount).toBe(1);
+  });
+});
+
+describe("getAnalysisDataUntil", () => {
+  it("returns the latest timestamp across every relationship list", () => {
+    const analysis = buildAnalysis({
+      mutual: [mkUserAt("alice", "2025-01-10T00:00:00Z")],
+      unfollowers: [mkUserAt("bob", "2026-05-01T00:00:00Z")],
+      recentUnfollowers: [mkUserAt("carol", "2026-10-17T00:00:00Z")],
+    });
+
+    expect(getAnalysisDataUntil(analysis)).toBe(
+      Date.parse("2026-10-17T00:00:00Z") / 1000
+    );
+  });
+
+  it("returns null when no user carries a timestamp", () => {
+    expect(
+      getAnalysisDataUntil(buildAnalysis({ mutual: [mkUser("alice")] }))
+    ).toBeNull();
   });
 });
 

@@ -70,6 +70,7 @@ Core relationships:
 - Following-only / not following back: the user follows an account, but that account does not follow the user. This is not an unfollow event.
 - Recent unfollowers: accounts reported by Instagram export as recently unfollowed.
 - Blocked, restricted, close friends, hidden stories: direct lists from supported Instagram export files.
+- History comparisons (`compareAnalysisSnapshots`): "before" and "after" follow the date of the data in each export (latest relationship timestamp, `getAnalysisDataUntil`), never the date the snapshot was saved - an export ending in August can be saved after one ending in October. `createdAt` is only the fallback when an export has no timestamps.
 
 Initial relationship vocabulary, where X is the current user's profile and Y is another profile:
 
