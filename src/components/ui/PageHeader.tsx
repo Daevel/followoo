@@ -14,6 +14,8 @@ type PageHeaderProps = {
   flush?: boolean;
   /** Tighter top and bottom padding, for task pages that must fit one screen. */
   compact?: boolean;
+  /** Lets the description run the full width, for pages whose content below is full width too. */
+  wide?: boolean;
   className?: string;
 };
 
@@ -27,6 +29,7 @@ export function PageHeader({
   actions,
   flush = false,
   compact = false,
+  wide = false,
   className,
 }: PageHeaderProps) {
   return (
@@ -54,7 +57,10 @@ export function PageHeader({
         {description && (
           <p
             data-page-animate="subheading"
-            className="text-fg-muted mt-3.5 max-w-[560px] text-base leading-7 md:text-[17px]"
+            className={clsx(
+              "text-fg-muted mt-3.5 text-base leading-7 md:text-[17px]",
+              wide ? "max-w-none" : "max-w-[560px]"
+            )}
           >
             {description}
           </p>

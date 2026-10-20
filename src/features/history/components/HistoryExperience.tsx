@@ -390,6 +390,7 @@ export function HistoryExperience() {
             <PageHeader
               kicker="Encrypted history"
               title="Your saved analyses"
+              wide
               description="Every entry is encrypted in your browser before it reaches our servers - only the date is ever stored in the clear."
             />
 
