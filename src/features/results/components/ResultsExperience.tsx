@@ -16,6 +16,7 @@ import { RelationshipHealthInsight } from "@/components/ui/RelationshipHealthIns
 import Seo from "@/components/ui/Seo";
 import { SortSelect } from "@/components/ui/SortSelect";
 import { UserListItem } from "@/components/ui/UserListItem";
+import { HistorySavePrompt } from "@/features/history/components/HistorySavePrompt";
 import { calculateNetworkVolatility } from "@/features/relationship/services/recentUnfollowActivityService";
 import { calculateRelationshipHealthScore } from "@/features/relationship/services/relationshipHealthService";
 import {
@@ -36,8 +37,11 @@ import { ResultsListSwitcher } from "./ResultsListSwitcher";
 
 export function ResultsExperience({
   analysis,
+  isHistorySavePending = false,
 }: {
   analysis: InstagramAnalysisResult;
+  /** Fresh analysis that wasn't saved because history was locked. */
+  isHistorySavePending?: boolean;
 }) {
   const [sortBy, setSortBy] = useState<SortKey>("alphabeticalAsc");
   const [activeTab, setActiveTab] = useState<TabKey>("mutual");
@@ -255,6 +259,12 @@ export function ResultsExperience({
                 account insights.
               </p>
             </header>
+
+            {isHistorySavePending && (
+              <div data-animate="hero-item" className="empty:hidden">
+                <HistorySavePrompt analysis={analysis} />
+              </div>
+            )}
 
             <div data-animate="hero-item">
               <ChartStats

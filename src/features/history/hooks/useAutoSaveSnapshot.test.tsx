@@ -61,17 +61,27 @@ describe("useAutoSaveSnapshot", () => {
     });
 
     const { result } = renderHook(() => useAutoSaveSnapshot());
-    result.current.saveSnapshot(analysis);
+    expect(result.current.saveSnapshot(analysis)).toBe("skipped");
 
     expect(createSnapshotMock).not.toHaveBeenCalled();
   });
 
-  it("does nothing when sync is not unlocked", () => {
+  it("does nothing when history is not activated", () => {
+    useAuthMock.mockReturnValue({ isSignedIn: true, getToken: vi.fn() });
+    useSyncKeyMock.mockReturnValue({ status: "inactive", masterKey: null });
+
+    const { result } = renderHook(() => useAutoSaveSnapshot());
+    expect(result.current.saveSnapshot(analysis)).toBe("skipped");
+
+    expect(createSnapshotMock).not.toHaveBeenCalled();
+  });
+
+  it("does nothing when sync is not unlocked, and says it was locked", () => {
     useAuthMock.mockReturnValue({ isSignedIn: true, getToken: vi.fn() });
     useSyncKeyMock.mockReturnValue({ status: "locked", masterKey: null });
 
     const { result } = renderHook(() => useAutoSaveSnapshot());
-    result.current.saveSnapshot(analysis);
+    expect(result.current.saveSnapshot(analysis)).toBe("locked");
 
     expect(createSnapshotMock).not.toHaveBeenCalled();
   });
@@ -88,7 +98,7 @@ describe("useAutoSaveSnapshot", () => {
     const { result } = renderHook(() => useAutoSaveSnapshot());
     const returnValue = result.current.saveSnapshot(analysis);
 
-    expect(returnValue).toBeUndefined();
+    expect(returnValue).toBe("saving");
 
     await waitFor(() => {
       expect(createSnapshotMock).toHaveBeenCalledTimes(1);

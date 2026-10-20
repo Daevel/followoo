@@ -20,13 +20,24 @@ import { createSnapshot } from "../services/historyService";
  * background save must never interrupt that, but it still needs to be
  * visible in Sentry if it starts failing systematically.
  */
+/**
+ * What `saveSnapshot` did: started saving in the background, skipped
+ * because history is activated but locked, or skipped because history
+ * doesn't apply (signed out, not activated, unavailable).
+ */
+export type SnapshotSaveOutcome = "saving" | "locked" | "skipped";
+
 export function useAutoSaveSnapshot() {
   const { getToken, isSignedIn } = useAuth();
   const { status, masterKey } = useSyncKey();
 
   const saveSnapshot = useCallback(
-    (analysis: InstagramAnalysisResult): void => {
-      if (!isSignedIn || status !== "unlocked" || !masterKey) return;
+    (analysis: InstagramAnalysisResult): SnapshotSaveOutcome => {
+      if (!isSignedIn) return "skipped";
+      // Activated but not unlocked this session: nothing is saved, and the
+      // caller can offer "Unlock and save" (HistorySavePrompt).
+      if (status === "locked") return "locked";
+      if (status !== "unlocked" || !masterKey) return "skipped";
 
       void (async () => {
         try {
@@ -73,6 +84,8 @@ export function useAutoSaveSnapshot() {
           });
         }
       })();
+
+      return "saving";
     },
     [isSignedIn, status, masterKey, getToken]
   );

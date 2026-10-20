@@ -33,3 +33,13 @@ export const WithMeta: Story = {
     ),
   },
 };
+
+export const Wide: Story = {
+  args: {
+    kicker: "Encrypted history",
+    title: "Your saved analyses",
+    description:
+      "Every entry is encrypted in your browser before it reaches our servers - only the date is ever stored in the clear.",
+    wide: true,
+  },
+};
