@@ -1,8 +1,9 @@
-import { Show, SignInButton, UserButton } from "@clerk/react";
+import { Show, SignInButton, UserButton, useAuth } from "@clerk/react";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
-import { SyncActivationWidget } from "@/features/sync/components/SyncActivationWidget";
+import { useFeatureFlag } from "@/analytics";
+import { SYNC_FEATURE_FLAG_KEY } from "@/features/sync/constants";
 import { Button } from "./Button";
 import { FabIcon } from "./FabIcon";
 
@@ -13,6 +14,8 @@ const navLinks = [
   { to: "/support", label: "Support" },
   { to: "/updates", label: "Updates" },
 ];
+
+const historyLink = { to: "/history", label: "History" };
 
 function NavAuthEntry() {
   return (
@@ -26,10 +29,7 @@ function NavAuthEntry() {
         </SignInButton>
       }
     >
-      <div className="flex items-center gap-3">
-        <SyncActivationWidget />
-        <UserButton />
-      </div>
+      <UserButton />
     </Show>
   );
 }
@@ -71,6 +71,17 @@ export function NavBar({ sticky = false, cta, showCta = false }: NavBarProps) {
 
   const isActiveLink = (to: string) => location.pathname === to;
 
+  // History is only for signed-in users with encrypted history enabled;
+  // it sits right before Updates.
+  const { isSignedIn } = useAuth();
+  const isSyncEnabled = useFeatureFlag(SYNC_FEATURE_FLAG_KEY, false);
+  const links =
+    isSignedIn && isSyncEnabled
+      ? navLinks.flatMap((link) =>
+          link.to === "/updates" ? [historyLink, link] : [link]
+        )
+      : navLinks;
+
   return (
     <header
       className={clsx(
@@ -99,7 +110,7 @@ export function NavBar({ sticky = false, cta, showCta = false }: NavBarProps) {
           </Link>
 
           <div className="flex items-center gap-1">
-            {navLinks
+            {links
               .filter((link) => link.to !== "/updates")
               .map((link) => (
                 <Link
@@ -172,7 +183,7 @@ export function NavBar({ sticky = false, cta, showCta = false }: NavBarProps) {
           )}
         >
           <div className="flex flex-col gap-0.5 p-2">
-            {navLinks.map((link) => (
+            {links.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}

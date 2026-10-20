@@ -1,5 +1,12 @@
-import { useAuth } from "@clerk/react";
-import { useRef, useState } from "react";
+import { SignInButton, useAuth } from "@clerk/react";
+import {
+  lazy,
+  type ReactNode,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useFeatureFlag } from "@/analytics";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { Button } from "@/components/ui/Button";
@@ -7,6 +14,7 @@ import { Callout } from "@/components/ui/Callout";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Container } from "@/components/ui/Container";
 import { FabIcon } from "@/components/ui/FabIcon";
+import { Icon, type IconName } from "@/components/ui/Icon";
 import { NavBar } from "@/components/ui/NavBar";
 import { PageHeader } from "@/components/ui/PageHeader";
 import Seo from "@/components/ui/Seo";
@@ -193,25 +201,177 @@ function HistoryList({
   );
 }
 
+// Lazy: both wizards pull in react-hook-form, zod and the sync crypto
+// module, which nothing else on this page needs until a dialog opens.
+const SyncActivationWizard = lazy(() =>
+  import("@/features/sync/components/SyncActivationWizard").then((module) => ({
+    default: module.SyncActivationWizard,
+  }))
+);
+const SyncUnlockWizard = lazy(() =>
+  import("@/features/sync/components/SyncUnlockWizard").then((module) => ({
+    default: module.SyncUnlockWizard,
+  }))
+);
+
+// Centered card for every state where the list can't be shown yet.
+function HistoryGate({
+  icon,
+  title,
+  children,
+  action,
+}: {
+  icon: IconName;
+  title: string;
+  children: ReactNode;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="border-line-subtle bg-surface-1 shadow-elev-1 flex flex-col items-center rounded-card border px-6 py-12 text-center">
+      <span className="border-brand-fg/20 bg-brand-fg/10 text-brand-fg flex size-10 items-center justify-center rounded-control border">
+        <Icon
+          name={icon}
+          color="current"
+          width={18}
+          height={18}
+          aria-hidden="true"
+        />
+      </span>
+      <h2 className="text-fg mt-4 text-lg font-semibold tracking-[-0.015em]">
+        {title}
+      </h2>
+      <p className="text-fg-muted mt-2 max-w-md text-sm leading-[1.55]">
+        {children}
+      </p>
+      {action && <div className="mt-6">{action}</div>}
+    </div>
+  );
+}
+
 export function HistoryExperience() {
-  const { isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
   const isSyncEnabled = useFeatureFlag(SYNC_FEATURE_FLAG_KEY, false);
   const { status, masterKey } = useSyncKey();
   const [openedAnalysis, setOpenedAnalysis] =
     useState<InstagramAnalysisResult | null>(null);
   const [comparisonResult, setComparisonResult] =
     useState<AnalysisComparison | null>(null);
+  const [dialog, setDialog] = useState<"unlock" | "activate" | null>(null);
+  const hasPromptedUnlock = useRef(false);
+
+  // Unlocking is part of opening History, not a separate step: the first
+  // time the page finds the history locked, the unlock dialog opens on its
+  // own. "Not now" leaves the page locked with a button to reopen it.
+  useEffect(() => {
+    if (status === "locked" && !hasPromptedUnlock.current) {
+      hasPromptedUnlock.current = true;
+      setDialog("unlock");
+    }
+  }, [status]);
 
   const rootRef = useRef<HTMLDivElement | null>(null);
   useStandardPageAnimation(rootRef, {
     animateItems: status === "unlocked" && !comparisonResult,
   });
 
-  // Reusing ResultsExperience as-is (it renders its own NavBar, which
-  // already carries a link back to /history once unlocked) instead of
-  // building a second results UI from scratch.
+  // Reusing ResultsExperience as-is (its NavBar carries the History link)
+  // instead of building a second results UI from scratch.
   if (openedAnalysis) {
     return <ResultsExperience analysis={openedAnalysis} />;
+  }
+
+  function renderContent() {
+    if (!isLoaded) return <HistorySkeleton label="Loading your account" />;
+
+    if (!isSignedIn) {
+      return (
+        <HistoryGate
+          icon="lock"
+          title="Sign in to see your history"
+          action={
+            <SignInButton mode="modal">
+              <Button>Sign in</Button>
+            </SignInButton>
+          }
+        >
+          Your saved analyses are tied to your Followoo account and encrypted in
+          your browser.
+        </HistoryGate>
+      );
+    }
+
+    if (!isSyncEnabled) {
+      return (
+        <Callout title="Not available" variant="info">
+          Encrypted history isn't available for your account right now.
+        </Callout>
+      );
+    }
+
+    if (status === "checking") {
+      return <HistorySkeleton label="Checking encrypted history status" />;
+    }
+
+    if (status === "unavailable") {
+      return (
+        <Callout title="Something went wrong" variant="danger">
+          We couldn't check your encrypted history status. Please try again
+          later.
+        </Callout>
+      );
+    }
+
+    if (status === "inactive") {
+      return (
+        <HistoryGate
+          icon="shield"
+          title="Keep a private history"
+          action={
+            <Button onClick={() => setDialog("activate")}>
+              Turn on encrypted history
+            </Button>
+          }
+        >
+          Save every analysis, encrypted in your browser, and compare how your
+          network changes over time. Free with your account.
+        </HistoryGate>
+      );
+    }
+
+    if (status === "locked") {
+      return (
+        <HistoryGate
+          icon="lock"
+          title="Your history is locked"
+          action={
+            <Button
+              icon="arrowRight"
+              iconPosition="right"
+              onClick={() => setDialog("unlock")}
+            >
+              Unlock
+            </Button>
+          }
+        >
+          Enter your passphrase to read your saved analyses on this device.
+        </HistoryGate>
+      );
+    }
+
+    if (!masterKey) return null;
+
+    return comparisonResult ? (
+      <SnapshotComparisonView
+        comparison={comparisonResult}
+        onBack={() => setComparisonResult(null)}
+      />
+    ) : (
+      <HistoryList
+        masterKey={masterKey}
+        onOpen={setOpenedAnalysis}
+        onCompared={setComparisonResult}
+      />
+    );
   }
 
   return (
@@ -234,53 +394,35 @@ export function HistoryExperience() {
             />
 
             <div data-page-animate="content" className="flex w-full flex-col">
-              {!isSignedIn || !isSyncEnabled ? (
-                <Callout title="Not available" variant="info">
-                  Encrypted history isn't available for your account right now.
-                </Callout>
-              ) : status === "checking" ? (
-                <Skeleton
-                  variant="list"
-                  items={3}
-                  lines={1}
-                  shape="rectangle"
-                  animation="wave"
-                  size="md"
-                  ariaLabel="Checking encrypted history status"
-                />
-              ) : status === "unavailable" ? (
-                <Callout title="Something went wrong" variant="danger">
-                  We couldn't check your encrypted history status. Please try
-                  again later.
-                </Callout>
-              ) : status === "inactive" ? (
-                <Callout title="Not activated yet" variant="info">
-                  Use the "Encrypted history" button in the navigation bar to
-                  activate your history - it's always free.
-                </Callout>
-              ) : status === "locked" ? (
-                <Callout title="Locked" variant="info" icon="lock">
-                  Use the "Unlock encrypted history" button in the navigation
-                  bar to unlock your history for this session.
-                </Callout>
-              ) : masterKey ? (
-                comparisonResult ? (
-                  <SnapshotComparisonView
-                    comparison={comparisonResult}
-                    onBack={() => setComparisonResult(null)}
-                  />
-                ) : (
-                  <HistoryList
-                    masterKey={masterKey}
-                    onOpen={setOpenedAnalysis}
-                    onCompared={setComparisonResult}
-                  />
-                )
-              ) : null}
+              {renderContent()}
             </div>
           </div>
         </Container>
       </section>
+
+      {dialog && (
+        <Suspense fallback={null}>
+          {dialog === "unlock" ? (
+            <SyncUnlockWizard onClose={() => setDialog(null)} />
+          ) : (
+            <SyncActivationWizard onClose={() => setDialog(null)} />
+          )}
+        </Suspense>
+      )}
     </>
+  );
+}
+
+function HistorySkeleton({ label }: { label: string }) {
+  return (
+    <Skeleton
+      variant="list"
+      items={3}
+      lines={1}
+      shape="rectangle"
+      animation="wave"
+      size="md"
+      ariaLabel={label}
+    />
   );
 }
