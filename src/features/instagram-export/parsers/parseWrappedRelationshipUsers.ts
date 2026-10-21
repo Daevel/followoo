@@ -3,6 +3,13 @@ import type { InstagramObjectArrayKeys } from "@/types/enums";
 import type { InstagramUser } from "@/types/instagram.types";
 import { isRelationshipObject } from "../utils/instagramUtils";
 
+// Instagram's `label_values` export format labels this field in the
+// export's own requested language, not always English - e.g. "Nome
+// utente" for an export requested in Italian (confirmed on real
+// exports). Extend this list (lowercase) as other languages are
+// reported; comparison below is already case-insensitive.
+const USERNAME_LABELS = ["username", "nome utente"];
+
 function normalizeUsernameCandidate(value: unknown): string | null {
   if (typeof value !== "string") return null;
 
@@ -12,16 +19,34 @@ function normalizeUsernameCandidate(value: unknown): string | null {
 
 function findLabelValue(
   labelValues: unknown[],
-  expectedLabel: string
+  expectedLabels: string | string[]
 ): unknown | null {
+  const candidates = (
+    Array.isArray(expectedLabels) ? expectedLabels : [expectedLabels]
+  ).map((label) => label.toLowerCase());
+
   const match = labelValues.find(
     (item) =>
       isObject(item) &&
       typeof item.label === "string" &&
-      item.label.toLowerCase() === expectedLabel.toLowerCase()
+      candidates.includes(item.label.toLowerCase())
   );
 
   return isObject(match) ? match.value : null;
+}
+
+/**
+ * Last resort when no known label matches `USERNAME_LABELS` - every real
+ * export observed so far uses exactly three `label_values` entries, in
+ * this order (URL, display name, username). If a future language isn't
+ * in the list above yet, this still recovers the username by position
+ * instead of silently returning nothing.
+ */
+function findUsernameByPosition(labelValues: unknown[]): unknown | null {
+  if (labelValues.length !== 3) return null;
+
+  const last = labelValues[2];
+  return isObject(last) ? last.value : null;
 }
 
 function parseRelationshipUserEntry(entry: unknown): InstagramUser[] {
@@ -66,7 +91,8 @@ function parseRelationshipUserEntry(entry: unknown): InstagramUser[] {
   }
 
   const username = normalizeUsernameCandidate(
-    findLabelValue(labelValues, "Username")
+    findLabelValue(labelValues, USERNAME_LABELS) ??
+      findUsernameByPosition(labelValues)
   );
 
   if (!username) {

@@ -32,6 +32,22 @@ function labelValuesEntry(username: string) {
   };
 }
 
+// Same `label_values` shape, but labeled in Italian - the real order
+// Instagram uses for an export requested in Italian (URL, display name,
+// username), confirmed on real exports. Regression coverage for the
+// "Username" label not being the only language Instagram ever sends.
+function italianLabelValuesEntry(username: string) {
+  return {
+    title: username,
+    timestamp: TIMESTAMP,
+    label_values: [
+      { label: "URL", value: `https://www.instagram.com/${username}/` },
+      { label: "Nome", value: username },
+      { label: "Nome utente", value: username },
+    ],
+  };
+}
+
 export const FIXTURE_FOLLOWERS = ["user_01", "user_02", "user_03", "user_04"];
 export const FIXTURE_FOLLOWING = ["user_02", "user_03", "user_05"];
 export const FIXTURE_RECENTLY_UNFOLLOWED = ["user_06"];
@@ -68,5 +84,28 @@ export const labelValuesExportFiles: Record<string, unknown> = {
   "connections/followers_and_following/blocked_accounts.json": {
     [InstagramObjectArrayKeys.BLOCKED_USERS]:
       FIXTURE_BLOCKED.map(labelValuesEntry),
+  },
+};
+
+// Same as `labelValuesExportFiles`, but with Italian labels (see
+// `italianLabelValuesEntry`) - an export requested in Italian, still in
+// the newer label_values shape.
+export const italianLabelValuesExportFiles: Record<string, unknown> = {
+  "connections/followers_and_following/followers_1.json": FIXTURE_FOLLOWERS.map(
+    italianLabelValuesEntry
+  ),
+  "connections/followers_and_following/following.json": {
+    [InstagramObjectArrayKeys.FOLLOWING]: FIXTURE_FOLLOWING.map(
+      italianLabelValuesEntry
+    ),
+  },
+  "connections/followers_and_following/recently_unfollowed_accounts.json": {
+    [InstagramObjectArrayKeys.UNFOLLOWED_USERS]:
+      FIXTURE_RECENTLY_UNFOLLOWED.map(italianLabelValuesEntry),
+  },
+  "connections/followers_and_following/blocked_accounts.json": {
+    [InstagramObjectArrayKeys.BLOCKED_USERS]: FIXTURE_BLOCKED.map(
+      italianLabelValuesEntry
+    ),
   },
 };

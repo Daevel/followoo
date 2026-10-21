@@ -5,6 +5,7 @@ import {
   FIXTURE_FOLLOWERS,
   FIXTURE_FOLLOWING,
   FIXTURE_RECENTLY_UNFOLLOWED,
+  italianLabelValuesExportFiles,
   labelValuesExportFiles,
   legacyStringListExportFiles,
 } from "../__fixtures__/instagramExportFixtures";
@@ -33,6 +34,24 @@ describe("parseInstagramExport", () => {
 
   it("normalizes the newer label_values export into the expected shape", async () => {
     const file = await buildInstagramExportZipFile(labelValuesExportFiles);
+    const result = await parseInstagramExport(file);
+
+    expect(usernamesOf(result.followers)).toEqual(
+      [...FIXTURE_FOLLOWERS].sort()
+    );
+    expect(usernamesOf(result.following)).toEqual(
+      [...FIXTURE_FOLLOWING].sort()
+    );
+    expect(usernamesOf(result.recentlyUnfollowed)).toEqual([
+      ...FIXTURE_RECENTLY_UNFOLLOWED,
+    ]);
+    expect(usernamesOf(result.blocked)).toEqual([...FIXTURE_BLOCKED]);
+  });
+
+  it("normalizes a label_values export requested in Italian into the expected shape", async () => {
+    const file = await buildInstagramExportZipFile(
+      italianLabelValuesExportFiles
+    );
     const result = await parseInstagramExport(file);
 
     expect(usernamesOf(result.followers)).toEqual(
