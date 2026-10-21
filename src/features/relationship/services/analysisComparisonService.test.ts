@@ -41,9 +41,9 @@ function buildAnalysis(
 }
 
 describe("compareAnalysisSnapshots", () => {
-  it("orders by the data date, not the save date - an older export saved later is still the older side", () => {
-    // Saved first, but its data runs until October.
-    const recentExport = {
+  it("orders by createdAt (save date), not by the date of the data, even when they disagree", () => {
+    // Saved first (createdAt earlier), but its data runs until October.
+    const savedFirst = {
       createdAt: "2026-10-18T09:00:00Z",
       analysis: buildAnalysis({
         mutual: [mkUserAt("alice", "2025-01-10T00:00:00Z")],
@@ -53,8 +53,8 @@ describe("compareAnalysisSnapshots", () => {
         ],
       }),
     };
-    // Saved afterwards, but its data stops at August 31.
-    const augustExport = {
+    // Saved afterwards (createdAt later), but its data stops at August 31.
+    const savedSecond = {
       createdAt: "2026-10-18T10:00:00Z",
       analysis: buildAnalysis({
         mutual: [mkUserAt("alice", "2025-01-10T00:00:00Z")],
@@ -66,14 +66,97 @@ describe("compareAnalysisSnapshots", () => {
     };
 
     for (const comparison of [
-      compareAnalysisSnapshots(recentExport, augustExport),
-      compareAnalysisSnapshots(augustExport, recentExport),
+      compareAnalysisSnapshots(savedFirst, savedSecond),
+      compareAnalysisSnapshots(savedSecond, savedFirst),
     ]) {
-      expect(comparison.older.createdAt).toBe("2026-10-18T10:00:00Z");
-      expect(comparison.newer.createdAt).toBe("2026-10-18T09:00:00Z");
-      expect(usernamesOf(comparison.newFollowers.users)).toEqual(["dave"]);
-      expect(usernamesOf(comparison.lostFollowers.users)).toEqual(["carol"]);
+      // older = savedFirst (earlier createdAt), even though its data is
+      // the more recent of the two - createdAt alone decides this.
+      // followers(older) = alice, bob, dave / followers(newer) = alice, bob, carol
+      expect(comparison.older.createdAt).toBe("2026-10-18T09:00:00Z");
+      expect(comparison.newer.createdAt).toBe("2026-10-18T10:00:00Z");
+      expect(usernamesOf(comparison.newFollowers.users)).toEqual(["carol"]);
+      expect(usernamesOf(comparison.lostFollowers.users)).toEqual(["dave"]);
+      // The two sides' data dates disagree with their save-date order -
+      // flagged, not silently trusted or used to flip anything.
+      expect(comparison.dataOrderMismatch).toBe(true);
     }
+  });
+
+  it("reports no mismatch when data date and save date agree", () => {
+    const older = {
+      createdAt: "2026-09-01T00:00:00Z",
+      analysis: buildAnalysis({
+        followersOnly: [mkUserAt("bob", "2026-08-01T00:00:00Z")],
+      }),
+    };
+    const newer = {
+      createdAt: "2026-10-01T00:00:00Z",
+      analysis: buildAnalysis({
+        followersOnly: [mkUserAt("bob", "2026-09-15T00:00:00Z")],
+      }),
+    };
+
+    const comparison = compareAnalysisSnapshots(older, newer);
+
+    expect(comparison.dataOrderMismatch).toBe(false);
+  });
+
+  it("does not flag a mismatch when either side has no timestamps to compare", () => {
+    const withDates = {
+      createdAt: "2026-09-01T00:00:00Z",
+      analysis: buildAnalysis({
+        followersOnly: [mkUserAt("bob", "2026-08-01T00:00:00Z")],
+      }),
+    };
+    const withoutDates = {
+      createdAt: "2026-10-01T00:00:00Z",
+      analysis: buildAnalysis({ followersOnly: [mkUser("carol")] }),
+    };
+
+    expect(
+      compareAnalysisSnapshots(withDates, withoutDates).dataOrderMismatch
+    ).toBe(false);
+  });
+
+  it("regression: a single anomalous following timestamp must not invert the comparison", () => {
+    // Reproduces the real bug shape (anonymized): the export saved first
+    // (true "older") has one following-only entry timestamped *after*
+    // the latest timestamp anywhere in the export saved second (true
+    // "newer"). Under the old data-date ordering this flipped every
+    // category; createdAt must keep the real save order regardless.
+    const olderExport = {
+      createdAt: "2026-09-01T00:00:00Z",
+      analysis: buildAnalysis({
+        mutual: [mkUserAt("alice", "2026-08-01T00:00:00Z")],
+        followersOnly: [mkUserAt("bob", "2026-08-02T00:00:00Z")],
+        // following-only entry about to be unfollowed, timestamped days
+        // after the newer export's latest timestamp below.
+        unfollowers: [mkUserAt("zara", "2026-10-20T00:00:00Z")],
+      }),
+    };
+    const newerExport = {
+      createdAt: "2026-10-01T00:00:00Z",
+      analysis: buildAnalysis({
+        mutual: [
+          mkUserAt("alice", "2026-08-01T00:00:00Z"),
+          mkUserAt("bob", "2026-09-20T00:00:00Z"),
+        ],
+        followersOnly: [mkUserAt("carol", "2026-09-21T00:00:00Z")],
+      }),
+    };
+
+    const comparison = compareAnalysisSnapshots(olderExport, newerExport);
+
+    expect(comparison.older.createdAt).toBe("2026-09-01T00:00:00Z");
+    expect(comparison.newer.createdAt).toBe("2026-10-01T00:00:00Z");
+    // bob moved from followers-only to mutual, carol is a brand new
+    // follower - both must land as "new", not "lost".
+    expect(usernamesOf(comparison.newFollowers.users)).toEqual(["carol"]);
+    expect(usernamesOf(comparison.lostFollowers.users)).toEqual([]);
+    expect(usernamesOf(comparison.newMutuals.users)).toEqual(["bob"]);
+    expect(usernamesOf(comparison.lostMutuals.users)).toEqual([]);
+    // The anomalous timestamp still gets flagged, just never trusted.
+    expect(comparison.dataOrderMismatch).toBe(true);
   });
 
   it("exposes how recent each side's data is", () => {
@@ -96,7 +179,7 @@ describe("compareAnalysisSnapshots", () => {
     expect(comparison.newer.dataUntil).toBeNull();
   });
 
-  it("falls back to createdAt when an export has no timestamps", () => {
+  it("orders by createdAt and diffs correctly even when one side has no timestamps at all", () => {
     const withDates = {
       createdAt: "2026-10-01T00:00:00Z",
       analysis: buildAnalysis({

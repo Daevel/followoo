@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Callout } from "@/components/ui/Callout";
 import { SnapshotComparisonChart } from "@/components/ui/charts/SnapshotComparisonChart";
 import { Icon } from "@/components/ui/Icon";
 import { UserListItem } from "@/components/ui/UserListItem";
@@ -155,6 +156,15 @@ export function SnapshotComparisonView({
           Back to history
         </Button>
       </div>
+
+      {comparison.dataOrderMismatch && (
+        <Callout title="Check which export is which" variant="info">
+          The data inside the export saved more recently looks older than the
+          data inside the other one. Double check you picked the right files
+          before reading this comparison - the dates and numbers below still
+          follow when each one was saved.
+        </Callout>
+      )}
 
       <SnapshotComparisonChart
         data={chartData}

@@ -34,6 +34,7 @@ const comparison: AnalysisComparison = {
   lostMutuals: diff([]),
   newFollowing: diff([at("sofia_fer", "2026-09-09T00:00:00Z")]),
   lostFollowing: diff([]),
+  dataOrderMismatch: false,
 };
 
 const meta: Meta<typeof SnapshotComparisonView> = {
@@ -56,5 +57,12 @@ export const WithoutTimestamps: Story = {
       older: { ...comparison.older, dataUntil: null },
       newer: { ...comparison.newer, dataUntil: null },
     },
+  },
+};
+
+/** A single anomalous timestamp makes the data dates disagree with save order - flagged, never trusted to reorder anything. */
+export const DataOrderMismatch: Story = {
+  args: {
+    comparison: { ...comparison, dataOrderMismatch: true },
   },
 };

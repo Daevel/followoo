@@ -36,6 +36,16 @@ export type AnalysisComparison = {
   lostMutuals: ComparisonDiff;
   newFollowing: ComparisonDiff;
   lostFollowing: ComparisonDiff;
+  /**
+   * True when `older.dataUntil` is actually more recent (by day) than
+   * `newer.dataUntil` - i.e. the export saved first contains data that
+   * outdates the one saved second. Purely informational: the UI should
+   * surface it as a non-blocking warning, never change which side is
+   * "older"/"newer" because of it. See `compareAnalysisSnapshots`'s
+   * own comment for why a single anomalous timestamp makes `dataUntil`
+   * unsafe as an ordering criterion.
+   */
+  dataOrderMismatch: boolean;
 };
 
 export type ComparisonChartDatum = {
@@ -94,6 +104,15 @@ function diffUsers(a: InstagramUser[], b: InstagramUser[]): ComparisonDiff {
 /**
  * How recent an export's data is: the latest follow/unfollow/request
  * timestamp it contains, in Unix seconds, or `null` if it has none.
+ *
+ * Informational only - shown to the user as "data up to X", and used to
+ * flag a mismatch when it disagrees with save order (`dataOrderMismatch`
+ * on `AnalysisComparison`). Not used to decide which snapshot is
+ * "older"/"newer": a single per-relationship timestamp from one export
+ * (e.g. someone about to be unfollowed, timestamped after everything in
+ * the other export) is enough to flip this value for the whole export,
+ * which is not a reliable enough signal to order a comparison by - see
+ * `compareAnalysisSnapshots`'s own comment.
  */
 export function getAnalysisDataUntil(
   analysis: InstagramAnalysisResult
@@ -115,12 +134,25 @@ export function getAnalysisDataUntil(
 }
 
 /**
- * Diffs two history snapshots. "Older" and "newer" follow the date of the
- * data in each export (`getAnalysisDataUntil`), not the date the snapshot
- * was saved: an export covering up to August can be saved after one
- * covering up to October. Falls back to `createdAt` when an export has no
- * timestamps or both end on the same day. The result never depends on
- * argument order.
+ * Diffs two history snapshots. "Older" and "newer" follow `createdAt` -
+ * the date the app itself saved the snapshot - and only that. It used to
+ * follow the date of the data instead (`getAnalysisDataUntil`), on the
+ * reasoning that an export covering up to August can be saved after one
+ * covering up to October. That broke on real exports: a single
+ * per-relationship timestamp (one `following` entry about to be
+ * unfollowed, timestamped days after everything else in the *other*
+ * export) is enough to flip `getAnalysisDataUntil`'s verdict for the
+ * whole export, which silently swapped every category - newly gained
+ * followers showing up as "lost", newly mutual accounts showing up as
+ * "lost mutuals". `createdAt` can't be wrong that way: the app writes it
+ * at save time, it never depends on what's inside the export.
+ *
+ * `dataUntil` stays on the result as description only (see
+ * `SnapshotPeriodSummary`) - never consulted here to decide order. When
+ * it still disagrees with the `createdAt` order (the side saved second
+ * has older data than the side saved first), `dataOrderMismatch` is set
+ * so the UI can flag it non-blockingly instead of silently trusting
+ * either signal. The result never depends on argument order.
  */
 export function compareAnalysisSnapshots(
   a: SnapshotForComparison,
@@ -130,15 +162,14 @@ export function compareAnalysisSnapshots(
     ...snapshot,
     dataUntil: getAnalysisDataUntil(snapshot.analysis),
   }));
-  const [older, newer] = withDates.sort((x, y) => {
-    if (x.dataUntil !== null && y.dataUntil !== null) {
-      const byData =
-        Math.floor(x.dataUntil / 86_400) - Math.floor(y.dataUntil / 86_400);
-      if (byData !== 0) return byData;
-    }
+  const [older, newer] = withDates.sort(
+    (x, y) => new Date(x.createdAt).getTime() - new Date(y.createdAt).getTime()
+  );
 
-    return new Date(x.createdAt).getTime() - new Date(y.createdAt).getTime();
-  });
+  const dataOrderMismatch =
+    older.dataUntil !== null &&
+    newer.dataUntil !== null &&
+    Math.floor(older.dataUntil / 86_400) > Math.floor(newer.dataUntil / 86_400);
 
   const olderSets = buildRelationshipSets(older.analysis);
   const newerSets = buildRelationshipSets(newer.analysis);
@@ -164,6 +195,7 @@ export function compareAnalysisSnapshots(
     lostMutuals: diffUsers(olderSets.mutuals, newerSets.mutuals),
     newFollowing: diffUsers(newerSets.following, olderSets.following),
     lostFollowing: diffUsers(olderSets.following, newerSets.following),
+    dataOrderMismatch,
   };
 }
 
