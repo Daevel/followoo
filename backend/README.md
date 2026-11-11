@@ -300,12 +300,17 @@ it describes the `updates` table as it already exists in the real Neon
 database (reconstructed from `app/updates/repository.py`, since the table
 predates any migration tooling). Running it as a normal `upgrade` against
 that database would fail (or duplicate the table) because the table is
-already there. Instead, mark it as already applied without running its
-SQL:
+already there. Instead, mark only the baseline as already applied
+without running its SQL, then let `upgrade` create everything after it:
 
 ```bash
-./.venv/bin/alembic stamp head
+./.venv/bin/alembic stamp 9ce14bf4d485   # baseline revision, NOT head
+./.venv/bin/alembic upgrade head
 ```
+
+Never use `stamp head` here: `head` is the latest revision, so it would
+mark every later migration (`users`, `sync_keys`, `analysis_snapshots`,
+...) as applied without ever creating those tables.
 
 Run this once, manually, against the production database before the
 first real deploy that includes Alembic.

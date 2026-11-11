@@ -336,7 +336,7 @@ Before deployment, confirm:
 - `FOLLOWOO_DATABASE_URL` is set in the backend host;
 - `FOLLOWOO_CORS_ORIGINS` includes the production frontend domain;
 - `FOLLOWOO_CLERK_JWKS_URL` is set (required for `/users/me`, `/usage-events`, and any other Clerk-protected route);
-- pending Alembic migrations have been applied (`alembic upgrade head`, or `alembic stamp head` for the one-time baseline - see backend/README.md);
+- pending Alembic migrations have been applied (`alembic upgrade head`, or `alembic stamp 9ce14bf4d485` (the baseline revision, never `head`) then `upgrade head` for a database that predates Alembic - see backend/README.md);
 - frontend `VITE_API_BASE_URL` points to the deployed Python API;
 - `/health` and `/updates` respond successfully;
 - no secrets are committed.
