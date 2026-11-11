@@ -1,84 +1,86 @@
 import { Link } from "react-router";
 
+const linkClass =
+  "text-fg-muted hover:text-fg focus-visible:shadow-ring rounded-sm text-sm transition-colors focus-visible:outline-none";
+
+function FooterColumn({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-fg text-[13px] font-semibold">{title}</p>
+      <div className="flex flex-col items-start gap-2.5">{children}</div>
+    </div>
+  );
+}
+
 export function FooterSignature() {
   return (
-    <footer className="w-full sm:py-8">
-      <div className="flex flex-col gap-10 md:gap-12 lg:flex-row lg:items-start lg:justify-around">
-        <div className="shrink-0">
-          <img src="/favicon.svg" alt="Followoo logo" width={32} height={32} />
+    <footer className="w-full text-start sm:py-8">
+      <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex max-w-xs flex-col gap-3">
+          <div className="flex items-center gap-2.5">
+            <img src="/favicon.svg" alt="" width={24} height={24} />
+            <span className="text-fg text-[15px] font-semibold tracking-[-0.01em]">
+              Followoo
+            </span>
+          </div>
+          <p className="text-fg-muted text-[13px] leading-[1.55]">
+            Not affiliated with Instagram or Meta.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-16">
-          <div className="flex flex-col gap-6">
-            <h4 className="text-lg font-medium">Pages</h4>
-            <div className="flex flex-col gap-4">
-              <Link
-                to="/"
-                className="text-foreground/50 hover:text-foreground transition-colors"
-              >
-                Home
-              </Link>
-              <Link
-                to="/get-started"
-                className="text-foreground/50 hover:text-foreground transition-colors"
-                state={{ isDemo: false }}
-              >
-                Get Started
-              </Link>
-              <Link
-                to="/support"
-                className="text-foreground/50 hover:text-foreground transition-colors"
-              >
-                Support
-              </Link>
-              <Link
-                to="/updates"
-                className="text-foreground/50 hover:text-foreground transition-colors"
-              >
-                Updates
-              </Link>
-            </div>
-          </div>
+        <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:gap-16">
+          <FooterColumn title="Pages">
+            <Link to="/" className={linkClass}>
+              Home
+            </Link>
+            <Link
+              to="/get-started"
+              className={linkClass}
+              state={{ isDemo: false }}
+            >
+              Get Started
+            </Link>
+            <Link to="/support" className={linkClass}>
+              Support
+            </Link>
+            <Link to="/updates" className={linkClass}>
+              Updates
+            </Link>
+          </FooterColumn>
 
-          <div className="flex flex-col gap-6">
-            <h4 className="text-lg font-medium">Rules & Privacy</h4>
-            <div className="flex flex-col gap-4">
-              <Link
-                to="/terms-and-conditions"
-                className="text-foreground/50 hover:text-foreground transition-colors"
-              >
-                Terms and conditions
-              </Link>
-              <Link
-                to="/privacy-and-policy"
-                className="text-foreground/50 hover:text-foreground transition-colors"
-              >
-                Privacy Policy
-              </Link>
-            </div>
-          </div>
+          <FooterColumn title="Rules & Privacy">
+            <Link to="/terms-and-conditions" className={linkClass}>
+              Terms and conditions
+            </Link>
+            <Link to="/privacy-and-policy" className={linkClass}>
+              Privacy Policy
+            </Link>
+          </FooterColumn>
 
-          <div className="flex flex-col gap-6">
-            <h4 className="text-lg font-medium">Social</h4>
-            <div className="flex flex-col gap-4">
-              <a
-                href="https://github.com/Daevel/followoo"
-                target="_blank"
-                rel="noreferrer"
-                className="text-foreground/50 hover:text-foreground transition-colors"
-              >
-                GitHub
-              </a>
-              <a
-                href="https://www.linkedin.com/in/luigi-avitabile"
-                target="_blank"
-                rel="noreferrer"
-                className="text-foreground/50 hover:text-foreground transition-colors"
-              >
-                LinkedIn
-              </a>
-            </div>
-          </div>
+          <FooterColumn title="Social">
+            <a
+              href="https://github.com/Daevel/followoo"
+              target="_blank"
+              rel="noreferrer"
+              className={linkClass}
+            >
+              GitHub
+            </a>
+            <a
+              href="https://www.linkedin.com/in/luigi-avitabile"
+              target="_blank"
+              rel="noreferrer"
+              className={linkClass}
+            >
+              LinkedIn
+            </a>
+          </FooterColumn>
         </div>
       </div>
     </footer>

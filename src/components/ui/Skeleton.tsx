@@ -137,7 +137,7 @@ export function Skeleton({
       <div
         role="status"
         aria-label={ariaLabel}
-        className={`rounded-lg border border-gray-200 p-4 ${className}`}
+        className={`border-line-subtle bg-surface-1 rounded-card border p-4 ${className}`}
       >
         <SkeletonBlock animation={animation} className="mb-4 h-40 w-full" />
 
@@ -165,7 +165,7 @@ export function Skeleton({
         className={`flex flex-col gap-4 ${className}`}
       >
         {skeletonListItems.map((item) => (
-          <div key={item.id} className="flex items-top gap-3 mt-4">
+          <div key={item.id} className="mt-4 flex items-start gap-3">
             <SkeletonBlock
               animation={animation}
               shape="circle"

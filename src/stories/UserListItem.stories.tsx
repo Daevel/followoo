@@ -29,6 +29,6 @@ export const WithPersona: Story = {
     user: sampleUser,
     formatDate: (timestamp) =>
       timestamp ? new Date(timestamp * 1000).toLocaleDateString("it-IT") : null,
-    persona: "engaged",
+    persona: "ENGAGED",
   },
 };

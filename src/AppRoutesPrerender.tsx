@@ -1,6 +1,7 @@
 import App from "./App";
 import { AppRouteTree } from "./AppRouteTree";
 import { GetStarted } from "./pages/GetStarted";
+import { History } from "./pages/History";
 import { InstructionsToStart } from "./pages/InstructionsToStart";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { ResultPage } from "./pages/ResultPage";
@@ -14,6 +15,7 @@ export function AppRoutesPrerender() {
       components={{
         Home: App,
         GetStarted,
+        History,
         InstructionsToStart,
         PrivacyPolicy,
         ResultPage,

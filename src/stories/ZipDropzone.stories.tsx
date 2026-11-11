@@ -24,9 +24,9 @@ export const ZipDropzone_: Story = {
     return (
       <div>
         <ZipDropzone file={file} onFileChange={setFile} onError={setError} />
-        {error && <p className="text-accent mt-3 text-sm">{error}</p>}
+        {error && <p className="text-danger mt-3 text-sm">{error}</p>}
         {file && (
-          <p className="text-primary mt-3 text-sm">
+          <p className="text-fg-muted mt-3 text-sm">
             File selezionato: {file.name}
           </p>
         )}
@@ -43,7 +43,7 @@ export const WithError: Story = {
     return (
       <div>
         <ZipDropzone file={file} onFileChange={setFile} onError={setError} />
-        {error && <p className="text-accent mt-3 text-sm">{error}</p>}
+        {error && <p className="text-danger mt-3 text-sm">{error}</p>}
       </div>
     );
   },

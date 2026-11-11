@@ -3,11 +3,6 @@
 /* inline means that it can be used within other styles outside the @theme reference */
 
 @theme inline {
-  --color-primary: #6366f1;
-  --color-bg: #0f172a;
-  --color-accent: #f43f5e;
-  --color-foreground: #fefefe;
-
   --font-inter: "Inter", sans-serif;
 
   /* typography tokens */
@@ -41,161 +36,169 @@
   --md-tablet: 768px;
   --lg-desktop: 1024px;
 
-  /* SHADOWS */
-  --shadow-primary:
-    0 8px 20px color-mix(in srgb, var(--color-primary) 28%, transparent),
-    0 2px 6px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  /* REDESIGN TOKENS (semantic layer, adopted component by component) */
+  /* contrast ratios are measured on surface-1 unless noted */
 
-  --shadow-accent:
-    0 8px 20px color-mix(in srgb, var(--color-accent) 28%, transparent),
-    0 2px 6px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  /* surfaces: hierarchy comes from surfaces and lines, not from color */
+  --color-surface-0: #0b0d17; /* page */
+  --color-surface-1: #12152a; /* cards, inputs, hovered rows */
+  --color-surface-2: #1a1e38; /* menus, toasts, selected tab */
+
+  --color-line-subtle: rgb(255 255 255 / 0.06); /* card borders, dividers */
+  --color-line-strong: rgb(255 255 255 / 0.12); /* control and field borders */
+
+  --color-fg: #f5f6fb; /* primary text, 15.1:1 on surface-2 */
+  --color-fg-muted: #9aa0bd; /* secondary text, 7.0:1 */
+  --color-fg-faint: #6b7194; /* placeholders, axes, non-essential meta only (3.8:1) */
+
+  --color-brand: #4f46e5; /* primary action fills, white on it 6.3:1 */
+  --color-brand-hover: #5b54ef; /* white on it 5.3:1 */
+  --color-brand-fg: #a5b4fc; /* indigo as text, links, focus ring, 9.0:1 */
+  --color-on-brand: #ffffff;
+
+  /* status: color is reserved for meaning, always paired with icon or word */
+  --color-success: #34d399; /* 9.4:1 */
+  --color-warning: #fbbf24; /* 10.8:1 */
+  --color-danger: #fb7185; /* 6.7:1 */
+  --color-danger-fill: #e11d48; /* destructive fills, white on it 4.7:1 */
+
+  /* data: personas and charts, same persona = same color everywhere */
+  --color-data-1: #818cf8; /* 6.0:1 */
+  --color-data-2: #22d3ee; /* 10.0:1 */
+  --color-data-3: #fbbf24; /* 10.8:1 */
+  --color-data-4: #c084fc; /* 6.8:1 */
+  --color-data-5: #6b7194; /* chart fills only, not text */
+
+  --radius-control: 10px; /* buttons, inputs, menus */
+  --radius-card: 14px; /* cards, panels */
+
+  /* quiet elevation: inner highlight + black shadow, no colored glow */
+  --shadow-elev-1:
+    inset 0 1px 0 rgb(255 255 255 / 0.04), 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-elev-2:
+    inset 0 1px 0 rgb(255 255 255 / 0.05), 0 8px 24px rgb(0 0 0 / 0.45);
+  /* keyboard focus: gap in surface-0, then brand-fg (9.7:1 on surface-0) */
+  --shadow-ring: 0 0 0 2px #0b0d17, 0 0 0 4px #a5b4fc;
 }
 
-@layer utilities {
-  .shadow-primary-hover {
-    box-shadow: 0 0 0 transparent;
-    transition:
-      box-shadow 250ms ease,
-      transform 250ms ease;
+/* BASE: element defaults live in @layer base so Tailwind utilities on an
+   element (e.g. text-xl on an h2) win over them. */
+@layer base {
+  html {
+    font-size: 16px;
+    background-color: var(--color-surface-0);
   }
 
-  .shadow-primary-hover:hover {
-    box-shadow: var(--shadow-primary);
-    transform: translateY(-2px);
+  body {
+    font-family: var(--font-inter);
+    font-size: var(--p1);
+    line-height: var(--lh-body);
   }
 
-  .shadow-accent-hover {
-    box-shadow: 0 0 0 transparent;
-    transition:
-      box-shadow 250ms ease,
-      transform 250ms ease;
+  /* HEADER SIZES */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-inter);
+    font-weight: var(--w-semibold); /* semibold */
+    line-height: var(--lh-headers); /* 125% */
   }
 
-  .shadow-accent-hover:hover {
-    box-shadow: var(--shadow-accent);
-    transform: translateY(-2px);
+  h1 {
+    font-size: var(--h1);
+  }
+
+  h2 {
+    font-size: var(--h2);
+  }
+
+  h3 {
+    font-size: var(--h3);
+  }
+
+  h4 {
+    font-size: var(--h4);
+  }
+
+  h5 {
+    font-size: var(--h5);
   }
 }
 
-html {
-  font-size: 16px;
-  background-color: var(--color-bg);
-}
+/* TEXT STYLES: in @layer components so utilities can refine them */
+@layer components {
+  /* BODY SIZES */
 
-body {
-  font-family: var(--font-inter);
-  font-size: var(--p1);
-  line-height: var(--lh-body);
-}
+  .p1-r {
+    font-size: var(--p1);
+    line-height: var(--lh-body);
+    font-weight: var(--w-regular);
+  }
+  .p1-b {
+    font-size: var(--p1);
+    line-height: var(--lh-body);
+    font-weight: var(--w-medium);
+  }
 
-/* HEADER SIZES */
+  .p2-r {
+    font-size: var(--p2);
+    line-height: var(--lh-body);
+    font-weight: var(--w-regular);
+  }
+  .p2-b {
+    font-size: var(--p2);
+    line-height: var(--lh-body);
+    font-weight: var(--w-medium);
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5 {
-  font-family: var(--font-inter);
-  font-weight: var(--w-semibold); /* semibold */
-  line-height: var(--lh-headers); /* 125% */
-}
+  .p3-r {
+    font-size: var(--p3);
+    line-height: var(--lh-body);
+    font-weight: var(--w-regular);
+  }
+  .p3-b {
+    font-size: var(--p3);
+    line-height: var(--lh-body);
+    font-weight: var(--w-medium);
+  }
 
-.h1-60 {
-  font-size: var(--h1-60);
-}
+  /* LABELS SIZES */
 
-.h1-128 {
-  font-size: var(--h1-128);
-}
+  .l1-r {
+    font-size: var(--l1);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-regular);
+  }
+  .l1-b {
+    font-size: var(--l1);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-semibold);
+  }
 
-h1 {
-  font-size: var(--h1);
-}
+  .l2-r {
+    font-size: var(--l2);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-regular);
+  }
+  .l2-b {
+    font-size: var(--l2);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-semibold);
+  }
 
-h2 {
-  font-size: var(--h2);
-}
-
-h3 {
-  font-size: var(--h3);
-}
-
-h4 {
-  font-size: var(--h4);
-}
-
-h5 {
-  font-size: var(--h5);
-}
-
-/* BODY SIZES */
-
-.p1-r {
-  font-size: var(--p1);
-  line-height: var(--lh-body);
-  font-weight: var(--w-regular);
-}
-.p1-b {
-  font-size: var(--p1);
-  line-height: var(--lh-body);
-  font-weight: var(--w-medium);
-}
-
-.p2-r {
-  font-size: var(--p2);
-  line-height: var(--lh-body);
-  font-weight: var(--w-regular);
-}
-.p2-b {
-  font-size: var(--p2);
-  line-height: var(--lh-body);
-  font-weight: var(--w-medium);
-}
-
-.p3-r {
-  font-size: var(--p3);
-  line-height: var(--lh-body);
-  font-weight: var(--w-regular);
-}
-.p3-b {
-  font-size: var(--p3);
-  line-height: var(--lh-body);
-  font-weight: var(--w-medium);
-}
-
-/* LABELS SIZES */
-
-.l1-r {
-  font-size: var(--l1);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-regular);
-}
-.l1-b {
-  font-size: var(--l1);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-semibold);
-}
-
-.l2-r {
-  font-size: var(--l2);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-regular);
-}
-.l2-b {
-  font-size: var(--l2);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-semibold);
-}
-
-.l3-r {
-  font-size: var(--l3);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-regular);
-}
-.l3-b {
-  font-size: var(--l3);
-  line-height: var(--lh-labels);
-  font-weight: var(--w-semibold);
+  .l3-r {
+    font-size: var(--l3);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-regular);
+  }
+  .l3-b {
+    font-size: var(--l3);
+    line-height: var(--lh-labels);
+    font-weight: var(--w-semibold);
+  }
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -234,18 +237,6 @@ h5 {
   scrollbar-color: rgba(99, 102, 241, 0.8) rgba(255, 255, 255, 0.05);
 }
 
-/* HERO SECTION*/
-
-.hero-h1 {
-  font-size: clamp(40px, 5vw, 60px);
-  line-height: var(--lh-headers);
-}
-
-.hero-h3 {
-  font-size: clamp(20px, 2.5vw, 24px);
-  line-height: var(--lh-headers);
-}
-
 /* SKELETON ANIMATIONS */
 
 @keyframes skeletonWave {
@@ -259,11 +250,7 @@ h5 {
 }
 
 .skeleton-base {
-  background-color: color-mix(
-    in srgb,
-    var(--color-foreground) 10%,
-    transparent
-  );
+  background-color: var(--color-surface-2);
 }
 
 .skeleton-wave-animation {
@@ -279,10 +266,10 @@ h5 {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    color-mix(in srgb, var(--color-foreground) 8%, transparent) 35%,
-    color-mix(in srgb, var(--color-foreground) 28%, transparent) 50%,
-    color-mix(in srgb, var(--color-foreground) 8%, transparent) 65%,
+    rgb(255 255 255 / 0.02) 35%,
+    rgb(255 255 255 / 0.06) 50%,
+    rgb(255 255 255 / 0.02) 65%,
     transparent 100%
   );
-  animation: skeletonWave 1.35s ease-in-out infinite;
+  animation: skeletonWave 1.6s ease-in-out infinite;
 }

@@ -29,7 +29,7 @@ const routeSeo = {
   "/": {
     title: "Followoo - Private Instagram Followers Analyzer",
     description:
-      "Analyze your Instagram export locally in your browser. Compare followers, following, mutuals and unfollowers without login or server-side file uploads.",
+      "Analyze your Instagram export locally in your browser. Compare followers, following, mutuals and unfollowers without an Instagram login or server-side file uploads.",
     canonical: siteUrl,
     schemaMarkup: {
       "@context": "https://schema.org",

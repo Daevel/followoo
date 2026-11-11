@@ -1,10 +1,16 @@
 import { lazy, Suspense } from "react";
+import { usePostHogIdentity } from "@/analytics";
 import { AppRouteTree } from "./AppRouteTree";
 
 const Home = lazy(() => import("./App"));
 const GetStarted = lazy(() =>
   import("./pages/GetStarted").then((module) => ({
     default: module.GetStarted,
+  }))
+);
+const History = lazy(() =>
+  import("./pages/History").then((module) => ({
+    default: module.History,
   }))
 );
 const InstructionsToStart = lazy(() =>
@@ -39,11 +45,14 @@ const Updates = lazy(() =>
 );
 
 export function AppRoutes() {
+  usePostHogIdentity();
+
   return (
     <AppRouteTree
       components={{
         Home,
         GetStarted,
+        History,
         InstructionsToStart,
         PrivacyPolicy,
         ResultPage,

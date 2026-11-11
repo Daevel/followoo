@@ -1,14 +1,19 @@
 import { Navigate, useLocation } from "react-router";
 import { ResultsExperience } from "@/features/results/components/ResultsExperience";
-import type { InstagramAnalysisResult } from "@/types/instagram.types";
+import type { ResultsLocationState } from "@/features/results/types/results.types";
 
 export function ResultPage() {
   const location = useLocation();
-  const analysis = location.state as InstagramAnalysisResult | undefined;
+  const state = location.state as ResultsLocationState | undefined;
 
-  if (!analysis) {
+  if (!state?.analysis) {
     return <Navigate to="/get-started" replace />;
   }
 
-  return <ResultsExperience analysis={analysis} />;
+  return (
+    <ResultsExperience
+      analysis={state.analysis}
+      isHistorySavePending={state.isHistorySavePending}
+    />
+  );
 }

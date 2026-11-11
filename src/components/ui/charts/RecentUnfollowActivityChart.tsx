@@ -1,56 +1,62 @@
-import clsx from "clsx";
 import { useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-import { Icon } from "@/components/ui/Icon";
+import { Badge, type BadgeTone } from "@/components/ui/Badge";
+import { Icon, type IconName } from "@/components/ui/Icon";
+import { TabButton } from "@/components/ui/TabButton";
 import {
   calculateRecentUnfollowActivity,
   type RecentUnfollowActivityPeriod,
   type RecentUnfollowActivityResult,
 } from "@/features/relationship/services/recentUnfollowActivityService";
 import type { InstagramUser } from "@/types/instagram.types";
+import { ChartCard, ChartStats } from "./ChartCard";
+import { chartTheme } from "./chartTheme";
 
 type RecentUnfollowActivityChartProps = {
   recentUnfollowers: InstagramUser[];
 };
 
-function TrendIcon({
+// Trend as icon + word; more unfollows is the bad direction.
+const trendStyles: Record<
+  "increasing" | "decreasing" | "stable",
+  { label: string; icon: IconName; tone: BadgeTone }
+> = {
+  increasing: { label: "Increasing", icon: "singleArrowUp", tone: "danger" },
+  decreasing: { label: "Decreasing", icon: "singleArrowDown", tone: "success" },
+  stable: { label: "Stable", icon: "check", tone: "neutral" },
+};
+
+function TrendBadge({
   trend,
 }: {
   trend: "increasing" | "decreasing" | "stable";
 }) {
-  const config = {
-    increasing: {
-      color: "text-accent",
-      icon: "singleArrowUp" as const,
-      label: "Increasing",
-    },
-    decreasing: {
-      color: "text-primary",
-      icon: "singleArrowDown" as const,
-      label: "Decreasing",
-    },
-    stable: {
-      color: "text-foreground",
-      icon: "check" as const,
-      label: "Stable",
-    },
-  };
-
-  const { color, icon, label } = config[trend];
+  const { label, icon, tone } = trendStyles[trend];
 
   return (
-    <div className="flex items-center gap-2">
-      <Icon name={icon} width={16} height={16} className={color} />
-      <span className={clsx("text-sm font-medium", color)}>{label}</span>
-    </div>
+    <Badge
+      tone={tone}
+      icon={
+        <Icon
+          name={icon}
+          color="current"
+          width={12}
+          height={12}
+          aria-hidden="true"
+        />
+      }
+    >
+      {label}
+    </Badge>
   );
 }
 
@@ -76,60 +82,54 @@ export function RecentUnfollowActivityChart({
     percentage: parseFloat(point.percentage.toFixed(1)),
   }));
 
+  const peakPeriod = activityResult.peakPeriod?.period;
+
   return (
-    <div className="border-foreground/10 flex w-full min-w-0 flex-col justify-between rounded-[10px] border bg-white/5 p-4 sm:p-5 md:p-6">
-      <div className="mb-6 flex flex-col">
-        <h3 className="text-foreground text-lg font-semibold sm:text-xl">
-          Recent unfollow activity
-        </h3>
-        <p className="text-foreground/70 mt-1 text-sm leading-6">
-          Based only on recent unfollowers included in this Instagram export.
-        </p>
-      </div>
-
-      {/* Period selector */}
-      <div className="mb-6 flex flex-row justify-center gap-2 sm:gap-3">
-        {(["month", "week"] as const).map((p) => (
-          <button
-            type="button"
-            key={p}
-            onClick={() => setPeriod(p)}
-            className={clsx(
-              "rounded-lg px-4 py-2 text-sm font-medium transition-all",
-              period === p
-                ? "border border-primary/30 bg-primary/20 text-primary"
-                : "border border-foreground/10 bg-foreground/5 text-foreground/70 hover:bg-foreground/10"
-            )}
-          >
-            {p === "month" ? "Monthly" : "Weekly"}
-          </button>
-        ))}
-      </div>
-
-      {/* Chart */}
-      <div className="flex h-[240px] w-full min-w-0 flex-row sm:h-[280px] lg:h-[300px]">
+    <ChartCard
+      title="Recent unfollow activity"
+      description="Based only on recent unfollowers included in this Instagram export."
+      action={
+        <div
+          role="tablist"
+          aria-label="Group by"
+          className="border-line-subtle bg-surface-1 inline-flex gap-0.5 rounded-xl border p-[3px]"
+        >
+          {(["month", "week"] as const).map((p) => (
+            <TabButton
+              key={p}
+              active={period === p}
+              onClick={() => setPeriod(p)}
+            >
+              {p === "month" ? "Monthly" : "Weekly"}
+            </TabButton>
+          ))}
+        </div>
+      }
+    >
+      <div className="h-[220px] w-full min-w-0 sm:h-[260px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="rgba(254,254,254,0.08)"
-            />
+          <BarChart data={chartData} margin={{ left: -16, right: 4 }}>
+            <CartesianGrid vertical={false} stroke={chartTheme.grid} />
             <XAxis
               dataKey="period"
-              tick={{ fill: "rgba(254,254,254,0.5)", fontSize: 12 }}
+              tick={{ fill: chartTheme.axis, fontSize: 11 }}
+              tickLine={false}
+              axisLine={false}
               angle={chartData.length > 5 ? -45 : 0}
               textAnchor={chartData.length > 5 ? "end" : "middle"}
-              height={chartData.length > 5 ? 80 : 30}
+              height={chartData.length > 5 ? 70 : 24}
             />
-            <YAxis tick={{ fill: "rgba(254,254,254,0.5)", fontSize: 12 }} />
+            <YAxis
+              allowDecimals={false}
+              tick={{ fill: chartTheme.axis, fontSize: 11 }}
+              tickLine={false}
+              axisLine={false}
+            />
             <Tooltip
-              contentStyle={{
-                backgroundColor: "#0f172a",
-                border: "1px solid rgba(254,254,254,0.12)",
-                borderRadius: "12px",
-                color: "#fefefe",
-              }}
-              cursor={{ fill: "rgba(99, 102, 241, 0.1)" }}
+              contentStyle={chartTheme.tooltip.contentStyle}
+              labelStyle={chartTheme.tooltip.labelStyle}
+              itemStyle={chartTheme.tooltip.itemStyle}
+              cursor={{ fill: chartTheme.cursor }}
               formatter={(value) => {
                 if (typeof value === "number") {
                   return [`${value}`, "Recent unfollows"];
@@ -137,83 +137,76 @@ export function RecentUnfollowActivityChart({
                 return value;
               }}
             />
-            <Bar dataKey="count" fill="#6366f1" radius={[8, 8, 0, 0]} />
+            {/* neutral bars; only the peak period carries color */}
+            <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={28}>
+              {chartData.map((point) => (
+                <Cell
+                  key={point.period}
+                  fill={
+                    point.period === peakPeriod
+                      ? chartTheme.barHighlight
+                      : chartTheme.barMuted
+                  }
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Insights */}
-      <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-        {/* Total */}
-        <div className="bg-foreground/5 flex flex-col items-center rounded-lg p-4">
-          <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
-            Recent unfollowers
-          </p>
-          <p className="text-foreground mt-2 text-2xl font-bold">
-            {activityResult.totalUnfollowers}
-          </p>
-        </div>
+      <ChartStats
+        stats={[
+          {
+            label: "Recent unfollowers",
+            value: activityResult.totalUnfollowers,
+          },
+          {
+            label: "Peak period",
+            value: activityResult.peakPeriod?.period ?? "—",
+            detail: activityResult.peakPeriod
+              ? `${activityResult.peakPeriod.count} recent unfollows`
+              : undefined,
+          },
+          {
+            label: "Avg per period",
+            value: Math.round(activityResult.averagePerPeriod),
+          },
+          {
+            label: "Trend",
+            value: <TrendBadge trend={activityResult.trend} />,
+          },
+        ]}
+      />
 
-        {/* Peak period */}
-        {activityResult.peakPeriod && (
-          <div className="bg-accent/10 rounded-lg p-4">
-            <p className="text-accent/80 text-xs font-semibold tracking-widest uppercase">
-              Peak period
-            </p>
-            <p className="text-accent mt-2 text-sm font-semibold">
-              {activityResult.peakPeriod.period}
-            </p>
-            <p className="text-accent/70 text-xs">
-              {activityResult.peakPeriod.count} recent unfollows
-            </p>
-          </div>
+      <p className="text-fg-muted text-[13px] leading-[1.6]">
+        {activityResult.trend === "increasing" && (
+          <>
+            <strong className="text-fg font-medium">
+              Recent unfollows increased.
+            </strong>{" "}
+            Instagram reports more recent unfollow records in the later periods
+            of this export.
+          </>
         )}
-
-        {/* Average per period */}
-        <div className="bg-foreground/5 rounded-lg p-4">
-          <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
-            Avg per period
-          </p>
-          <p className="text-foreground mt-2 text-2xl font-bold">
-            {Math.round(activityResult.averagePerPeriod)}
-          </p>
-        </div>
-
-        {/* Trend */}
-        <div className="bg-foreground/5 flex flex-col items-center rounded-lg p-4">
-          <p className="text-foreground/60 text-xs font-semibold tracking-widest uppercase">
-            Trend
-          </p>
-          <div className="mt-4">
-            <TrendIcon trend={activityResult.trend} />
-          </div>
-        </div>
-      </div>
-
-      {/* Interpretation */}
-      <div className="border-foreground/10 bg-foreground/5 mt-6 flex flex-row rounded-lg border p-4">
-        <p className="text-foreground text-sm leading-6">
-          {activityResult.trend === "increasing" && (
-            <>
-              <strong>Recent unfollows increased.</strong> Instagram reports
-              more recent unfollow records in the later periods of this export.
-            </>
-          )}
-          {activityResult.trend === "decreasing" && (
-            <>
-              <strong>Recent unfollows decreased.</strong> Instagram reports
-              fewer recent unfollow records in the later periods of this export.
-            </>
-          )}
-          {activityResult.trend === "stable" && (
-            <>
-              <strong>Recent unfollows look stable.</strong> The records in this
-              export do not show a strong increase or decrease over the grouped
-              periods.
-            </>
-          )}
-        </p>
-      </div>
-    </div>
+        {activityResult.trend === "decreasing" && (
+          <>
+            <strong className="text-fg font-medium">
+              Recent unfollows decreased.
+            </strong>{" "}
+            Instagram reports fewer recent unfollow records in the later periods
+            of this export.
+          </>
+        )}
+        {activityResult.trend === "stable" && (
+          <>
+            <strong className="text-fg font-medium">
+              Recent unfollows look stable.
+            </strong>{" "}
+            The records in this export do not show a strong increase or decrease
+            over the grouped periods.
+          </>
+        )}
+      </p>
+    </ChartCard>
   );
 }

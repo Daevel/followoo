@@ -4,34 +4,40 @@ Root-level entry point for any coding agent (OpenCode or otherwise) working in t
 
 ## What Followoo is
 
-A privacy-first tool that analyzes a user's Instagram data export locally to show followers/following, mutuals, recent unfollowers, and blocked users, plus persona/engagement insights. No backend processing of Instagram export content; the only server-side data today is the public `/updates` changelog and (from v3.1.0) opt-in encrypted sync.
+A privacy-first tool that analyzes a user's Instagram data export locally to show followers/following, mutuals, recent unfollowers, and blocked users, plus persona/engagement insights. No backend processing of Instagram export content. Server-side data today: the public `/updates` changelog, (v3.0.0) user identity/entitlement/anonymous usage analytics for account-gated access (`backend/app/users`, `users`/`subscriptions`/`usage_events` tables), and (v3.1.0 Task 1) opt-in encrypted history key management (`backend/app/sync`, `sync_keys` table) - the backend only ever stores a passphrase-wrapped and a recovery-code-wrapped copy of a client-generated master key, never Instagram export/relationship data or the master key itself. The feature this unlocks (actually storing/reviewing encrypted history snapshots, v3.1.0 Task 2) is not built yet, so activation is feature-flagged off by default.
 
 ## Stack at a glance
 
 - Frontend: React + Vite (TypeScript), Tailwind CSS 4, Storybook, Vitest
 - Backend: Python FastAPI (`backend/`), Neon Postgres, Alembic migrations, psycopg_pool, slowapi rate limiting
-- CI/CD: GitHub Actions (`.github/workflows/ci.yml`) - lint, build, unit tests, Chromatic
+- CI/CD: GitHub Actions (`.github/workflows/ci.yml`) - frontend lint/build/unit tests, backend lint/typecheck/pytest against a real Postgres service container, Chromatic
 - Errors/observability: Sentry (frontend `@sentry/react`, backend `sentry_sdk`) with PII scrubbing
+- Feature flags: PostHog (`posthog-js`, no React provider) via `useFeatureFlag` (`src/analytics/`) - default-first, no server-side bootstrapping (client-rendered SPA); `usePostHogIdentity` links Clerk sign-in to `posthog.identify()`/`reset()`
 - Deploy: Vercel (frontend), GitHub App preview deployments per PR
+- Environments: `main` = production; `preview` = shared staging (Vercel Preview deployment + dedicated Render service + dedicated Neon branch)
 
 ## Essential commands
 
     npm run dev                  # local frontend dev server
     npm run build                # typecheck + build + SEO prerender
     npm run lint / lint:fix      # Biome
-    npx vitest run --project unit
+    npx vitest run --project unit --project dom   # "dom" = React hooks via @testing-library/react + jsdom
     npm run storybook / build-storybook
     backend/.venv/bin/python -m uvicorn app.main:app --reload --port 8000
     backend/.venv/bin/python -m ruff check app
     backend/.venv/bin/python -m mypy app
+    backend/.venv/bin/python -m pytest   # needs FOLLOWOO_DATABASE_URL pointed at a real (test) Postgres
 
 ## Non-negotiable rules (apply regardless of task)
 
 1. Never send Instagram export content, usernames, follower/following lists, or relationship-analysis results to any third-party service (Sentry included) - see the `project-context` and `python-backend` skills for the exact scrubbing pattern already in place.
-2. Never imply official Instagram/Meta affiliation in product copy.
-3. Commit messages: always English, Conventional Commits format - see the `git-commits` skill.
-4. Before `git push`: always run the `pre-push-sync-knowledge` flow.
-5. Public `/updates` entries: only for end-user-visible changes - see the `public-changelog` skill's decision rule before writing one.
+2. Never send user account PII (email) to analytics or error tracking beyond the Clerk user id already used for `posthog.identify()` - see `project-context`.
+3. Never log, send to Sentry/analytics, or persist server-side a passphrase, recovery code, or master key in plaintext for the encrypted history sync feature (v3.1.0 Task 1) - the backend (`backend/app/sync`) and the service layer (`src/features/sync/services/syncService.ts`) must only ever handle already-wrapped (ciphertext) forms; a wrong passphrase/recovery code during local unwrap is expected UI validation, not an error to report (see `src/features/sync/crypto/wrapping.ts`'s `MasterKeyUnwrapError`).
+4. Never imply official Instagram/Meta affiliation in product copy.
+5. Commit messages: always English, Conventional Commits format - see the `git-commits` skill.
+6. Before `git push`: always run the `pre-push-sync-knowledge` flow.
+7. Public `/updates` entries: only for end-user-visible changes - see the `public-changelog` skill's decision rule before writing one.
+8. Branching: never push directly to `main`. Every change goes through `preview` first (staging branch, with its own Vercel deployment and its own Render backend) - merging into `main` is a separate, explicit decision made after validation on `preview`.
 
 ## Skills index
 

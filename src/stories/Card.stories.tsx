@@ -14,18 +14,14 @@ const meta: Meta<typeof Card> = {
       control: "text",
       description: "Card description",
     },
-    color: {
+    tone: {
       control: { type: "select" },
-      options: ["primary", "accent", "bg", "foreground"],
-      description: "Card color variant",
+      options: ["default", "brand"],
+      description: "Icon tile tone (the surface stays neutral)",
     },
     iconName: {
       control: "text",
       description: "Icon name",
-    },
-    opacity: {
-      control: "boolean",
-      description: "Apply backdrop blur effect",
     },
   },
 };
@@ -33,38 +29,20 @@ const meta: Meta<typeof Card> = {
 export default meta;
 type Story = StoryObj<typeof Card>;
 
-export const Primary: Story = {
+export const Default: Story = {
   args: {
-    title: "Crescita sicura",
-    description: "Una card compatta con icona e testo.",
-    color: "primary",
-    iconName: "shield",
+    title: "Elaborazione locale",
+    description: "Il calcolo avviene interamente nel tuo browser.",
+    tone: "default",
+    iconName: "laptop",
   },
 };
 
-export const Accent: Story = {
+export const Brand: Story = {
   args: {
-    title: "Crescita sicura",
-    description: "Una card compatta con icona e testo.",
-    color: "accent",
-    iconName: "shield",
-  },
-};
-
-export const Bg: Story = {
-  args: {
-    title: "Crescita sicura",
-    description: "Una card compatta con icona e testo.",
-    color: "bg",
-    iconName: "shield",
-  },
-};
-
-export const Foreground: Story = {
-  args: {
-    title: "Crescita sicura",
-    description: "Una card compatta con icona e testo.",
-    color: "foreground",
+    title: "Privata per impostazione",
+    description: "L'export viene analizzato nel tuo browser. Nessun upload.",
+    tone: "brand",
     iconName: "shield",
   },
 };
@@ -75,32 +53,20 @@ export const AllVariants: Story = {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(2, 1fr)",
+        gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
         gap: "1rem",
       }}
     >
       <Card
-        title="Primary"
-        description="Card con colore primary"
-        color="primary"
-        iconName="shield"
+        title="Elaborazione locale"
+        description="Il calcolo avviene interamente nel tuo browser."
+        tone="default"
+        iconName="laptop"
       />
       <Card
-        title="Accent"
-        description="Card con colore accent"
-        color="accent"
-        iconName="shield"
-      />
-      <Card
-        title="Bg"
-        description="Card con colore bg"
-        color="bg"
-        iconName="shield"
-      />
-      <Card
-        title="Foreground"
-        description="Card con colore foreground"
-        color="foreground"
+        title="Privata per impostazione"
+        description="L'export viene analizzato nel tuo browser. Nessun upload."
+        tone="brand"
         iconName="shield"
       />
     </div>

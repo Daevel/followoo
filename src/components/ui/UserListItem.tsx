@@ -1,15 +1,24 @@
+import clsx from "clsx";
 import { getInstagramProfileUrl } from "@/features/instagram-export/utils/instagramUtils";
 import { extractFirstNameLetter } from "@/lib/searchUtils";
 import type { InstagramUser, UserPersona } from "../../types/instagram.types";
+import { Icon } from "./Icon";
 import { PersonaBadge } from "./PersonaBadge";
 
 type UserListItemProps = {
   user: InstagramUser;
   formatDate: (timestamp?: number) => string | null;
   persona?: UserPersona;
+  /** `row` drops border and fill, for lists already inside a card. */
+  appearance?: "card" | "row";
 };
 
-export function UserListItem({ user, formatDate, persona }: UserListItemProps) {
+export function UserListItem({
+  user,
+  formatDate,
+  persona,
+  appearance = "card",
+}: UserListItemProps) {
   const href = getInstagramProfileUrl(user);
   const initial = extractFirstNameLetter(user.username.toUpperCase());
   const formattedDate = formatDate(user.timestamp);
@@ -20,22 +29,36 @@ export function UserListItem({ user, formatDate, persona }: UserListItemProps) {
       target="_blank"
       rel="noreferrer"
       title={`Open @${user.username} on Instagram`}
-      className="border-accent hover:bg-primary/10 flex min-w-0 items-center gap-3 rounded-[10px] border p-3 transition sm:gap-4 sm:p-4"
+      className={clsx(
+        "group hover:bg-surface-2 focus-visible:shadow-ring flex min-w-0 items-center gap-3 rounded-control px-3 py-2.5 transition-colors focus-visible:outline-none",
+        appearance === "card" && "border-line-subtle bg-surface-1 border"
+      )}
     >
-      <div className="bg-primary/30 text-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold">
+      <div className="border-line-strong bg-surface-2 text-fg flex size-9 shrink-0 items-center justify-center rounded-full border text-[13px] font-semibold">
         {initial}
       </div>
 
-      <div className="flex min-w-0 flex-col gap-2 text-start">
-        <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <span className="p2-b text-primary truncate">{user.username}</span>
-          {persona && <PersonaBadge persona={persona} size="sm" />}
-        </div>
-
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
+        <span className="text-fg truncate text-sm font-medium">
+          @{user.username}
+        </span>
         {formattedDate && (
-          <span className="text-foreground/60 text-sm">{formattedDate}</span>
+          <span className="text-fg-muted text-xs tabular-nums">
+            {formattedDate}
+          </span>
         )}
       </div>
+
+      {persona && <PersonaBadge persona={persona} size="sm" />}
+
+      <Icon
+        name="arrowRight"
+        color="current"
+        width={14}
+        height={14}
+        className="text-fg-faint group-hover:text-fg-muted shrink-0 transition-colors"
+        aria-hidden="true"
+      />
     </a>
   );
 }

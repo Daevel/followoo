@@ -12,7 +12,10 @@ from slowapi.middleware import SlowAPIMiddleware
 from app.core.limiter import limiter
 from app.core.sentry import init_sentry
 from app.db import get_pool
+from app.snapshots.router import router as snapshots_router
+from app.sync.router import router as sync_router
 from app.updates.router import router as updates_router
+from app.users.router import router as users_router
 
 load_dotenv()
 init_sentry()
@@ -55,7 +58,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
     allow_credentials=False,
-    allow_methods=["GET"],
+    allow_methods=["GET", "POST", "DELETE"],
     allow_headers=["*"],
 )
 
@@ -68,3 +71,6 @@ def health_check() -> dict[str, str]:
 
 
 app.include_router(updates_router)
+app.include_router(users_router)
+app.include_router(sync_router)
+app.include_router(snapshots_router)

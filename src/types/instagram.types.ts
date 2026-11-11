@@ -74,7 +74,7 @@ export const UserPersona = {
   FICKLE: "FICKLE",
   LURKER: "LURKER",
   DORMANT: "DORMANT",
-};
+} as const;
 
 export type UserPersona = (typeof UserPersona)[keyof typeof UserPersona];
 

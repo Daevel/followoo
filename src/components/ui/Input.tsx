@@ -34,18 +34,19 @@ export const Input = forwardRef<
   } = props;
 
   const baseClasses =
-    "w-full bg-gray-200 rounded-[10px] px-4 py-2 focus:outline-none focus:ring-2 focus:border-transparent text-[#000000]";
+    "bg-surface-1 text-fg placeholder:text-fg-faint w-full rounded-control border px-3 text-sm transition-colors focus:outline-none";
 
+  // Border colors are exclusive per state: a shared base color would win the cascade.
   const stateClasses = hasError
-    ? "border border-accent focus:ring-accent"
-    : "border border-gray-300 focus:ring-primary";
+    ? "border-danger/60 focus:border-danger focus:shadow-[0_0_0_3px_rgb(251_113_133/0.18)]"
+    : "border-line-strong hover:border-fg-faint focus:border-brand-fg focus:shadow-[0_0_0_3px_rgb(165_180_252/0.18)]";
 
   if (variant === "textarea") {
     const textareaProps =
       rest as React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
     return (
-      <div className="flex w-full flex-col gap-1 text-[#000000]">
+      <div className="flex w-full flex-col gap-1">
         <textarea
           ref={ref as React.Ref<HTMLTextAreaElement>}
           maxLength={maxLength}
@@ -54,7 +55,7 @@ export const Input = forwardRef<
           className={clsx(
             baseClasses,
             stateClasses,
-            "min-h-[140px] resize-none py-3",
+            "min-h-[140px] resize-none py-2.5 leading-[1.55]",
             className
           )}
           {...textareaProps}
@@ -70,7 +71,7 @@ export const Input = forwardRef<
       ref={ref as React.Ref<HTMLInputElement>}
       placeholder={placeholder}
       aria-invalid={hasError}
-      className={clsx(baseClasses, stateClasses, className)}
+      className={clsx(baseClasses, stateClasses, "h-10", className)}
       {...inputProps}
     />
   );

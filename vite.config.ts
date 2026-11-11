@@ -36,12 +36,12 @@ export default defineConfig(({ isSsrBuild }) => ({
     sitemapPlugin({
       hostname: "https://followoo.app",
       dynamicRoutes: routes,
-      exclude: ["/results"],
+      exclude: ["/results", "/history"],
       robots: [
         {
           userAgent: "*",
           allow: "/",
-          disallow: "/results",
+          disallow: ["/results", "/history"],
         },
       ],
     }),
@@ -60,8 +60,8 @@ export default defineConfig(({ isSsrBuild }) => ({
         description:
           "Analyze your Instagram followers, following and unfollowers locally in your browser. No Instagram login and no server-side file upload.",
         lang: "en",
-        theme_color: "#1a1a1a",
-        background_color: "#ffffff",
+        theme_color: "#0b0d17",
+        background_color: "#0b0d17",
         display: "standalone",
         scope: "/",
         start_url: "/",
@@ -188,6 +188,21 @@ export default defineConfig(({ isSsrBuild }) => ({
           name: "unit",
           environment: "node",
           include: ["src/**/*.test.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          // Separate from "unit": React hooks that use useState/useEffect
+          // (@testing-library/react's renderHook) need a real DOM, which
+          // "unit"'s Node environment doesn't have. Kept as its own
+          // project rather than switching "unit" to jsdom so the many
+          // pure-logic tests there stay fast and don't pay for a DOM they
+          // never touch. Matched by extension (.test.tsx, not .test.ts)
+          // so a file is picked up by exactly one project, never both.
+          name: "dom",
+          environment: "jsdom",
+          include: ["src/**/*.test.tsx"],
         },
       },
     ],

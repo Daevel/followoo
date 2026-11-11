@@ -44,7 +44,7 @@ export function SortSelect<T extends string>({
     const rect = triggerRef.current.getBoundingClientRect();
 
     setMenuPosition({
-      top: rect.bottom + 8 + window.scrollY,
+      top: rect.bottom + 6 + window.scrollY,
       left: rect.left + window.scrollX,
       width: rect.width,
     });
@@ -100,7 +100,9 @@ export function SortSelect<T extends string>({
           className
         )}
       >
-        <span className="l2-r text-foreground/80 text-start">{label}</span>
+        <span className="text-fg-muted text-start text-[13px] font-medium">
+          {label}
+        </span>
         <div className="relative w-full min-w-44 md:w-auto">
           <button
             ref={triggerRef}
@@ -115,20 +117,20 @@ export function SortSelect<T extends string>({
               setIsOpen((prev) => !prev);
             }}
             className={clsx(
-              "border-primary bg-primary text-foreground flex w-full items-center justify-between gap-3 rounded-[10px] border px-4 py-2 transition-colors",
-              "focus:ring-primary hover:opacity-95 focus:ring-2 focus:outline-none"
+              "border-line-strong bg-surface-1 text-fg flex h-9 w-full cursor-pointer items-center justify-between gap-3 rounded-control border pr-2.5 pl-3 text-sm transition-colors",
+              "hover:border-fg-faint focus-visible:shadow-ring focus-visible:outline-none"
             )}
           >
             <span>{selectedOption?.label ?? "Select"}</span>
 
             <Icon
-              name="singleArrowRight"
-              color="foreground"
-              width={24}
-              height={24}
+              name="singleArrowDown"
+              color="current"
+              width={16}
+              height={16}
               className={clsx(
-                "shrink-0 transition-transform duration-200",
-                isOpen && "rotate-90"
+                "text-fg-muted shrink-0 transition-transform duration-200",
+                isOpen && "rotate-180"
               )}
               aria-hidden="true"
             />
@@ -149,9 +151,9 @@ export function SortSelect<T extends string>({
               width: menuPosition.width,
               zIndex: 9999,
             }}
-            className="border-primary bg-bg origin-top rounded-b-[10px] border shadow-lg"
+            className="border-line-strong bg-surface-2 shadow-elev-2 origin-top rounded-[12px] border p-1"
           >
-            <div className="flex flex-col py-1">
+            <div className="flex flex-col">
               {options.map((option) => {
                 const isSelected = option.value === value;
 
@@ -167,13 +169,22 @@ export function SortSelect<T extends string>({
                       setIsOpen(false);
                     }}
                     className={clsx(
-                      "px-4 py-3 text-left transition-colors",
-                      isSelected
-                        ? "bg-accent text-foreground"
-                        : "text-foreground hover:bg-primary/20"
+                      "flex cursor-pointer items-center justify-between gap-3 rounded-lg px-2.5 py-2 text-left text-sm transition-colors",
+                      "hover:bg-line-subtle focus-visible:shadow-ring focus-visible:outline-none",
+                      isSelected ? "text-fg" : "text-fg-muted hover:text-fg"
                     )}
                   >
                     {option.label}
+                    {isSelected && (
+                      <Icon
+                        name="check"
+                        color="current"
+                        width={14}
+                        height={14}
+                        className="text-brand-fg shrink-0"
+                        aria-hidden="true"
+                      />
+                    )}
                   </button>
                 );
               })}

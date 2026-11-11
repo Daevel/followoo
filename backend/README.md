@@ -11,6 +11,7 @@ FOLLOWOO_DATABASE_URL="postgresql://..."
 FOLLOWOO_CORS_ORIGINS="http://localhost:5173,http://127.0.0.1:5173"
 FOLLOWOO_SENTRY_DSN=""
 FOLLOWOO_ENVIRONMENT="development"
+FOLLOWOO_CLERK_JWKS_URL=""
 ```
 
 `FOLLOWOO_SENTRY_DSN` and `FOLLOWOO_ENVIRONMENT` are optional - see
@@ -18,12 +19,39 @@ FOLLOWOO_ENVIRONMENT="development"
 DSN; leave it unset/empty locally unless you are deliberately testing
 against your own Sentry project.
 
+`FOLLOWOO_CLERK_JWKS_URL` is required for `/auth/me` (and any future
+Clerk-protected endpoint) to work - see
+[Authentication (Clerk)](#authentication-clerk) below.
+
 In production, configure `FOLLOWOO_CORS_ORIGINS` on the backend host with the
 public frontend origins:
 
 ```txt
 FOLLOWOO_CORS_ORIGINS="https://followoo.app,https://www.followoo.app"
 ```
+
+### Preview environment
+
+Besides the production service, a second Render service
+(`followoo-api-preview`) tracks the `preview` branch instead of `main`,
+with its own environment variables:
+
+- `FOLLOWOO_DATABASE_URL` -> dedicated Neon branch `preview-backend` (not
+  the production database; created manually, independent of the
+  Vercel-Neon integration's automatic branch lifecycle)
+- `FOLLOWOO_CORS_ORIGINS` ->
+  `http://localhost:5173,http://127.0.0.1:5173,https://followoo.app,https://www.followoo.app,https://followoo-git-preview-daevels-projects.vercel.app`
+  (no trailing slash on any origin, or the CORS match fails)
+- `FOLLOWOO_ENVIRONMENT=preview`
+
+Preview backend URL: `https://followoo-api-preview.onrender.com`
+Preview frontend URL: `https://followoo-git-preview-daevels-projects.vercel.app`
+
+On Vercel, `VITE_API_BASE_URL` is set as a "Preview"-scoped variable to the
+preview backend URL above.
+
+See the repo root `AGENTS.md` "Environments" note for the overall `main`
+vs `preview` flow.
 
 Start the API from `backend/`:
 
@@ -43,6 +71,25 @@ Updates endpoint:
 GET http://localhost:8000/updates
 ```
 
+Run the test suite (`tests/`, mirroring `app/`) and dev-tool checks from
+`backend/` with the dev extras installed (`pip install -e ".[dev]"` or
+`pip install -r requirements.txt pytest ruff mypy httpx`):
+
+```bash
+./.venv/bin/python -m pytest
+./.venv/bin/python -m ruff check app
+./.venv/bin/python -m mypy app
+```
+
+`tests/auth/` stubs the JWKS fetch and needs no database. `tests/users/`
+does: it exercises real SQL (upserts, JSONB) against `FOLLOWOO_DATABASE_URL`,
+so point that at a real local/test Postgres with migrations applied
+(`alembic upgrade head`) before running `pytest` - see
+[Users & Entitlement](#users--entitlement) and
+[Database Migrations](#database-migrations-alembic) below. CI does this
+automatically against a `postgres:16` service container (see
+`docs/CI.md`).
+
 ## Database Connections
 
 `app/db.py` keeps a `psycopg_pool.ConnectionPool` (min 1, max 5 connections)
@@ -55,13 +102,112 @@ it now borrows/returns a pooled connection instead of opening/closing one.
 
 ## Rate Limiting
 
-Public GET endpoints (currently `/updates`) are rate limited per client IP
-with `slowapi` at 30 requests/minute, using the shared limiter in
-`app/core/limiter.py`. Exceeding the limit returns `429` with a JSON body.
-`/health` is intentionally not rate limited so uptime checks stay cheap and
-reliable. When a backend-side support/contact endpoint is added, apply the
-same `@limiter.limit(PUBLIC_RATE_LIMIT)` decorator to it - it does not exist
-in the backend yet (the support form is still frontend-only).
+Public endpoints (currently `/updates`, `/users/me`, and `/usage-events`)
+are rate limited per client IP with `slowapi` at 30 requests/minute, using
+the shared limiter in `app/core/limiter.py`. Exceeding the limit returns
+`429` with a JSON body. `/health` is intentionally not rate limited so
+uptime checks stay cheap and reliable. When a backend-side support/contact
+endpoint is added, apply the same `@limiter.limit(PUBLIC_RATE_LIMIT)`
+decorator to it - it does not exist in the backend yet (the support form is
+still frontend-only).
+
+## Authentication (Clerk)
+
+`app/auth/clerk.py` verifies Clerk session JWTs locally against Clerk's
+public JWKS - no call to Clerk's API happens per request, and no Clerk
+Secret Key is needed (JWKS signature verification only needs public keys).
+`get_current_clerk_user_id` is a FastAPI dependency (`Depends(...)`) that
+reads the `Authorization: Bearer <token>` header, verifies the signature
+(RS256) via `PyJWT`'s `PyJWKClient` (which fetches and caches the JWKS
+document itself), checks expiry, and validates the `azp` claim against
+`FOLLOWOO_CORS_ORIGINS` - the same origin(s) already trusted for CORS are,
+for this app's single-SPA setup, the same origin(s) Clerk mints tokens for.
+On any failure it raises a `401` with a structured
+`{"code": "...", "message": "..."}` body (`AUTH_TOKEN_MISSING`,
+`AUTH_TOKEN_EXPIRED`, or `AUTH_TOKEN_INVALID`) instead of a bare exception -
+there is no dedicated `AppError`/`ERROR_CODES` class in this Python backend
+the way there is in `src/errors/` on the frontend, so this mirrors that
+pattern's intent on top of the existing `HTTPException` convention.
+
+**Setup**: in the Clerk dashboard for your application, find the JWKS URL
+under API Keys (or use `<your Frontend API URL>/.well-known/jwks.json`) and
+set it as `FOLLOWOO_CLERK_JWKS_URL`. Since 11/11/2026 there is one Clerk
+instance per environment, split the same way `FOLLOWOO_DATABASE_URL` is
+split per branch:
+
+- `preview` (`followoo-api-preview`) uses the Clerk **development**
+  instance - its frontend uses a `pk_test_...` publishable key, and
+  `FOLLOWOO_CLERK_JWKS_URL` is that instance's JWKS URL.
+- `main`/production (`followoo-api`) uses the Clerk **production**
+  instance on the `clerk.followoo.app` domain - its frontend uses a
+  `pk_live_...` key, and `FOLLOWOO_CLERK_JWKS_URL` is
+  `https://clerk.followoo.app/.well-known/jwks.json`.
+
+The two instances sign tokens with different keys, so never copy one
+service's `FOLLOWOO_CLERK_JWKS_URL` to the other: every token would fail
+verification with `AUTH_TOKEN_INVALID`. Likewise, each service's
+`FOLLOWOO_CORS_ORIGINS` must list that environment's own frontend
+origin(s), because it is also the `azp` allow-list above.
+
+`get_current_clerk_claims` is the same check, returning the full claim set
+(e.g. for an `email` claim, if the Clerk JWT template has been customized
+to include one) instead of just `sub` - `app/users/router.py` uses it for
+`GET /users/me`.
+
+**Testing it locally**: sign in on the frontend (with `VITE_CLERK_PUBLISHABLE_KEY`
+configured), get a session token from Clerk client-side (e.g.
+`await window.Clerk.session.getToken()` in the browser console), and call:
+
+```bash
+curl -H "Authorization: Bearer <token>" http://localhost:8000/users/me
+```
+
+A missing, expired, or tampered-with token should get a `401` instead.
+
+## Users & Entitlement
+
+`backend/app/users/` (router, service, repository, schemas, dependencies -
+the same feature-module shape as `app/auth/` and `app/updates/`) owns user
+identity and the Base/Pro entitlement model, added for v3.0.0 Task 2:
+
+- `users.id` is the Clerk JWT `sub` claim directly - no separate internal
+  id. A row is lazily created on a user's first verified request
+  (`get_or_create_user`); there is no Clerk webhook for this.
+- `subscriptions` is the entitlement source of truth. `get_entitlement`
+  resolves `"pro"` when a row with `status` `active` or `trialing` exists
+  for that user, otherwise `"base"` - never from a stored `plan` field on
+  `users`, so it can't drift from what Stripe actually reports.
+  `subscriptions` stays empty until v3.0.0 Task 3 wires up Stripe, so
+  **every user resolves to `"base"` today - that is the expected state,
+  not a bug**.
+- `usage_events` is analytics only (e.g. `analysis_run`), never a usage
+  cap - a Base account can run unlimited analyses. Never accept Instagram
+  export/relationship data in `metadata` - see
+  `.opencode/skills/project-context/SKILL.md`.
+- `require_entitlement(min_level)` is a dependency factory for gating a
+  route behind a minimum plan (`Depends(require_entitlement("pro"))`),
+  raising `403` (`ENTITLEMENT_INSUFFICIENT`) otherwise. No route uses
+  `min_level="pro"` yet - the first Pro-only feature ships in v3.1.0 - but
+  the check is built and tested now so that feature doesn't have to design
+  and test the gate itself too.
+
+Endpoints:
+
+- `GET /users/me` - `get_or_create_user`s the caller, returns
+  `{"user_id", "email", "plan"}`. Replaces the temporary `GET /auth/me`
+  from Task 1 (removed, not kept alongside this).
+- `POST /usage-events` - body `{"event_type": "analysis_run"}` (or any
+  other free-form event name), logs one row. Also lazily provisions the
+  user first, since a client's first backend call could plausibly be this
+  endpoint rather than `GET /users/me`.
+
+The account gate itself - free anonymous analyses vs. requiring sign-in
+from the second one on - lives on the frontend
+(`src/features/instagram-export/hooks/useFreeAnalysisGate.ts`): a
+`localStorage` flag is a deliberately soft, bypassable signal (the
+anonymous analysis costs the backend nothing, so a bypass is a lost funnel
+opportunity, not a security issue), but every authenticated backend call
+still goes through the real JWT check above regardless.
 
 ## Error Tracking (Sentry)
 
@@ -166,26 +312,66 @@ it describes the `updates` table as it already exists in the real Neon
 database (reconstructed from `app/updates/repository.py`, since the table
 predates any migration tooling). Running it as a normal `upgrade` against
 that database would fail (or duplicate the table) because the table is
-already there. Instead, mark it as already applied without running its
-SQL:
+already there. Instead, mark only the baseline as already applied
+without running its SQL, then let `upgrade` create everything after it:
 
 ```bash
-./.venv/bin/alembic stamp head
-```
-
-Run this once, manually, against the production database before the
-first real deploy that includes Alembic. From then on, every deploy
-should run:
-
-```bash
+./.venv/bin/alembic stamp 9ce14bf4d485   # baseline revision, NOT head
 ./.venv/bin/alembic upgrade head
 ```
 
-which applies any migrations newer than whatever revision the database is
-currently stamped at. This is safe to run on every deploy: if the
-database is already at `head`, it is a no-op.
+Never use `stamp head` here: `head` is the latest revision, so it would
+mark every later migration (`users`, `sync_keys`, `analysis_snapshots`,
+...) as applied without ever creating those tables.
+
+Run this once, manually, against the production database before the
+first real deploy that includes Alembic.
+
+From then on, applying migrations against the real Render/Neon
+environments is **automatic**, not a manual step - but not via Render's
+Pre-Deploy Command: that feature turned out to require a paid web
+service plan, and both `followoo-api` and `followoo-api-preview` are on
+the free tier (discovered only once actually trying to configure it, not
+known when this section was first written). Instead, the migration runs
+at the top of [`backend/start.sh`](start.sh), which is what both
+services' **Start Command** on Render invokes instead of calling
+`uvicorn` directly:
+
+```bash
+alembic upgrade head
+exec uvicorn app.main:app --host 0.0.0.0 --port "$PORT"
+```
+
+This runs on every boot of the instance - every real deploy, but also a
+plain manual restart or a scaling event - not only when new code ships.
+That is harmless: `alembic upgrade head` is a no-op once the database is
+already at `head`, so re-running it on a restart that doesn't include a
+new migration costs nothing.
+
+The zero-downtime safety is the same guarantee the Pre-Deploy Command
+would have given, just produced a different way: `start.sh` runs with
+`set -euo pipefail`, so if `alembic upgrade head` fails, the script stops
+right there - `uvicorn` never starts, the instance never passes Render's
+health check, and Render keeps routing traffic to the previous (working)
+version instead of cutting over to a broken one. The trailing `exec` is
+not decorative: without it, `uvicorn` would run as a child process of
+this script, and a `SIGTERM` (which Render sends for a clean shutdown on
+every deploy/restart) would reach the script instead of `uvicorn`
+directly; `exec` replaces the bash process with `uvicorn`'s, preserving
+the clean shutdown the original plain `uvicorn ...` Start Command had.
+
+Both Render services' **Start Command** must be set to `bash start.sh`
+(assuming each service's Root Directory is `backend`, consistent with
+the previous Start Command not using a `cd backend &&` prefix). Like the
+Pre-Deploy Command before it, updating that field is a manual step in
+the Render dashboard, outside this repo - this repo has no `render.yaml`,
+so neither the old nor the new value will ever show up in `git log` or a
+PR diff.
 
 A fresh database (a new local/test/staging environment that never had the
 `updates` table) should always use `alembic upgrade head` from the start,
 never `stamp` - `stamp` only makes sense for the one database that
-already had the table before Alembic existed.
+already had the table before Alembic existed. Running migrations
+locally (`./.venv/bin/alembic upgrade head`, see "Applying migrations
+locally" above) is unaffected by any of this - the Start Command only
+runs on Render, against the two real Render/Neon environments.

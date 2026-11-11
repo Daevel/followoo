@@ -1,3 +1,5 @@
+import type { InstagramAnalysisResult } from "@/types/instagram.types";
+
 export type SortKey =
   | "alphabeticalAsc"
   | "alphabeticalDesc"
@@ -24,4 +26,11 @@ export type ResultsEmptyState = {
 export type ResultsTabInfo = {
   sectionTitle: string;
   description: string;
+};
+
+/** Navigation state of `/results`, set by the upload flow. */
+export type ResultsLocationState = {
+  analysis: InstagramAnalysisResult;
+  /** History is activated but was locked, so this analysis wasn't saved. */
+  isHistorySavePending: boolean;
 };

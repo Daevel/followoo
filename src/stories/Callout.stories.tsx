@@ -12,7 +12,7 @@ const meta: Meta<typeof Callout> = {
     },
     variant: {
       control: { type: "select" },
-      options: ["info", "warning", "success"],
+      options: ["info", "success", "warning", "danger"],
       description: "Callout variant",
     },
     children: {
@@ -53,6 +53,14 @@ export const Success: Story = {
   },
 };
 
+export const Danger: Story = {
+  args: {
+    title: "ZIP non valido",
+    variant: "danger",
+    children: "Carica l'export di Instagram in formato JSON.",
+  },
+};
+
 export const AllVariants: Story = {
   name: "Tutte le varianti",
   render: () => (
@@ -65,6 +73,9 @@ export const AllVariants: Story = {
       </Callout>
       <Callout title="Successo" variant="success">
         L'operazione è stata completata con successo.
+      </Callout>
+      <Callout title="ZIP non valido" variant="danger">
+        Carica l'export di Instagram in formato JSON.
       </Callout>
     </div>
   ),

@@ -44,7 +44,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
     <>
       {children}
 
-      <ScreenMount position="top-right" className="max-w-sm sm:w-full">
+      <ScreenMount position="toast" className="sm:w-full sm:max-w-sm">
         <Suspense fallback={null}>
           {toasts.map((toast) => (
             <Toast

@@ -20,10 +20,10 @@ Followoo is independent and is not affiliated with Instagram or Meta.
 ## Product Principles
 
 - Privacy first: Instagram exports are processed locally in the browser.
-- No Instagram login: never ask for credentials or OAuth access.
+- No Instagram login: never ask for Instagram credentials or Instagram OAuth access. This is unrelated to the Followoo *account* system (Clerk, v3.0.0) - signing in to Followoo with Google/email is about identifying a Followoo user for entitlement purposes, never about authenticating against Instagram itself.
 - No Instagram API usage: analysis must rely on official export files only.
 - No file uploads for analysis: user ZIP content must not be sent to application servers.
-- No persistent storage of relationship data: uploaded data should disappear after refresh/close unless the user explicitly requests an export-oriented feature.
+- No persistent storage of relationship data: uploaded data should disappear after refresh/close unless the user explicitly requests an export-oriented feature. This still holds with accounts (v3.0.0): `users`/`subscriptions`/`usage_events` store identity, entitlement, and generic usage analytics only - never Instagram export or relationship data. Persisting actual analysis results (encrypted snapshots) is separate, opt-in, future work (v3.1.0).
 - Explainability: relationship results should be easy to understand and trace back to Instagram export data.
 - Mobile-first usability: upload, filtering, sorting, and results must remain usable on small screens.
 
@@ -70,6 +70,7 @@ Core relationships:
 - Following-only / not following back: the user follows an account, but that account does not follow the user. This is not an unfollow event.
 - Recent unfollowers: accounts reported by Instagram export as recently unfollowed.
 - Blocked, restricted, close friends, hidden stories: direct lists from supported Instagram export files.
+- History comparisons (`compareAnalysisSnapshots`): "before" and "after" follow the date of the data in each export (latest relationship timestamp, `getAnalysisDataUntil`), never the date the snapshot was saved - an export ending in August can be saved after one ending in October. `createdAt` is only the fallback when an export has no timestamps.
 
 Initial relationship vocabulary, where X is the current user's profile and Y is another profile:
 
@@ -94,7 +95,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - Storybook for component documentation and visual development.
 - Biome 2.5 for formatting and lint checks.
 - Vite PWA plugin for installable app behavior.
-- PostHog is present for product analytics initialization; do not use it to track private Instagram relationship data.
+- PostHog is present for product analytics initialization; do not use it to track private Instagram relationship data. Feature flags (v3.0.0) use the same `posthog-js` instance via `useFeatureFlag(key, defaultValue)` (`src/analytics/useFeatureFlag.ts`) - always default-first (no server-side bootstrapping, this is a client-rendered SPA), and the default must match today's real behavior so a slow/unreachable PostHog changes nothing for the user. `usePostHogIdentity` (`src/analytics/`, mounted once in `src/AppRoutes.tsx`) calls `posthog.identify(userId)` on Clerk sign-in and `posthog.reset()` on sign-out, using the same Clerk `sub` as `users.id` on the backend - never re-invent a different id.
 - Sentry (`@sentry/react`, initialized in `src/errors/sentryInit.ts`) is present for error tracking, wired through `src/errors/errorService.ts`'s `handleAppError` and `AppErrorBoundary`; do not use it to track private Instagram relationship data either (see Privacy And Analytics Rules below).
 
 ## Runtime Shape
@@ -106,21 +107,24 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - Vercel should serve prerendered public SEO routes from the generated static files; only SPA-only routes such as `/results` should rewrite to `/index.html`.
 - PWA service worker registration, update prompts, and manifest injection are handled by `vite-plugin-pwa`; do not add a manual `public/sw.js` or manual `/manifest.json` link.
 - PWA install and update prompts use the global toast system via `src/features/pwa-install/hooks/usePwaInstallPrompt.ts` and `src/pwa/usePwaUpdateToast.ts`.
+- The viewport uses `viewport-fit=cover` with the iOS `black-translucent` status bar, so in the installed app the page extends under the notch/Dynamic Island and home indicator: anything pinned to a screen edge (header, `ScreenMount` toasts, future bottom bars) must offset itself with `env(safe-area-inset-*)`. Manifest `background_color`/`theme_color` and `<meta name="theme-color">` match `surface-0` (`#0b0d17`, which `color-bg` now aliases); change them together with that token.
 - `src/App.tsx` is the landing page composition.
 - Page-level routes live in `src/pages`.
 - Shared UI lives in `src/components/ui`.
 - `src/services/`, `src/providers/`, and `src/lib/` hold shared services, React context providers, and technical utilities respectively; feature-owned services, hooks, schemas, and utils live under `src/features/<feature>/`. See the `project-scaffolding` skill for the full target structure and File Placement Decision Tree.
 - Cross-cutting folders already exist at `src/analytics`, `src/animations`, `src/errors`, `src/pwa`, `src/data`, and `src/types`.
-- Python FastAPI backend code lives under `backend/` and owns server-side public data endpoints such as `/updates`.
+- Python FastAPI backend code lives under `backend/` and owns server-side public data endpoints such as `/updates`, plus (v3.0.0) account/entitlement endpoints (`GET /users/me`, `POST /usage-events`) authenticated via Clerk JWTs (`backend/app/auth`, `backend/app/users`).
 - The React app calls the Python backend through `src/lib/api.ts` and `VITE_API_BASE_URL`; do not reintroduce the old `api/` and `server/` TypeScript updates path unless explicitly requested.
+- The anonymous-analysis-then-account gate (`src/features/instagram-export/hooks/useFreeAnalysisGate.ts`) and current-user/entitlement data (`src/features/users/`) are the frontend halves of the v3.0.0 account system; `useAuth`/`useClerk`/`SignInButton`/`UserButton` come from `@clerk/react`, initialized in `src/main.tsx`.
 
 ## Privacy And Analytics Rules
 
 - Never upload or log raw Instagram export contents.
-- Never send usernames, follower lists, relationship lists, or derived private relationship data to analytics **or error tracking** (PostHog, Sentry).
-- Analytics events should describe generic product interactions only, such as page visits or feature usage.
+- Never send usernames, follower lists, relationship lists, or derived private relationship data to analytics **or error tracking** (PostHog, Sentry) **or `usage_events`**. `posthog.identify()` (`usePostHogIdentity`) passes only the Clerk user id - no properties, no export/relationship data.
+- Analytics events (PostHog, and backend `usage_events`) should describe generic product interactions only, such as page visits or feature usage - e.g. `analysis_run`, never anything about what was in the analyzed export.
 - Error reporting must avoid embedding raw parsed data or file contents. Concretely for Sentry: only send an `AppError`'s `code`/message/stack, never its `details` (see `src/errors/sentryInit.ts`'s `captureAppError`); keep error messages static/developer-authored rather than interpolating usernames or export content into them; the same rule applies to the Python SDK on the backend (`backend/app/core/sentry.py`).
 - If adding persistence, prefer explicit user-controlled exports/downloads over implicit browser storage.
+- The public Privacy Policy (`src/pages/PrivacyPolicy.tsx`, updated October 2026) names every third-party provider (Clerk, PostHog, Sentry, EmailJS, hosting) and every kind of stored data (account id + email, usage events, local storage keys, support messages). When a change adds a provider or a new kind of stored or sent data, update that page in the same change and bump its "Last updated".
 
 ## Product Copy Rules
 

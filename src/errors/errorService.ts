@@ -40,7 +40,7 @@ export function handleAppError(
   }
 
   if (showToast) {
-    toastService.warning({
+    toastService.danger({
       title: fallbackTitle,
       description: appError.userMessage,
     });

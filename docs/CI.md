@@ -1,10 +1,10 @@
 # CI Pipeline
 
-Defined in [`.github/workflows/ci.yml`](../.github/workflows/ci.yml). Runs on every pull request targeting `main` and on every push to `main`.
+Defined in [`.github/workflows/ci.yml`](../.github/workflows/ci.yml). Runs on every pull request targeting `main` or `preview`, and on every push to `main` or `preview` (see `AGENTS.md`'s "Environments" note for what those two branches are).
 
 ## `verify` job
 
-Always runs, no secrets required:
+Frontend checks. Always runs, no secrets required:
 
 1. `actions/checkout`
 2. `actions/setup-node` (Node 24 - the repo has no `.nvmrc` or `package.json` `engines` field yet; this pins to the Node major version used locally, see `devDependencies["@types/node"]`)
@@ -12,6 +12,18 @@ Always runs, no secrets required:
 4. `npm run lint` (Biome)
 5. `npm run build` (`tsc -b` + Vite client/SSR build + static prerender)
 6. `npx vitest run --project unit` - runs only the `unit` Vitest project (pure parsing/relationship-analysis logic). The `storybook` Vitest project (`@storybook/addon-vitest`) needs Playwright browsers installed in the runner and is intentionally left out of this base pipeline.
+
+## `backend-verify` job
+
+Backend checks, running against a real `postgres:16` service container (`app/users/repository.py` is raw SQL - upserts, JSONB - that a mocked connection couldn't prove correct, and `backend/tests/users/` exercises it for real). Always runs, no secrets required:
+
+1. `actions/checkout`
+2. `actions/setup-python` (3.13, pip cache keyed on `backend/requirements.txt`)
+3. `pip install -r requirements.txt ruff mypy pytest httpx` (mirrors local dev - see `backend/README.md`)
+4. `ruff check app tests`
+5. `mypy app` and `mypy tests`
+6. `alembic upgrade head` against the service container's empty database
+7. `pytest` (`backend/tests/`)
 
 ## `chromatic` job
 
@@ -30,3 +42,9 @@ Until that secret exists, the `chromatic` job is skipped (not failed) on every r
 This repo is already connected to Vercel through the Vercel GitHub App: production deployments are created by `vercel[bot]` and reported as a `Vercel` commit status (visible via the GitHub API, e.g. `GET /repos/daevel/followoo/commits/main/status`). The Vercel GitHub App automatically creates a preview deployment for every pull request as well.
 
 Because of this, **no deploy-preview job was added to `ci.yml`** - it would duplicate what Vercel already does automatically for every PR.
+
+## Database migrations against real environments
+
+`ci.yml`'s `backend-verify` job runs `alembic upgrade head` (step 6 above), but only against the ephemeral `postgres:16` service container it creates for that run - this only proves the migrations are valid and apply cleanly against a clean database. It never touches the real production or preview Neon databases, and no other job does either.
+
+Applying migrations against those two real databases is handled by [`backend/start.sh`](../backend/start.sh), which both Render services (`followoo-api`, `followoo-api-preview`) run as their **Start Command** instead of calling `uvicorn` directly - it runs `alembic upgrade head` before starting the API, on every boot of the instance. (Render's Pre-Deploy Command would have been the more direct fit, but that feature requires a paid web service plan; both services are on the free tier.) See `backend/README.md`'s "Applying migrations in deploy" section for the full explanation of why, and what happens if the migration fails.
