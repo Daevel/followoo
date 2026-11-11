@@ -131,11 +131,23 @@ pattern's intent on top of the existing `HTTPException` convention.
 
 **Setup**: in the Clerk dashboard for your application, find the JWKS URL
 under API Keys (or use `<your Frontend API URL>/.well-known/jwks.json`) and
-set it as `FOLLOWOO_CLERK_JWKS_URL`. For now, both `main` and `preview` use
-the same single Clerk application in development mode (see the repo root
-`AGENTS.md`), so this is the same value on both Render services - splitting
-Clerk environments the way `FOLLOWOO_DATABASE_URL` is split per branch is
-future work, not required today.
+set it as `FOLLOWOO_CLERK_JWKS_URL`. Since 11/11/2026 there is one Clerk
+instance per environment, split the same way `FOLLOWOO_DATABASE_URL` is
+split per branch:
+
+- `preview` (`followoo-api-preview`) uses the Clerk **development**
+  instance - its frontend uses a `pk_test_...` publishable key, and
+  `FOLLOWOO_CLERK_JWKS_URL` is that instance's JWKS URL.
+- `main`/production (`followoo-api`) uses the Clerk **production**
+  instance on the `clerk.followoo.app` domain - its frontend uses a
+  `pk_live_...` key, and `FOLLOWOO_CLERK_JWKS_URL` is
+  `https://clerk.followoo.app/.well-known/jwks.json`.
+
+The two instances sign tokens with different keys, so never copy one
+service's `FOLLOWOO_CLERK_JWKS_URL` to the other: every token would fail
+verification with `AUTH_TOKEN_INVALID`. Likewise, each service's
+`FOLLOWOO_CORS_ORIGINS` must list that environment's own frontend
+origin(s), because it is also the `azp` allow-list above.
 
 `get_current_clerk_claims` is the same check, returning the full claim set
 (e.g. for an `email` claim, if the Clerk JWT template has been customized
