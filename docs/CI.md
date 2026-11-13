@@ -27,15 +27,11 @@ Backend checks, running against a real `postgres:16` service container (`app/use
 
 ## `chromatic` job
 
-Publishes the Storybook build to [Chromatic](https://www.chromatic.com/) for visual review/regression testing. It only runs when the `CHROMATIC_PROJECT_TOKEN` secret is present, which also means it is naturally skipped on pull requests from forks.
+Publishes the Storybook build to [Chromatic](https://www.chromatic.com/) for visual review/regression testing. It runs on every push and on every same-repo pull request, and is a required status check for merging into `main`; only PRs from forks skip it (they never get secrets). If `CHROMATIC_PROJECT_TOKEN` is missing it fails with an explicit `Missing secret CHROMATIC_PROJECT_TOKEN` annotation instead of skipping.
 
-**Manual setup required** (cannot be done from this repo or by an agent):
+The token comes from chromatic.com: link the `Daevel/followoo` repository as a **Storybook** project (not React Native), then copy its project token into the `CHROMATIC_PROJECT_TOKEN` repository secret (Settings > Secrets and variables > Actions).
 
-1. Sign in to [chromatic.com](https://www.chromatic.com/) and link the `daevel/followoo` GitHub repository to create a Chromatic project.
-2. Copy the project token Chromatic gives you.
-3. In the GitHub repo, go to Settings > Secrets and variables > Actions, and add a new repository secret named `CHROMATIC_PROJECT_TOKEN` with that value.
-
-Until that secret exists, the `chromatic` job is skipped (not failed) on every run.
+Storybook wraps every story in a `ClerkProvider` (`.storybook/preview.tsx`), so Clerk-aware components such as `NavBar` render. Without a `VITE_CLERK_PUBLISHABLE_KEY` (as in CI) Clerk gets an offline stub that never loads: snapshots are deterministic and never show Clerk's signed-in/signed-out UI such as "Sign in".
 
 ## Preview deployments (Vercel)
 
@@ -81,4 +77,4 @@ The preview alias is behind Vercel Deployment Protection (SSO), so `preview` run
 | `NEON_API_KEY` | `Migrations` / `dry-run` | Neon Console > Account settings > API keys (or an org/project-scoped key) |
 | `PREVIEW_DATABASE_URL` | `Migrations` / `apply-preview` | Neon Console > `followoo-database` > `preview-backend` > Connect |
 
-Every job that needs one of these fails with an explicit `Missing secret <NAME>` annotation while it is absent (except `chromatic`, which is still skipped - see above).
+Every job that needs one of these fails with an explicit `Missing secret <NAME>` annotation while it is absent.
