@@ -1,6 +1,6 @@
 # AGENTS.md - Followoo
 
-Root-level entry point for any coding agent (OpenCode or otherwise) working in this repository. Read this file first, before touching any code. It is deliberately short: it orients you and points to the right `.opencode/skills/*/SKILL.md` for the details, rather than duplicating them.
+Root-level entry point for any coding agent (Claude Code, OpenCode or otherwise) working in this repository. Read this file first, before touching any code. It is deliberately short: it orients you and points to the right `.claude/skills/*/SKILL.md` for the details, rather than duplicating them.
 
 ## What Followoo is
 
@@ -41,7 +41,7 @@ A privacy-first tool that analyzes a user's Instagram data export locally to sho
 
 ## Skills index
 
-This repo ships project-specific OpenCode skills under `.opencode/skills/`. Each one is auto-loaded by its own `description` frontmatter when a task matches it - this file does not replace that mechanism, it is the static map for when you need to find the right one deliberately, or when you're doing something broad enough to touch several:
+This repo ships project-specific agent skills under `.claude/skills/`. Each one is auto-loaded by its own `description` frontmatter when a task matches it - this file does not replace that mechanism, it is the static map for when you need to find the right one deliberately, or when you're doing something broad enough to touch several:
 
 | Skill | Use it for |
 |---|---|

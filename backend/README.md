@@ -183,7 +183,7 @@ identity and the Base/Pro entitlement model, added for v3.0.0 Task 2:
 - `usage_events` is analytics only (e.g. `analysis_run`), never a usage
   cap - a Base account can run unlimited analyses. Never accept Instagram
   export/relationship data in `metadata` - see
-  `.opencode/skills/project-context/SKILL.md`.
+  `.claude/skills/project-context/SKILL.md`.
 - `require_entitlement(min_level)` is a dependency factory for gating a
   route behind a minimum plan (`Depends(require_entitlement("pro"))`),
   raising `403` (`ENTITLEMENT_INSUFFICIENT`) otherwise. No route uses
@@ -230,7 +230,7 @@ request-forging secrets by design (they only accept event writes).
 **Privacy**: this integration must never send Instagram export content,
 usernames, follower/following lists, or relationship analysis results to
 Sentry - the same non-negotiable rule already applied in `app/updates` and
-documented in `.opencode/skills/project-context/SKILL.md`. Concretely:
+documented in `.claude/skills/project-context/SKILL.md`. Concretely:
 
 - `traces_sample_rate=0.0` (tracing/profiling is disabled entirely).
 - `send_default_pii=False` (no automatic IP/cookie/header attachment).

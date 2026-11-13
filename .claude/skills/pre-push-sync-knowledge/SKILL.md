@@ -36,7 +36,7 @@ Ask whether the commits introduce or change any durable project knowledge:
 - server/API boundaries;
 - PWA behavior;
 - build, lint, or Husky workflow;
-- OpenCode skills or project instructions;
+- agent skills or project instructions;
 - major dependencies or developer commands.
 
 If yes, update the relevant project knowledge before pushing.
@@ -46,13 +46,13 @@ If yes, update the relevant project knowledge before pushing.
 Relevant Followoo knowledge files include:
 
 ```txt
-.opencode/skills/project-context/SKILL.md
-.opencode/skills/project-scaffolding/SKILL.md
-.opencode/skills/git-commits/SKILL.md
-.opencode/skills/pre-push-sync-knowledge/SKILL.md
-.opencode/skills/python-backend/SKILL.md
-.opencode/skills/storybook-component-creation/SKILL.md
-.opencode/skills/public-changelog/SKILL.md
+.claude/skills/project-context/SKILL.md
+.claude/skills/project-scaffolding/SKILL.md
+.claude/skills/git-commits/SKILL.md
+.claude/skills/pre-push-sync-knowledge/SKILL.md
+.claude/skills/python-backend/SKILL.md
+.claude/skills/storybook-component-creation/SKILL.md
+.claude/skills/public-changelog/SKILL.md
 AGENTS.md
 README.md
 docs/*
@@ -62,7 +62,7 @@ Update only the file that owns the changed knowledge.
 
 ## When To Update Knowledge
 
-Update `.opencode/skills/project-context/SKILL.md` when commits change:
+Update `.claude/skills/project-context/SKILL.md` when commits change:
 
 - product behavior;
 - privacy model;
@@ -71,14 +71,14 @@ Update `.opencode/skills/project-context/SKILL.md` when commits change:
 - tech stack or important dependencies;
 - runtime shape and major commands.
 
-Update `.opencode/skills/project-scaffolding/SKILL.md` when commits change:
+Update `.claude/skills/project-scaffolding/SKILL.md` when commits change:
 
 - top-level folders;
 - target `src` structure;
 - placement rules for pages, features, services, providers, schemas, hooks, UI, server, or API code;
 - migration rules.
 
-Update `.opencode/skills/git-commits/SKILL.md` when commits change:
+Update `.claude/skills/git-commits/SKILL.md` when commits change:
 
 - commit conventions;
 - scopes;
@@ -106,7 +106,7 @@ Do not update knowledge for:
 Prefer a dedicated docs commit for knowledge updates:
 
 ```bash
-git add .opencode/skills/project-context/SKILL.md
+git add .claude/skills/project-context/SKILL.md
 git commit -m "docs(project): update Followoo architecture context"
 ```
 
@@ -121,7 +121,7 @@ npm run lint
 npm run build
 ```
 
-For documentation-only OpenCode changes, `npm run lint` is usually enough, but `npm run build` is still appropriate when earlier commits in the push changed app code.
+For documentation-only skill changes, `npm run lint` is usually enough, but `npm run build` is still appropriate when earlier commits in the push changed app code.
 
 Respect the Husky pre-commit hook. Do not skip hooks.
 

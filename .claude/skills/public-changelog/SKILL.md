@@ -20,7 +20,7 @@ Do not publish entries for changes that are invisible to the end user, even when
 - backend connection pooling, rate limiting, database migrations (Alembic)
 - error tracking / observability (Sentry) setup
 - folder/architecture refactors, legacy structure migrations
-- OpenCode skill or internal documentation fixes
+- agent skill or internal documentation fixes
 - dependency bumps with no visible behavior change
 
 A version can close fully on the roadmap and still have zero `/updates` entries if every task was infrastructure work - that is expected, not a gap. Followoo's v2.1.0 (unit tests, CI/CD, pooling, rate limiting, Alembic, legacy structure migration, Sentry) is exactly this case and intentionally has no public entry.
