@@ -152,6 +152,31 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
+  deploy-env-check:
+    name: Deploy env vars present
+    # Push only: it needs repo secrets, which PRs from forks never get.
+    # Vercel and Render deploy on their own from the same push; this job
+    # can't block them, it makes a misconfigured environment fail loudly
+    # here instead of surfacing later as a broken deploy.
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: Check variable names on Vercel and Render
+        # Fails with an explicit "Missing secret ..." annotation (and where
+        # to create it) until VERCEL_TOKEN and RENDER_API_KEY exist.
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: node scripts/check-deploy-env.mjs
+
   # Vercel preview deployments are already handled automatically by the
   # Vercel GitHub App connected to this repo (see deployments created by
   # vercel[bot] and the "Vercel" commit status). No deploy-preview job is
