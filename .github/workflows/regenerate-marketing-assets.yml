@@ -67,7 +67,7 @@ jobs:
         run: git status --short && git diff --stat
 
       - name: Open or update the review PR
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           # GITHUB_TOKEN works only if the repo allows Actions to create
           # PRs (Settings > Actions > General), and PRs it opens do not
