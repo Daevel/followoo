@@ -14,6 +14,7 @@
     "analyze": "npx vite-bundle-visualizer",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "generate:assets": "node scripts/generate-marketing-assets.mjs",
     "prepare": "husky"
   },
   "dependencies": {

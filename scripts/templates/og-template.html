@@ -1,0 +1,127 @@
+<!doctype html>
+<!--
+  Social preview template (public/icons/OG.png, 1200x630), rendered by
+  scripts/generate-marketing-assets.mjs. Markers filled at render time:
+  the @tokens CSS comment (every --color-* / --radius-* token from
+  src/index.css), the @logo HTML comment (public/favicon.svg, inlined) and
+  the img PREVIEW_SRC marker (data URL of the fresh results screenshot).
+  Keep the copy free of any implied Instagram/Meta affiliation.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=block"
+    />
+    <style>
+      :root {
+        /* @tokens */
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+      }
+
+      body {
+        position: relative;
+        background: var(--color-surface-0);
+        color: var(--color-fg);
+        font-family: "Inter", system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .copy {
+        position: absolute;
+        top: 72px;
+        left: 72px;
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      .wordmark {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 30px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .wordmark svg {
+        width: 40px;
+        height: 40px;
+      }
+
+      h1 {
+        font-size: 56px;
+        line-height: 1.05;
+        font-weight: 600;
+        letter-spacing: -0.035em;
+        text-wrap: balance;
+      }
+
+      p {
+        color: var(--color-fg-muted);
+        font-size: 22px;
+        line-height: 1.45;
+      }
+
+      .pill {
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--color-line-strong);
+        background: var(--color-surface-1);
+        border-radius: 999px;
+        padding: 8px 16px;
+        font-size: 17px;
+        font-weight: 500;
+        color: var(--color-brand-fg);
+      }
+
+      .preview {
+        position: absolute;
+        top: 72px;
+        left: 640px;
+        width: 760px;
+        border: 1px solid var(--color-line-strong);
+        border-radius: var(--radius-card);
+        overflow: hidden;
+        box-shadow: 0 24px 60px rgb(0 0 0 / 0.5);
+      }
+
+      .preview img {
+        display: block;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="copy">
+      <div class="wordmark"><!-- @logo --><span>Followoo</span></div>
+      <h1>See who doesn&rsquo;t follow you back</h1>
+      <p>
+        Analyze your Instagram data export privately. No Instagram login, no
+        uploads to a server.
+      </p>
+      <span class="pill">Runs entirely in your browser</span>
+    </div>
+    <div class="preview">
+      <img src="__PREVIEW_SRC__" alt="" />
+    </div>
+  </body>
+</html>
