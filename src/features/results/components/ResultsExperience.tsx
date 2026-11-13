@@ -43,7 +43,7 @@ export function ResultsExperience({
   /** Fresh analysis that wasn't saved because history was locked. */
   isHistorySavePending?: boolean;
 }) {
-  const [sortBy, setSortBy] = useState<SortKey>("alphabeticalAsc");
+  const [sortBy, setSortBy] = useState<SortKey>("recentDesc");
   const [activeTab, setActiveTab] = useState<TabKey>("mutual");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
