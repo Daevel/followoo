@@ -10,8 +10,6 @@ import { FabIcon } from "./FabIcon";
 const navLinks = [
   { to: "/", label: "Home" },
   { to: "/instructions-to-start", label: "How to start" },
-  { to: "/get-started", label: "Analyze your export" },
-  { to: "/support", label: "Support" },
   { to: "/updates", label: "Updates" },
 ];
 
@@ -116,9 +114,6 @@ export function NavBar({ sticky = false, cta, showCta = false }: NavBarProps) {
                 <Link
                   key={link.to}
                   to={link.to}
-                  state={
-                    link.to === "/get-started" ? { isDemo: false } : undefined
-                  }
                   aria-current={isActiveLink(link.to) ? "page" : undefined}
                   className={navLinkClass(isActiveLink(link.to), "desktop")}
                 >
