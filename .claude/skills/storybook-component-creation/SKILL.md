@@ -13,7 +13,8 @@ Generi story Storybook per i componenti UI di Followoo. Ogni file di story DEVE 
 - **CSF 3** (Component Story Format) — story basate su oggetti, niente `Template.bind({})` di CSF 2
 - Tipi importati da `@storybook/react-vite`: `Meta`, `StoryObj`
 - Styling: **Tailwind CSS 4**, con i design token definiti in `src/index.css` (blocco `@theme inline`): font, tipografia, breakpoint e i token semantici dei colori (`surface-*`, `line-*`, `fg*`, `brand*`, stati, `data-1…5`, raggi, ombre; i vecchi `primary`/`accent`/`bg`/`foreground` sono stati rimossi), visibile nella story `Foundations/DesignTokens`
-- Il preview (`.storybook/preview.tsx`) importa `../src/index.css`, avvolge ogni story in `MemoryRouter` e applica `bg-surface-0 text-fg p-6`
+- Il preview (`.storybook/preview.tsx`) importa `../src/index.css`, avvolge ogni story in `ClerkProvider` + `MemoryRouter` e applica `bg-surface-0 text-fg p-6`
+- `ClerkProvider` globale: i componenti Clerk-aware (es. `NavBar`) non vanno avvolti a mano. Senza `VITE_CLERK_PUBLISHABLE_KEY` (Chromatic in CI) Clerk riceve uno stub offline che non si carica mai: niente rete, snapshot deterministici, e la UI condizionata da Clerk (es. "Sign in") non compare. Non scrivere story che dipendono da Clerk caricato
 
 ## File Naming e Posizione
 
