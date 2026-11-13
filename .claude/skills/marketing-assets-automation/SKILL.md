@@ -35,7 +35,7 @@ public/screenshots/pwa-*.png    PWA manifest screenshots (vite.config.ts)
 Repository prerequisites (Settings, not code):
 
 - Either enable "Allow GitHub Actions to create and approve pull requests", or add a fine-grained PAT as the `MARKETING_ASSETS_PR_TOKEN` secret (preferred: PRs opened with the default token do not trigger CI).
-- Optional: a Clerk development key (`pk_test_...`) as the `MARKETING_ASSETS_CLERK_PUBLISHABLE_KEY` variable, so the navbar "Sign in" button renders in captures.
+- Optional: a Clerk development key (`pk_test_...`) as `MARKETING_ASSETS_CLERK_PUBLISHABLE_KEY` (repo Variable or Secret, both are read), so the navbar "Sign in" button renders in captures. The script detects the key in `dist/` and waits for Clerk to load before each capture; without it, captures just omit Sign in. Locally, build with `VITE_CLERK_PUBLISHABLE_KEY` set to get the same result.
 
 ## Rules for agents
 

@@ -6,6 +6,9 @@
 // Usage: npm run build && npm run generate:assets
 // Requires a Playwright Chromium (`npx playwright install chromium`) and,
 // for demo.gif only, ffmpeg on PATH (skipped with a warning otherwise).
+// Optional: build with VITE_CLERK_PUBLISHABLE_KEY (a pk_test_... development
+// key) so the navbar "Sign in" button renders; without it the captures
+// simply show no sign-in entry point, as before.
 //
 // The results screens use the product's own demo flow ("Try demo" -> demo
 // export from Vercel Blob), never a real user export. Runs in CI via
@@ -15,6 +18,7 @@ import { spawn, spawnSync } from "node:child_process";
 import {
   mkdir,
   mkdtemp,
+  readdir,
   readFile,
   rm,
   stat,
@@ -84,10 +88,31 @@ async function waitForServer(timeoutMs = 30_000) {
   );
 }
 
-// Waits for network, fonts and the GSAP entrance animations to finish.
+// True when the build in dist/ was made with a Clerk publishable key, i.e.
+// the sign-in UI will render and every capture must wait for Clerk.
+let hasClerkKey = false;
+
+async function detectClerkKey() {
+  const assetsDir = path.join(rootDir, "dist", "assets");
+  const files = (await readdir(assetsDir)).filter((f) => f.endsWith(".js"));
+  for (const file of files) {
+    const source = await readFile(path.join(assetsDir, file), "utf8");
+    if (/pk_(?:test|live)_[A-Za-z0-9]{10,}/.test(source)) return true;
+  }
+  return false;
+}
+
+// Waits for network, fonts, Clerk (when configured, so its loading state is
+// never captured) and the GSAP entrance animations to finish.
 async function settle(page, ms = 1500) {
   await page.waitForLoadState("networkidle");
   await page.evaluate(() => document.fonts.ready);
+  if (hasClerkKey) {
+    await page.waitForFunction(() => window.Clerk?.loaded === true, null, {
+      timeout: 20_000,
+    });
+    await page.waitForLoadState("networkidle");
+  }
   await page.waitForTimeout(ms);
 }
 
@@ -294,6 +319,12 @@ async function main() {
   let browser;
   try {
     await waitForServer();
+    hasClerkKey = await detectClerkKey();
+    console.log(
+      hasClerkKey
+        ? "Clerk key found in the build: captures will include Sign in."
+        : "! No Clerk key in the build: captures will not include Sign in."
+    );
     browser = await chromium.launch();
 
     const resultsPng = await captureDesktop(browser);

@@ -55,9 +55,10 @@ jobs:
       - name: Build
         env:
           # Optional: a Clerk *development* publishable key (pk_test_...),
-          # so the navbar "Sign in" button renders on localhost. Without
-          # it the captures simply show no sign-in entry point.
-          VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.MARKETING_ASSETS_CLERK_PUBLISHABLE_KEY }}
+          # so the navbar "Sign in" button renders on localhost. It is
+          # public by design; accepted as a repo Variable or a Secret.
+          # Without it the captures simply show no sign-in entry point.
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.MARKETING_ASSETS_CLERK_PUBLISHABLE_KEY || secrets.MARKETING_ASSETS_CLERK_PUBLISHABLE_KEY }}
         run: npm run build
 
       - name: Generate assets
