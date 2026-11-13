@@ -53,6 +53,7 @@ Relevant Followoo knowledge files include:
 .claude/skills/python-backend/SKILL.md
 .claude/skills/storybook-component-creation/SKILL.md
 .claude/skills/public-changelog/SKILL.md
+.claude/skills/marketing-assets-automation/SKILL.md
 AGENTS.md
 README.md
 docs/*

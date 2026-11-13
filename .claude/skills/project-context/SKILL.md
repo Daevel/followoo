@@ -142,6 +142,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - `npm run format`: Biome format with writes.
 - `npm run storybook`: start Storybook.
 - `npm run build-storybook`: build Storybook.
+- `npm run generate:assets`: regenerate README screenshots, `OG.png` and PWA screenshots from `dist/` (see `marketing-assets-automation`).
 - `backend/.venv/bin/python -m uvicorn app.main:app --reload --port 8000`: start the Python API from `backend/`.
 - `backend/.venv/bin/python -m ruff check app` and `backend/.venv/bin/python -m mypy app`: verify the Python backend from `backend/`.
 
