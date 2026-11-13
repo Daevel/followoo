@@ -27,7 +27,7 @@ Backend checks, running against a real `postgres:16` service container (`app/use
 
 ## `chromatic` job
 
-Publishes the Storybook build to [Chromatic](https://www.chromatic.com/) for visual review/regression testing. It runs on every push and on every same-repo pull request, and is a required status check for merging into `main`; only PRs from forks skip it (they never get secrets). If `CHROMATIC_PROJECT_TOKEN` is missing it fails with an explicit `Missing secret CHROMATIC_PROJECT_TOKEN` annotation instead of skipping.
+Publishes the Storybook build to [Chromatic](https://www.chromatic.com/) for visual review/regression testing. It runs on every push and on every same-repo pull request, and is a required status check for merging into `main` (branch protection, set 2026-11-13). `preview` has no branch protection on purpose: it receives direct pushes, which a required check would block; only PRs from forks skip it (they never get secrets). If `CHROMATIC_PROJECT_TOKEN` is missing it fails with an explicit `Missing secret CHROMATIC_PROJECT_TOKEN` annotation instead of skipping.
 
 The token comes from chromatic.com: link the `Daevel/followoo` repository as a **Storybook** project (not React Native), then copy its project token into the `CHROMATIC_PROJECT_TOKEN` repository secret (Settings > Secrets and variables > Actions).
 
