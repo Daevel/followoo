@@ -113,19 +113,21 @@ async function checkClerk({ frontendUrl, needsBypass }) {
     // Vercel's Protection Bypass for Automation: one request with the
     // secret header sets a bypass cookie in this context's cookie jar, so
     // the secret never appears in the page URL (where it could leak to
-    // third parties through Referer or analytics).
+    // third parties through Referer or analytics). Vercel answers with a
+    // 307 back to the same URL plus Set-Cookie; following it must land on
+    // the app itself - a wrong secret ends on Vercel's SSO login instead.
     const response = await context.request.get(frontendUrl, {
       headers: {
         "x-vercel-protection-bypass":
           process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
         "x-vercel-set-bypass-cookie": "true",
       },
-      maxRedirects: 0,
     });
-    if (response.status() !== 200) {
+    const landedOn = new URL(response.url()).host;
+    if (!response.ok() || landedOn !== new URL(frontendUrl).host) {
       fail(
         "Vercel protection bypass rejected",
-        `HTTP ${response.status()} from ${frontendUrl} - check VERCEL_AUTOMATION_BYPASS_SECRET matches the project's current bypass secret.`
+        `HTTP ${response.status()} from ${landedOn} (expected ${new URL(frontendUrl).host}) - check VERCEL_AUTOMATION_BYPASS_SECRET matches the project's current bypass secret.`
       );
     }
   }
