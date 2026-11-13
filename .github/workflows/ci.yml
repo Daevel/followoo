@@ -177,6 +177,43 @@ jobs:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: node scripts/check-deploy-env.mjs
 
+  smoke-test:
+    name: Post-deploy smoke test
+    # Push only: there is no stable deployed environment for a PR.
+    if: github.event_name == 'push'
+    needs: [verify, backend-verify]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Reads the GitHub Deployments Vercel's GitHub App creates per commit,
+      # to wait for this commit's deploy without a Vercel token.
+      deployments: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke-test Clerk and /health
+        # main -> https://followoo.app + followoo-api; preview -> the
+        # SSO-protected preview alias + followoo-api-preview, which needs
+        # VERCEL_AUTOMATION_BYPASS_SECRET (fails with an explicit message
+        # until it exists). See scripts/smoke-test-deploy.mjs.
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/smoke-test-deploy.mjs
+
   # Vercel preview deployments are already handled automatically by the
   # Vercel GitHub App connected to this repo (see deployments created by
   # vercel[bot] and the "Vercel" commit status). No deploy-preview job is
