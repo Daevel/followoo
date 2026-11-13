@@ -10,6 +10,7 @@ import { FabIcon } from "./FabIcon";
 const navLinks = [
   { to: "/", label: "Home" },
   { to: "/instructions-to-start", label: "How to start" },
+  { to: "/get-started", label: "Analyze your export" },
   { to: "/updates", label: "Updates" },
 ];
 
@@ -44,12 +45,9 @@ function navLinkClass(isActive: boolean, size: "desktop" | "mobile") {
 type NavBarProps = {
   /** Pins the bar to the top with a translucent background (homepage). */
   sticky?: boolean;
-  /** Primary action shown in the bar only while `showCta` is true. */
-  cta?: { label: string; onClick: () => void };
-  showCta?: boolean;
 };
 
-export function NavBar({ sticky = false, cta, showCta = false }: NavBarProps) {
+export function NavBar({ sticky = false }: NavBarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -114,6 +112,9 @@ export function NavBar({ sticky = false, cta, showCta = false }: NavBarProps) {
                 <Link
                   key={link.to}
                   to={link.to}
+                  state={
+                    link.to === "/get-started" ? { isDemo: false } : undefined
+                  }
                   aria-current={isActiveLink(link.to) ? "page" : undefined}
                   className={navLinkClass(isActiveLink(link.to), "desktop")}
                 >
@@ -135,7 +136,6 @@ export function NavBar({ sticky = false, cta, showCta = false }: NavBarProps) {
             Updates
           </Link>
           <NavAuthEntry />
-          {cta && <NavCta cta={cta} visible={showCta} />}
         </div>
 
         <Link
@@ -148,12 +148,6 @@ export function NavBar({ sticky = false, cta, showCta = false }: NavBarProps) {
             Followoo
           </span>
         </Link>
-
-        {cta && (
-          <div className="ml-auto pr-2 lg:hidden">
-            <NavCta cta={cta} visible={showCta} />
-          </div>
-        )}
 
         <FabIcon
           icon={isMenuOpen ? "close" : "menu"}
@@ -195,29 +189,5 @@ export function NavBar({ sticky = false, cta, showCta = false }: NavBarProps) {
         </div>
       </nav>
     </header>
-  );
-}
-
-// Fades in once the page's own primary action has scrolled away, so there is
-// never more than one primary CTA on screen.
-function NavCta({
-  cta,
-  visible,
-}: {
-  cta: { label: string; onClick: () => void };
-  visible: boolean;
-}) {
-  return (
-    <div
-      inert={!visible}
-      className={clsx(
-        "transition-opacity duration-200",
-        visible ? "opacity-100" : "pointer-events-none opacity-0"
-      )}
-    >
-      <Button size="sm" onClick={cta.onClick}>
-        {cta.label}
-      </Button>
-    </div>
   );
 }

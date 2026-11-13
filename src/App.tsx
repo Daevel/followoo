@@ -7,7 +7,6 @@ import { FeaturesSection } from "@/features/landing/components/FeatureSection";
 import { HeroSection } from "@/features/landing/components/HeroSection";
 import { PrivacySection } from "@/features/landing/components/PrivacySection";
 import { faqCards, Questions } from "@/features/landing/components/Questions";
-import { useIsInViewport } from "@/features/landing/hooks/useIsInViewport";
 import { useLandingPageAnimations } from "./animations/pages/useLandingPageAnimations";
 import { FooterSignature } from "./components/ui/FooterSignature";
 import { NavBar } from "./components/ui/NavBar";
@@ -57,9 +56,7 @@ const homeSchemaMarkup = {
 
 export default function App() {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const heroCtaRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
-  const isHeroCtaVisible = useIsInViewport(heroCtaRef);
 
   useLandingPageAnimations(rootRef);
 
@@ -75,14 +72,9 @@ export default function App() {
         canonical={SITE_URL}
         schemaMarkup={homeSchemaMarkup}
       />
-      {/* the bar's CTA appears only once the hero's own actions scroll away */}
-      <NavBar
-        sticky
-        cta={{ label: "Analyze your data", onClick: analyze }}
-        showCta={!isHeroCtaVisible}
-      />
+      <NavBar sticky />
 
-      <HeroSection ctaRef={heroCtaRef} />
+      <HeroSection />
       <FeaturesSection />
       <PrivacySection />
       <Questions />
