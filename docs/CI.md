@@ -13,6 +13,10 @@ Frontend checks. Always runs, no secrets required:
 5. `npm run build` (`tsc -b` + Vite client/SSR build + static prerender)
 6. `npx vitest run --project unit` - runs only the `unit` Vitest project (pure parsing/relationship-analysis logic). The `storybook` Vitest project (`@storybook/addon-vitest`) needs Playwright browsers installed in the runner and is intentionally left out of this base pipeline.
 
+## `docs-mermaid` job
+
+Syntax check of the architecture diagrams. Always runs, no secrets required: `npm ci`, then `npm run docs:check-mermaid`, which runs [`scripts/validate-mermaid.mjs`](../scripts/validate-mermaid.mjs) on [`docs/architecture.md`](architecture.md). The script parses every `mermaid` block with the real Mermaid parser (`mermaid` devDependency, in Node on a jsdom window, no browser) and fails with a `file:line` annotation on the first broken block. It checks syntax, not whether a diagram still matches the code.
+
 ## `backend-verify` job
 
 Backend checks, running against a real `postgres:16` service container (`app/users/repository.py` is raw SQL - upserts, JSONB - that a mocked connection couldn't prove correct, and `backend/tests/users/` exercises it for real). Always runs, no secrets required:

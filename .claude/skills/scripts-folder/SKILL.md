@@ -20,6 +20,7 @@ description: The scripts/ folder - what each Followoo script does, who runs it (
 | `generate-marketing-assets.mjs` | Captures README screenshots, `demo.gif`, `OG.png` and PWA screenshots from the built app with Playwright. See the `marketing-assets-automation` skill. | `npm run generate:assets`; `.github/workflows/regenerate-marketing-assets.yml` |
 | `templates/og-template.html` | Template for `OG.png`. Design tokens are injected from `src/index.css` at render time. | `generate-marketing-assets.mjs` |
 | `check-deploy-env.mjs` | Checks that the required env var **names** exist on Vercel (production and preview) and on both Render services. It never reads values. | CI job `deploy-env-check` (`.github/workflows/ci.yml`) |
+| `validate-mermaid.mjs` | Parses every ```` ```mermaid ```` block in the Markdown files it is given (default `docs/architecture.md`) with the `mermaid` devDependency, in Node on a jsdom window, and exits 1 on any syntax error. Syntax only, no rendering. | `npm run docs:check-mermaid`; CI job `docs-mermaid` (`.github/workflows/ci.yml`) |
 | `smoke-test-deploy.mjs` | After a push to `preview`/`main`: waits for the Vercel deployment, checks the backend `/health`, then checks that Clerk loads and "Sign in" renders. | CI job `smoke-test` (`.github/workflows/ci.yml`) |
 
 Not here, on purpose:
