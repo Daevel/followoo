@@ -48,6 +48,7 @@ Relevant Followoo knowledge files include:
 .claude/skills/scripts-folder/SKILL.md
 AGENTS.md
 README.md
+docs/architecture.md
 docs/*
 ```
 
@@ -81,6 +82,8 @@ Update `.claude/skills/git-commits/SKILL.md` when commits change:
 Update `.claude/skills/husky-pre-commit/SKILL.md` when commits change `.husky/` or `scripts/pre-commit-biome.sh`.
 
 Update `.claude/skills/scripts-folder/SKILL.md` when a file in `scripts/` is added, removed, renamed or changes purpose.
+
+Update `docs/architecture.md` when commits change a component, an integration, a data flow or a state machine its diagrams draw (`SyncKeyProvider`, the free-analysis gate, the sync wizards). Re-read the affected diagram against the code: the `docs-mermaid` CI job only checks that the Mermaid parses.
 
 Update `.claude/skills/impact-assessment/SKILL.md` when commits change:
 
@@ -143,4 +146,4 @@ After pushing, report:
 - commit hashes/messages;
 - checks run;
 - remaining local changes, if any;
-- the "Impatto" block defined by `impact-assessment`. It is one line when the push is not impactful. When it is, it lists the three external surfaces: never omit them silently.
+- the "Impatto" block defined by `impact-assessment`. It is one line when the push is not impactful. When it is, it says whether `docs/architecture.md` changed and lists the two external surfaces: never omit them silently.

@@ -39,6 +39,10 @@ A privacy-first tool that analyzes a user's Instagram data export locally to sho
 7. Public `/updates` entries: only for end-user-visible changes - see the `public-changelog` skill's decision rule before writing one.
 8. Branching: never push directly to `main`. Every change goes through `preview` first (staging branch, with its own Vercel deployment and its own Render backend) - merging into `main` is a separate, explicit decision made after validation on `preview`.
 
+## Architecture diagram
+
+`docs/architecture.md` holds the system overview and the main state machines (encrypted history key, free-analysis gate, sync wizards) as Mermaid. It is the single place for these diagrams: when a change alters what it draws, update it in the same push (see `impact-assessment`). CI (`docs-mermaid`) checks it still parses.
+
 ## Skills index
 
 This repo ships project-specific agent skills under `.claude/skills/`. Each one is auto-loaded by its own `description` frontmatter when a task matches it - this file does not replace that mechanism, it is the static map for when you need to find the right one deliberately, or when you're doing something broad enough to touch several:
