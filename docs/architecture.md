@@ -120,7 +120,7 @@ stateDiagram-v2
     checking --> locked: GET /sync/credentials says active true
     checking --> unavailable: no Clerk token OR credentials fetch failed (AppError, reported)
     inactive --> unlocked: SyncActivationWizard success, setUnlockedAfterActivation
-    locked --> unlocked: unlockWithPassphrase OK
+    locked --> : -->
     locked --> unlocked: unlockWithRecoveryCode OK (unlockedVia = recovery)
     locked --> locked: wrong passphrase or recovery code (MasterKeyUnwrapError, validation only)
     unlocked --> unlocked: setNewPassphrase after a recovery unlock (POST /sync/rotate-passphrase)
