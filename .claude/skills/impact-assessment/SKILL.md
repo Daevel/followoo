@@ -1,6 +1,6 @@
 ---
 name: impact-assessment
-description: Decide whether a Followoo change is "impactful" (data schema/Alembic migration, public route or endpoint contract, security/privacy boundary, feature flag, large redesign) and what full documentation sweep it then requires, including the Notion and Claude Project surfaces an agent cannot write. Use before pushing, when summarizing a push, or when asked whether a change needs docs updates.
+description: Decide whether a Followoo change is "impactful" (data schema/Alembic migration, public route or endpoint contract, security/privacy boundary, feature flag, large redesign) and what full documentation sweep it then requires, including the in-repo architecture diagram (docs/architecture.md) and the Notion and Claude Project surfaces an agent cannot write. Use before pushing, when summarizing a push, or when asked whether a change needs docs updates.
 ---
 
 # Impact Assessment - Followoo
@@ -65,17 +65,17 @@ Update these in the same push, ideally as separate `docs(...)` commits:
 - **`README.md`**, when behavior or setup changes for a user or contributor: commands, env vars, prerequisites, what the product does.
 - **The owning `SKILL.md` files.** Use the ownership map in `pre-push-sync-knowledge` ("Knowledge Files" and "When To Update Knowledge") to find which skill owns the changed knowledge. Update only the owners; do not copy knowledge into other skills.
 - **`AGENTS.md`**, when a non-negotiable rule, the stack summary or the skills index changes.
-- **`docs/*`**, when the change belongs to a documented area, for example `docs/CI.md` for workflows and secrets.
+- **`docs/architecture.md`**, when the change alters a component, an integration, a data flow or one of the state machines it draws (`SyncKeyProvider`, the free-analysis gate, the sync wizards). It replaced the Mermaid diagrams that used to live on Notion: update it directly, in the same push, like any other repo doc. The `docs-mermaid` CI job only proves the Mermaid still parses, so re-read the affected diagram against the code. If the change adds a new stateful flow worth drawing, add a diagram.
+- **Other `docs/*`**, when the change belongs to a documented area, for example `docs/CI.md` for workflows and secrets.
 
 ### Surfaces the agent cannot write
 
-There are three, and this agent has no access to Notion or to the Claude Project:
+There are two, and this agent has no access to Notion or to the Claude Project:
 
-1. **The Mermaid flow diagrams published on Notion.**
-2. **The Notion database "🚀 Followoo SaaS Roadmap".**
-3. **`claude/analisi-architetturale-saas.md`**, the project document maintained by another Claude session. It is relevant when the change touches the SaaS architecture: backend, data model, auth, billing/entitlements or sync.
+1. **The Notion database "🚀 Followoo SaaS Roadmap".**
+2. **`claude/analisi-architetturale-saas.md`**, the project document maintained by another Claude session. It is relevant when the change touches the SaaS architecture: backend, data model, auth, billing/entitlements or sync.
 
-Do not try to update these, and never drop them silently. **The summary of every impactful push must list all three**, each one either:
+Do not try to update these, and never drop them silently. **The summary of every impactful push must list both**, each one either:
 
 - **"da aggiornare"**, with a ready-to-paste sentence for whoever does it (the founder or the other session); or
 - **"non toccato"**, with a one-line reason, for example "nessun flusso cambiato".
@@ -83,7 +83,6 @@ Do not try to update these, and never drop them silently. **The summary of every
 Ready-to-paste templates, in Italian because the founder reads them; replace the placeholders:
 
 ```txt
-Diagrammi Mermaid (Notion): aggiornare <nome diagramma/flusso> - <cosa cambia nel flusso>, introdotto in <hash commit> su preview.
 SaaS Roadmap (Notion): segnare <voce roadmap> come <stato> - <cosa è stato consegnato>, commit <hash> su preview.
 analisi-architetturale-saas.md: aggiornare la sezione <sezione> - <decisione/cambiamento architetturale>, vedi <file chiave> (commit <hash>).
 ```
@@ -94,7 +93,7 @@ When this skill runs as part of a push, add an **"Impatto"** block to the push s
 
 - **Verdict:** "impattante" or "non impattante".
 - **Criteria met:** their numbers.
-- **Repo files updated** in the sweep.
-- **The three external surfaces**, with their status, as above.
+- **Repo files updated** in the sweep, including whether `docs/architecture.md` changed (or "nessun diagramma cambiato").
+- **The two external surfaces**, with their status, as above.
 
 For a non-impactful push, one line is enough: "Non impattante: nessun criterio soddisfatto".
