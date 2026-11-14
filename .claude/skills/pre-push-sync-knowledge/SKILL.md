@@ -25,21 +25,10 @@ If the upstream branch name is unknown, inspect `git status` first.
 
 ## Knowledge Sync Decision
 
-Ask whether the commits introduce or change any durable project knowledge:
+Two questions, in this order:
 
-- folder structure or architecture boundaries;
-- routing/page placement;
-- Instagram export parsing behavior;
-- relationship analysis semantics;
-- privacy guarantees;
-- analytics behavior around private data;
-- server/API boundaries;
-- PWA behavior;
-- build, lint, or Husky workflow;
-- agent skills or project instructions;
-- major dependencies or developer commands.
-
-If yes, update the relevant project knowledge before pushing.
+1. **Is the push impactful?** This skill does not define that. Apply `.claude/skills/impact-assessment/SKILL.md`. It owns the criteria (schema/migrations, public route or endpoint contracts, security/privacy boundary, feature flags, large redesigns), the full sweep an impactful push requires, and the external surfaces (Notion, Claude Project) the push summary must list.
+2. **Does it change any durable knowledge an owning file documents?** Even a non-impactful push can make a knowledge file stale, for example a new script in `scripts/`, a change to the Husky hook or a new folder. Use "Knowledge Files" and "When To Update Knowledge" below to find the owner and update it before pushing.
 
 ## Knowledge Files
 
@@ -54,6 +43,9 @@ Relevant Followoo knowledge files include:
 .claude/skills/storybook-component-creation/SKILL.md
 .claude/skills/public-changelog/SKILL.md
 .claude/skills/marketing-assets-automation/SKILL.md
+.claude/skills/impact-assessment/SKILL.md
+.claude/skills/husky-pre-commit/SKILL.md
+.claude/skills/scripts-folder/SKILL.md
 AGENTS.md
 README.md
 docs/*
@@ -86,10 +78,19 @@ Update `.claude/skills/git-commits/SKILL.md` when commits change:
 - staging or Husky behavior;
 - verification expectations.
 
+Update `.claude/skills/husky-pre-commit/SKILL.md` when commits change `.husky/` or `scripts/pre-commit-biome.sh`.
+
+Update `.claude/skills/scripts-folder/SKILL.md` when a file in `scripts/` is added, removed, renamed or changes purpose.
+
+Update `.claude/skills/impact-assessment/SKILL.md` when commits change:
+
+- what counts as an impactful change;
+- the documentation surfaces an impactful change must sweep, including the external Notion/Claude Project ones.
+
 Update this skill when commits change:
 
 - pre-push workflow;
-- knowledge sync criteria;
+- the ownership map in this section;
 - required checks before push.
 
 ## When Not To Update Knowledge
@@ -141,4 +142,5 @@ After pushing, report:
 - pushed branch;
 - commit hashes/messages;
 - checks run;
-- remaining local changes, if any.
+- remaining local changes, if any;
+- the "Impatto" block defined by `impact-assessment`. It is one line when the push is not impactful. When it is, it lists the three external surfaces: never omit them silently.
