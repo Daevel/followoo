@@ -46,6 +46,28 @@ jobs:
         # is intentionally out of scope for this base pipeline.
         run: npx vitest run --project unit --project dom
 
+  docs-mermaid:
+    name: Mermaid diagrams parse
+    # Syntax check of every ```mermaid block in docs/architecture.md, so a
+    # broken diagram fails here instead of at the next human look. Uses the
+    # real Mermaid parser in Node (jsdom), no browser download.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate Mermaid blocks
+        run: npm run docs:check-mermaid
+
   backend-verify:
     name: Backend lint, typecheck, test
     runs-on: ubuntu-latest
@@ -102,35 +124,27 @@ jobs:
       - name: Tests
         run: python -m pytest
 
-  chromatic-guard:
-    name: Check Chromatic secret
-    runs-on: ubuntu-latest
-    # The "secrets" context can't be read directly in a job/step "if:"
-    # condition (GitHub Actions restricts which contexts each "if:" can
-    # see). This job reads it once in a "run:" step - where secrets ARE
-    # allowed - and exposes the result as an output the "chromatic" job's
-    # "if:" can read via the "needs" context.
-    outputs:
-      has_token: ${{ steps.check.outputs.has_token }}
-    steps:
-      - name: Check whether CHROMATIC_PROJECT_TOKEN is set
-        id: check
-        run: echo "has_token=${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
-
   chromatic:
     name: Chromatic
-    needs: [verify, chromatic-guard]
+    needs: [verify]
     runs-on: ubuntu-latest
-    # Skips cleanly until CHROMATIC_PROJECT_TOKEN is added to the repo
-    # secrets (Settings > Secrets and variables > Actions). That token must
-    # be created manually on chromatic.com by linking this repo/Storybook
-    # project - it cannot be generated from here. This condition also keeps
-    # the job skipped on PRs from forks, which never have access to secrets.
-    if: needs.chromatic-guard.outputs.has_token == 'true'
+    # Always runs (it is meant to be a required check): a missing
+    # CHROMATIC_PROJECT_TOKEN now fails loudly instead of skipping. Only PRs
+    # from forks are skipped - they never get repository secrets.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      # "secrets" can't be read in a step "if:", but job env can.
+      HAS_CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
     permissions:
       contents: read
       statuses: write
     steps:
+      - name: Require CHROMATIC_PROJECT_TOKEN
+        if: env.HAS_CHROMATIC_TOKEN != 'true'
+        run: |
+          echo "::error title=Missing secret CHROMATIC_PROJECT_TOKEN::Add CHROMATIC_PROJECT_TOKEN as a repository secret (Settings > Secrets and variables > Actions). Get it from chromatic.com > this project (Storybook type) > Manage > Configure."
+          exit 1
+
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -151,6 +165,68 @@ jobs:
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-env-check:
+    name: Deploy env vars present
+    # Push only: it needs repo secrets, which PRs from forks never get.
+    # Vercel and Render deploy on their own from the same push; this job
+    # can't block them, it makes a misconfigured environment fail loudly
+    # here instead of surfacing later as a broken deploy.
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: Check variable names on Vercel and Render
+        # Fails with an explicit "Missing secret ..." annotation (and where
+        # to create it) until VERCEL_TOKEN and RENDER_API_KEY exist.
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: node scripts/check-deploy-env.mjs
+
+  smoke-test:
+    name: Post-deploy smoke test
+    # Push only: there is no stable deployed environment for a PR.
+    if: github.event_name == 'push'
+    needs: [verify, backend-verify]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Reads the GitHub Deployments Vercel's GitHub App creates per commit,
+      # to wait for this commit's deploy without a Vercel token.
+      deployments: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke-test Clerk and /health
+        # main -> https://followoo.app + followoo-api; preview -> the
+        # SSO-protected preview alias + followoo-api-preview, which needs
+        # VERCEL_AUTOMATION_BYPASS_SECRET (fails with an explicit message
+        # until it exists). See scripts/smoke-test-deploy.mjs.
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/smoke-test-deploy.mjs
 
   # Vercel preview deployments are already handled automatically by the
   # Vercel GitHub App connected to this repo (see deployments created by

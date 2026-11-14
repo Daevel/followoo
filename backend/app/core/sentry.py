@@ -8,7 +8,7 @@ from sentry_sdk.types import Event, Hint
 
 # Keys that must never leave this process, even redacted-in-place inside a
 # nested dict. Mirrors the same non-negotiable list documented in
-# .opencode/skills/project-context/SKILL.md and enforced client-side in
+# .claude/skills/project-context/SKILL.md and enforced client-side in
 # src/errors/sentryInit.ts: Instagram export content, usernames, follower/
 # following lists, and relationship analysis results.
 _SENSITIVE_KEY_RE = re.compile(

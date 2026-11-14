@@ -1,0 +1,142 @@
+name: Migrations
+
+# Alembic checks against real Neon data, only when migrations change.
+# The ephemeral Postgres in ci.yml (backend-verify) proves migrations run
+# on an empty database; this proves they run on top of preview-backend's
+# real schema and rows. See docs/CI.md.
+on:
+  pull_request:
+    branches: [preview, main]
+    paths:
+      - "backend/alembic/**"
+      - "backend/alembic.ini"
+      - ".github/workflows/migrations.yml"
+  push:
+    branches: [preview, main]
+    paths:
+      - "backend/alembic/**"
+      - "backend/alembic.ini"
+      - ".github/workflows/migrations.yml"
+  workflow_dispatch:
+
+# Never cancel a run halfway through a migration.
+concurrency:
+  group: migrations-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # Not secret: the Neon project id is also visible in Neon/Vercel URLs.
+  NEON_PROJECT_ID: quiet-bird-57080571
+
+jobs:
+  dry-run:
+    name: Alembic dry-run on a temporary Neon branch
+    runs-on: ubuntu-latest
+    # PRs from forks never get secrets; skip them instead of failing.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      # "secrets" can't be read in a step "if:", but job env can.
+      HAS_NEON_API_KEY: ${{ secrets.NEON_API_KEY != '' }}
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Require NEON_API_KEY
+        if: env.HAS_NEON_API_KEY != 'true'
+        run: |
+          echo "::error title=Missing secret NEON_API_KEY::Add NEON_API_KEY as a repository secret (Settings > Secrets and variables > Actions). Create it at: Neon Console > Account settings > API keys (https://console.neon.tech/app/settings/api-keys), or an organization/project-scoped key for the followoo-database project."
+          exit 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compute branch expiry
+        id: expiry
+        run: echo "at=$(date -u -d '+2 hours' +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      - name: Create temporary branch from preview-backend
+        id: branch
+        uses: neondatabase/create-branch-action@v6.4.0
+        with:
+          project_id: ${{ env.NEON_PROJECT_ID }}
+          api_key: ${{ secrets.NEON_API_KEY }}
+          parent_branch: preview-backend
+          branch_name: ci-migration-dry-run-${{ github.run_id }}-${{ github.run_attempt }}
+          database: neondb
+          role: neondb_owner
+          # Safety net: Neon deletes the branch by itself after 2 hours
+          # even if the cleanup step below never runs.
+          expires_at: ${{ steps.expiry.outputs.at }}
+
+      - name: alembic upgrade head
+        env:
+          FOLLOWOO_DATABASE_URL: ${{ steps.branch.outputs.db_url }}
+        run: |
+          python -m alembic current
+          python -m alembic upgrade head
+          python -m alembic current
+
+      - name: Delete temporary branch
+        # Always clean up, including when the migration failed.
+        if: always() && steps.branch.outputs.branch_id != ''
+        uses: neondatabase/delete-branch-action@v3.2.1
+        with:
+          project_id: ${{ env.NEON_PROJECT_ID }}
+          api_key: ${{ secrets.NEON_API_KEY }}
+          branch: ${{ steps.branch.outputs.branch_id }}
+
+  apply-preview:
+    name: Apply migrations to preview-backend
+    # Pushes to preview (or a manual run on preview), never PRs, and only
+    # after the dry-run above passed. Complements backend/start.sh, which
+    # still applies migrations when Render boots followoo-api-preview; this
+    # makes the preview database update visible in CI logs, right away.
+    # Production is never migrated from this workflow.
+    needs: dry-run
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/preview'
+    runs-on: ubuntu-latest
+    env:
+      HAS_PREVIEW_DATABASE_URL: ${{ secrets.PREVIEW_DATABASE_URL != '' }}
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Require PREVIEW_DATABASE_URL
+        if: env.HAS_PREVIEW_DATABASE_URL != 'true'
+        run: |
+          echo "::error title=Missing secret PREVIEW_DATABASE_URL::Add PREVIEW_DATABASE_URL as a repository secret (Settings > Secrets and variables > Actions): a connection string for the preview-backend Neon branch (Neon Console > followoo-database > branch preview-backend > Connect), ideally for a dedicated CI role, kept separate from the app's FOLLOWOO_DATABASE_URL so CI access can be rotated or revoked on its own."
+          exit 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: alembic upgrade head on preview-backend
+        env:
+          FOLLOWOO_DATABASE_URL: ${{ secrets.PREVIEW_DATABASE_URL }}
+        run: |
+          python -m alembic current
+          python -m alembic upgrade head
+          python -m alembic current

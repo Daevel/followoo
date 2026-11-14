@@ -9,7 +9,7 @@ description: Git commit, commit message, git status, git diff. Use when preparin
 
 Use this skill whenever preparing, suggesting, reviewing, or creating commits in Followoo.
 
-Followoo is a single React + Vite application with Vercel/serverless endpoints and project-specific OpenCode skills. Commits should stay small, intentional, and easy to review.
+Followoo is a single React + Vite application with Vercel/serverless endpoints and project-specific agent skills. Commits should stay small, intentional, and easy to review.
 
 ## Required Checks Before Commit
 
@@ -57,7 +57,7 @@ Allowed common types:
 feat      -> new user-facing capability
 fix       -> bug fix
 refactor  -> restructuring without behavior change
-docs      -> docs, README, OpenCode skills, project knowledge
+docs      -> docs, README, agent skills, project knowledge
 chore     -> maintenance not affecting runtime behavior
 style     -> visual/style-only changes
 test      -> tests
@@ -89,7 +89,7 @@ api          -> Vercel/serverless endpoints under api
 server       -> server-only services/repositories under server
 tooling      -> Biome, Husky, scripts, TypeScript/Vite config
 storybook    -> Storybook stories/config
-opencode     -> .opencode skills/configuration
+claude       -> .claude skills/configuration
 docs         -> README, docs, static documentation
 project      -> broad architecture or structural changes
 ```
@@ -105,10 +105,10 @@ Good split examples:
 ```txt
 fix(tooling): preserve staged files in pre-commit checks
 refactor(project): align source architecture with scaffolding
-docs(opencode): migrate agent skills configuration
+docs(claude): migrate agent skills configuration
 ```
 
-Avoid mixing unrelated changes such as UI styling, parser behavior, OpenCode skill edits, and tooling fixes in one commit.
+Avoid mixing unrelated changes such as UI styling, parser behavior, agent skill edits, and tooling fixes in one commit.
 
 ## Staging Rules
 
@@ -131,7 +131,7 @@ npm run lint
 npm run build
 ```
 
-For small documentation-only changes, `npm run lint` is usually enough if Markdown/OpenCode files are included in Biome checks.
+For small documentation-only changes, `npm run lint` is usually enough if Markdown/skill files are included in Biome checks.
 
 For Storybook or shared UI changes, also consider:
 

@@ -5,7 +5,7 @@ let sentryModule: typeof import("@sentry/react") | null = null;
 
 // Keys that must never leave the browser, even redacted-in-place inside a
 // nested object. Mirrors the same non-negotiable list documented in
-// .opencode/skills/project-context/SKILL.md and enforced server-side in
+// .claude/skills/project-context/SKILL.md and enforced server-side in
 // backend/app/core/sentry.py: Instagram export content, usernames,
 // follower/following lists, and relationship analysis results.
 const SENSITIVE_KEY_PATTERN =

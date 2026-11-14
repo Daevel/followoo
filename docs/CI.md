@@ -13,6 +13,10 @@ Frontend checks. Always runs, no secrets required:
 5. `npm run build` (`tsc -b` + Vite client/SSR build + static prerender)
 6. `npx vitest run --project unit` - runs only the `unit` Vitest project (pure parsing/relationship-analysis logic). The `storybook` Vitest project (`@storybook/addon-vitest`) needs Playwright browsers installed in the runner and is intentionally left out of this base pipeline.
 
+## `docs-mermaid` job
+
+Syntax check of the architecture diagrams. Always runs, no secrets required: `npm ci`, then `npm run docs:check-mermaid`, which runs [`scripts/validate-mermaid.mjs`](../scripts/validate-mermaid.mjs) on [`docs/architecture.md`](architecture.md). The script parses every `mermaid` block with the real Mermaid parser (`mermaid` devDependency, in Node on a jsdom window, no browser) and fails with a `file:line` annotation on the first broken block. It checks syntax, not whether a diagram still matches the code.
+
 ## `backend-verify` job
 
 Backend checks, running against a real `postgres:16` service container (`app/users/repository.py` is raw SQL - upserts, JSONB - that a mocked connection couldn't prove correct, and `backend/tests/users/` exercises it for real). Always runs, no secrets required:
@@ -27,15 +31,11 @@ Backend checks, running against a real `postgres:16` service container (`app/use
 
 ## `chromatic` job
 
-Publishes the Storybook build to [Chromatic](https://www.chromatic.com/) for visual review/regression testing. It only runs when the `CHROMATIC_PROJECT_TOKEN` secret is present, which also means it is naturally skipped on pull requests from forks.
+Publishes the Storybook build to [Chromatic](https://www.chromatic.com/) for visual review/regression testing. It runs on every push and on every same-repo pull request, and is a required status check for merging into `main` (branch protection, set 2026-11-13). `preview` has no branch protection on purpose: it receives direct pushes, which a required check would block; only PRs from forks skip it (they never get secrets). If `CHROMATIC_PROJECT_TOKEN` is missing it fails with an explicit `Missing secret CHROMATIC_PROJECT_TOKEN` annotation instead of skipping.
 
-**Manual setup required** (cannot be done from this repo or by an agent):
+The token comes from chromatic.com: link the `Daevel/followoo` repository as a **Storybook** project (not React Native), then copy its project token into the `CHROMATIC_PROJECT_TOKEN` repository secret (Settings > Secrets and variables > Actions).
 
-1. Sign in to [chromatic.com](https://www.chromatic.com/) and link the `daevel/followoo` GitHub repository to create a Chromatic project.
-2. Copy the project token Chromatic gives you.
-3. In the GitHub repo, go to Settings > Secrets and variables > Actions, and add a new repository secret named `CHROMATIC_PROJECT_TOKEN` with that value.
-
-Until that secret exists, the `chromatic` job is skipped (not failed) on every run.
+Storybook wraps every story in a `ClerkProvider` (`.storybook/preview.tsx`), so Clerk-aware components such as `NavBar` render. Without a `VITE_CLERK_PUBLISHABLE_KEY` (as in CI) Clerk gets an offline stub that never loads: snapshots are deterministic and never show Clerk's signed-in/signed-out UI such as "Sign in".
 
 ## Preview deployments (Vercel)
 
@@ -45,6 +45,40 @@ Because of this, **no deploy-preview job was added to `ci.yml`** - it would dupl
 
 ## Database migrations against real environments
 
-`ci.yml`'s `backend-verify` job runs `alembic upgrade head` (step 6 above), but only against the ephemeral `postgres:16` service container it creates for that run - this only proves the migrations are valid and apply cleanly against a clean database. It never touches the real production or preview Neon databases, and no other job does either.
+`ci.yml`'s `backend-verify` job runs `alembic upgrade head` (step 6 above), but only against the ephemeral `postgres:16` service container it creates for that run - this only proves the migrations are valid and apply cleanly against a clean database. It never touches the real Neon databases; the `Migrations` workflow below covers real data.
 
 Applying migrations against those two real databases is handled by [`backend/start.sh`](../backend/start.sh), which both Render services (`followoo-api`, `followoo-api-preview`) run as their **Start Command** instead of calling `uvicorn` directly - it runs `alembic upgrade head` before starting the API, on every boot of the instance. (Render's Pre-Deploy Command would have been the more direct fit, but that feature requires a paid web service plan; both services are on the free tier.) See `backend/README.md`'s "Applying migrations in deploy" section for the full explanation of why, and what happens if the migration fails.
+
+## `Migrations` workflow (`migrations.yml`)
+
+Runs only when `backend/alembic/**`, `backend/alembic.ini` or the workflow itself change (PRs and pushes to `preview`/`main`), or on manual dispatch:
+
+- `dry-run`: creates a temporary Neon branch from `preview-backend` (`ci-migration-dry-run-<run id>`), runs `alembic upgrade head` there against real schema and rows, then always deletes the branch, even if the migration failed (the branch also carries a 2-hour Neon expiry as a safety net). Needs the `NEON_API_KEY` secret.
+- `apply-preview`: on `preview` only (never PRs, never production), after `dry-run` passes, runs `alembic upgrade head` against the real `preview-backend` branch so its state is visible in CI logs. It complements `backend/start.sh`, it does not replace it. Needs the `PREVIEW_DATABASE_URL` secret: a connection string kept separate from the app's own so CI access can be rotated on its own.
+
+## `deploy-env-check` job
+
+On pushes to `preview`/`main`, [`scripts/check-deploy-env.mjs`](../scripts/check-deploy-env.mjs) lists the environment variable **names** (never values) on Vercel (production and preview targets) and on both Render services (including linked environment groups), and fails with one annotation per missing required variable. The required lists live at the top of the script - keep them in sync with `.env.example` and `backend/README.md`. Needs the `VERCEL_TOKEN` and `RENDER_API_KEY` secrets. Vercel and Render deploy on their own from the same push, so this job reports a misconfiguration loudly; it cannot block the deploy.
+
+## `smoke-test` job
+
+On pushes to `preview`/`main`, after `verify` and `backend-verify`, [`scripts/smoke-test-deploy.mjs`](../scripts/smoke-test-deploy.mjs):
+
+1. waits for the GitHub Deployment that Vercel's GitHub App reports for the commit (`Preview` or `Production`) to succeed - using `GITHUB_TOKEN`, no Vercel token;
+2. checks `GET /health` on the matching Render backend (`followoo-api-preview` or `followoo-api`) answers 200, retrying through cold starts;
+3. opens the stable frontend URL (`https://followoo-git-preview-daevels-projects.vercel.app` or `https://followoo.app`) in Playwright and checks Clerk finishes loading, with no Clerk console/network errors, and "Sign in" renders. PostHog requests are blocked so these visits stay out of analytics.
+
+The preview alias is behind Vercel Deployment Protection (SSO), so `preview` runs need the `VERCEL_AUTOMATION_BYPASS_SECRET` secret (Vercel > project > Settings > Deployment Protection > Protection Bypass for Automation). The script sends it once as a header to obtain the bypass cookie, so it never appears in a page URL.
+
+## Secrets used by CI
+
+| Secret | Used by | Where to create it |
+|---|---|---|
+| `CHROMATIC_PROJECT_TOKEN` | `chromatic` | chromatic.com, after linking this repo |
+| `VERCEL_TOKEN` | `deploy-env-check` | Vercel > Account Settings > Tokens, scoped to the team owning `followoo` |
+| `RENDER_API_KEY` | `deploy-env-check` | Render > Account Settings > API Keys |
+| `VERCEL_AUTOMATION_BYPASS_SECRET` | `smoke-test` (preview) | Vercel > `followoo` > Settings > Deployment Protection > Protection Bypass for Automation |
+| `NEON_API_KEY` | `Migrations` / `dry-run` | Neon Console > Account settings > API keys (or an org/project-scoped key) |
+| `PREVIEW_DATABASE_URL` | `Migrations` / `apply-preview` | Neon Console > `followoo-database` > `preview-backend` > Connect |
+
+Every job that needs one of these fails with an explicit `Missing secret <NAME>` annotation while it is absent.

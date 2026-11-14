@@ -1,0 +1,99 @@
+name: Regenerate marketing assets
+
+# Regenerates the README screenshots, demo.gif, the social preview (OG.png)
+# and the PWA manifest screenshots from a real build, and proposes them as a
+# PR into preview - never a direct push, never an auto-merge. See
+# .claude/skills/marketing-assets-automation/SKILL.md.
+on:
+  push:
+    branches: [preview]
+    # Only when something that shows up in the captures changes. The
+    # generated files themselves are not listed, so merging the asset PR
+    # does not trigger another run.
+    paths:
+      - "src/features/landing/**"
+      - "src/features/results/**"
+      - "src/features/instagram-export/**"
+      - "src/components/ui/**"
+      - "src/index.css"
+      - "scripts/generate-marketing-assets.mjs"
+      - "scripts/templates/**"
+      - ".github/workflows/regenerate-marketing-assets.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: marketing-assets
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regenerate:
+    name: Capture and propose assets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          # Keep in sync with .github/workflows/ci.yml.
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium and ffmpeg
+        run: |
+          npx playwright install --with-deps chromium
+          command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+
+      - name: Build
+        env:
+          # Optional: a Clerk *development* publishable key (pk_test_...),
+          # so the navbar "Sign in" button renders on localhost. It is
+          # public by design; accepted as a repo Variable or a Secret.
+          # Without it the captures simply show no sign-in entry point.
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.MARKETING_ASSETS_CLERK_PUBLISHABLE_KEY || secrets.MARKETING_ASSETS_CLERK_PUBLISHABLE_KEY }}
+        run: npm run build
+
+      - name: Generate assets
+        run: npm run generate:assets
+
+      - name: Show changes
+        run: git status --short && git diff --stat
+
+      - name: Open or update the review PR
+        uses: peter-evans/create-pull-request@v8
+        with:
+          # GITHUB_TOKEN works only if the repo allows Actions to create
+          # PRs (Settings > Actions > General), and PRs it opens do not
+          # trigger CI. A fine-grained PAT in this secret avoids both.
+          token: ${{ secrets.MARKETING_ASSETS_PR_TOKEN || github.token }}
+          base: preview
+          # One long-lived branch: a newer run updates the open PR instead
+          # of stacking a new PR per push.
+          branch: chore/marketing-assets
+          delete-branch: true
+          add-paths: |
+            docs/images/*
+            public/icons/OG.png
+            public/screenshots/*
+          commit-message: |
+            chore(docs): regenerate marketing assets
+
+            Automated capture from ${{ github.sha }} by
+            scripts/generate-marketing-assets.mjs.
+          title: "chore(docs): regenerate marketing assets"
+          body: |
+            Automated regeneration of the README screenshots (`docs/images/`),
+            the social preview (`public/icons/OG.png`) and the PWA manifest
+            screenshots (`public/screenshots/`), captured from ${{ github.sha }}
+            via the demo flow.
+
+            Review visually before merging - nothing here goes live until
+            this PR is merged into `preview`.

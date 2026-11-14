@@ -109,6 +109,8 @@ The workflow is simple:
 
 All of this happens **locally in the browser**.
 
+For the full picture (components, data flow, encrypted history and account gate state machines), see [docs/architecture.md](./docs/architecture.md).
+
 ---
 
 ## 📦 Supported Instagram Export Structure

@@ -28,7 +28,7 @@ Current project shape:
 
 ```txt
 followoo/
-├── .opencode/
+├── .claude/
 │   └── skills/
 ├── .storybook/
 ├── backend/
@@ -50,7 +50,7 @@ backend/    -> Python FastAPI backend for public server-side API endpoints
 public/     -> static public assets
 docs/       -> documentation and images
 scripts/    -> local automation
-.opencode/  -> agent skills and OpenCode project configuration
+.claude/    -> agent skills and Claude Code project configuration
 ```
 
 ## `src` Structure
