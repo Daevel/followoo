@@ -7,5 +7,5 @@ python-dotenv
 alembic
 sqlalchemy
 slowapi
-sentry-sdk
+sentry-sdk>=2,<3
 pyjwt[crypto]
