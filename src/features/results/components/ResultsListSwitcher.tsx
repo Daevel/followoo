@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { TabButton } from "@/components/ui/TabButton";
+import { getRelationshipGroupLabel } from "@/features/relationship/constants/relationshipGroups";
 import type { TabKey } from "@/features/results/types/results.types";
 import type { InstagramAnalysisResult } from "@/types/instagram.types";
 
@@ -10,9 +11,9 @@ type ListOption = { key: TabKey; label: string };
 // The five lists people open most are always one click away; the rest live
 // in the "More lists" menu.
 const PRIMARY_LISTS: ListOption[] = [
-  { key: "mutual", label: "Mutual" },
-  { key: "followersOnly", label: "Follower" },
-  { key: "unfollowers", label: "Following" },
+  { key: "mutual", label: getRelationshipGroupLabel("mutual") },
+  { key: "followersOnly", label: getRelationshipGroupLabel("followersOnly") },
+  { key: "unfollowers", label: getRelationshipGroupLabel("unfollowers") },
   { key: "recentUnfollowers", label: "Recent unfollowers" },
   { key: "blocked", label: "Blocked" },
 ];

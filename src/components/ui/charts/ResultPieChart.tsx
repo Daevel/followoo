@@ -5,6 +5,8 @@ import { chartTheme } from "./chartTheme";
 export type PieChartDatum = {
   name: string;
   value: number;
+  /** Fixed slice color; defaults to the data palette in order of size. */
+  color?: string;
 };
 
 type ResultsPieChartProps = {
@@ -69,7 +71,9 @@ export function ResultsPieChart({
                 {chartData.map((entry, index) => (
                   <Cell
                     key={entry.name}
-                    fill={CHART_COLORS[index % CHART_COLORS.length]}
+                    fill={
+                      entry.color ?? CHART_COLORS[index % CHART_COLORS.length]
+                    }
                   />
                 ))}
               </Pie>
@@ -117,7 +121,8 @@ export function ResultsPieChart({
                   aria-hidden="true"
                   className="size-2 shrink-0 rounded-[2px]"
                   style={{
-                    backgroundColor: CHART_COLORS[index % CHART_COLORS.length],
+                    backgroundColor:
+                      item.color ?? CHART_COLORS[index % CHART_COLORS.length],
                   }}
                 />
                 <span className="text-fg-muted min-w-0 flex-1 truncate">

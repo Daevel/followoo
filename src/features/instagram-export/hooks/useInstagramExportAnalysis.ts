@@ -6,6 +6,7 @@ import { animateLoadingOut } from "@/animations/loading/useAnimateLoadingOut";
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 import { handleAppError } from "@/errors";
 import { useAutoSaveSnapshot } from "@/features/history/hooks/useAutoSaveSnapshot";
+import type { RelationshipGroupCounts } from "@/features/relationship/constants/relationshipGroups";
 import { analyzeInstagramExport } from "@/features/relationship/services/instagramAnalysisService";
 import type { ResultsLocationState } from "@/features/results/types/results.types";
 import { logUsageEvent } from "@/features/users/services/usersService";
@@ -13,6 +14,11 @@ import { parseInstagramExport } from "../services/instagramExportService";
 import { useFreeAnalysisGate } from "./useFreeAnalysisGate";
 
 export type FileValidationState = "idle" | "checking" | "valid" | "invalid";
+
+/** Minimum time on the loading screen, so its animation can play out. */
+const MIN_LOADING_MS = 2500;
+/** Time the dots need to reach their orbits once the counts are known. */
+const MIN_REVEAL_MS = 1200;
 
 async function reportAnalysisUsage(
   getToken: () => Promise<string | null>
@@ -43,6 +49,8 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
   const [selectedZipFile, setSelectedZipFile] = useState<File | null>(null);
   const [uploadError, setUploadError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingCounts, setLoadingCounts] =
+    useState<RelationshipGroupCounts | null>(null);
   const [termsAndConditionsAccepted, setTermsAndConditionsAccepted] =
     useState(false);
   const [fileValidationState, setFileValidationState] =
@@ -131,9 +139,9 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
     });
 
     setUploadError("");
+    setLoadingCounts(null);
     setLoading(true);
 
-    const minLoadingTime = 2500;
     const start = Date.now();
 
     try {
@@ -161,8 +169,15 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
         recent_follow_requests_count: analysis.recentFollowRequests.length,
       });
 
+      // Only counts reach the loading screen, never the lists themselves.
+      setLoadingCounts({
+        mutual: analysis.mutual.length,
+        followersOnly: analysis.followersOnly.length,
+        unfollowers: analysis.unfollowers.length,
+      });
+
       const elapsed = Date.now() - start;
-      const remaining = Math.max(0, minLoadingTime - elapsed);
+      const remaining = Math.max(MIN_LOADING_MS - elapsed, MIN_REVEAL_MS);
 
       if (remaining > 0) {
         await new Promise((resolve) => setTimeout(resolve, remaining));
@@ -210,6 +225,7 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
     uploadError,
     setUploadError,
     loading,
+    loadingCounts,
     loadingRef,
     termsAndConditionsAccepted,
     setTermsAndConditionsAccepted,
