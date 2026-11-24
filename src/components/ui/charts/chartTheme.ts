@@ -4,6 +4,7 @@ export const chartTheme = {
   // data-1…5: same order and meaning as the persona/data palette
   series: ["#818cf8", "#22d3ee", "#fbbf24", "#c084fc", "#6b7194"],
   surface1: "#12152a",
+  brand: "#4f46e5", // brand: fills and glows drawn in SVG
   barMuted: "#6b7194", // data-5: chart fills only
   barHighlight: "#fb7185", // danger
   grid: "rgba(255, 255, 255, 0.06)", // line-subtle

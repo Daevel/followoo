@@ -1,4 +1,4 @@
-import { SignInButton } from "@clerk/react";
+import { SignInButton, useUser } from "@clerk/react";
 import { useRef } from "react";
 import { Link } from "react-router";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
@@ -8,10 +8,10 @@ import { Callout } from "@/components/ui/Callout";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
-import { Loading } from "@/components/ui/Loading";
 import { NavBar } from "@/components/ui/NavBar";
 import { ZipDropzone } from "@/components/ui/ZipDropzone";
 import { useInstagramExportAnalysis } from "../hooks/useInstagramExportAnalysis";
+import { AnalysisLoading } from "./AnalysisLoading";
 
 const demoPreviewItems = [
   "Your network health score",
@@ -33,6 +33,7 @@ export function InstagramExportUploadExperience({
     uploadError,
     setUploadError,
     loading,
+    loadingCounts,
     loadingRef,
     setTermsAndConditionsAccepted,
     fileValidationState,
@@ -46,11 +47,20 @@ export function InstagramExportUploadExperience({
   } = useInstagramExportAnalysis({ isDemo });
 
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const { user } = useUser();
+  // The account photo only (Clerk), never anything from the Instagram export.
+  const avatarUrl = user?.hasImage ? user.imageUrl : null;
 
   useStandardPageAnimation(rootRef);
 
   if (loading) {
-    return <Loading ref={loadingRef} loading={loading} />;
+    return (
+      <AnalysisLoading
+        ref={loadingRef}
+        counts={loadingCounts}
+        avatarUrl={avatarUrl}
+      />
+    );
   }
 
   if (needsAccountPrompt) {
