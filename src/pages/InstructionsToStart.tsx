@@ -17,6 +17,8 @@ type DeviceType = "laptop" | "smartPhone";
 type InstructionStep = {
   id: number;
   title: string;
+  /** Label in the desktop progress bar, where six steps share one row. */
+  shortTitle: string;
   /** One action per item, in order. */
   actions: ReactNode[];
   /** Reassurance shown after the actions. */
@@ -41,6 +43,7 @@ const desktopInstructionSteps: InstructionStep[] = [
   {
     id: 1,
     title: "Open Instagram Settings",
+    shortTitle: "Open Settings",
     actions: [
       <>
         Open Instagram and go to your <UiLabel>Profile</UiLabel> (bottom-left
@@ -57,6 +60,7 @@ const desktopInstructionSteps: InstructionStep[] = [
   {
     id: 2,
     title: "Find your data settings",
+    shortTitle: "Find data settings",
     actions: [
       <>
         Inside <UiLabel>Accounts Center</UiLabel>, tap{" "}
@@ -72,6 +76,7 @@ const desktopInstructionSteps: InstructionStep[] = [
   {
     id: 3,
     title: "Start a new export",
+    shortTitle: "Start an export",
     actions: [
       <>
         Tap <UiLabel>Create export</UiLabel>.
@@ -91,6 +96,7 @@ const desktopInstructionSteps: InstructionStep[] = [
   {
     id: 4,
     title: "Choose what to export",
+    shortTitle: "Choose what to export",
     actions: [
       <>
         Deselect everything, then select only{" "}
@@ -111,10 +117,11 @@ const desktopInstructionSteps: InstructionStep[] = [
   {
     id: 5,
     title: "Download your file",
+    shortTitle: "Download",
     actions: [
       <>
-        When Instagram notifies you, go back to{" "}
-        <UiLabel>Accounts Center</UiLabel>.
+        When Instagram notifies you (it can take from a few minutes to a few
+        hours), go back to <UiLabel>Accounts Center</UiLabel>.
       </>,
       <>
         Tap <UiLabel>Download file</UiLabel>: a ZIP file is saved to your
@@ -128,6 +135,7 @@ const desktopInstructionSteps: InstructionStep[] = [
   {
     id: 6,
     title: "Upload the ZIP file",
+    shortTitle: "Upload",
     actions: [
       <>
         Click <UiLabel>Continue</UiLabel> below.
@@ -143,6 +151,7 @@ const mobileInstructionSteps: InstructionStep[] = [
   {
     id: 1,
     title: "Go to Export your information",
+    shortTitle: "Export your information",
     actions: [
       <>
         Open Instagram and go to your <UiLabel>Profile</UiLabel> (bottom-right
@@ -163,6 +172,7 @@ const mobileInstructionSteps: InstructionStep[] = [
   {
     id: 2,
     title: "Start the export",
+    shortTitle: "Start the export",
     actions: [
       <>
         Tap <UiLabel>Create export</UiLabel>.
@@ -182,6 +192,7 @@ const mobileInstructionSteps: InstructionStep[] = [
   {
     id: 3,
     title: "Choose what to export",
+    shortTitle: "Choose what to export",
     actions: [
       <>
         Deselect everything, then select only{" "}
@@ -202,9 +213,11 @@ const mobileInstructionSteps: InstructionStep[] = [
   {
     id: 4,
     title: "Upload the ZIP file",
+    shortTitle: "Upload",
     actions: [
       <>
-        When your file is ready, download the <UiLabel>ZIP file</UiLabel>.
+        When your file is ready (it can take from a few minutes to a few hours),
+        download the <UiLabel>ZIP file</UiLabel>.
       </>,
       <>
         Tap <UiLabel>Continue</UiLabel> below and upload it.
@@ -515,127 +528,167 @@ function StepNavigation({
   );
 }
 
-type StepListProps = {
+type StepState = "done" | "active" | "upcoming";
+
+function stepState(stepId: number, currentStep: number): StepState {
+  if (stepId === currentStep) return "active";
+  return stepId < currentStep ? "done" : "upcoming";
+}
+
+function StepMarker({ id, state }: { id: number; state: StepState }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={clsx(
+        "flex size-[26px] shrink-0 items-center justify-center rounded-full border text-xs font-semibold tabular-nums",
+        state === "active" && "border-brand bg-brand text-on-brand",
+        state === "done" && "border-success/30 bg-success/10 text-success",
+        state === "upcoming" && "border-line-strong text-fg-muted"
+      )}
+    >
+      {state === "done" ? (
+        <Icon
+          name="check"
+          color="current"
+          width={14}
+          height={14}
+          aria-hidden="true"
+        />
+      ) : (
+        id
+      )}
+    </span>
+  );
+}
+
+type StepProgressProps = {
   steps: InstructionStep[];
   currentStep: number;
   onStepClick: (stepId: number) => void;
-  navigation: ReactNode;
 };
 
-// Every step on one line; the current one opens with its actions. On phones
-// only the current step is shown and the navigation moves to a bottom bar.
-function StepList({
-  steps,
-  currentStep,
-  onStepClick,
-  navigation,
-}: StepListProps) {
+// Desktop only: every step on one row, so the page shows where you are
+// without a list that grows taller than the video next to it.
+function StepProgress({ steps, currentStep, onStepClick }: StepProgressProps) {
   return (
-    <ol className="border-line-subtle bg-surface-1 shadow-elev-1 rounded-card border p-1.5 text-start">
-      {steps.map((step) => {
-        const isActive = step.id === currentStep;
-        const isDone = step.id < currentStep;
-
-        const marker = (
-          <span
-            aria-hidden="true"
-            className={clsx(
-              "flex size-[26px] shrink-0 items-center justify-center rounded-full border text-xs font-semibold tabular-nums",
-              isActive
-                ? "border-brand bg-brand text-on-brand"
-                : isDone
-                  ? "border-success/30 bg-success/10 text-success"
-                  : "border-line-strong text-fg-muted"
-            )}
-          >
-            {isDone ? (
-              <Icon
-                name="check"
-                color="current"
-                width={14}
-                height={14}
-                aria-hidden="true"
-              />
-            ) : (
-              step.id
-            )}
-          </span>
-        );
-
-        if (!isActive) {
-          return (
-            <li key={step.id} className="hidden lg:block">
-              <button
-                type="button"
-                onClick={() => onStepClick(step.id)}
-                className="text-fg-muted hover:text-fg focus-visible:shadow-ring flex w-full items-center gap-3 rounded-control px-3 py-2.5 text-start text-sm transition-colors outline-none"
-              >
-                {marker}
-                <span>
-                  <span className="sr-only">
-                    Step {step.id}
-                    {isDone ? ", done" : ""}:{" "}
-                  </span>
-                  {step.title}
-                </span>
-              </button>
-            </li>
-          );
-        }
+    <ol aria-label="Steps" className="hidden items-center lg:flex">
+      {steps.map((step, index) => {
+        const state = stepState(step.id, currentStep);
+        const isLast = index === steps.length - 1;
 
         return (
           <li
             key={step.id}
-            aria-current="step"
-            className="lg:bg-surface-2 lg:shadow-elev-1 rounded-control lg:my-1"
+            className={clsx("flex items-center", !isLast && "flex-1")}
           >
-            <div className="flex items-center gap-3 px-3 pt-3.5 pb-2.5">
-              {marker}
-              <h2 className="text-fg text-[17px] leading-snug font-semibold tracking-[-0.015em]">
-                <span className="text-fg-muted hidden text-xs font-medium tracking-normal lg:block">
-                  Step {step.id} of {steps.length}
+            <button
+              type="button"
+              onClick={() => onStepClick(step.id)}
+              aria-current={state === "active" ? "step" : undefined}
+              className={clsx(
+                "focus-visible:shadow-ring flex shrink-0 items-center gap-2.5 rounded-control py-1 pr-1.5 text-[13px] whitespace-nowrap transition-colors outline-none",
+                state === "active"
+                  ? "text-fg font-semibold"
+                  : "text-fg-muted hover:text-fg"
+              )}
+            >
+              <StepMarker id={step.id} state={state} />
+              <span>
+                <span className="sr-only">
+                  Step {step.id}
+                  {state === "done" ? ", done" : ""}:{" "}
                 </span>
-                {step.title}
-              </h2>
-            </div>
-
-            <div className="px-3.5 pb-3.5 lg:pl-[50px]">
-              <ol className="flex flex-col gap-2.5">
-                {step.actions.map((action, index) => (
-                  <li
-                    // biome-ignore lint/suspicious/noArrayIndexKey: static, ordered content
-                    key={index}
-                    className="text-fg-muted flex items-baseline gap-3 text-sm leading-[1.7]"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="bg-surface-2 text-fg-muted lg:bg-surface-0 flex size-5 shrink-0 -translate-y-px items-center justify-center rounded-md text-[11px] font-semibold"
-                    >
-                      {index + 1}
-                    </span>
-                    <span>{action}</span>
-                  </li>
-                ))}
-              </ol>
-
-              {step.note && (
-                <p className="text-fg-muted mt-3 text-[13px]">{step.note}</p>
-              )}
-
-              {step.zipWarning && (
-                <div className="mt-4">
-                  <ZipWarning />
-                </div>
-              )}
-
-              <div className="mt-4 hidden justify-end lg:flex">
-                {navigation}
-              </div>
-            </div>
+                {step.shortTitle}
+              </span>
+            </button>
+            {!isLast && (
+              <span
+                aria-hidden="true"
+                className={clsx(
+                  "mx-2.5 h-px min-w-4 flex-1",
+                  state === "done" ? "bg-success/35" : "bg-line-strong"
+                )}
+              />
+            )}
           </li>
         );
       })}
     </ol>
+  );
+}
+
+function StepContent({
+  step,
+  totalSteps,
+}: {
+  step: InstructionStep;
+  totalSteps: number;
+}) {
+  return (
+    <>
+      <div className="flex items-center gap-3">
+        <span className="lg:hidden">
+          <StepMarker id={step.id} state="active" />
+        </span>
+        <h2 className="text-fg text-[17px] leading-snug font-semibold tracking-[-0.015em] lg:text-xl">
+          <span className="text-fg-muted hidden text-xs font-medium tracking-normal lg:mb-0.5 lg:block">
+            Step {step.id} of {totalSteps}
+          </span>
+          {step.title}
+        </h2>
+      </div>
+
+      <ol className="mt-3.5 flex flex-col gap-2.5 lg:mt-4">
+        {step.actions.map((action, index) => (
+          <li
+            // biome-ignore lint/suspicious/noArrayIndexKey: static, ordered content
+            key={index}
+            className="text-fg-muted flex items-baseline gap-3 text-sm leading-[1.7]"
+          >
+            <span
+              aria-hidden="true"
+              className="bg-surface-2 text-fg-muted flex size-5 shrink-0 -translate-y-px items-center justify-center rounded-md text-[11px] font-semibold"
+            >
+              {index + 1}
+            </span>
+            <span>{action}</span>
+          </li>
+        ))}
+      </ol>
+
+      {step.note && (
+        <p className="text-fg-muted mt-3 text-[13px]">{step.note}</p>
+      )}
+
+      {step.zipWarning && (
+        <div className="mt-4">
+          <ZipWarning />
+        </div>
+      )}
+    </>
+  );
+}
+
+// Fills the video slot on the last step, so the card keeps its shape.
+function UploadPreview() {
+  return (
+    <div className="border-line-strong flex aspect-video flex-col items-center justify-center gap-2 rounded-card border border-dashed px-8 text-center">
+      <span className="bg-surface-2 text-brand-fg mb-1 flex size-11 items-center justify-center rounded-full">
+        <Icon
+          name="upload"
+          color="current"
+          width={20}
+          height={20}
+          aria-hidden="true"
+        />
+      </span>
+      <p className="text-fg text-[15px] font-semibold">
+        Your ZIP goes here next
+      </p>
+      <p className="text-fg-muted max-w-[320px] text-[13px]">
+        Followoo reads it right on this device.
+      </p>
+    </div>
   );
 }
 
@@ -682,7 +735,8 @@ export function InstructionsToStart() {
     [currentStep, instructionSteps]
   );
 
-  const hasMedia = Boolean(activeStep.mediaSrc?.trim());
+  const mediaSrc = activeStep.mediaSrc?.trim();
+  const isLastStep = currentStep === totalSteps;
 
   useStandardPageAnimation(rootRef);
 
@@ -699,6 +753,17 @@ export function InstructionsToStart() {
   const goToNextStep = () => {
     setCurrentStep((prev) => Math.min(totalSteps, prev + 1));
   };
+
+  const uploadShortcut = (
+    <Link
+      to="/get-started"
+      state={{ isDemo: false }}
+      className="text-fg-muted hover:text-fg focus-visible:shadow-ring rounded-control text-[13px] outline-none"
+    >
+      Already have the ZIP?{" "}
+      <span className="text-brand-fg font-medium">Upload it now</span>
+    </Link>
+  );
 
   const navigationProps = {
     currentStep,
@@ -719,7 +784,7 @@ export function InstructionsToStart() {
         <NavBar />
 
         <Container size="app" className="flex flex-1 flex-col">
-          <div ref={rootRef} className="flex-1 pb-6 lg:pb-20">
+          <div ref={rootRef} className="flex-1 pb-6 lg:pb-12">
             <PageHeader
               kicker="How to start"
               title="Get your Instagram data in a few steps."
@@ -763,63 +828,56 @@ export function InstructionsToStart() {
 
             <div
               data-page-animate="content"
-              className="grid items-start gap-4 lg:grid-cols-[380px_minmax(0,1fr)] lg:gap-8"
+              className="flex flex-col gap-4 lg:gap-5"
             >
-              <div className="-order-2 flex items-center justify-between lg:hidden">
+              <div className="flex items-center justify-between lg:hidden">
                 <span className="text-fg-muted text-xs font-medium">
                   Step {currentStep} of {totalSteps}
                 </span>
                 <StepDots total={totalSteps} current={currentStep} />
               </div>
 
-              <div className="flex flex-col gap-3 lg:col-start-1 lg:row-start-1">
-                <StepList
-                  steps={instructionSteps}
-                  currentStep={currentStep}
-                  onStepClick={setCurrentStep}
-                  navigation={<StepNavigation {...navigationProps} size="sm" />}
-                />
+              <StepProgress
+                steps={instructionSteps}
+                currentStep={currentStep}
+                onStepClick={setCurrentStep}
+              />
 
-                {currentStep < totalSteps && (
-                  <div className="flex items-center justify-between gap-3 px-1">
-                    <span className="text-fg-muted text-[13px]">
-                      Already have the ZIP?
-                    </span>
-                    <Link
-                      to="/get-started"
-                      state={{ isDemo: false }}
-                      className={buttonClasses({
-                        variant: "ghost",
-                        size: "sm",
-                      })}
-                    >
-                      <Icon
-                        name="upload"
-                        color="current"
-                        width={14}
-                        height={14}
-                        aria-hidden="true"
-                      />
-                      Upload it now
-                    </Link>
+              {/* One card on desktop: what to do next to the video, then the
+                  navigation. Nothing to line up, whatever the step's length.
+                  The video column also shrinks with the window height, so
+                  the whole step fits on a laptop screen without scrolling. */}
+              <div className="lg:border-line-subtle lg:bg-surface-1 lg:shadow-elev-1 lg:rounded-card [--stage-offset:420px] lg:border">
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_min(56%,max(380px,calc((100svh-var(--stage-offset))*16/9)))] lg:gap-7 lg:p-2.5">
+                  <div className="border-line-subtle bg-surface-1 shadow-elev-1 rounded-card order-2 border p-4 text-start lg:order-1 lg:border-0 lg:bg-transparent lg:pt-4 lg:pr-0 lg:pb-2 lg:pl-4 lg:shadow-none">
+                    <StepContent step={activeStep} totalSteps={totalSteps} />
                   </div>
-                )}
+
+                  <div
+                    className={clsx(
+                      "order-1 lg:order-2",
+                      !mediaSrc && "hidden lg:block"
+                    )}
+                  >
+                    {mediaSrc ? (
+                      <StepMedia
+                        key={`${selectedDevice}-${activeStep.id}`}
+                        src={mediaSrc}
+                        alt={activeStep.mediaAlt}
+                      />
+                    ) : (
+                      <UploadPreview />
+                    )}
+                  </div>
+                </div>
+
+                <div className="border-line-subtle mx-2.5 hidden items-center justify-between gap-4 border-t py-3 pr-1.5 pl-4 lg:flex">
+                  {isLastStep ? <span /> : uploadShortcut}
+                  <StepNavigation {...navigationProps} size="sm" />
+                </div>
               </div>
 
-              {hasMedia && activeStep.mediaSrc && (
-                <div className="-order-1 lg:sticky lg:top-24 lg:order-none lg:col-start-2 lg:row-start-1">
-                  <StepMedia
-                    key={`${selectedDevice}-${activeStep.id}`}
-                    src={activeStep.mediaSrc}
-                    alt={activeStep.mediaAlt}
-                  />
-                  <p className="text-fg-muted mt-2.5 text-xs lg:text-[13px]">
-                    Instagram may take from a few minutes to a few hours to
-                    prepare your file. Tap the video to pause, double tap for
-                    fullscreen.
-                  </p>
-                </div>
-              )}
+              {!isLastStep && <div className="lg:hidden">{uploadShortcut}</div>}
             </div>
           </div>
         </Container>

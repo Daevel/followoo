@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { Link } from "react-router";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { Button, buttonClasses } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Container } from "@/components/ui/Container";
@@ -12,6 +12,13 @@ import { Loading } from "@/components/ui/Loading";
 import { NavBar } from "@/components/ui/NavBar";
 import { ZipDropzone } from "@/components/ui/ZipDropzone";
 import { useInstagramExportAnalysis } from "../hooks/useInstagramExportAnalysis";
+
+const demoPreviewItems = [
+  "Your network health score",
+  "Who follows you back, and who doesn't",
+  "Recent unfollow activity and network volatility",
+  "Every list, with personas, search and sorting",
+];
 
 type InstagramExportUploadExperienceProps = {
   isDemo: boolean;
@@ -117,7 +124,7 @@ export function InstagramExportUploadExperience({
 
           <div
             data-page-animate="content"
-            className="border-line-subtle bg-surface-1 shadow-elev-1 flex min-w-0 flex-col gap-4 rounded-card border p-5 sm:p-6 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+            className="border-line-subtle bg-surface-1 shadow-elev-1 flex min-w-0 flex-col gap-4 rounded-card border p-5 sm:p-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-stretch"
           >
             <h2 className="text-fg text-base font-semibold">
               {isDemo ? "Try the demo" : "Current export"}
@@ -129,6 +136,32 @@ export function InstagramExportUploadExperience({
                   A sample Instagram export will be used automatically to show
                   how the analysis works.
                 </Callout>
+              </div>
+            )}
+
+            {isDemo && (
+              <div data-page-animate="item">
+                <p className="text-fg text-sm font-medium">
+                  What you&apos;ll see
+                </p>
+                <ul className="mt-3 flex flex-col gap-2.5">
+                  {demoPreviewItems.map((item) => (
+                    <li
+                      key={item}
+                      className="text-fg-muted flex items-start gap-2.5 text-sm leading-6"
+                    >
+                      <Icon
+                        name="check"
+                        color="current"
+                        width={16}
+                        height={16}
+                        className="text-success mt-1 shrink-0"
+                        aria-hidden="true"
+                      />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
 
@@ -234,11 +267,38 @@ export function InstagramExportUploadExperience({
                   </p>
                 )}
             </div>
+
+            {/* Closes the card at the bottom of the column, so on desktop it
+                ends on the same line as the details on the left. */}
+            <div
+              data-page-animate="item"
+              className="border-line-subtle mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t pt-4"
+            >
+              <span className="text-fg-muted text-[13px]">
+                {isDemo
+                  ? "Want to see your own data?"
+                  : "Don't have your export yet?"}
+              </span>
+              <Link
+                to={isDemo ? "/get-started" : "/instructions-to-start"}
+                state={isDemo ? { isDemo: false } : undefined}
+                className={buttonClasses({ variant: "ghost", size: "sm" })}
+              >
+                {isDemo ? "Upload your export" : "See how to get it"}
+                <Icon
+                  name="arrowRight"
+                  color="current"
+                  width={14}
+                  height={14}
+                  aria-hidden="true"
+                />
+              </Link>
+            </div>
           </div>
 
           <div
             data-page-animate="content"
-            className="flex min-w-0 flex-col gap-4 lg:col-start-1 lg:row-start-2"
+            className="flex min-w-0 flex-col gap-4 lg:col-start-1 lg:row-start-2 lg:self-stretch"
           >
             <div data-page-animate="item">
               <h2 className="text-fg text-base font-semibold">
@@ -266,7 +326,8 @@ export function InstagramExportUploadExperience({
               </ol>
             </div>
 
-            <div data-page-animate="item">
+            {/* Pinned to the bottom so both columns end on the same line. */}
+            <div data-page-animate="item" className="lg:mt-auto">
               <Callout title="Your data stays on this device" variant="info">
                 Your data is processed locally in your browser. No files are
                 uploaded, stored, or shared with external servers.
