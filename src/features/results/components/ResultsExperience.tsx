@@ -17,6 +17,7 @@ import Seo from "@/components/ui/Seo";
 import { SortSelect } from "@/components/ui/SortSelect";
 import { UserListItem } from "@/components/ui/UserListItem";
 import { HistorySavePrompt } from "@/features/history/components/HistorySavePrompt";
+import { RELATIONSHIP_GROUPS } from "@/features/relationship/constants/relationshipGroups";
 import { calculateNetworkVolatility } from "@/features/relationship/services/recentUnfollowActivityService";
 import { calculateRelationshipHealthScore } from "@/features/relationship/services/relationshipHealthService";
 import {
@@ -150,11 +151,12 @@ export function ResultsExperience({
   }, [sortedUsers, currentPage]);
 
   const chartData = useMemo(
-    () => [
-      { name: "Mutual", value: analysis.mutual.length },
-      { name: "Follower", value: analysis.followersOnly.length },
-      { name: "Following", value: analysis.unfollowers.length },
-    ],
+    () =>
+      RELATIONSHIP_GROUPS.map((group) => ({
+        name: group.label,
+        value: analysis[group.key].length,
+        color: group.color,
+      })),
     [analysis]
   );
 
