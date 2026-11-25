@@ -1,32 +1,29 @@
-export const animationTokens = {
+/**
+ * Followoo motion: the only durations and curves the UI uses. The same
+ * values live in `src/index.css` (`--motion-*`, `ease-motion-out/in`) for
+ * CSS transitions; keep both in sync.
+ *
+ * - fast: hover, color changes, button press
+ * - base: menus, tabs, toggles, checkboxes
+ * - slow: modals, bottom sheets, accordions
+ * - entrance: page blocks rising in, numbers counting up
+ *
+ * Things entering use `out` (fast start, soft stop); things leaving use
+ * `in` and take about 70% of the entrance time, so closing feels instant.
+ */
+export const motion = {
   duration: {
-    instant: 0.16,
-    fast: 0.24,
-    base: 0.32,
-    slow: 0.48,
-    slower: 0.64,
+    fast: 0.15,
+    base: 0.2,
+    slow: 0.3,
+    entrance: 0.5,
   },
   ease: {
-    standard: "power2.out",
-    entrance: "power3.out",
-    exit: "power2.in",
-    emphasized: "expo.out",
+    /** cubic-bezier(0.2, 0.8, 0.2, 1) */
+    out: "power3.out",
+    /** cubic-bezier(0.4, 0, 1, 1) */
+    in: "power2.in",
   },
-  distance: {
-    xs: 4,
-    sm: 8,
-    md: 16,
-    lg: 24,
-    xl: 40,
-  },
-  scale: {
-    hover: 1.015,
-    press: 0.985,
-    iconHover: 1.06,
-  },
-  stagger: {
-    tight: 0.04,
-    base: 0.08,
-    relaxed: 0.12,
-  },
+  /** Exit duration = entrance duration × this. */
+  exitRatio: 0.7,
 } as const;

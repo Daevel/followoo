@@ -46,7 +46,9 @@ export function buttonClasses({
   iconOnly?: boolean;
 }) {
   return clsx(
-    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-control border font-medium tracking-[-0.005em] transition-colors",
+    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-control border font-medium tracking-[-0.005em]",
+    // motion: color in 150ms, and a small press so a tap is felt
+    "ease-motion-out transition-[color,background-color,border-color,transform] duration-150 enabled:active:scale-[0.96]",
     "focus-visible:shadow-ring focus-visible:outline-none",
     "disabled:cursor-not-allowed disabled:opacity-45",
     variantClasses[variant],

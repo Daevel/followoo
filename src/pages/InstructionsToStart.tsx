@@ -10,6 +10,7 @@ import { NavBar } from "@/components/ui/NavBar";
 import { PageHeader } from "@/components/ui/PageHeader";
 import Seo from "@/components/ui/Seo";
 import { TabButton } from "@/components/ui/TabButton";
+import { TabIndicator } from "@/components/ui/TabIndicator";
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
 
 type DeviceType = "laptop" | "smartPhone";
@@ -717,6 +718,7 @@ function StepDots({ total, current }: { total: number; current: number }) {
 
 export function InstructionsToStart() {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const deviceTabsRef = useRef<HTMLDivElement | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedDevice, setSelectedDevice] = useState<DeviceType>("laptop");
 
@@ -792,12 +794,18 @@ export function InstructionsToStart() {
               compact
               actions={
                 <div
+                  ref={deviceTabsRef}
                   role="tablist"
                   aria-label="Your device"
-                  className="border-line-subtle bg-surface-1 grid grid-cols-2 gap-0.5 rounded-xl border p-[3px] md:inline-grid"
+                  className="border-line-subtle bg-surface-1 relative grid grid-cols-2 gap-0.5 rounded-xl border p-[3px] md:inline-grid"
                 >
+                  <TabIndicator
+                    containerRef={deviceTabsRef}
+                    activeKey={selectedDevice}
+                  />
                   <TabButton
                     active={selectedDevice === "laptop"}
+                    withIndicator
                     onClick={() => selectDevice("laptop")}
                   >
                     <Icon
@@ -811,6 +819,7 @@ export function InstructionsToStart() {
                   </TabButton>
                   <TabButton
                     active={selectedDevice === "smartPhone"}
+                    withIndicator
                     onClick={() => selectDevice("smartPhone")}
                   >
                     <Icon

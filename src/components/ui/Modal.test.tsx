@@ -38,22 +38,40 @@ describe("Modal", () => {
     expect(document.activeElement).toBe(screen.getByLabelText("Passphrase"));
   });
 
-  it("closes on Escape and from the close button", () => {
+  it("closes on Escape after its exit animation", () => {
+    vi.useFakeTimers();
     const { onClose } = renderModal({});
 
     fireEvent.keyDown(document, { key: "Escape" });
-    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    expect(onClose).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(250);
 
-    expect(onClose).toHaveBeenCalledTimes(2);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    vi.useRealTimers();
+  });
+
+  it("closes from the close button, once even if pressed twice", () => {
+    vi.useFakeTimers();
+    const { onClose } = renderModal({});
+
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    vi.advanceTimersByTime(250);
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+    vi.useRealTimers();
   });
 
   it("can't be closed while closeDisabled is set", () => {
     const { onClose } = renderModal({ closeDisabled: true });
 
+    vi.useFakeTimers();
     fireEvent.keyDown(document, { key: "Escape" });
     fireEvent.click(screen.getByRole("button", { name: "Close dialog" }));
+    vi.advanceTimersByTime(250);
 
     expect(onClose).not.toHaveBeenCalled();
+    vi.useRealTimers();
   });
 
   it("locks page scroll while open and restores it on close", () => {

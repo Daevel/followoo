@@ -79,6 +79,28 @@
     inset 0 1px 0 rgb(255 255 255 / 0.05), 0 8px 24px rgb(0 0 0 / 0.45);
   /* keyboard focus: gap in surface-0, then brand-fg (9.7:1 on surface-0) */
   --shadow-ring: 0 0 0 2px #0b0d17, 0 0 0 4px #a5b4fc;
+
+  /* Followoo motion (mirrored in src/animations/tokens.ts). Durations:
+     fast 150ms (hover, color, press), base 200ms (menus, tabs, toggles),
+     slow 300ms (modals, sheets, accordions), entrance 500ms (page blocks).
+     Use them as duration-150/200/300/500 with ease-motion-out to enter and
+     ease-motion-in to leave; exits take ~70% of the entrance. */
+  --ease-motion-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-motion-in: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* "Reduce motion": every CSS transition and animation lands on its final
+   state at once (GSAP is handled in src/animations/gsap.ts). Unlayered on
+   purpose: it beats every Tailwind utility without !important. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
+  }
 }
 
 /* BASE: element defaults live in @layer base so Tailwind utilities on an
