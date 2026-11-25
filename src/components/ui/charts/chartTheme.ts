@@ -1,25 +1,44 @@
-// Recharts takes colors as SVG props, where CSS variables are not reliable,
-// so these mirror the semantic tokens in src/index.css: keep them in sync.
+// Colors for SVG and chart props (Recharts, inline SVG). They point at the
+// theme's CSS variables, so charts follow light and dark like everything
+// else: browsers resolve var() in SVG presentation attributes and inline
+// styles. Code that has to interpolate a color itself (GSAP tweens) reads
+// the current value with `readThemeColor`.
 export const chartTheme = {
   // data-1…5: the data palette, in order
-  series: ["#818cf8", "#22d3ee", "#fbbf24", "#c084fc", "#6b7194"],
-  surface1: "#12152a",
-  brand: "#4f46e5", // brand: fills and glows drawn in SVG
-  barMuted: "#6b7194", // data-5: chart fills only
-  barHighlight: "#fb7185", // danger
-  grid: "rgba(255, 255, 255, 0.06)", // line-subtle
-  axis: "#6b7194", // fg-faint
-  cursor: "rgba(255, 255, 255, 0.04)",
+  series: [
+    "var(--color-data-1)",
+    "var(--color-data-2)",
+    "var(--color-data-3)",
+    "var(--color-data-4)",
+    "var(--color-data-5)",
+  ],
+  surface1: "var(--color-surface-1)",
+  brand: "var(--color-brand)", // fills and glows drawn in SVG
+  barMuted: "var(--color-data-5)", // chart fills only
+  barHighlight: "var(--color-danger)",
+  grid: "var(--color-line-subtle)",
+  axis: "var(--color-fg-faint)",
+  cursor: "var(--color-line-subtle)",
   tooltip: {
     contentStyle: {
-      backgroundColor: "#1a1e38", // surface-2
-      border: "1px solid rgba(255, 255, 255, 0.12)", // line-strong
+      backgroundColor: "var(--color-surface-2)",
+      border: "1px solid var(--color-line-strong)",
       borderRadius: "12px",
-      boxShadow: "0 8px 24px rgba(0, 0, 0, 0.45)", // elev-2
-      color: "#f5f6fb", // fg
+      boxShadow: "var(--shadow-elev-2)",
+      color: "var(--color-fg)",
       fontSize: "13px",
     },
-    labelStyle: { color: "#9aa0bd" }, // fg-muted
-    itemStyle: { color: "#f5f6fb" },
+    labelStyle: { color: "var(--color-fg-muted)" },
+    itemStyle: { color: "var(--color-fg)" },
   },
 } as const;
+
+/** The current value of a `var(--…)` color, for code that interpolates it. */
+export function readThemeColor(value: string) {
+  const name = /^var\((--[\w-]+)\)$/.exec(value)?.[1];
+  if (!name || typeof window === "undefined") return value;
+  return (
+    getComputedStyle(document.documentElement).getPropertyValue(name).trim() ||
+    value
+  );
+}

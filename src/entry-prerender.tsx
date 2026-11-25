@@ -4,6 +4,7 @@ import { HelmetProvider, type HelmetServerState } from "react-helmet-async";
 import { MemoryRouter } from "react-router";
 import { AppRoutesPrerender } from "./AppRoutesPrerender";
 import { SyncKeyProvider } from "./providers/SyncKeyProvider";
+import { ThemeProvider } from "./providers/ThemeProvider";
 import { ToastProvider } from "./providers/ToastProvider";
 
 HelmetProvider.canUseDOM = false;
@@ -23,11 +24,13 @@ export function render(route: string) {
         publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
       >
         <MemoryRouter initialEntries={[route]}>
-          <ToastProvider>
-            <SyncKeyProvider>
-              <AppRoutesPrerender />
-            </SyncKeyProvider>
-          </ToastProvider>
+          <ThemeProvider>
+            <ToastProvider>
+              <SyncKeyProvider>
+                <AppRoutesPrerender />
+              </SyncKeyProvider>
+            </ToastProvider>
+          </ThemeProvider>
         </MemoryRouter>
       </ClerkProvider>
     </HelmetProvider>

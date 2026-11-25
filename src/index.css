@@ -40,45 +40,50 @@
   /* contrast ratios are measured on surface-1 unless noted */
 
   /* surfaces: hierarchy comes from surfaces and lines, not from color */
-  --color-surface-0: #0b0d17; /* page */
-  --color-surface-1: #12152a; /* cards, inputs, hovered rows */
-  --color-surface-2: #1a1e38; /* menus, toasts, selected tab */
+  --color-surface-0: var(--theme-surface-0); /* page */
+  --color-surface-1: var(--theme-surface-1); /* cards, inputs, hovered rows */
+  --color-surface-2: var(--theme-surface-2); /* menus, toasts, selected tab */
 
-  --color-line-subtle: rgb(255 255 255 / 0.06); /* card borders, dividers */
-  --color-line-strong: rgb(255 255 255 / 0.12); /* control and field borders */
+  --color-line-subtle: var(--theme-line-subtle); /* card borders, dividers */
+  --color-line-strong: var(--theme-line-strong); /* control and field borders */
 
-  --color-fg: #f5f6fb; /* primary text, 15.1:1 on surface-2 */
-  --color-fg-muted: #9aa0bd; /* secondary text, 7.0:1 */
-  --color-fg-faint: #6b7194; /* placeholders, axes, non-essential meta only (3.8:1) */
+  --color-fg: var(--theme-fg); /* primary text, 15.1:1 on surface-2 */
+  --color-fg-muted: var(--theme-fg-muted); /* secondary text, 7.0:1 */
+  --color-fg-faint: var(
+    --theme-fg-faint
+  ); /* placeholders, axes, non-essential meta only (3.8:1) */
 
-  --color-brand: #4f46e5; /* primary action fills, white on it 6.3:1 */
-  --color-brand-hover: #5b54ef; /* white on it 5.3:1 */
-  --color-brand-fg: #a5b4fc; /* indigo as text, links, focus ring, 9.0:1 */
-  --color-on-brand: #ffffff;
+  --color-brand: var(
+    --theme-brand
+  ); /* primary action fills, white on it 6.3:1 */
+  --color-brand-hover: var(--theme-brand-hover); /* white on it 5.3:1 */
+  --color-brand-fg: var(
+    --theme-brand-fg
+  ); /* indigo as text, links, focus ring, 9.0:1 */
+  --color-on-brand: var(--theme-on-brand);
 
   /* status: color is reserved for meaning, always paired with icon or word */
-  --color-success: #34d399; /* 9.4:1 */
-  --color-warning: #fbbf24; /* 10.8:1 */
-  --color-danger: #fb7185; /* 6.7:1 */
-  --color-danger-fill: #e11d48; /* destructive fills, white on it 4.7:1 */
+  --color-success: var(--theme-success); /* 9.4:1 */
+  --color-warning: var(--theme-warning); /* 10.8:1 */
+  --color-danger: var(--theme-danger); /* 6.7:1 */
+  --color-danger-fill: var(
+    --theme-danger-fill
+  ); /* destructive fills, white on it 4.7:1 */
 
   /* data: relationship groups and charts, same group = same color everywhere */
-  --color-data-1: #818cf8; /* 6.0:1 */
-  --color-data-2: #22d3ee; /* 10.0:1 */
-  --color-data-3: #fbbf24; /* 10.8:1 */
-  --color-data-4: #c084fc; /* 6.8:1 */
-  --color-data-5: #6b7194; /* chart fills only, not text */
+  --color-data-1: var(--theme-data-1); /* 6.0:1 */
+  --color-data-2: var(--theme-data-2); /* 10.0:1 */
+  --color-data-3: var(--theme-data-3); /* 10.8:1 */
+  --color-data-4: var(--theme-data-4); /* 6.8:1 */
+  --color-data-5: var(--theme-data-5); /* chart fills only, not text */
 
   --radius-control: 10px; /* buttons, inputs, menus */
   --radius-card: 14px; /* cards, panels */
 
-  /* quiet elevation: inner highlight + black shadow, no colored glow */
-  --shadow-elev-1:
-    inset 0 1px 0 rgb(255 255 255 / 0.04), 0 1px 2px rgb(0 0 0 / 0.4);
-  --shadow-elev-2:
-    inset 0 1px 0 rgb(255 255 255 / 0.05), 0 8px 24px rgb(0 0 0 / 0.45);
-  /* keyboard focus: gap in surface-0, then brand-fg (9.7:1 on surface-0) */
-  --shadow-ring: 0 0 0 2px #0b0d17, 0 0 0 4px #a5b4fc;
+  /* quiet elevation and keyboard focus ring, per theme (see below) */
+  --shadow-elev-1: var(--theme-shadow-elev-1);
+  --shadow-elev-2: var(--theme-shadow-elev-2);
+  --shadow-ring: var(--theme-shadow-ring);
 
   /* Followoo motion (mirrored in src/animations/tokens.ts). Durations:
      fast 150ms (hover, color, press), base 200ms (menus, tabs, toggles),
@@ -87,6 +92,72 @@
      ease-motion-in to leave; exits take ~70% of the entrance. */
   --ease-motion-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-motion-in: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* THEMES: the values behind the color tokens. Dark is the default; the
+   `data-theme` attribute on <html> is set before first paint by the script
+   in index.html and kept in sync by ThemeProvider ("system" follows the
+   OS). Light is a warm paper palette; status and data colors are darker
+   there so they stay readable on white. Contrast notes are for dark. */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --theme-surface-0: #0b0d17;
+  --theme-surface-1: #12152a;
+  --theme-surface-2: #1a1e38;
+  --theme-line-subtle: rgb(255 255 255 / 0.06);
+  --theme-line-strong: rgb(255 255 255 / 0.12);
+  --theme-fg: #f5f6fb;
+  --theme-fg-muted: #9aa0bd;
+  --theme-fg-faint: #6b7194;
+  --theme-brand: #4f46e5;
+  --theme-brand-hover: #5b54ef;
+  --theme-brand-fg: #a5b4fc;
+  --theme-on-brand: #ffffff;
+  --theme-success: #34d399;
+  --theme-warning: #fbbf24;
+  --theme-danger: #fb7185;
+  --theme-danger-fill: #e11d48;
+  --theme-data-1: #818cf8;
+  --theme-data-2: #22d3ee;
+  --theme-data-3: #fbbf24;
+  --theme-data-4: #c084fc;
+  --theme-data-5: #6b7194;
+  --theme-shadow-elev-1:
+    inset 0 1px 0 rgb(255 255 255 / 0.04), 0 1px 2px rgb(0 0 0 / 0.4);
+  --theme-shadow-elev-2:
+    inset 0 1px 0 rgb(255 255 255 / 0.05), 0 8px 24px rgb(0 0 0 / 0.45);
+  /* gap in surface-0, then brand-fg */
+  --theme-shadow-ring: 0 0 0 2px #0b0d17, 0 0 0 4px #a5b4fc;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --theme-surface-0: #f6f4ef;
+  --theme-surface-1: #fffdf8;
+  --theme-surface-2: #eeeae1;
+  --theme-line-subtle: rgb(40 32 20 / 0.08);
+  --theme-line-strong: rgb(40 32 20 / 0.15);
+  --theme-fg: #1c1a16;
+  --theme-fg-muted: #625d52;
+  --theme-fg-faint: #8c8679;
+  --theme-brand: #4f46e5;
+  --theme-brand-hover: #4338ca;
+  --theme-brand-fg: #4338ca;
+  --theme-on-brand: #ffffff;
+  --theme-success: #047857;
+  --theme-warning: #b45309;
+  --theme-danger: #be123c;
+  --theme-danger-fill: #e11d48;
+  --theme-data-1: #6366f1;
+  --theme-data-2: #0891b2;
+  --theme-data-3: #d97706;
+  --theme-data-4: #9333ea;
+  --theme-data-5: #b3ad9f;
+  --theme-shadow-elev-1:
+    0 1px 2px rgb(40 32 20 / 0.07), 0 1px 1px rgb(40 32 20 / 0.04);
+  --theme-shadow-elev-2: 0 8px 24px rgb(40 32 20 / 0.12);
+  --theme-shadow-ring: 0 0 0 2px #f6f4ef, 0 0 0 4px #4f46e5;
 }
 
 /* "Reduce motion": every CSS transition and animation lands on its final

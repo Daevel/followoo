@@ -1,8 +1,27 @@
 import { ClerkProvider } from "@clerk/react";
 import type { Preview } from "@storybook/react-vite";
-import type { ComponentProps } from "react";
+import { type ComponentProps, type ReactNode, useEffect } from "react";
 import { MemoryRouter } from "react-router";
 import "../src/index.css";
+import {
+  type ThemePreference,
+  ThemeProvider,
+  useTheme,
+} from "../src/providers/ThemeProvider";
+
+// Follows the "Theme" toolbar control, so every story can be checked in
+// light and dark.
+function ThemeFromToolbar({
+  theme,
+  children,
+}: {
+  theme: ThemePreference;
+  children: ReactNode;
+}) {
+  const { setPreference } = useTheme();
+  useEffect(() => setPreference(theme), [theme, setPreference]);
+  return children;
+}
 
 // Clerk-aware components (NavBar's <Show>/<SignInButton>/<UserButton>,
 // useAuth) throw without a <ClerkProvider> ancestor, so every story gets
@@ -27,19 +46,38 @@ const clerkPublishableKey =
 
 const preview: Preview = {
   decorators: [
-    (Story) => (
-      <ClerkProvider
-        publishableKey={clerkPublishableKey}
-        {...offlineClerkProps}
-      >
-        <MemoryRouter>
-          <div className="min-h-screen bg-surface-0 text-fg p-6">
-            <Story />
-          </div>
-        </MemoryRouter>
-      </ClerkProvider>
+    (Story, context) => (
+      <ThemeProvider>
+        <ThemeFromToolbar theme={context.globals.theme as ThemePreference}>
+          <ClerkProvider
+            publishableKey={clerkPublishableKey}
+            {...offlineClerkProps}
+          >
+            <MemoryRouter>
+              <div className="min-h-screen bg-surface-0 text-fg p-6">
+                <Story />
+              </div>
+            </MemoryRouter>
+          </ClerkProvider>
+        </ThemeFromToolbar>
+      </ThemeProvider>
     ),
   ],
+  globalTypes: {
+    theme: {
+      description: "Tema dei componenti",
+      toolbar: {
+        title: "Tema",
+        icon: "mirror",
+        items: [
+          { value: "dark", title: "Scuro" },
+          { value: "light", title: "Chiaro" },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
+  initialGlobals: { theme: "dark" },
   parameters: {
     controls: {
       matchers: {
