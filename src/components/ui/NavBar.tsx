@@ -6,6 +6,7 @@ import { useFeatureFlag } from "@/analytics";
 import { SYNC_FEATURE_FLAG_KEY } from "@/features/sync/constants";
 import { Button } from "./Button";
 import { FabIcon } from "./FabIcon";
+import { ThemeMenu, ThemeSwitch } from "./ThemeMenu";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -135,6 +136,7 @@ export function NavBar({ sticky = false }: NavBarProps) {
           >
             Updates
           </Link>
+          <ThemeMenu />
           <NavAuthEntry />
         </div>
 
@@ -182,6 +184,9 @@ export function NavBar({ sticky = false }: NavBarProps) {
                 {link.label}
               </Link>
             ))}
+            <div className="border-line-subtle mt-1.5 border-t pt-2.5 pb-1">
+              <ThemeSwitch />
+            </div>
             <div className="border-line-subtle mt-1.5 border-t px-1 pt-2.5 pb-1">
               <NavAuthEntry />
             </div>

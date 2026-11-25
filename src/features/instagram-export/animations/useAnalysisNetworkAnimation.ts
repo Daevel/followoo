@@ -1,5 +1,6 @@
 import { type RefObject, useRef } from "react";
 import { gsap, useGSAP } from "@/animations/gsap";
+import { readThemeColor } from "@/components/ui/charts/chartTheme";
 import {
   RELATIONSHIP_GROUPS,
   type RelationshipGroupCounts,
@@ -16,9 +17,12 @@ type UseAnalysisNetworkAnimationOptions = {
   reduceMotion: boolean;
 };
 
-const GROUP_COLORS = Object.fromEntries(
-  RELATIONSHIP_GROUPS.map((group) => [group.key, group.color])
-);
+// GSAP interpolates the fill, so it needs the theme's actual color values,
+// read when the dots settle.
+const groupColors = () =>
+  Object.fromEntries(
+    RELATIONSHIP_GROUPS.map((group) => [group.key, readThemeColor(group.color)])
+  );
 
 // Timeline of the analysis loading network: the constellation draws itself,
 // turns slowly (wide screens), then each dot glides to its group's orbit and
@@ -149,6 +153,7 @@ export function useAnalysisNetworkAnimation({
         allocateDots(counts, dots.length)
       );
       const instant = reduceMotion;
+      const colors = groupColors();
 
       gsap.to(lines, { opacity: 0, duration: instant ? 0 : 0.35 });
       gsap.to("[data-network-orbit]", {
@@ -166,7 +171,7 @@ export function useAnalysisNetworkAnimation({
 
         gsap.to(dot, {
           attr: { cx: assignment.target.x, cy: assignment.target.y },
-          fill: GROUP_COLORS[assignment.group],
+          fill: colors[assignment.group],
           duration: instant ? 0 : 0.62,
           ease: "power2.inOut",
           delay: instant ? 0 : (order / assignments.length) * 0.26,

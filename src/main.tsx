@@ -9,6 +9,7 @@ import { initializeSentry } from "./errors/sentryInit";
 import "./index.css";
 
 import { SyncKeyProvider } from "./providers/SyncKeyProvider.tsx";
+import { ThemeProvider } from "./providers/ThemeProvider.tsx";
 import { ToastProvider } from "./providers/ToastProvider.tsx";
 
 const rootElement = document.getElementById("root");
@@ -30,16 +31,18 @@ if (!clerkPublishableKey) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <ClerkProvider publishableKey={clerkPublishableKey}>
-      <HelmetProvider>
-        <BrowserRouter>
-          <ToastProvider>
-            <SyncKeyProvider>
-              <AppRoutes />
-            </SyncKeyProvider>
-          </ToastProvider>
-        </BrowserRouter>
-      </HelmetProvider>
-    </ClerkProvider>
+    <ThemeProvider>
+      <ClerkProvider publishableKey={clerkPublishableKey}>
+        <HelmetProvider>
+          <BrowserRouter>
+            <ToastProvider>
+              <SyncKeyProvider>
+                <AppRoutes />
+              </SyncKeyProvider>
+            </ToastProvider>
+          </BrowserRouter>
+        </HelmetProvider>
+      </ClerkProvider>
+    </ThemeProvider>
   </StrictMode>
 );

@@ -17,6 +17,8 @@ import Laptop from "../../icons/laptop.svg?react";
 import LinkOff from "../../icons/link-off.svg?react";
 import Locker from "../../icons/lock.svg?react";
 import Menu from "../../icons/menu.svg?react";
+import Monitor from "../../icons/monitor.svg?react";
+import Moon from "../../icons/moon.svg?react";
 import NeutralFace from "../../icons/neutral-face.svg?react";
 import UserCheck from "../../icons/person-check.svg?react";
 import Help from "../../icons/question-mark.svg?react";
@@ -28,6 +30,7 @@ import SingleArrowLeft from "../../icons/single-arrow-left.svg?react";
 import SingleArrowRight from "../../icons/single-arrow-right.svg?react";
 import SingleArrowUp from "../../icons/single-arrow-up.svg?react";
 import Smartphone from "../../icons/smarthphone.svg?react";
+import Sun from "../../icons/sun.svg?react";
 import Upload from "../../icons/upload.svg?react";
 import Warning from "../../icons/warning.svg?react";
 
@@ -62,6 +65,9 @@ const icons = {
   neutralFace: NeutralFace,
   sadFace: SadFace,
   smartPhone: Smartphone,
+  sun: Sun,
+  moon: Moon,
+  monitor: Monitor,
 } as const;
 
 export type IconName = keyof typeof icons;
