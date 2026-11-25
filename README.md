@@ -38,6 +38,9 @@ How many of the people you follow follow you back.
 • **You unfollowed**  
 Accounts you recently stopped following, as listed by Instagram.
 
+• **Light and dark theme**  
+Follows your system by default, or pick Light or Dark from the navbar.
+
 • **Blocked users**  
 List the users you have blocked.
 
@@ -268,8 +271,7 @@ Planned enhancements include:
 • Export results to CSV  
 • Visual graphs of relationships  
 • Dataset comparison between exports  
-• Improved analytics  
-• Dark / light theme switch
+• Improved analytics
 
 ---
 
