@@ -1,5 +1,11 @@
 import clsx from "clsx";
-import { type ReactNode, useEffect, useRef } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "./Icon";
 
@@ -13,6 +19,19 @@ type ModalProps = {
   className?: string;
 };
 
+/** Exit time: ~70% of the entrance (300ms sheet / 200ms dialog). */
+const EXIT_MS = 210;
+
+type Phase = "enter" | "open" | "exit";
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -21,6 +40,10 @@ const FOCUSABLE =
 // its `position: fixed` and push it off screen. Centered from `sm`, a
 // bottom sheet on phones. Esc and the scrim close it; focus stays inside
 // while it is open and returns to the trigger afterwards.
+//
+// Motion: the scrim fades in; the dialog grows from 96% while rising 6px
+// (200ms), the phone sheet slides up (300ms). Closing from inside (Esc,
+// scrim, close button) plays the exit first, then calls onClose.
 export function Modal({
   children,
   onClose,
@@ -29,10 +52,38 @@ export function Modal({
   className,
 }: ModalProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const [phase, setPhase] = useState<Phase>("enter");
+  const isClosingRef = useRef(false);
   const onCloseRef = useRef(onClose);
   const closeDisabledRef = useRef(closeDisabled);
   onCloseRef.current = onClose;
   closeDisabledRef.current = closeDisabled;
+
+  const requestClose = useCallback(() => {
+    if (closeDisabledRef.current || isClosingRef.current) return;
+    isClosingRef.current = true;
+
+    if (prefersReducedMotion()) {
+      onCloseRef.current();
+      return;
+    }
+    setPhase("exit");
+    window.setTimeout(() => onCloseRef.current(), EXIT_MS);
+  }, []);
+  const requestCloseRef = useRef(requestClose);
+  requestCloseRef.current = requestClose;
+
+  // Two frames, so the closed state is painted before moving to open.
+  useEffect(() => {
+    let second = 0;
+    const first = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => setPhase("open"));
+    });
+    return () => {
+      cancelAnimationFrame(first);
+      cancelAnimationFrame(second);
+    };
+  }, []);
 
   useEffect(() => {
     const panel = panelRef.current;
@@ -49,7 +100,7 @@ export function Modal({
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        if (!closeDisabledRef.current) onCloseRef.current();
+        requestCloseRef.current();
         return;
       }
 
@@ -87,10 +138,14 @@ export function Modal({
         type="button"
         tabIndex={-1}
         aria-label="Close dialog"
-        onClick={() => {
-          if (!closeDisabled) onClose();
-        }}
-        className="absolute inset-0 cursor-default bg-black/60 backdrop-blur-[2px]"
+        onClick={requestClose}
+        className={clsx(
+          "absolute inset-0 cursor-default bg-black/60 backdrop-blur-[2px] transition-opacity",
+          phase === "exit"
+            ? "ease-motion-in duration-150"
+            : "ease-motion-out duration-200",
+          phase === "open" ? "opacity-100" : "opacity-0"
+        )}
       />
 
       <div
@@ -102,6 +157,13 @@ export function Modal({
         className={clsx(
           "border-line-strong bg-surface-1 shadow-elev-2 relative max-h-[90svh] w-full overflow-y-auto border-t p-6 pb-[max(24px,env(safe-area-inset-bottom))] text-start outline-none",
           "rounded-t-[22px] sm:max-w-md sm:rounded-card sm:border sm:pb-6",
+          "transition-[opacity,transform]",
+          phase === "exit"
+            ? "ease-motion-in duration-200 sm:duration-150"
+            : "ease-motion-out duration-300 sm:duration-200",
+          phase === "open"
+            ? "translate-y-0 sm:scale-100 sm:opacity-100"
+            : "translate-y-full sm:translate-y-1.5 sm:scale-[0.96] sm:opacity-0",
           className
         )}
       >
@@ -112,7 +174,7 @@ export function Modal({
 
         <button
           type="button"
-          onClick={onClose}
+          onClick={requestClose}
           disabled={closeDisabled}
           aria-label="Close"
           className="text-fg-muted hover:text-fg focus-visible:shadow-ring absolute top-4 right-4 rounded-control outline-none disabled:cursor-not-allowed disabled:opacity-40"

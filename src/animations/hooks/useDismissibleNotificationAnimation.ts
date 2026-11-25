@@ -1,5 +1,6 @@
 import { type RefObject, useCallback, useRef } from "react";
 import { gsap, useGSAP } from "../gsap";
+import { motion } from "../tokens";
 
 export function useDismissibleNotificationAnimation(
   rootRef: RefObject<HTMLElement | null>
@@ -25,8 +26,8 @@ export function useDismissibleNotificationAnimation(
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.35,
-          ease: "power3.out",
+          duration: motion.duration.slow,
+          ease: motion.ease.out,
         }
       );
     },
@@ -48,8 +49,8 @@ export function useDismissibleNotificationAnimation(
         opacity: 0,
         y: exitToY,
         scale: 0.98,
-        duration: 0.22,
-        ease: "power2.in",
+        duration: motion.duration.slow * motion.exitRatio,
+        ease: motion.ease.in,
         onComplete,
       });
     },

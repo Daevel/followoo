@@ -25,8 +25,8 @@ export function DropdownCard({ title, description }: DropdownCardProps) {
           <div
             className={
               isOpen
-                ? "rotate-180 transition-transform duration-300 ease-out"
-                : "transition-transform duration-300 ease-out"
+                ? "rotate-180 transition-transform duration-300 ease-motion-out"
+                : "transition-transform duration-300 ease-motion-out"
             }
           >
             <Icon
@@ -41,7 +41,7 @@ export function DropdownCard({ title, description }: DropdownCardProps) {
       </button>
 
       <div
-        className={`grid overflow-hidden transition-all duration-300 ease-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"} `}
+        className={`grid overflow-hidden transition-all duration-300 ease-motion-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"} `}
       >
         <div className="min-h-0 text-start">
           <p className="text-fg-muted px-5 pb-4 text-sm leading-relaxed">

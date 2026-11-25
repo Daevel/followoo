@@ -1,7 +1,9 @@
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
+import { useDropdownMenuAnimation } from "@/animations/hooks/useDropdownMenuAnimation";
 import { Icon } from "@/components/ui/Icon";
 import { TabButton } from "@/components/ui/TabButton";
+import { TabIndicator } from "@/components/ui/TabIndicator";
 import {
   getRelationshipGroupLabel,
   RELATIONSHIP_GROUPS,
@@ -46,7 +48,11 @@ export function ResultsListSwitcher({
 }: ResultsListSwitcherProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRootRef = useRef<HTMLDivElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const tablistRef = useRef<HTMLDivElement | null>(null);
   const activeMoreList = MORE_LISTS.find((list) => list.key === activeTab);
+
+  useDropdownMenuAnimation(menuRef, isMenuOpen, "top right");
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -81,10 +87,12 @@ export function ResultsListSwitcher({
     // and "More lists" goes full width below. From `md` they sit in a row.
     <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-start">
       <div
+        ref={tablistRef}
         role="tablist"
         aria-label="Relationship lists"
-        className="border-line-subtle bg-surface-1 grid grid-cols-3 gap-0.5 rounded-xl border p-[3px] md:inline-flex md:whitespace-nowrap"
+        className="border-line-subtle bg-surface-1 relative grid grid-cols-3 gap-0.5 rounded-xl border p-[3px] md:inline-flex md:whitespace-nowrap"
       >
+        <TabIndicator containerRef={tablistRef} activeKey={activeTab} />
         {PRIMARY_LISTS.map((list) => {
           const isActive = activeTab === list.key;
 
@@ -92,6 +100,7 @@ export function ResultsListSwitcher({
             <TabButton
               key={list.key}
               active={isActive}
+              withIndicator
               onClick={() => select(list.key)}
               className="h-full flex-col gap-1 px-1.5 py-2 md:flex-row md:gap-1.5 md:px-3 md:py-1.5"
             >
@@ -166,6 +175,7 @@ export function ResultsListSwitcher({
 
         {isMenuOpen && (
           <div
+            ref={menuRef}
             role="menu"
             aria-label="More lists"
             className="border-line-strong bg-surface-2 shadow-elev-2 absolute top-full right-0 left-0 z-30 mt-1.5 flex flex-col rounded-[12px] border p-1 md:left-auto md:w-56"
