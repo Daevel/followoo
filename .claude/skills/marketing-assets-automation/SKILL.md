@@ -41,5 +41,5 @@ Repository prerequisites (Settings, not code):
 
 - Do not regenerate or hand-edit these images as part of a UI change. Push the UI change to `preview`; the workflow proposes updated assets as a reviewable PR.
 - Run `npm run build && npm run generate:assets` locally only to debug the generator or the OG template, and restore the generated files afterwards (`git checkout -- docs/images public/icons/OG.png public/screenshots`) unless the user explicitly asks to commit them.
-- If a UI change breaks a selector the script relies on ("Try demo", "Start analysis", the "Your Instagram network analysis" heading, `#search-users`), update the script in the same change.
+- If a UI change breaks a selector the script relies on ("Try demo", "Start analysis", the "Your results" heading, `#search-users`), update the script in the same change.
 - Local runs need `npx playwright install chromium`; `demo.gif` also needs `ffmpeg` on PATH (skipped with a warning otherwise).

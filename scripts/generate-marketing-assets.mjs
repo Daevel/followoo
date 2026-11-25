@@ -38,7 +38,7 @@ const pwaScreenshotsDir = path.join(rootDir, "public", "screenshots");
 const port = Number(process.env.MARKETING_ASSETS_PORT ?? 4319);
 const baseUrl = `http://127.0.0.1:${port}`;
 
-const RESULTS_HEADING = "Your Instagram network analysis";
+const RESULTS_HEADING = "Your results";
 
 // Every app context: dark UI, fixed locale/timezone, and no service worker,
 // so the PWA "ready offline" toast never lands in a screenshot.
@@ -268,12 +268,18 @@ async function captureDemoGif(browser) {
 }
 
 // Pulls every --color-*/--radius-* token from src/index.css so the OG image
-// always follows the real design tokens.
+// always follows the real design tokens. The color tokens point at --theme-*
+// variables, so the dark theme's values come along too: the OG image, like
+// every other capture, is dark.
 async function readDesignTokens() {
   const css = await readFile(path.join(rootDir, "src", "index.css"), "utf8");
   const tokens = css.match(/--(?:color|radius)-[\w-]+:\s*[^;]+;/g) ?? [];
   if (tokens.length === 0) throw new Error("No design tokens in src/index.css");
-  return tokens.join("\n        ");
+  const darkBlock = css.match(/:root\[data-theme="dark"\]\s*\{([^}]*)\}/);
+  const theme = darkBlock?.[1].match(/--theme-[\w-]+:\s*[^;]+;/g) ?? [];
+  if (theme.length === 0)
+    throw new Error("No dark theme values in src/index.css");
+  return [...theme, ...tokens].join("\n        ");
 }
 
 async function captureOgImage(browser, resultsPng) {
