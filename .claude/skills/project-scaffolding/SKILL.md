@@ -184,7 +184,7 @@ Likely Followoo feature boundaries:
 ```txt
 features/instagram-export  -> ZIP parsing, export file recognition, parser orchestration
 features/results           -> relationship result UI, tabs, filters, sorting, pagination
-features/relationship      -> relationship analysis, health, persona, engagement insights
+features/relationship      -> relationship analysis, follow-back rate, relationship facts
 features/landing           -> homepage sections and landing-only behavior
 features/upload            -> upload flow UI and hooks when it grows beyond a thin page
 features/instructions      -> instruction page sections and instruction-step data
@@ -209,7 +209,7 @@ UI component rules:
 - Components in `components/ui` must be reusable and mostly presentational.
 - They may know visual design language, accessibility behavior, and interaction patterns.
 - They should not own Instagram export parsing or relationship analysis logic.
-- They should not encode product-specific concepts such as relationship health, user personas, Instagram network tabs, or landing-page content unless deliberately treated as reusable app-level UI.
+- They should not encode product-specific concepts such as the follow-back rate, relationship facts, Instagram network tabs, or landing-page content unless deliberately treated as reusable app-level UI.
 - If a component is only meaningful for one feature, keep it inside that feature.
 - Keep Storybook stories close to existing project convention in `src/stories` unless a Storybook refactor is explicitly requested.
 
@@ -233,12 +233,11 @@ Feature-specific examples that should not be added directly to `components/ui` u
 InstagramExportAnalyzer
 ResultsDashboard
 RelationshipTabsController
-RelationshipHealthInsight
-PersonaFilter
+ResultsHero
+NetworkComposition
+ImproveActions
 UserListItem
-ResultPieChart
 EngagementPatternChart
-FollowBackRateCard
 HeroSection
 FeatureSection
 PrivacySection
@@ -307,7 +306,7 @@ Rules:
 - Normalize usernames before comparison.
 - Deduplicate by normalized username.
 - Keep the semantics of mutual, followers-only, unfollowers (= don't follow you back), recent unfollowers (= accounts the user unfollowed), blocked, restricted, close friends, and hidden stories stable. Analysis field names are legacy but stay: encrypted history snapshots store them.
-- Keep follow-back rate, persona, engagement, and follower snapshot diff logic under `src/features/relationship/services` unless it becomes clearly owned by a narrower results feature.
+- Keep follow-back rate, relationship facts, and follower snapshot diff logic under `src/features/relationship/services` unless it becomes clearly owned by a narrower results feature.
 - Keep sorting/filtering/pagination separate from core relationship computation.
 - Avoid coupling analysis services to React components.
 
@@ -428,10 +427,11 @@ Rules:
 - Never build Tailwind class names at runtime (`bg-${color}`): map props to full, static class strings so Tailwind can see them.
 - Actions: `Button` takes a role, never colors: `variant` (`primary` | `secondary` | `ghost` | `danger`), `size` (`sm` | `md` | `lg`), `loading`. Keep a single `primary` per view. Icon-only actions use `FabIcon`, which requires an `aria-label` and shares Button's variants via `buttonClasses`. Every interactive control shows `focus-visible:shadow-ring`.
 - Messages: `Callout` and `Toast` share `feedbackVariants` (`info` | `success` | `warning` | `danger`); surfaces stay neutral and the variant lives in the icon. Only an inline `Callout variant="danger"` is tinted, for errors that block the user, placed next to their cause. Toasts (`toastService.info/success/warning/danger`) are always neutral and only for transient outcomes; a blocking error is never only a toast.
-- Form fields: wrap every `Input` in `Field` (`label`, `htmlFor`, optional `hint`/`error`/`meta`); it renders the label, wires `aria-describedby`/`aria-invalid` and shows errors with an icon. Don't hand-write `<label>` + red `<p>` pairs. Persona colors come from `personaStyles` (data palette), shared by every persona UI.
-- Small labels (versions, statuses, personas) use `Badge` (`tone`: `neutral` | `brand` | `success` | `warning` | `danger`, optional `dotClass`/`icon`); `PersonaBadge` and `BadgeVersion` are thin wrappers over it. `Separator` is one hairline with no margin: spacing comes from the parent.
+- Form fields: wrap every `Input` in `Field` (`label`, `htmlFor`, optional `hint`/`error`/`meta`); it renders the label, wires `aria-describedby`/`aria-invalid` and shows errors with an icon. Don't hand-write `<label>` + red `<p>` pairs.
+- Small labels (versions, statuses, relationship facts) use `Badge` (`tone`: `neutral` | `brand` | `success` | `warning` | `danger`, optional `dotClass`/`icon`); `BadgeVersion` is a thin wrapper over it. `Separator` is one hairline with no margin: spacing comes from the parent.
 - Charts: wrap them in `ChartCard` (and `ChartStats` for stat blocks) from `src/components/ui/charts/ChartCard.tsx`; take Recharts colors only from `chartTheme.ts`, which mirrors the semantic tokens (SVG props can't rely on CSS variables) and must be updated with `src/index.css`. Series use the data palette in order; highlight only the data point that matters.
-- Relationship groups: the labels and colors of Mutual, Follower and Following (data-1/2/3) come only from `RELATIONSHIP_GROUPS` in `src/features/relationship/constants/relationshipGroups.ts`, shared by the results tabs, the "Relationship breakdown" pie (each slice carries its group color) and the analysis loading screen. Never write these labels or colors by hand in a screen.
+- Relationship groups: the labels and colors of Mutual, Don't follow you back and You don't follow back (data-1/3/2, in that reading order) come only from `RELATIONSHIP_GROUPS` in `src/features/relationship/constants/relationshipGroups.ts`, shared by the results tabs, the "Your network" bars and the analysis loading screen. Never write these labels or colors by hand in a screen.
+- Results page (`src/features/results`): reading order is answer → composition → how to improve → lists. `ResultsHero` tints its glow and ring by follow-back level (success ≥ 70%, warning ≥ 40%, danger below), always with the level written in a badge. Per-list copy (`description`, `action` "What you can do", `dateLabel` for the row dates) lives in `resultTabContent.ts`; the open list is mirrored in the URL hash (`resultListLinks.ts`). Rows show facts from other lists (`relationshipFactsService`), never personas or guesses about behavior. Numbers count up, the ring and bars fill (`useResultsPageAnimation`, `data-count`/`data-ring`/`data-bar`); the DOM holds the final values, so reduced motion shows them at once.
 - CSS layers in `src/index.css`: element defaults (`html`, `body`, `h1`–`h5`) are in `@layer base` and the text styles (`p1-r`, `l2-b`, …) in `@layer components`, so Tailwind utilities always refine them — never use the important modifier (`!`) to beat them. 
 - Page width: `Container size="prose"` (768px, default) for single-column reading, `size="app"` (1120px) for dashboards, charts and pages with a side column (support, legal, updates), whose text column stays at about 680px. Content pages open with `PageHeader` (`kicker`, `title`, optional `description`/`meta`/`actions`, `flush`, `compact` for task pages that must fit one screen, `wide` when the content below is full width), which carries the `data-page-animate` hooks; legal pages render through `LegalDocument` with sections as data, so the legal text stays verbatim. Toasts mount with `ScreenMount position="toast"`: bottom and full width on phones (clear of the header), top-right from `sm`.
 - Dialogs use `Modal` (`src/components/ui/Modal.tsx`): it renders through a portal on `document.body`, so a sticky header with `backdrop-filter` or a GSAP transform can't become the containing block of its `position: fixed` and push it off screen. Centered from `sm`, bottom sheet on phones; Esc/scrim close it (unless `closeDisabled`), focus is trapped and restored. Never hand-roll `fixed inset-0` overlays inside other components.
