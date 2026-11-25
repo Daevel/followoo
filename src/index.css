@@ -160,6 +160,30 @@
   --theme-shadow-ring: 0 0 0 2px #f6f4ef, 0 0 0 4px #4f46e5;
 }
 
+/* CLERK: sign-in, sign-up and account components take Followoo's tokens,
+   so they follow the light and dark theme with no JavaScript. Clerk reads
+   these --clerk-* variables (appearance "variables" as CSS) and derives
+   its shades from them with color-mix(). */
+:root {
+  --clerk-color-primary: var(--color-brand);
+  --clerk-color-primary-foreground: var(--color-on-brand);
+  --clerk-color-background: var(--color-surface-1);
+  --clerk-color-foreground: var(--color-fg);
+  --clerk-color-muted: var(--color-surface-2);
+  --clerk-color-muted-foreground: var(--color-fg-muted);
+  --clerk-color-input: var(--color-surface-1);
+  --clerk-color-input-foreground: var(--color-fg);
+  --clerk-color-ring: var(--color-brand-fg);
+  --clerk-color-neutral: var(--color-fg);
+  --clerk-color-danger: var(--color-danger);
+  --clerk-color-success: var(--color-success);
+  --clerk-color-warning: var(--color-warning);
+  --clerk-color-modal-backdrop: rgb(0 0 0 / 0.6);
+  --clerk-border-radius: var(--radius-control);
+  --clerk-font-family: var(--font-inter);
+  --clerk-font-family-buttons: var(--font-inter);
+}
+
 /* "Reduce motion": every CSS transition and animation lands on its final
    state at once (GSAP is handled in src/animations/gsap.ts). Unlayered on
    purpose: it beats every Tailwind utility without !important. */
