@@ -19,11 +19,13 @@ docs/images/upload.png          /get-started before upload, desktop (README)
 docs/images/results.png         results page via the demo flow, desktop (README)
 docs/images/search.png          results search + sort controls, desktop (README)
 docs/images/mobile.png          results page via the demo flow, mobile (README)
+docs/images/*-light.png         the five screenshots above, in the light theme (README)
 docs/images/demo.gif            recorded demo flow, converted with ffmpeg (README)
 public/icons/OG.png             1200x630 social preview (og:image / twitter:image)
 public/screenshots/pwa-*.png    PWA manifest screenshots (vite.config.ts)
 ```
 
+- The README shows each screenshot in the reader's GitHub theme with `<picture>`: the dark file is the default `<img>`, the `-light` file a `<source media="(prefers-color-scheme: light)">`. The app follows the system theme by default, so the script picks the theme with Playwright's `colorScheme` alone. `OG.png`, the PWA screenshots and `demo.gif` have no reader theme to follow and stay dark. A new README screenshot needs both files and a `<picture>`.
 - Results screens always go through the product's own "Try demo" flow (demo export from Vercel Blob, see `src/data/vercelBlobStructure.ts`), never a real user export - keep it that way.
 - `OG.png` is rendered from `scripts/templates/og-template.html`, which pulls every `--color-*`/`--radius-*` token from `src/index.css` at render time and embeds the freshly captured results screenshot. Redesign the social preview by editing that template, not the PNG. Its copy must never imply Instagram/Meta affiliation.
 - The script pre-dismisses the PWA install toast and blocks the service worker, so neither shows up in captures. Keep README image file names stable - `README.md` references them by path.

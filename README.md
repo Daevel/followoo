@@ -9,7 +9,10 @@ Analyze your Instagram followers and relationships using your official Instagram
 
 Take a look: https://followoo.app
 
-![Followoo Hero](./docs/images/hero.png)
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/hero-light.png">
+  <img alt="Followoo Hero" src="./docs/images/hero.png">
+</picture>
 
 Followoo is a privacy-focused tool that allows you to analyze your Instagram relationships directly in the browser using the ZIP file provided by Instagram's official data export.
 
@@ -78,19 +81,31 @@ Once the page is refreshed or closed, the data disappears.
 
 ### Results Overview
 
-![Results](./docs/images/results.png)
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/results-light.png">
+  <img alt="Results" src="./docs/images/results.png">
+</picture>
 
 ### Search and Sorting
 
-![Search](./docs/images/search.png)
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/search-light.png">
+  <img alt="Search" src="./docs/images/search.png">
+</picture>
 
 ### Mobile Experience
 
-![Mobile](./docs/images/mobile.png)
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/mobile-light.png">
+  <img alt="Mobile" src="./docs/images/mobile.png">
+</picture>
 
 ### Upload ZIP
 
-![Upload](./docs/images/upload.png)
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/upload-light.png">
+  <img alt="Upload" src="./docs/images/upload.png">
+</picture>
 
 ---
 
