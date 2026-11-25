@@ -4,11 +4,17 @@ type TabButtonProps = {
   children: React.ReactNode;
   active: boolean;
   onClick: () => void;
+  className?: string;
 };
 
 // One segment of a segmented control: the selected tab is raised on
 // surface-2 instead of being filled with color.
-export function TabButton({ children, active, onClick }: TabButtonProps) {
+export function TabButton({
+  children,
+  active,
+  onClick,
+  className,
+}: TabButtonProps) {
   return (
     <button
       type="button"
@@ -20,7 +26,8 @@ export function TabButton({ children, active, onClick }: TabButtonProps) {
         "focus-visible:shadow-ring focus-visible:outline-none",
         active
           ? "bg-surface-2 text-fg shadow-elev-1"
-          : "text-fg-muted hover:bg-surface-2/60 hover:text-fg"
+          : "text-fg-muted hover:bg-surface-2/60 hover:text-fg",
+        className
       )}
     >
       {children}

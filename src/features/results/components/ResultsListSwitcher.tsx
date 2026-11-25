@@ -2,11 +2,17 @@ import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { TabButton } from "@/components/ui/TabButton";
-import { getRelationshipGroupLabel } from "@/features/relationship/constants/relationshipGroups";
+import {
+  getRelationshipGroupLabel,
+  RELATIONSHIP_GROUPS,
+} from "@/features/relationship/constants/relationshipGroups";
 import type { TabKey } from "@/features/results/types/results.types";
 import type { InstagramAnalysisResult } from "@/types/instagram.types";
 
 type ListOption = { key: TabKey; label: string };
+
+const dotClassOf = (key: TabKey) =>
+  RELATIONSHIP_GROUPS.find((group) => group.key === key)?.dotClass;
 
 // The three relationship groups are always one click away, the answer
 // people come for first; the other lists live in the "More lists" menu.
@@ -70,38 +76,67 @@ export function ResultsListSwitcher({
   }
 
   return (
-    <div className="flex min-w-0 items-start gap-2">
-      {/* scrolls horizontally on phones instead of wrapping */}
-      <div className="min-w-0 overflow-x-auto [scrollbar-width:none]">
-        <div
-          role="tablist"
-          aria-label="Relationship lists"
-          className="border-line-subtle bg-surface-1 inline-flex gap-0.5 rounded-xl border p-[3px] whitespace-nowrap"
-        >
-          {PRIMARY_LISTS.map((list) => (
+    // Phones: the three groups share the full width as equal tabs (number
+    // on top, name on two lines), so nothing is cut or hidden off screen,
+    // and "More lists" goes full width below. From `md` they sit in a row.
+    <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-start">
+      <div
+        role="tablist"
+        aria-label="Relationship lists"
+        className="border-line-subtle bg-surface-1 grid grid-cols-3 gap-0.5 rounded-xl border p-[3px] md:inline-flex md:whitespace-nowrap"
+      >
+        {PRIMARY_LISTS.map((list) => {
+          const isActive = activeTab === list.key;
+
+          return (
             <TabButton
               key={list.key}
-              active={activeTab === list.key}
+              active={isActive}
               onClick={() => select(list.key)}
+              className="h-full flex-col gap-1 px-1.5 py-2 md:flex-row md:gap-1.5 md:px-3 md:py-1.5"
             >
-              {list.label}
-              <ListCount
-                count={analysis[list.key].length}
-                active={activeTab === list.key}
-              />
+              {/* Phones: dot and number on top, the name gets the full
+                  width below. From md: dot, name, number in one line. */}
+              <span
+                className={clsx(
+                  "flex items-center gap-1.5 text-[15px] font-semibold tabular-nums md:order-last md:text-xs md:font-normal",
+                  isActive
+                    ? "text-fg md:text-brand-fg"
+                    : "text-fg-muted md:text-fg-faint"
+                )}
+              >
+                <span
+                  aria-hidden="true"
+                  className={clsx(
+                    "size-[7px] shrink-0 rounded-full md:hidden",
+                    dotClassOf(list.key)
+                  )}
+                />
+                {analysis[list.key].length}
+              </span>
+              <span className="flex items-center gap-1.5 text-center text-xs leading-tight md:text-[13px]">
+                <span
+                  aria-hidden="true"
+                  className={clsx(
+                    "hidden size-[7px] shrink-0 rounded-full md:inline-block",
+                    dotClassOf(list.key)
+                  )}
+                />
+                {list.label}
+              </span>
             </TabButton>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
-      <div ref={menuRootRef} className="relative shrink-0">
+      <div ref={menuRootRef} className="relative md:shrink-0">
         <button
           type="button"
           aria-haspopup="menu"
           aria-expanded={isMenuOpen}
           onClick={() => setIsMenuOpen((open) => !open)}
           className={clsx(
-            "inline-flex h-[40px] cursor-pointer items-center gap-1.5 rounded-xl border px-3 text-[13px] font-medium whitespace-nowrap transition-colors",
+            "flex h-[40px] w-full cursor-pointer items-center justify-between gap-1.5 rounded-xl border px-3 text-[13px] font-medium whitespace-nowrap transition-colors md:inline-flex md:w-auto md:justify-start",
             "focus-visible:shadow-ring focus-visible:outline-none",
             activeMoreList
               ? "border-line-strong bg-surface-2 text-fg"
@@ -133,7 +168,7 @@ export function ResultsListSwitcher({
           <div
             role="menu"
             aria-label="More lists"
-            className="border-line-strong bg-surface-2 shadow-elev-2 absolute top-full right-0 z-30 mt-1.5 flex w-56 flex-col rounded-[12px] border p-1"
+            className="border-line-strong bg-surface-2 shadow-elev-2 absolute top-full right-0 left-0 z-30 mt-1.5 flex flex-col rounded-[12px] border p-1 md:left-auto md:w-56"
           >
             {MORE_LISTS.map((list) => {
               const isActive = activeTab === list.key;
