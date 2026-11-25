@@ -1,21 +1,18 @@
 import { Icon } from "@/components/ui/Icon";
 import { UserListItem } from "@/components/ui/UserListItem";
-import type { InstagramUser, UserPersona } from "@/types/instagram.types";
+import type { InstagramUser } from "@/types/instagram.types";
 
 // Illustrative sample (same usernames as the demo export): the hero shows the
 // real results UI instead of a static screenshot, so it never goes stale.
-const sampleUsers: { user: InstagramUser; persona: UserPersona }[] = [
-  {
-    user: { username: "alex.rossi", timestamp: 1773619200 },
-    persona: "LURKER",
-  },
+const sampleUsers: { user: InstagramUser; badges: string[] }[] = [
+  { user: { username: "alex.rossi", timestamp: 1773619200 }, badges: [] },
   {
     user: { username: "giulia.design", timestamp: 1773619200 },
-    persona: "FICKLE",
+    badges: ["Restricted"],
   },
   {
     user: { username: "luca.codes", timestamp: 1773619200 },
-    persona: "SUPER_FAN",
+    badges: ["Close Friend"],
   },
 ];
 
@@ -78,11 +75,11 @@ export function ProductPreview() {
         </div>
 
         <div className="border-line-subtle bg-surface-1 divide-line-subtle flex flex-col divide-y rounded-control border px-1">
-          {sampleUsers.map(({ user, persona }) => (
+          {sampleUsers.map(({ user, badges }) => (
             <div key={user.username} className="py-0.5">
               <UserListItem
                 user={user}
-                persona={persona}
+                badges={badges}
                 formatDate={formatSampleDate}
                 appearance="row"
               />

@@ -54,50 +54,73 @@ const tabInfoByTab: Record<TabKey, ResultsTabInfo> = {
   mutual: {
     sectionTitle: "Mutual",
     description: "You follow each other.",
+    action: "Nothing to do: these are your two-way connections.",
+    dateLabel: "Follows you since",
   },
   followersOnly: {
     sectionTitle: "You don't follow back",
     description: "They follow you, but you don't follow them.",
+    action: "Follow back the people you know. You don't owe anyone a follow.",
+    dateLabel: "Follows you since",
   },
   unfollowers: {
     sectionTitle: "Don't follow you back",
     description:
       "You follow them, but they don't follow you. This includes people who unfollowed you and people who never followed you back.",
+    action:
+      "Unfollow the ones you don't care about. Brands and public figures rarely follow back, and that's fine.",
+    dateLabel: "You follow since",
   },
   recentUnfollowers: {
     sectionTitle: "You unfollowed",
     description:
       "Accounts you recently stopped following, as listed by Instagram.",
+    action:
+      "Unfollowed someone by mistake? Open their profile and follow them again.",
+    dateLabel: "Unfollowed on",
   },
   blocked: {
     sectionTitle: "Blocked",
     description:
       "Accounts you blocked. They can't see your profile or message you.",
+    action: "You can unblock an account from its profile on Instagram.",
+    dateLabel: "Blocked on",
   },
   restricted: {
     sectionTitle: "Restricted",
     description:
       "Accounts you restricted. Their new comments on your posts are visible only to them, and their messages go to your requests.",
+    action: "You can remove the restriction from their profile on Instagram.",
+    dateLabel: "Restricted on",
   },
   closeFriends: {
     sectionTitle: "Close Friends",
     description:
       "Your Close Friends list: they can see the stories you share with Close Friends.",
+    action: "Check it's still the people you want to share those stories with.",
+    dateLabel: "Added on",
   },
   hideStoriesFrom: {
     sectionTitle: "Hidden from your stories",
     description: "Accounts that can't see your stories.",
+    action:
+      "Check it's still intentional: you can change it in Instagram's story settings.",
+    dateLabel: "Hidden since",
   },
   pendingFollowRequests: {
     sectionTitle: "Requests you sent",
     description:
       "Follow requests you sent to private accounts that haven't been accepted yet.",
+    action: "Cancel the requests you no longer care about from their profiles.",
+    dateLabel: "Requested on",
   },
   // Not shown in the list menu until we know whether Instagram lists
   // requests you sent or received here.
   recentFollowRequests: {
     sectionTitle: "Recent follow requests",
     description: "Recent follow request activity listed by Instagram.",
+    action: "",
+    dateLabel: "Listed on",
   },
 };
 

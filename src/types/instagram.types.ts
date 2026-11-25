@@ -72,17 +72,3 @@ export type InstagramAnalysisResult = {
     following: number;
   };
 };
-
-export const UserPersona = {
-  SUPER_FAN: "SUPER_FAN",
-  ENGAGED: "ENGAGED",
-  FICKLE: "FICKLE",
-  LURKER: "LURKER",
-  DORMANT: "DORMANT",
-} as const;
-
-export type UserPersona = (typeof UserPersona)[keyof typeof UserPersona];
-
-export type UserWithPersona = InstagramUser & {
-  persona: UserPersona;
-};

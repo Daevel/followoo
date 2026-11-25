@@ -5,7 +5,13 @@ const meta: Meta<typeof UserListItem> = {
   title: "Components/UI/UserListItem",
   component: UserListItem,
   tags: ["autodocs"],
-  argTypes: {},
+  argTypes: {
+    badges: {
+      control: "object",
+      description:
+        'Fatti presi dalle altre liste, mostrati come badge (es. "Close Friend").',
+    },
+  },
 };
 
 export default meta;
@@ -21,14 +27,6 @@ export const UserListItem_: Story = {
     user: sampleUser,
     formatDate: (timestamp) =>
       timestamp ? new Date(timestamp * 1000).toLocaleDateString("it-IT") : null,
-  },
-};
-
-export const WithPersona: Story = {
-  args: {
-    user: sampleUser,
-    formatDate: (timestamp) =>
-      timestamp ? new Date(timestamp * 1000).toLocaleDateString("it-IT") : null,
-    persona: "ENGAGED",
+    badges: ["Close Friend"],
   },
 };
