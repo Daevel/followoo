@@ -301,13 +301,14 @@ export const AnalysisLoading = forwardRef<HTMLDivElement, AnalysisLoadingProps>(
                   shouldSettle ? "opacity-100" : "opacity-0"
                 )}
               >
-                <dl className="flex justify-center gap-[18px] lg:justify-start lg:gap-6">
+                {/* One row per group, so long group names never overflow. */}
+                <dl className="mx-auto flex max-w-[260px] flex-col gap-1.5 text-start lg:mx-0 lg:max-w-none">
                   {RELATIONSHIP_GROUPS.map((group) => (
                     <div
                       key={group.key}
-                      className="flex flex-col-reverse items-center gap-px lg:items-start"
+                      className="flex items-baseline justify-between gap-4"
                     >
-                      <dt className="text-fg-muted flex items-center gap-1.5 text-[11.5px] whitespace-nowrap">
+                      <dt className="text-fg-muted flex items-center gap-2 text-[12.5px]">
                         <span
                           aria-hidden="true"
                           className={clsx(
@@ -317,13 +318,13 @@ export const AnalysisLoading = forwardRef<HTMLDivElement, AnalysisLoadingProps>(
                         />
                         {group.label}
                       </dt>
-                      <dd className="text-fg text-[15px] font-semibold tracking-[-0.01em] tabular-nums lg:text-[17px]">
+                      <dd className="text-fg text-[15px] font-semibold tracking-[-0.01em] tabular-nums">
                         {counts ? counts[group.key] : 0}
                       </dd>
                     </div>
                   ))}
                 </dl>
-                <p className="text-fg-faint mt-2.5 min-h-4 text-[11px]">
+                <p className="text-fg-faint mt-2.5 min-h-4 text-center text-[11px] lg:text-start">
                   {perDot !== null && `Each dot is about ${perDot} people`}
                 </p>
               </div>

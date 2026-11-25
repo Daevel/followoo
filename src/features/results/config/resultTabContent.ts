@@ -7,43 +7,39 @@ import type {
 const emptyStatesByTab: Record<TabKey, ResultsEmptyState> = {
   mutual: {
     title: "No mutual connections yet",
-    description:
-      "We couldn't find any people who follow you back in this export.",
+    description: "Nobody in this export follows you while you follow them.",
   },
   followersOnly: {
-    title: "No follower-only users found",
-    description:
-      "There are no people in this export who follow you while you don't follow them back.",
+    title: "You follow back everyone",
+    description: "Everyone who follows you is someone you follow too.",
   },
   unfollowers: {
-    title: "No following-only users found",
-    description: "Good news — everyone you follow appears to follow you back.",
+    title: "Everyone follows you back",
+    description: "Everyone you follow also follows you.",
   },
   recentUnfollowers: {
-    title: "No recent unfollowers found",
-    description:
-      "We couldn't find any recent unfollow activity in this export.",
+    title: "No recent unfollows",
+    description: "Instagram lists no accounts you recently stopped following.",
   },
   blocked: {
-    title: "No blocked users found",
-    description: "There are no blocked users available in this export.",
+    title: "No blocked accounts",
+    description: "You haven't blocked anyone, according to this export.",
   },
   restricted: {
-    title: "No restricted users found",
-    description: "There are no restricted users available in this export.",
+    title: "No restricted accounts",
+    description: "You haven't restricted anyone, according to this export.",
   },
   closeFriends: {
-    title: "No close friends found",
-    description: "There are no close friends available in this export.",
+    title: "No Close Friends",
+    description: "Your Close Friends list is empty in this export.",
   },
   hideStoriesFrom: {
-    title: "No hidden stories users found",
-    description: "There are no users hidden from your stories in this export.",
+    title: "Your stories are hidden from no one",
+    description: "This export lists nobody you hide your stories from.",
   },
   pendingFollowRequests: {
-    title: "No pending follow requests found",
-    description:
-      "There are no pending follow requests available in this export.",
+    title: "No requests waiting",
+    description: "You have no follow requests waiting to be accepted.",
   },
   recentFollowRequests: {
     title: "No recent follow requests found",
@@ -52,48 +48,56 @@ const emptyStatesByTab: Record<TabKey, ResultsEmptyState> = {
   },
 };
 
+// Each list says who is in it from the user's side, so its name never
+// needs a glossary. "Followers" and "Following" are kept for the totals.
 const tabInfoByTab: Record<TabKey, ResultsTabInfo> = {
   mutual: {
-    sectionTitle: "Mutual connections",
-    description: "People you follow who also follow you back.",
+    sectionTitle: "Mutual",
+    description: "You follow each other.",
   },
   followersOnly: {
-    sectionTitle: "Follower",
-    description: "People who follow you, but you don't follow back.",
+    sectionTitle: "You don't follow back",
+    description: "They follow you, but you don't follow them.",
   },
   unfollowers: {
-    sectionTitle: "Following",
-    description: "People you follow, but who don't follow you back.",
+    sectionTitle: "Don't follow you back",
+    description:
+      "You follow them, but they don't follow you. This includes people who unfollowed you and people who never followed you back.",
   },
   recentUnfollowers: {
-    sectionTitle: "Recent unfollowers",
-    description: "People who recently unfollowed you.",
+    sectionTitle: "You unfollowed",
+    description:
+      "Accounts you recently stopped following, as listed by Instagram.",
   },
   blocked: {
-    sectionTitle: "Blocked users",
-    description: "People you have blocked on Instagram.",
+    sectionTitle: "Blocked",
+    description:
+      "Accounts you blocked. They can't see your profile or message you.",
   },
   restricted: {
-    sectionTitle: "Restricted users",
+    sectionTitle: "Restricted",
     description:
-      "People you have restricted. They can still see your content, but their activity is limited.",
+      "Accounts you restricted. Their new comments on your posts are visible only to them, and their messages go to your requests.",
   },
   closeFriends: {
-    sectionTitle: "Close friends",
+    sectionTitle: "Close Friends",
     description:
-      "People in your Close Friends list who can see your private stories.",
+      "Your Close Friends list: they can see the stories you share with Close Friends.",
   },
   hideStoriesFrom: {
-    sectionTitle: "Hidden stories",
-    description: "People you have hidden your stories from.",
+    sectionTitle: "Hidden from your stories",
+    description: "Accounts that can't see your stories.",
   },
   pendingFollowRequests: {
-    sectionTitle: "Pending follow requests",
-    description: "People you have requested to follow.",
+    sectionTitle: "Requests you sent",
+    description:
+      "Follow requests you sent to private accounts that haven't been accepted yet.",
   },
+  // Not shown in the list menu until we know whether Instagram lists
+  // requests you sent or received here.
   recentFollowRequests: {
     sectionTitle: "Recent follow requests",
-    description: "Recent accounts involved in follow request activity.",
+    description: "Recent follow request activity listed by Instagram.",
   },
 };
 

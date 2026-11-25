@@ -18,7 +18,7 @@ type SnapshotComparisonChartProps = {
 };
 
 // Grouped bars (older vs newer per category) - no Recharts Legend, an HTML
-// list instead, same style choice as ResultPieChart/RecentUnfollowActivityChart.
+// list instead, same style choice as ResultPieChart.
 export function SnapshotComparisonChart({
   data,
   olderLabel,

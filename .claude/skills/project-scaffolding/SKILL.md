@@ -238,7 +238,7 @@ PersonaFilter
 UserListItem
 ResultPieChart
 EngagementPatternChart
-NetworkVolatilityCard
+FollowBackRateCard
 HeroSection
 FeatureSection
 PrivacySection
@@ -306,8 +306,8 @@ Rules:
 
 - Normalize usernames before comparison.
 - Deduplicate by normalized username.
-- Keep the semantics of mutual, followers-only, unfollowers, recent unfollowers, blocked, restricted, close friends, and hidden stories stable.
-- Keep relationship health, persona, engagement, volatility, and follower snapshot diff logic under `src/features/relationship/services` unless it becomes clearly owned by a narrower results feature.
+- Keep the semantics of mutual, followers-only, unfollowers (= don't follow you back), recent unfollowers (= accounts the user unfollowed), blocked, restricted, close friends, and hidden stories stable. Analysis field names are legacy but stay: encrypted history snapshots store them.
+- Keep follow-back rate, persona, engagement, and follower snapshot diff logic under `src/features/relationship/services` unless it becomes clearly owned by a narrower results feature.
 - Keep sorting/filtering/pagination separate from core relationship computation.
 - Avoid coupling analysis services to React components.
 

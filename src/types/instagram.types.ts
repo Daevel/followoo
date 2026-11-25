@@ -42,10 +42,24 @@ export type InstagramExportData = {
   hideStoriesFrom: InstagramUser[];
 };
 
+// Field names are kept as they are: encrypted history snapshots store this
+// shape, so renaming a field would break every snapshot saved before.
+// The names are legacy; the comments say what each list really holds.
 export type InstagramAnalysisResult = {
+  /** You follow each other. */
   mutual: InstagramUser[];
+  /** They follow you, you don't follow them ("You don't follow back"). */
   followersOnly: InstagramUser[];
+  /**
+   * You follow them, they don't follow you ("Don't follow you back"). Mixes
+   * people who unfollowed you with people who never followed you: one
+   * export can't tell them apart, only a comparison of two exports can.
+   */
   unfollowers: InstagramUser[];
+  /**
+   * Accounts the user recently stopped following ("You unfollowed"), from
+   * Instagram's recently_unfollowed file. Not people who unfollowed the user.
+   */
   recentUnfollowers: InstagramUser[];
   blocked: InstagramUser[];
   restricted: InstagramUser[];
@@ -57,15 +71,6 @@ export type InstagramAnalysisResult = {
     followers: number;
     following: number;
   };
-};
-
-export type VolatilityLevel = "stable" | "moderate" | "high";
-
-export type NetworkVolatilityResult = {
-  instabilityIndex: number;
-  recentUnfollowRatio: number;
-  volatilityLevel: VolatilityLevel;
-  insight: string;
 };
 
 export const UserPersona = {

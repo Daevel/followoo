@@ -12,7 +12,7 @@ Followoo is a privacy-focused React + Vite web app for analyzing Instagram relat
 The core promise is simple:
 
 ```txt
-Understand who follows you, who you follow, who does not follow you back, who recently unfollowed you, and related relationship statistics without logging in or sending data to a server.
+Understand who follows you, who you follow, who does not follow you back, and your follow-back rate, without sending your export to a server. Who exactly unfollowed you comes from comparing two exports (encrypted History), never from a single export.
 ```
 
 Followoo is independent and is not affiliated with Instagram or Meta.
@@ -68,7 +68,9 @@ Core relationships:
 - Mutual: the user follows an account and that account follows the user back.
 - Followers only: an account follows the user, but the user does not follow it back.
 - Following-only / not following back: the user follows an account, but that account does not follow the user. This is not an unfollow event.
-- Recent unfollowers: accounts reported by Instagram export as recently unfollowed.
+- "You unfollowed" (`recentUnfollowers`, legacy name): accounts the user recently stopped following, from `recently_unfollowed_profiles.json` (key `relationships_unfollowed_users`). It is NOT a list of people who unfollowed the user: never present it as such, and never feed it into scores (verified 2026-11-25 against a real export).
+- Who unfollowed the user: only a comparison of two exports can tell (History). From one export, "Don't follow you back" mixes people who unfollowed the user with people who never followed them.
+- Follow-back rate: Mutual ÷ (Mutual + Don't follow you back). Balanced ≥ 70%, Room to improve 40–69%, Mostly one-way < 40% (`followBackRateService`).
 - Blocked, restricted, close friends, hidden stories: direct lists from supported Instagram export files.
 - History comparisons (`compareAnalysisSnapshots`): "before" and "after" follow the date of the data in each export (latest relationship timestamp, `getAnalysisDataUntil`), never the date the snapshot was saved - an export ending in August can be saved after one ending in October. `createdAt` is only the fallback when an export has no timestamps.
 
@@ -77,7 +79,7 @@ Initial relationship vocabulary, where X is the current user's profile and Y is 
 - `MUTUAL`: X follows Y and Y follows X.
 - `FOLLOWERS`: Y follows X, but X does not follow Y.
 - `UNFOLLOWERS`: X follows Y, but Y does not follow X.
-- `RECENT_UNFOLLOWERS`: direct list from `recently_unfollowed_profiles.json`.
+- `RECENT_UNFOLLOWERS`: direct list from `recently_unfollowed_profiles.json` = accounts X recently unfollowed.
 - `BLOCKED`: direct list from `blocked_profiles.json`.
 
 Avoid changing these semantics during refactors unless the user explicitly asks for product behavior changes.
@@ -131,7 +133,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - Be direct and reassuring about local processing.
 - Do not imply official Instagram or Meta affiliation.
 - Do not overpromise exact unfollow timing beyond what the export data supports.
-- Prefer clear user terms like `followers`, `following`, `not following you back`, `recent unfollowers`, and `blocked users`.
+- User-facing group names come only from `RELATIONSHIP_GROUPS`: `Mutual`, `Don't follow you back`, `You don't follow back`. `Followers` and `Following` only ever mean the two totals. Other lists: `You unfollowed`, `Blocked`, `Restricted`, `Close Friends`, `Hidden from your stories`, `Requests you sent`.
 
 ## Useful Commands
 

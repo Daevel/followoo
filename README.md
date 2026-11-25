@@ -26,14 +26,17 @@ Followoo provides a set of tools to understand your Instagram connections more c
 • **Mutual connections**  
 See users that you follow and who follow you back.
 
-• **Followers**  
-Identify accounts that follow you but you don't follow back.
+• **Don't follow you back**  
+Accounts you follow that don't follow you.
 
-• **Unfollowers**  
-Detect accounts you follow that do not follow you.
+• **You don't follow back**  
+Accounts that follow you but you don't follow back.
 
-• **Recent unfollowers**  
-View accounts that recently unfollowed you (based on export data).
+• **Follow-back rate**  
+How many of the people you follow follow you back.
+
+• **You unfollowed**  
+Accounts you recently stopped following, as listed by Instagram.
 
 • **Blocked users**  
 List the users you have blocked.

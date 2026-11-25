@@ -17,7 +17,7 @@ flowchart TB
     subgraph Browser["Browser - client-side, privacy-first core"]
         SPA["React 19 + Vite 7 SPA<br/>routes: / /get-started /instructions-to-start<br/>/results /history /updates /support /privacy-and-policy /terms-and-conditions"]
         Parse["Instagram export parsing - JSZip<br/>(src/features/instagram-export)<br/>never leaves the device"]
-        Analysis["Relationship analysis<br/>followers, following, mutuals, unfollowers, blocked, personas<br/>(src/features/relationship)"]
+        Analysis["Relationship analysis<br/>mutual, don't follow you back, you don't follow back,<br/>follow-back rate, other lists, personas<br/>(src/features/relationship)"]
         Gate["useFreeAnalysisGate<br/>localStorage followoo_free_analysis_used"]
         SyncProvider["SyncKeyProvider<br/>checking / inactive / locked / unlocked / unavailable"]
         Crypto["WebCrypto (src/features/sync/crypto)<br/>master key, wrap with passphrase + recovery code,<br/>encrypt / decrypt snapshots"]
