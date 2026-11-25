@@ -85,7 +85,7 @@ export function useLandingPageAnimations(
           subheading:
             "[data-section='privacy'] [data-animate='section-subheading']",
           items: "[data-section='privacy'] [data-animate='privacy-card']",
-          icon: "[data-section='privacy'] [data-animate='section-icon']",
+          icon: null,
         },
         {
           section: "[data-section='faq']",
@@ -93,7 +93,7 @@ export function useLandingPageAnimations(
           subheading:
             "[data-section='faq'] [data-animate='section-subheading']",
           items: "[data-section='faq'] [data-animate='faq-card']",
-          icon: "[data-section='faq'] [data-animate='section-icon']",
+          icon: null,
         },
       ];
 

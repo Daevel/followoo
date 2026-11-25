@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/Input";
 import { NavBar } from "@/components/ui/NavBar";
 import { Paginator } from "@/components/ui/Paginator";
 import Seo from "@/components/ui/Seo";
+import { SiteFooter } from "@/components/ui/SiteFooter";
 import { SortSelect } from "@/components/ui/SortSelect";
 import { UserListItem } from "@/components/ui/UserListItem";
 import { HistorySavePrompt } from "@/features/history/components/HistorySavePrompt";
@@ -440,6 +441,7 @@ export function ResultsExperience({
             </section>
           </div>
         </Container>
+        <SiteFooter />
       </section>
     </>
   );

@@ -18,6 +18,7 @@ import { Icon, type IconName } from "@/components/ui/Icon";
 import { NavBar } from "@/components/ui/NavBar";
 import { PageHeader } from "@/components/ui/PageHeader";
 import Seo from "@/components/ui/Seo";
+import { SiteFooter } from "@/components/ui/SiteFooter";
 import { Skeleton } from "@/components/ui/Skeleton";
 import type { AnalysisComparison } from "@/features/relationship/services/analysisComparisonService";
 import { ResultsExperience } from "@/features/results/components/ResultsExperience";
@@ -399,6 +400,7 @@ export function HistoryExperience() {
             </div>
           </div>
         </Container>
+        <SiteFooter />
       </section>
 
       {dialog && (

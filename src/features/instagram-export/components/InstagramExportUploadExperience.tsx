@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { NavBar } from "@/components/ui/NavBar";
+import { SiteFooter } from "@/components/ui/SiteFooter";
 import { ZipDropzone } from "@/components/ui/ZipDropzone";
 import { useInstagramExportAnalysis } from "../hooks/useInstagramExportAnalysis";
 import { AnalysisLoading } from "./AnalysisLoading";
@@ -87,6 +88,7 @@ export function InstagramExportUploadExperience({
             </SignInButton>
           </div>
         </Container>
+        <SiteFooter />
       </section>
     );
   }
@@ -346,6 +348,7 @@ export function InstagramExportUploadExperience({
           </div>
         </div>
       </Container>
+      <SiteFooter />
     </section>
   );
 }
