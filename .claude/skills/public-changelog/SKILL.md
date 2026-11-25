@@ -29,7 +29,7 @@ If a purely internal version still deserves a trust signal (e.g. "we made the se
 
 ## Copy Rules
 
-Reuse the product copy rules from `project-context/SKILL.md`: be direct and reassuring about local processing, never imply official Instagram/Meta affiliation, do not overpromise, use plain terms (`followers`, `following`, `not following you back`, `recent unfollowers`, `blocked users`).
+Reuse the product copy rules from `project-context/SKILL.md`: be direct and reassuring about local processing, never imply official Instagram/Meta affiliation, do not overpromise, use the same terms as the product (`followers`, `following`, `don't follow you back`, `you don't follow back`, `you unfollowed`, `blocked`); never promise "who unfollowed you" from a single export.
 
 Additional rules specific to changelog entries:
 
