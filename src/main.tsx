@@ -8,6 +8,7 @@ import { initializePostHog } from "./analytics/posthogInit";
 import { initializeSentry } from "./errors/sentryInit";
 import "./index.css";
 
+import { clerkAppearance } from "./providers/clerkAppearance.ts";
 import { SyncKeyProvider } from "./providers/SyncKeyProvider.tsx";
 import { ThemeProvider } from "./providers/ThemeProvider.tsx";
 import { ToastProvider } from "./providers/ToastProvider.tsx";
@@ -32,7 +33,10 @@ if (!clerkPublishableKey) {
 createRoot(rootElement).render(
   <StrictMode>
     <ThemeProvider>
-      <ClerkProvider publishableKey={clerkPublishableKey}>
+      <ClerkProvider
+        publishableKey={clerkPublishableKey}
+        appearance={clerkAppearance}
+      >
         <HelmetProvider>
           <BrowserRouter>
             <ToastProvider>
