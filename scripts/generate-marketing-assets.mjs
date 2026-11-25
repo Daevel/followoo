@@ -1,5 +1,6 @@
 // Regenerates the marketing assets from a real production build:
 //   docs/images/{hero,upload,results,search,mobile}.png + demo.gif  (README)
+//   docs/images/*-light.png       the same README screenshots in the light theme
 //   public/icons/OG.png                                              (social preview, 1200x630)
 //   public/screenshots/pwa-{mobile,desktop}.png                      (PWA manifest)
 //
@@ -40,8 +41,16 @@ const baseUrl = `http://127.0.0.1:${port}`;
 
 const RESULTS_HEADING = "Your results";
 
-// Every app context: dark UI, fixed locale/timezone, and no service worker,
-// so the PWA "ready offline" toast never lands in a screenshot.
+// The README shows each screenshot in the reader's GitHub theme: dark files
+// keep their names, light ones get this suffix. OG, PWA and demo.gif have
+// no theme to follow and stay dark.
+const fileFor = (name, scheme) =>
+  scheme === "light" ? `${name}-light.png` : `${name}.png`;
+
+// Every app context: dark UI unless a capture asks for light, fixed
+// locale/timezone, and no service worker, so the PWA "ready offline" toast
+// never lands in a screenshot. The app follows the system theme by default,
+// so colorScheme alone picks the theme.
 const baseContext = {
   colorScheme: "dark",
   locale: "en-US",
@@ -141,23 +150,30 @@ async function save(filePath, buffer) {
   written.push(filePath);
 }
 
-async function captureDesktop(browser) {
+async function captureDesktop(browser, scheme) {
   const context = await newAppContext(browser, {
+    colorScheme: scheme,
     viewport: { width: 1600, height: 900 },
     deviceScaleFactor: 2,
   });
   const page = await context.newPage();
 
   await openHome(page);
-  await save(path.join(docsImagesDir, "hero.png"), await page.screenshot());
+  await save(
+    path.join(docsImagesDir, fileFor("hero", scheme)),
+    await page.screenshot()
+  );
 
   await page.goto(`${baseUrl}/get-started`);
   await settle(page);
-  await save(path.join(docsImagesDir, "upload.png"), await page.screenshot());
+  await save(
+    path.join(docsImagesDir, fileFor("upload", scheme)),
+    await page.screenshot()
+  );
 
   await runDemoFlow(page);
   const resultsPng = await page.screenshot();
-  await save(path.join(docsImagesDir, "results.png"), resultsPng);
+  await save(path.join(docsImagesDir, fileFor("results", scheme)), resultsPng);
 
   // Bring the search + sort controls near the top and focus the search.
   await page.evaluate(() => {
@@ -168,14 +184,18 @@ async function captureDesktop(browser) {
   });
   await page.locator("#search-users").focus();
   await page.waitForTimeout(800);
-  await save(path.join(docsImagesDir, "search.png"), await page.screenshot());
+  await save(
+    path.join(docsImagesDir, fileFor("search", scheme)),
+    await page.screenshot()
+  );
 
   await context.close();
   return resultsPng;
 }
 
-async function captureMobile(browser) {
+async function captureMobile(browser, scheme) {
   const context = await newAppContext(browser, {
+    colorScheme: scheme,
     viewport: { width: 430, height: 932 },
     deviceScaleFactor: 3,
     isMobile: true,
@@ -183,8 +203,12 @@ async function captureMobile(browser) {
   });
   const page = await context.newPage();
   await runDemoFlow(page);
-  await save(path.join(docsImagesDir, "mobile.png"), await page.screenshot());
+  await save(
+    path.join(docsImagesDir, fileFor("mobile", scheme)),
+    await page.screenshot()
+  );
   await context.close();
+  if (scheme === "light") return;
 
   const pwaContext = await newAppContext(browser, {
     viewport: { width: 540, height: 720 },
@@ -333,8 +357,10 @@ async function main() {
     );
     browser = await chromium.launch();
 
-    const resultsPng = await captureDesktop(browser);
-    await captureMobile(browser);
+    const resultsPng = await captureDesktop(browser, "dark");
+    await captureDesktop(browser, "light");
+    await captureMobile(browser, "dark");
+    await captureMobile(browser, "light");
     await captureDemoGif(browser);
     await captureOgImage(browser, resultsPng);
 
