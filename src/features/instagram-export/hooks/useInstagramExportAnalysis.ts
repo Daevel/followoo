@@ -161,6 +161,8 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
         following_count: exportData.following.length,
         mutual_count: analysis.mutual.length,
         unfollowers_count: analysis.unfollowers.length,
+        // Name kept for continuity in PostHog: it counts accounts the user
+        // unfollowed ("You unfollowed"), not people who unfollowed them.
         recent_unfollowers_count: analysis.recentUnfollowers.length,
         blocked_count: analysis.blocked.length,
         restricted_count: analysis.restricted.length,

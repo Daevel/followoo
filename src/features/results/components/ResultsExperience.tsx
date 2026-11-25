@@ -3,23 +3,23 @@ import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { useResultsPageAnimation } from "@/animations/pages/useResultsPageAnimation";
 import { Container } from "@/components/ui/Container";
 import { ChartStats } from "@/components/ui/charts/ChartCard";
-import { NetworkVolatilityCard } from "@/components/ui/charts/NetworkVolatilityCard";
-import { RecentUnfollowActivityChart } from "@/components/ui/charts/RecentUnfollowActivityChart";
 import { ResultsPieChart } from "@/components/ui/charts/ResultPieChart";
 import { Field } from "@/components/ui/Field";
+import { FollowBackRateCard } from "@/components/ui/FollowBackRateCard";
 import { Icon } from "@/components/ui/Icon";
 import { Input } from "@/components/ui/Input";
 import { NavBar } from "@/components/ui/NavBar";
 import { Paginator } from "@/components/ui/Paginator";
 import { PersonaFilter } from "@/components/ui/PersonaFilter";
-import { RelationshipHealthInsight } from "@/components/ui/RelationshipHealthInsight";
 import Seo from "@/components/ui/Seo";
 import { SortSelect } from "@/components/ui/SortSelect";
 import { UserListItem } from "@/components/ui/UserListItem";
 import { HistorySavePrompt } from "@/features/history/components/HistorySavePrompt";
-import { RELATIONSHIP_GROUPS } from "@/features/relationship/constants/relationshipGroups";
-import { calculateNetworkVolatility } from "@/features/relationship/services/recentUnfollowActivityService";
-import { calculateRelationshipHealthScore } from "@/features/relationship/services/relationshipHealthService";
+import {
+  getRelationshipGroupLabel,
+  RELATIONSHIP_GROUPS,
+} from "@/features/relationship/constants/relationshipGroups";
+import { calculateFollowBackRate } from "@/features/relationship/services/followBackRateService";
 import {
   classifyUserPersona,
   groupUsersByPersona,
@@ -45,7 +45,8 @@ export function ResultsExperience({
   isHistorySavePending?: boolean;
 }) {
   const [sortBy, setSortBy] = useState<SortKey>("recentDesc");
-  const [activeTab, setActiveTab] = useState<TabKey>("mutual");
+  // Opens on the answer people come for: who doesn't follow them back.
+  const [activeTab, setActiveTab] = useState<TabKey>("unfollowers");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPersona, setSelectedPersona] = useState<UserPersona | null>(
@@ -160,13 +161,8 @@ export function ResultsExperience({
     [analysis]
   );
 
-  const relationshipHealthInsight = useMemo(
-    () => calculateRelationshipHealthScore(analysis),
-    [analysis]
-  );
-
-  const networkVolatility = useMemo(
-    () => calculateNetworkVolatility(analysis),
+  const followBackRate = useMemo(
+    () => calculateFollowBackRate(analysis),
     [analysis]
   );
 
@@ -281,8 +277,8 @@ export function ResultsExperience({
                   },
                   { label: "Mutual", value: analysis.mutual.length },
                   {
-                    label: "Recent unfollowers",
-                    value: analysis.recentUnfollowers.length,
+                    label: getRelationshipGroupLabel("unfollowers"),
+                    value: analysis.unfollowers.length,
                   },
                 ]}
               />
@@ -292,21 +288,11 @@ export function ResultsExperience({
               data-animate="hero-item"
               className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2"
             >
-              <RelationshipHealthInsight insight={relationshipHealthInsight} />
+              <FollowBackRateCard result={followBackRate} />
               <ResultsPieChart
                 data={chartData}
                 title="Relationship breakdown"
               />
-            </div>
-
-            <div
-              data-animate="hero-item"
-              className="grid min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-2"
-            >
-              <RecentUnfollowActivityChart
-                recentUnfollowers={analysis.recentUnfollowers}
-              />
-              <NetworkVolatilityCard volatility={networkVolatility} />
             </div>
 
             <section
@@ -355,10 +341,16 @@ export function ResultsExperience({
                     value={sortBy}
                     onChange={handleSortChange}
                     options={[
-                      { label: "A-Z", value: "alphabeticalAsc" },
-                      { label: "Z-A", value: "alphabeticalDesc" },
-                      { label: "Most recent", value: "recentDesc" },
-                      { label: "Oldest", value: "recentAsc" },
+                      { label: "Name, A-Z", value: "alphabeticalAsc" },
+                      { label: "Name, Z-A", value: "alphabeticalDesc" },
+                      {
+                        label: "Date followed, newest first",
+                        value: "recentDesc",
+                      },
+                      {
+                        label: "Date followed, oldest first",
+                        value: "recentAsc",
+                      },
                     ]}
                     className="w-full md:w-auto"
                   />

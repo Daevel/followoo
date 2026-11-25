@@ -94,7 +94,7 @@ describe("assignDotsToOrbits", () => {
     );
     const closestOuter = Math.min(
       ...assignments
-        .filter((a) => a.group === "unfollowers")
+        .filter((a) => a.group === "followersOnly")
         .map((a) => distance(a.index))
     );
 

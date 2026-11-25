@@ -125,7 +125,7 @@ export function ResultsPieChart({
                       item.color ?? CHART_COLORS[index % CHART_COLORS.length],
                   }}
                 />
-                <span className="text-fg-muted min-w-0 flex-1 truncate">
+                <span className="text-fg-muted min-w-0 flex-1 leading-snug">
                   {item.name}
                 </span>
                 <span className="text-fg font-medium tabular-nums">

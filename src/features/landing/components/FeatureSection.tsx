@@ -17,7 +17,7 @@ const cards = [
   },
   {
     title: "Instant insights",
-    text: "Quickly see who unfollowed you with simple filters.",
+    text: "See who doesn't follow you back, with search and sorting.",
     iconName: "eye" as IconName,
   },
 ];

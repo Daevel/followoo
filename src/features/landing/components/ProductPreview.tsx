@@ -22,7 +22,7 @@ const sampleUsers: { user: InstagramUser; persona: UserPersona }[] = [
 const sampleStats = [
   { label: "Followers", value: "342" },
   { label: "Mutual", value: "128" },
-  { label: "Unfollowers", value: "9" },
+  { label: "Don't follow you back", value: "9" },
 ];
 
 const formatSampleDate = () => "Mar 16, 2026";

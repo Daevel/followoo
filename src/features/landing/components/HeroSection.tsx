@@ -50,7 +50,8 @@ export function HeroSection({ ctaRef }: HeroSectionProps) {
 
           <p className="text-fg-muted mt-5 max-w-[470px] text-base leading-7 sm:text-lg">
             Upload your official Instagram export: Followoo analyzes it in your
-            browser and shows followers, mutuals and recent unfollowers.
+            browser and shows who doesn&apos;t follow you back, your mutuals and
+            your follow-back rate.
           </p>
 
           <div

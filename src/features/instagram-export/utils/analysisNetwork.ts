@@ -13,11 +13,11 @@ export type NetworkDot = NetworkPoint & { radius: number };
 
 export const NETWORK_VIEWBOX = "-150 -120 300 240";
 
-/** Orbit radius per group, innermost first; drawn as ellipses. */
+/** Orbit radius per group, innermost first, in RELATIONSHIP_GROUPS order. */
 export const ORBIT_RADII: Record<RelationshipGroupKey, number> = {
   mutual: 46,
-  followersOnly: 76,
-  unfollowers: 104,
+  unfollowers: 76,
+  followersOnly: 104,
 };
 
 export const ORBIT_SCALE = { x: 1.25, y: 0.95 } as const;

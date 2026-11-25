@@ -14,10 +14,10 @@ import { useInstagramExportAnalysis } from "../hooks/useInstagramExportAnalysis"
 import { AnalysisLoading } from "./AnalysisLoading";
 
 const demoPreviewItems = [
-  "Your network health score",
-  "Who follows you back, and who doesn't",
-  "Recent unfollow activity and network volatility",
-  "Every list, with personas, search and sorting",
+  "Who doesn't follow you back",
+  "Your follow-back rate",
+  "Mutuals and the people you don't follow back",
+  "Every list, with search and sorting",
 ];
 
 type InstagramExportUploadExperienceProps = {

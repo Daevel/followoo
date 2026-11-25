@@ -8,22 +8,23 @@ import type { InstagramAnalysisResult } from "@/types/instagram.types";
 
 type ListOption = { key: TabKey; label: string };
 
-// The five lists people open most are always one click away; the rest live
-// in the "More lists" menu.
+// The three relationship groups are always one click away, the answer
+// people come for first; the other lists live in the "More lists" menu.
+// "Recent follow requests" stays hidden until we know whether Instagram
+// lists requests you sent or received there.
 const PRIMARY_LISTS: ListOption[] = [
   { key: "mutual", label: getRelationshipGroupLabel("mutual") },
-  { key: "followersOnly", label: getRelationshipGroupLabel("followersOnly") },
   { key: "unfollowers", label: getRelationshipGroupLabel("unfollowers") },
-  { key: "recentUnfollowers", label: "Recent unfollowers" },
-  { key: "blocked", label: "Blocked" },
+  { key: "followersOnly", label: getRelationshipGroupLabel("followersOnly") },
 ];
 
 const MORE_LISTS: ListOption[] = [
+  { key: "recentUnfollowers", label: "You unfollowed" },
+  { key: "blocked", label: "Blocked" },
   { key: "restricted", label: "Restricted" },
-  { key: "closeFriends", label: "Close friends" },
-  { key: "hideStoriesFrom", label: "Hide stories" },
-  { key: "pendingFollowRequests", label: "Pending requests" },
-  { key: "recentFollowRequests", label: "Recent requests" },
+  { key: "closeFriends", label: "Close Friends" },
+  { key: "hideStoriesFrom", label: "Hidden from your stories" },
+  { key: "pendingFollowRequests", label: "Requests you sent" },
 ];
 
 type ResultsListSwitcherProps = {
