@@ -62,7 +62,7 @@
   --color-danger: #fb7185; /* 6.7:1 */
   --color-danger-fill: #e11d48; /* destructive fills, white on it 4.7:1 */
 
-  /* data: personas and charts, same persona = same color everywhere */
+  /* data: relationship groups and charts, same group = same color everywhere */
   --color-data-1: #818cf8; /* 6.0:1 */
   --color-data-2: #22d3ee; /* 10.0:1 */
   --color-data-3: #fbbf24; /* 10.8:1 */

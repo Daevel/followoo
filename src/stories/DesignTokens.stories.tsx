@@ -116,7 +116,7 @@ const groups: { title: string; swatches: Swatch[] }[] = [
     ],
   },
   {
-    title: "Dati (persona e grafici)",
+    title: "Dati (gruppi e grafici)",
     swatches: [
       {
         name: "data-1",

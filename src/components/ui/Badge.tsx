@@ -22,7 +22,7 @@ type BadgeProps = {
   children: ReactNode;
   tone?: BadgeTone;
   size?: keyof typeof sizeClasses;
-  /** Leading color dot, e.g. a persona's data color class (`bg-data-3`). */
+  /** Leading color dot, e.g. a group's data color class (`bg-data-3`). */
   dotClass?: string;
   icon?: ReactNode;
   className?: string;

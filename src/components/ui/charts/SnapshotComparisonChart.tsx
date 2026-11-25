@@ -18,7 +18,7 @@ type SnapshotComparisonChartProps = {
 };
 
 // Grouped bars (older vs newer per category) - no Recharts Legend, an HTML
-// list instead, same style choice as ResultPieChart.
+// list instead, same style as the other cards.
 export function SnapshotComparisonChart({
   data,
   olderLabel,

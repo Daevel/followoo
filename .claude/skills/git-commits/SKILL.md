@@ -82,7 +82,7 @@ auth         -> authentication/session/JWT verification (frontend Clerk integrat
 users        -> user identity, Base/Pro entitlement, usage analytics (src/features/users, backend/app/users)
 pwa          -> service worker and install behavior
 instagram    -> Instagram export parsing and ZIP handling
-relationship -> relationship analysis, personas, health, engagement insights
+relationship -> relationship analysis, follow-back rate, relationship facts
 support      -> support form/schema/service behavior
 updates      -> updates page/API/server update retrieval
 api          -> Vercel/serverless endpoints under api

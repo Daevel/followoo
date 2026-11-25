@@ -25,7 +25,12 @@ export type ResultsEmptyState = {
 
 export type ResultsTabInfo = {
   sectionTitle: string;
+  /** Who is in the list and why, from the user's side. */
   description: string;
+  /** What the user can do about it. */
+  action: string;
+  /** What the date on each row means, e.g. "Follows you since". */
+  dateLabel: string;
 };
 
 /** Navigation state of `/results`, set by the upload flow. */

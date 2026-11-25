@@ -1,7 +1,7 @@
 // Recharts takes colors as SVG props, where CSS variables are not reliable,
 // so these mirror the semantic tokens in src/index.css: keep them in sync.
 export const chartTheme = {
-  // data-1…5: same order and meaning as the persona/data palette
+  // data-1…5: the data palette, in order
   series: ["#818cf8", "#22d3ee", "#fbbf24", "#c084fc", "#6b7194"],
   surface1: "#12152a",
   brand: "#4f46e5", // brand: fills and glows drawn in SVG
