@@ -54,7 +54,7 @@ export function FeaturesSection() {
           .
         </p>
 
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
           {cards.map((card) => (
             <div key={card.title} data-animate="feature-card">
               <Card

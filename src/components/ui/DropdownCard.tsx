@@ -10,7 +10,7 @@ export function DropdownCard({ title, description }: DropdownCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-line-subtle bg-surface-1 w-full max-w-190 rounded-card border transition-colors">
+    <div className="border-line-subtle bg-surface-1 w-full rounded-card border transition-colors">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}

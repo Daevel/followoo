@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/Input";
 import { NavBar } from "@/components/ui/NavBar";
 import { PageHeader } from "@/components/ui/PageHeader";
 import Seo from "@/components/ui/Seo";
+import { SiteFooter } from "@/components/ui/SiteFooter";
 import { useSupportForm } from "@/features/support/hooks/useSupportForm";
 import { toastService } from "@/services/toastService";
 
@@ -210,6 +211,7 @@ function SupportContent() {
           </div>
         </div>
       </Container>
+      <SiteFooter />
     </section>
   );
 }

@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import { Container } from "@/components/ui/Container";
 import { DropdownCard } from "@/components/ui/DropdownCard.tsx";
-import { Icon } from "@/components/ui/Icon";
 
 export const faqCards = [
   {
@@ -40,25 +39,11 @@ export function Questions() {
         className="grid gap-10 text-start lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-16"
       >
         <div>
-          <div className="flex items-center gap-2.5">
-            <span
-              data-animate="section-icon"
-              className="border-brand-fg/20 bg-brand-fg/10 text-brand-fg flex size-8 items-center justify-center rounded-control border"
-            >
-              <Icon
-                name="help"
-                color="current"
-                width={16}
-                height={16}
-                aria-hidden="true"
-              />
-            </span>
-            <p className="text-brand-fg text-[13px] font-medium">FAQ</p>
-          </div>
+          <p className="text-brand-fg text-[13px] font-medium">FAQ</p>
 
           <h2
             data-animate="section-heading"
-            className="text-fg mt-4 text-[28px] leading-tight font-semibold tracking-[-0.03em] sm:text-[32px]"
+            className="text-fg mt-2 text-[28px] leading-tight font-semibold tracking-[-0.03em] sm:text-[32px]"
           >
             Got questions?
           </h2>

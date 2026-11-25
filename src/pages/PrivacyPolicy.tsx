@@ -3,6 +3,7 @@ import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnim
 import { Container } from "@/components/ui/Container";
 import { NavBar } from "@/components/ui/NavBar";
 import Seo from "@/components/ui/Seo";
+import { SiteFooter } from "@/components/ui/SiteFooter";
 import {
   LegalDocument,
   type LegalSection,
@@ -158,6 +159,7 @@ export function PrivacyPolicy() {
           />
         </div>
       </Container>
+      <SiteFooter />
     </section>
   );
 }

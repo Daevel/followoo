@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/Icon";
 import { NavBar } from "@/components/ui/NavBar";
 import { PageHeader } from "@/components/ui/PageHeader";
 import Seo from "@/components/ui/Seo";
+import { SiteFooter } from "@/components/ui/SiteFooter";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { handleAppError, UnknownErrorPage } from "@/errors";
 import { getApiUrl } from "@/lib/api";
@@ -34,6 +35,26 @@ type UpdatesApiResponse = {
 
 // The stored descriptions open with "Version X.Y.Z"; the version is already
 // shown next to the entry, so it is dropped from the sentence.
+
+type UpdateGroup = { label: string; items: string[] };
+
+// Two columns like a board: each group card goes under the column with less
+// text so far, so cards keep their own height and the columns end close
+// together. On phones the two columns simply stack.
+function splitIntoColumns<T extends UpdateGroup>(groups: T[]): [T[], T[]] {
+  const columns: [T[], T[]] = [[], []];
+  const weight = [0, 0];
+  const size = (group: T) =>
+    2 + group.items.reduce((sum, item) => sum + item.length / 60 + 1, 0);
+
+  for (const group of groups) {
+    const target = weight[0] <= weight[1] ? 0 : 1;
+    columns[target].push(group);
+    weight[target] += size(group);
+  }
+  return columns;
+}
+
 function describe(description: string, version: string) {
   const text = description.replace(`Version ${version} `, "").trim();
   return text.charAt(0).toUpperCase() + text.slice(1);
@@ -135,33 +156,41 @@ function ReleaseEntry({
         </p>
 
         {update.groups.length > 0 && (
-          <div className="mt-6 grid gap-3 md:grid-cols-2">
-            {update.groups.map((group) => (
-              <section
-                key={group.label}
-                className="border-line-subtle bg-surface-1 shadow-elev-1 rounded-card border px-5 py-[18px]"
+          <div className="mt-6 grid items-start gap-3 md:grid-cols-2">
+            {splitIntoColumns(update.groups).map((column, index) => (
+              <div
+                // biome-ignore lint/suspicious/noArrayIndexKey: two fixed columns
+                key={index}
+                className="flex flex-col gap-3"
               >
-                <h3 className="text-fg flex items-center justify-between text-[13px] font-semibold">
-                  {group.label}
-                  <span className="text-fg-faint text-xs font-medium tabular-nums">
-                    {group.items.length}
-                  </span>
-                </h3>
-                <ul className="mt-3 flex flex-col gap-2">
-                  {group.items.map((item) => (
-                    <li
-                      key={item}
-                      className="text-fg-muted flex gap-2.5 text-sm leading-normal"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="bg-fg-faint mt-[9px] size-1 shrink-0 rounded-full"
-                      />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </section>
+                {column.map((group) => (
+                  <section
+                    key={group.label}
+                    className="border-line-subtle bg-surface-1 shadow-elev-1 rounded-card border px-5 py-[18px]"
+                  >
+                    <h3 className="text-fg flex items-center justify-between text-[13px] font-semibold">
+                      {group.label}
+                      <span className="text-fg-faint text-xs font-medium tabular-nums">
+                        {group.items.length}
+                      </span>
+                    </h3>
+                    <ul className="mt-3 flex flex-col gap-2">
+                      {group.items.map((item) => (
+                        <li
+                          key={item}
+                          className="text-fg-muted flex gap-2.5 text-sm leading-normal"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="bg-fg-faint mt-[9px] size-1 shrink-0 rounded-full"
+                          />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                ))}
+              </div>
             ))}
           </div>
         )}
@@ -286,6 +315,7 @@ export function Updates() {
             </div>
           </div>
         </Container>
+        <SiteFooter />
       </section>
     </>
   );

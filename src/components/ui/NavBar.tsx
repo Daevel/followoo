@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router";
 import { useFeatureFlag } from "@/analytics";
 import { SYNC_FEATURE_FLAG_KEY } from "@/features/sync/constants";
 import { Button } from "./Button";
+import { Container } from "./Container";
 import { FabIcon } from "./FabIcon";
 import { ThemeMenu, ThemeSwitch } from "./ThemeMenu";
 
@@ -82,22 +83,70 @@ export function NavBar({ sticky = false }: NavBarProps) {
   return (
     <header
       className={clsx(
-        "px-5 pt-[env(safe-area-inset-top)] md:px-10 lg:px-18",
+        "pt-[env(safe-area-inset-top)]",
         sticky &&
           "border-line-subtle bg-surface-0/80 sticky top-0 z-40 border-b backdrop-blur-md"
       )}
     >
-      <nav
-        id="navbar-inner"
-        className="text-fg relative flex h-16 items-center justify-between md:h-20"
-      >
-        <div
-          id="navbar-left"
-          className="hidden w-full items-center gap-6 lg:flex"
+      {/* Same container as the page content, so the logo lines up with
+          the page titles at every width. */}
+      <Container size="app">
+        <nav
+          id="navbar-inner"
+          className="text-fg relative flex h-16 items-center justify-between md:h-20"
         >
+          <div
+            id="navbar-left"
+            className="hidden w-full items-center gap-6 lg:flex"
+          >
+            <Link
+              to="/"
+              className="focus-visible:shadow-ring flex items-center gap-2.5 rounded-lg focus-visible:outline-none"
+              aria-label="Go to homepage"
+            >
+              <img src="/favicon.svg" alt="" width={24} height={24} />
+              <span className="text-[15px] font-semibold tracking-[-0.01em]">
+                Followoo
+              </span>
+            </Link>
+
+            <div className="flex items-center gap-1">
+              {links
+                .filter((link) => link.to !== "/updates")
+                .map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    state={
+                      link.to === "/get-started" ? { isDemo: false } : undefined
+                    }
+                    aria-current={isActiveLink(link.to) ? "page" : undefined}
+                    className={navLinkClass(isActiveLink(link.to), "desktop")}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+            </div>
+          </div>
+
+          <div
+            id="navbar-right"
+            className="hidden shrink-0 flex-row items-center gap-3 lg:flex"
+          >
+            <Link
+              to="/updates"
+              aria-current={isActiveLink("/updates") ? "page" : undefined}
+              className={navLinkClass(isActiveLink("/updates"), "desktop")}
+            >
+              Updates
+            </Link>
+            <ThemeMenu />
+            <NavAuthEntry />
+          </div>
+
           <Link
             to="/"
-            className="focus-visible:shadow-ring flex items-center gap-2.5 rounded-lg focus-visible:outline-none"
+            className="focus-visible:shadow-ring flex items-center gap-2.5 rounded-lg focus-visible:outline-none lg:hidden"
             aria-label="Go to homepage"
           >
             <img src="/favicon.svg" alt="" width={24} height={24} />
@@ -106,93 +155,49 @@ export function NavBar({ sticky = false }: NavBarProps) {
             </span>
           </Link>
 
-          <div className="flex items-center gap-1">
-            {links
-              .filter((link) => link.to !== "/updates")
-              .map((link) => (
+          <FabIcon
+            icon={isMenuOpen ? "close" : "menu"}
+            variant="ghost"
+            className="lg:hidden"
+            aria-label={
+              isMenuOpen ? "Close navigation menu" : "Open navigation menu"
+            }
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+          />
+
+          <div
+            id="mobile-navigation"
+            inert={!isMenuOpen}
+            className={clsx(
+              "border-line-strong bg-surface-2 shadow-elev-2 absolute top-full left-0 z-50 w-full overflow-hidden rounded-card border transition-all duration-300 lg:hidden",
+              isMenuOpen
+                ? "pointer-events-auto mt-2 opacity-100"
+                : "pointer-events-none mt-0 opacity-0"
+            )}
+          >
+            <div className="flex flex-col gap-0.5 p-2">
+              {links.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
-                  state={
-                    link.to === "/get-started" ? { isDemo: false } : undefined
-                  }
                   aria-current={isActiveLink(link.to) ? "page" : undefined}
-                  className={navLinkClass(isActiveLink(link.to), "desktop")}
+                  className={navLinkClass(isActiveLink(link.to), "mobile")}
                 >
                   {link.label}
                 </Link>
               ))}
-          </div>
-        </div>
-
-        <div
-          id="navbar-right"
-          className="hidden shrink-0 flex-row items-center gap-3 lg:flex"
-        >
-          <Link
-            to="/updates"
-            aria-current={isActiveLink("/updates") ? "page" : undefined}
-            className={navLinkClass(isActiveLink("/updates"), "desktop")}
-          >
-            Updates
-          </Link>
-          <ThemeMenu />
-          <NavAuthEntry />
-        </div>
-
-        <Link
-          to="/"
-          className="focus-visible:shadow-ring flex items-center gap-2.5 rounded-lg focus-visible:outline-none lg:hidden"
-          aria-label="Go to homepage"
-        >
-          <img src="/favicon.svg" alt="" width={24} height={24} />
-          <span className="text-[15px] font-semibold tracking-[-0.01em]">
-            Followoo
-          </span>
-        </Link>
-
-        <FabIcon
-          icon={isMenuOpen ? "close" : "menu"}
-          variant="ghost"
-          className="lg:hidden"
-          aria-label={
-            isMenuOpen ? "Close navigation menu" : "Open navigation menu"
-          }
-          aria-expanded={isMenuOpen}
-          aria-controls="mobile-navigation"
-          onClick={() => setIsMenuOpen((prev) => !prev)}
-        />
-
-        <div
-          id="mobile-navigation"
-          inert={!isMenuOpen}
-          className={clsx(
-            "border-line-strong bg-surface-2 shadow-elev-2 absolute top-full left-0 z-50 w-full overflow-hidden rounded-card border transition-all duration-300 lg:hidden",
-            isMenuOpen
-              ? "pointer-events-auto mt-2 opacity-100"
-              : "pointer-events-none mt-0 opacity-0"
-          )}
-        >
-          <div className="flex flex-col gap-0.5 p-2">
-            {links.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                aria-current={isActiveLink(link.to) ? "page" : undefined}
-                className={navLinkClass(isActiveLink(link.to), "mobile")}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <div className="border-line-subtle mt-1.5 border-t pt-2.5 pb-1">
-              <ThemeSwitch />
-            </div>
-            <div className="border-line-subtle mt-1.5 border-t px-1 pt-2.5 pb-1">
-              <NavAuthEntry />
+              <div className="border-line-subtle mt-1.5 border-t pt-2.5 pb-1">
+                <ThemeSwitch />
+              </div>
+              <div className="border-line-subtle mt-1.5 border-t px-1 pt-2.5 pb-1">
+                <NavAuthEntry />
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </Container>
     </header>
   );
 }

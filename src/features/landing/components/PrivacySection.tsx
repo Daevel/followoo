@@ -66,27 +66,13 @@ export function PrivacySection() {
         className="grid items-center gap-12 text-start lg:grid-cols-2 lg:gap-16"
       >
         <div className="min-w-0">
-          <div className="flex items-center gap-2.5">
-            <span
-              data-animate="section-icon"
-              className="border-brand-fg/20 bg-brand-fg/10 text-brand-fg flex size-8 items-center justify-center rounded-control border"
-            >
-              <Icon
-                name="shield"
-                color="current"
-                width={16}
-                height={16}
-                aria-hidden="true"
-              />
-            </span>
-            <p className="text-brand-fg text-[13px] font-medium">
-              Your privacy? Glad you asked.
-            </p>
-          </div>
+          <p className="text-brand-fg text-[13px] font-medium">
+            Your privacy? Glad you asked.
+          </p>
 
           <h2
             data-animate="section-heading"
-            className="text-fg mt-5 text-2xl leading-[1.35] font-medium tracking-[-0.02em] sm:text-[26px]"
+            className="text-fg mt-3 text-2xl leading-[1.35] font-medium tracking-[-0.02em] sm:text-[26px]"
           >
             &ldquo;I designed Followoo to be private by default. Your data stays
             where it belongs - on your device.&rdquo;

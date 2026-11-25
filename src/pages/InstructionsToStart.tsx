@@ -9,6 +9,7 @@ import { Icon } from "@/components/ui/Icon";
 import { NavBar } from "@/components/ui/NavBar";
 import { PageHeader } from "@/components/ui/PageHeader";
 import Seo from "@/components/ui/Seo";
+import { SiteFooter } from "@/components/ui/SiteFooter";
 import { TabButton } from "@/components/ui/TabButton";
 import { TabIndicator } from "@/components/ui/TabIndicator";
 import { vercelBlobStructure } from "@/data/vercelBlobStructure";
@@ -890,6 +891,7 @@ export function InstructionsToStart() {
             </div>
           </div>
         </Container>
+        <SiteFooter />
 
         <div className="border-line-subtle bg-surface-0/90 sticky bottom-0 z-10 border-t px-5 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
           <StepNavigation {...navigationProps} />
