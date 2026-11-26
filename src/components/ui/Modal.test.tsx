@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Modal } from "./Modal";
 
@@ -71,6 +77,29 @@ describe("Modal", () => {
     vi.advanceTimersByTime(250);
 
     expect(onClose).not.toHaveBeenCalled();
+    vi.useRealTimers();
+  });
+
+  it("closes from closeRef with its exit, even while closeDisabled", () => {
+    vi.useFakeTimers();
+    const onClose = vi.fn();
+    const closeRef: { current: (() => void) | null } = { current: null };
+    render(
+      <Modal
+        onClose={onClose}
+        labelledBy="modal-title"
+        closeDisabled
+        closeRef={closeRef}
+      >
+        <h2 id="modal-title">Saved</h2>
+      </Modal>
+    );
+
+    act(() => closeRef.current?.());
+    expect(onClose).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(250);
+
+    expect(onClose).toHaveBeenCalledTimes(1);
     vi.useRealTimers();
   });
 

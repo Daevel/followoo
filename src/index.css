@@ -92,6 +92,11 @@
      ease-motion-in to leave; exits take ~70% of the entrance. */
   --ease-motion-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-motion-in: cubic-bezier(0.4, 0, 1, 1);
+
+  /* A block that replaces a placeholder or swaps in place: rises 14px and
+     fades in, like the page blocks GSAP animates on load. */
+  --animate-enter: motion-enter 500ms var(--ease-motion-out) both;
+  --animate-fade-in: motion-fade-in 200ms var(--ease-motion-out) both;
 }
 
 /* THEMES: the values behind the color tokens. Dark is the default; the
@@ -247,6 +252,19 @@
     opacity: 0.6;
   }
 }
+@keyframes motion-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes motion-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
 @keyframes orbit-spin {
   to {
     transform: rotate(360deg);

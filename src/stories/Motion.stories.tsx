@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useRef, useState } from "react";
 import { Button } from "../components/ui/Button";
+import { Collapse } from "../components/ui/Collapse";
 import { DropdownCard } from "../components/ui/DropdownCard";
 import { Modal } from "../components/ui/Modal";
 import { SortSelect } from "../components/ui/SortSelect";
@@ -83,6 +84,8 @@ function TabsDemo() {
 
 function MotionSheet() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBlockShown, setIsBlockShown] = useState(false);
+  const closeModal = useRef<(() => void) | null>(null);
   const [sort, setSort] = useState<"recent" | "name">("recent");
 
   return (
@@ -144,7 +147,7 @@ function MotionSheet() {
 
       <Section
         title="Finestre"
-        note="Lo sfondo sfuma; il pannello cresce dal 96% salendo di 6 px (200 ms). Su telefono il foglio sale dal basso (300 ms). Esc, lo sfondo e la X riproducono l’uscita prima di chiudere."
+        note="Lo sfondo sfuma; il pannello cresce dal 96% salendo di 6 px (200 ms). Su telefono il foglio sale dal basso (300 ms). Esc, lo sfondo, la X e i pulsanti interni (tramite closeRef) riproducono l’uscita prima di chiudere."
       >
         <Button variant="secondary" onClick={() => setIsModalOpen(true)}>
           Apri una finestra
@@ -153,6 +156,7 @@ function MotionSheet() {
           <Modal
             labelledBy="motion-modal-title"
             onClose={() => setIsModalOpen(false)}
+            closeRef={closeModal}
           >
             <h2
               id="motion-modal-title"
@@ -164,18 +168,51 @@ function MotionSheet() {
               Chiudila con Esc, toccando lo sfondo o con la X per vedere
               l’uscita.
             </p>
+            <Button className="mt-5" onClick={() => closeModal.current?.()}>
+              Fatto
+            </Button>
           </Modal>
         )}
       </Section>
 
       <Section
         title="Sezioni che si aprono"
-        note="Altezza e opacità in 300 ms con la curva out."
+        note="Collapse: altezza e opacità in 300 ms con la curva out, chiusura in 200 ms; la freccia ruota insieme. Lo usano FAQ, tag “changed username”, “Your own changes”, “Show more”."
       >
         <DropdownCard
           title="I miei dati vengono caricati su un server?"
           description="No. Followoo legge l’export nel tuo browser: niente del suo contenuto viene inviato a un server."
         />
+      </Section>
+
+      <Section
+        title="Blocchi che arrivano dopo"
+        note="Collapse motion=“entrance”: lo spazio si apre e il blocco sale di 14 px sfumando (500 ms), esce in 300 ms. Per card che arrivano dopo il caricamento, come “Since your last analysis”. Un blocco che sostituisce un segnaposto usa invece la classe animate-enter."
+      >
+        <div className="flex w-full flex-col">
+          <Button
+            variant="secondary"
+            className="self-start"
+            onClick={() => setIsBlockShown((previous) => !previous)}
+          >
+            {isBlockShown ? "Togli il blocco" : "Fai arrivare un blocco"}
+          </Button>
+          <Collapse open={isBlockShown} motion="entrance" unmountOnClose>
+            <div className="pt-4">
+              <div className="border-line-subtle bg-surface-1 shadow-elev-1 rounded-card border p-5">
+                <p className="text-fg text-lg font-semibold">
+                  Nobody unfollowed you
+                </p>
+                <p className="text-fg-muted mt-1 text-sm">
+                  Un blocco arrivato dopo il resto della pagina.
+                </p>
+              </div>
+            </div>
+          </Collapse>
+          <p className="text-fg-faint mt-4 text-sm">
+            Il contenuto sotto scende e risale senza scatti.
+          </p>
+        </div>
       </Section>
     </div>
   );
