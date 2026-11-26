@@ -21,7 +21,7 @@ flowchart TB
         Gate["useFreeAnalysisGate<br/>localStorage followoo_free_analysis_used"]
         SyncProvider["SyncKeyProvider<br/>checking / inactive / locked / unlocked / unavailable"]
         Crypto["WebCrypto (src/features/sync/crypto)<br/>master key, wrap with passphrase + recovery code,<br/>encrypt / decrypt snapshots"]
-        History["History (src/features/history)<br/>useAutoSaveSnapshot, useHistorySnapshots, useOpenSnapshot"]
+        History["History (src/features/history)<br/>useAutoSaveSnapshot, useHistorySnapshots, useOpenSnapshot,<br/>useSinceLastAnalysis (results vs last saved, in memory)"]
         ClerkSDK["@clerk/react<br/>Google OAuth + email/password"]
         PostHogJS["posthog-js<br/>useFeatureFlag, usePostHogIdentity"]
         SentryJS["@sentry/react<br/>scrubSentryEvent (src/errors/sentryInit.ts)"]
