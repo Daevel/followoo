@@ -2,6 +2,8 @@ import clsx from "clsx";
 import { type CSSProperties, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
+import { Collapse } from "@/components/ui/Collapse";
+import { Icon } from "@/components/ui/Icon";
 import { UserListItem } from "@/components/ui/UserListItem";
 import type {
   AnalysisComparison,
@@ -28,10 +30,25 @@ function DiffList({
   empty: string;
 }) {
   const [showAll, setShowAll] = useState(false);
-  const visibleUsers = showAll
-    ? diff.users
-    : diff.users.slice(0, VISIBLE_USERS_LIMIT);
-  const remaining = diff.users.length - visibleUsers.length;
+  const firstUsers = diff.users.slice(0, VISIBLE_USERS_LIMIT);
+  const moreUsers = diff.users.slice(VISIBLE_USERS_LIMIT);
+
+  function renderRows(users: ComparisonDiff["users"]) {
+    return (
+      <ul className="flex flex-col">
+        {users.map((user) => (
+          <li key={user.username}>
+            <UserListItem
+              user={user}
+              formatDate={formatDate}
+              datePrefix={datePrefix}
+              appearance="row"
+            />
+          </li>
+        ))}
+      </ul>
+    );
+  }
 
   return (
     <section className="border-line-subtle bg-surface-1 shadow-elev-1 flex flex-col gap-2 rounded-card border p-5 text-start">
@@ -48,25 +65,21 @@ function DiffList({
         <p className="text-fg-muted text-[13px]">{empty}</p>
       ) : (
         <>
-          <ul className="flex flex-col">
-            {visibleUsers.map((user) => (
-              <li key={user.username}>
-                <UserListItem
-                  user={user}
-                  formatDate={formatDate}
-                  datePrefix={datePrefix}
-                  appearance="row"
-                />
-              </li>
-            ))}
-          </ul>
-          {remaining > 0 && (
+          <div>
+            {renderRows(firstUsers)}
+            {moreUsers.length > 0 && (
+              <Collapse open={showAll} unmountOnClose>
+                {renderRows(moreUsers)}
+              </Collapse>
+            )}
+          </div>
+          {moreUsers.length > 0 && !showAll && (
             <button
               type="button"
               onClick={() => setShowAll(true)}
               className="text-brand-fg focus-visible:shadow-ring self-start rounded-control text-[13px] font-medium outline-none hover:underline"
             >
-              Show {remaining} more
+              Show {moreUsers.length} more
             </button>
           )}
         </>
@@ -273,12 +286,23 @@ export function SnapshotComparisonView({
               {comparison.lostFollowing.count}.
             </span>
           </span>
-          <span className="text-brand-fg shrink-0 text-[13px] font-medium">
+          <span className="text-brand-fg inline-flex shrink-0 items-center gap-1.5 text-[13px] font-medium">
             {showOwnChanges ? "Hide" : "Show"}
+            <Icon
+              name="singleArrowDown"
+              color="current"
+              width={14}
+              height={14}
+              aria-hidden="true"
+              className={clsx(
+                "ease-motion-out transition-transform duration-300",
+                showOwnChanges && "rotate-180"
+              )}
+            />
           </span>
         </button>
 
-        {showOwnChanges && (
+        <Collapse open={showOwnChanges}>
           <div className="grid gap-4 px-5 pb-5 md:grid-cols-2">
             <DiffList
               title="You followed"
@@ -295,7 +319,7 @@ export function SnapshotComparisonView({
               empty="You didn't unfollow anyone."
             />
           </div>
-        )}
+        </Collapse>
       </section>
     </div>
   );

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useId, useState } from "react";
+import { Collapse } from "@/components/ui/Collapse";
 import { Icon } from "@/components/ui/Icon.tsx";
 
 type DropdownCardProps = {
@@ -8,6 +9,7 @@ type DropdownCardProps = {
 
 export function DropdownCard({ title, description }: DropdownCardProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const panelId = useId();
 
   return (
     <div className="border-line-subtle bg-surface-1 w-full rounded-card border transition-colors">
@@ -16,6 +18,7 @@ export function DropdownCard({ title, description }: DropdownCardProps) {
         onClick={() => setIsOpen((prev) => !prev)}
         className="focus-visible:shadow-ring flex w-full cursor-pointer items-center justify-between gap-6 rounded-card px-5 py-4 focus-visible:outline-none"
         aria-expanded={isOpen}
+        aria-controls={panelId}
       >
         <h4 className="text-fg pr-4 text-start text-[15px] leading-snug font-medium">
           {title}
@@ -40,15 +43,11 @@ export function DropdownCard({ title, description }: DropdownCardProps) {
         </div>
       </button>
 
-      <div
-        className={`grid overflow-hidden transition-all duration-300 ease-motion-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"} `}
-      >
-        <div className="min-h-0 text-start">
-          <p className="text-fg-muted px-5 pb-4 text-sm leading-relaxed">
-            {description}
-          </p>
-        </div>
-      </div>
+      <Collapse open={isOpen} id={panelId}>
+        <p className="text-fg-muted px-5 pb-4 text-start text-sm leading-relaxed">
+          {description}
+        </p>
+      </Collapse>
     </div>
   );
 }

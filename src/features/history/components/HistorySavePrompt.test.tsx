@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { InstagramAnalysisResult } from "@/types/instagram.types";
 import { HistorySavePrompt } from "./HistorySavePrompt";
@@ -55,19 +61,22 @@ describe("HistorySavePrompt", () => {
     expect(await screen.findByRole("dialog", { name: "Unlock" })).toBeTruthy();
   });
 
-  it("goes away on Not now without saving", () => {
+  // The banner folds away (Collapse) before it unmounts.
+  it("goes away on Not now without saving", async () => {
     useSyncKeyMock.mockReturnValue({ status: "locked" });
     render(<HistorySavePrompt analysis={analysis} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Not now" }));
 
-    expect(
-      screen.queryByText("This analysis isn't in your history yet")
-    ).toBeNull();
+    await waitFor(() =>
+      expect(
+        screen.queryByText("This analysis isn't in your history yet")
+      ).toBeNull()
+    );
     expect(saveSnapshotMock).not.toHaveBeenCalled();
   });
 
-  it("saves the analysis once history is unlocked", () => {
+  it("saves the analysis once history is unlocked", async () => {
     useSyncKeyMock.mockReturnValue({ status: "locked" });
     saveSnapshotMock.mockReturnValue("saving");
     const { rerender } = render(<HistorySavePrompt analysis={analysis} />);
@@ -78,9 +87,11 @@ describe("HistorySavePrompt", () => {
     expect(saveSnapshotMock).toHaveBeenCalledTimes(1);
     expect(saveSnapshotMock).toHaveBeenCalledWith(analysis);
     expect(toastSuccessMock).toHaveBeenCalledTimes(1);
-    expect(
-      screen.queryByText("This analysis isn't in your history yet")
-    ).toBeNull();
+    await waitFor(() =>
+      expect(
+        screen.queryByText("This analysis isn't in your history yet")
+      ).toBeNull()
+    );
   });
 
   it("shows nothing when history isn't activated", () => {

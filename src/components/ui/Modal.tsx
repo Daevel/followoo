@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import {
   type ReactNode,
+  type RefObject,
   useCallback,
   useEffect,
   useRef,
@@ -16,6 +17,13 @@ type ModalProps = {
   labelledBy: string;
   /** Blocks every way of closing (button, Esc, scrim), e.g. while saving. */
   closeDisabled?: boolean;
+  /**
+   * Filled with a function that closes the modal with its exit animation,
+   * for buttons inside it (Cancel, Done, a successful submit). Unmounting
+   * the modal from outside skips the exit. Works even while
+   * `closeDisabled`: the caller decides the work is done.
+   */
+  closeRef?: RefObject<(() => void) | null>;
   className?: string;
 };
 
@@ -49,6 +57,7 @@ export function Modal({
   onClose,
   labelledBy,
   closeDisabled = false,
+  closeRef,
   className,
 }: ModalProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -59,8 +68,8 @@ export function Modal({
   onCloseRef.current = onClose;
   closeDisabledRef.current = closeDisabled;
 
-  const requestClose = useCallback(() => {
-    if (closeDisabledRef.current || isClosingRef.current) return;
+  const close = useCallback(() => {
+    if (isClosingRef.current) return;
     isClosingRef.current = true;
 
     if (prefersReducedMotion()) {
@@ -70,6 +79,17 @@ export function Modal({
     setPhase("exit");
     window.setTimeout(() => onCloseRef.current(), EXIT_MS);
   }, []);
+  const requestClose = useCallback(() => {
+    if (!closeDisabledRef.current) close();
+  }, [close]);
+
+  useEffect(() => {
+    if (!closeRef) return;
+    closeRef.current = close;
+    return () => {
+      closeRef.current = null;
+    };
+  }, [closeRef, close]);
   const requestCloseRef = useRef(requestClose);
   requestCloseRef.current = requestClose;
 

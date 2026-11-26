@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
@@ -44,6 +44,12 @@ export function SyncUnlockWizard({ onClose }: SyncUnlockWizardProps) {
     onClose();
   }
 
+  // Buttons inside the dialog close it with its exit animation too.
+  const closeRef = useRef<(() => void) | null>(null);
+  function closeWithExit() {
+    (closeRef.current ?? onClose)();
+  }
+
   async function handleSubmitPassphrase(event: FormEvent) {
     event.preventDefault();
     if (!passphraseInput) return;
@@ -54,7 +60,7 @@ export function SyncUnlockWizard({ onClose }: SyncUnlockWizardProps) {
     setIsSubmitting(false);
 
     if (unlocked) {
-      onClose();
+      closeWithExit();
       return;
     }
 
@@ -90,13 +96,14 @@ export function SyncUnlockWizard({ onClose }: SyncUnlockWizardProps) {
       setIsSubmitting(false);
 
       if (rotated) {
-        onClose();
+        closeWithExit();
       }
     }
   );
 
   return (
     <Modal
+      closeRef={closeRef}
       onClose={handleClose}
       labelledBy={TITLE_ID}
       closeDisabled={isSubmitting}
@@ -162,7 +169,9 @@ export function SyncUnlockWizard({ onClose }: SyncUnlockWizardProps) {
             </button>
             <button
               type="button"
-              onClick={handleClose}
+              onClick={() => {
+                if (!isSubmitting) closeWithExit();
+              }}
               className="text-fg-muted hover:text-fg text-[13px] font-medium"
             >
               Not now
@@ -280,7 +289,7 @@ export function SyncUnlockWizard({ onClose }: SyncUnlockWizardProps) {
             </Button>
             <button
               type="button"
-              onClick={onClose}
+              onClick={closeWithExit}
               className="text-fg-muted hover:text-fg text-[13px] font-medium underline-offset-2 hover:underline"
             >
               Skip for now

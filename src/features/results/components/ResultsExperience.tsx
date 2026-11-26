@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { useResultsPageAnimation } from "@/animations/pages/useResultsPageAnimation";
 import { Button } from "@/components/ui/Button";
+import { Collapse } from "@/components/ui/Collapse";
 import { Container } from "@/components/ui/Container";
 import { Field } from "@/components/ui/Field";
 import { Icon } from "@/components/ui/Icon";
@@ -325,9 +326,12 @@ export function ResultsExperience({
               </p>
             </header>
 
+            {/* Blocks that arrive or leave after the page loaded fold in
+                and out (Collapse). Their gap from the block above is
+                padding inside the fold, so the page never jumps by it. */}
             {isHistorySavePending && (
-              <div data-animate="hero-item" className="empty:hidden">
-                <HistorySavePrompt analysis={analysis} />
+              <div data-animate="hero-item" className="-mt-5 empty:hidden">
+                <HistorySavePrompt analysis={analysis} className="pt-5" />
               </div>
             )}
 
@@ -339,14 +343,22 @@ export function ResultsExperience({
               />
             </div>
 
-            {sinceLast.status === "ready" && (
-              <div data-animate="hero-item">
-                <SinceLastAnalysis
-                  comparison={sinceLast.comparison}
-                  onSeeWho={() => navigate("/history?open=latest")}
-                />
-              </div>
-            )}
+            <div data-animate="hero-item" className="-mt-5 empty:hidden">
+              <Collapse
+                open={sinceLast.status === "ready"}
+                motion="entrance"
+                unmountOnClose
+              >
+                {sinceLast.status === "ready" && (
+                  <div className="pt-5">
+                    <SinceLastAnalysis
+                      comparison={sinceLast.comparison}
+                      onSeeWho={() => navigate("/history?open=latest")}
+                    />
+                  </div>
+                )}
+              </Collapse>
+            </div>
 
             <div data-animate="hero-item">
               <NetworkComposition counts={counts} onOpenList={openList} />
@@ -356,8 +368,11 @@ export function ResultsExperience({
               <ImproveActions counts={counts} onOpenList={openList} />
             </div>
 
-            <div data-animate="hero-item" className="empty:hidden">
-              {sinceLast.status !== "ready" && <ComparisonNote />}
+            <div data-animate="hero-item" className="-mt-5 empty:hidden">
+              <ComparisonNote
+                hidden={sinceLast.status === "ready"}
+                className="pt-5"
+              />
             </div>
 
             <section

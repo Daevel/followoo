@@ -1,4 +1,6 @@
+import clsx from "clsx";
 import { useId, useState } from "react";
+import { Collapse } from "@/components/ui/Collapse";
 import { Icon } from "@/components/ui/Icon";
 import { UserListItem } from "@/components/ui/UserListItem";
 import type {
@@ -55,15 +57,15 @@ export function RenamedAccounts({
           width={12}
           height={12}
           aria-hidden="true"
-          className={isOpen ? "rotate-180" : undefined}
+          className={clsx(
+            "ease-motion-out transition-transform duration-300",
+            isOpen && "rotate-180"
+          )}
         />
       </button>
 
-      {isOpen && (
-        <div
-          id={panelId}
-          className="border-line-subtle bg-surface-0 mt-2.5 max-w-md rounded-control border px-2 py-2"
-        >
+      <Collapse open={isOpen} id={panelId}>
+        <div className="border-line-subtle bg-surface-0 mt-2.5 max-w-md rounded-control border px-2 py-2">
           <p className="text-fg-muted px-2 pt-1 pb-1.5 text-xs">
             Same account, new name: not counted as unfollowed.
           </p>
@@ -79,7 +81,7 @@ export function RenamedAccounts({
             ))}
           </ul>
         </div>
-      )}
+      </Collapse>
     </div>
   );
 }
