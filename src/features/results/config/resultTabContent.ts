@@ -8,43 +8,53 @@ const emptyStatesByTab: Record<TabKey, ResultsEmptyState> = {
   mutual: {
     title: "No mutual connections yet",
     description: "Nobody in this export follows you while you follow them.",
+    mascot: "sleep",
   },
   followersOnly: {
     title: "You follow back everyone",
     description: "Everyone who follows you is someone you follow too.",
+    mascot: "party",
   },
   unfollowers: {
     title: "Everyone follows you back",
     description: "Everyone you follow also follows you.",
+    mascot: "party",
   },
   recentUnfollowers: {
     title: "No recent unfollows",
     description: "Instagram lists no accounts you recently stopped following.",
+    mascot: "sleep",
   },
   blocked: {
     title: "No blocked accounts",
     description: "You haven't blocked anyone, according to this export.",
+    mascot: "sleep",
   },
   restricted: {
     title: "No restricted accounts",
     description: "You haven't restricted anyone, according to this export.",
+    mascot: "sleep",
   },
   closeFriends: {
     title: "No Close Friends",
     description: "Your Close Friends list is empty in this export.",
+    mascot: "sleep",
   },
   hideStoriesFrom: {
     title: "Your stories are hidden from no one",
     description: "This export lists nobody you hide your stories from.",
+    mascot: "sleep",
   },
   pendingFollowRequests: {
     title: "No requests waiting",
     description: "You have no follow requests waiting to be accepted.",
+    mascot: "sleep",
   },
   recentFollowRequests: {
     title: "No recent follow requests found",
     description:
       "There are no recent follow requests available in this export.",
+    mascot: "sleep",
   },
 };
 
@@ -127,6 +137,7 @@ const tabInfoByTab: Record<TabKey, ResultsTabInfo> = {
 const searchEmptyState: ResultsEmptyState = {
   title: "No users match your search",
   description: "Try a different username or clear your search.",
+  mascot: "search",
 };
 
 export function getResultsEmptyState({

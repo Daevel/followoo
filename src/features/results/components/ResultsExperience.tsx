@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Field } from "@/components/ui/Field";
 import { Icon } from "@/components/ui/Icon";
 import { Input } from "@/components/ui/Input";
+import { Mascot, type MascotPose } from "@/components/ui/Mascot";
 import { NavBar } from "@/components/ui/NavBar";
 import { Paginator } from "@/components/ui/Paginator";
 import Seo from "@/components/ui/Seo";
@@ -93,6 +94,15 @@ export function ResultsExperience({
     () => calculateFollowBackRate(analysis),
     [analysis]
   );
+
+  // The mascot reacts to the follow-back rate, but is never sad: a low
+  // score gets the curious face, not a disappointed one.
+  const titleMascot: MascotPose | null =
+    followBackRate.level === "noData"
+      ? null
+      : followBackRate.level === "balanced"
+        ? "cheer"
+        : "curious";
 
   const factIndex = useMemo(
     () => buildRelationshipFactIndex(analysis),
@@ -276,7 +286,14 @@ export function ResultsExperience({
                 />
                 Processed in your browser
               </p>
-              <h1 className="text-fg text-[28px] leading-tight font-semibold tracking-[-0.025em] text-balance sm:text-[32px]">
+              <h1 className="text-fg flex items-center gap-2.5 text-[28px] leading-tight font-semibold tracking-[-0.025em] text-balance sm:text-[32px]">
+                {titleMascot && (
+                  <Mascot
+                    pose={titleMascot}
+                    size={44}
+                    className="size-[34px] sm:size-11"
+                  />
+                )}
                 Your results
               </h1>
               <p className="text-fg-muted text-sm tabular-nums">
@@ -397,6 +414,11 @@ export function ResultsExperience({
 
                 {emptyState ? (
                   <div className="flex min-h-48 w-full flex-col items-center justify-center px-4 py-10 text-center sm:px-6">
+                    <Mascot
+                      pose={emptyState.mascot}
+                      size={72}
+                      className="mb-3"
+                    />
                     <h3 className="text-fg text-base font-semibold">
                       {emptyState.title}
                     </h3>

@@ -1,28 +1,33 @@
 import { Icon } from "@/components/ui/Icon";
-import { UserListItem } from "@/components/ui/UserListItem";
-import type { InstagramUser } from "@/types/instagram.types";
 
-// Illustrative sample (same usernames as the demo export): the hero shows the
-// real results UI instead of a static screenshot, so it never goes stale.
-const sampleUsers: { user: InstagramUser; badges: string[] }[] = [
-  { user: { username: "alex.rossi", timestamp: 1773619200 }, badges: [] },
+// Illustrative sample shaped like the real results page (answer first, the
+// follow-back rate ring, then the network bars), so the hero matches what
+// people get after the analysis. Numbers are made up and consistent:
+// 128 following, 119 mutual, 9 don't follow back, 342 followers.
+const SAMPLE = {
+  following: 128,
+  followers: 342,
+  mutual: 119,
+  notFollowingBack: 9,
+};
+const RATE = Math.round((SAMPLE.mutual / SAMPLE.following) * 100);
+const RING_RADIUS = 15;
+const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
+
+const bars = [
   {
-    user: { username: "giulia.design", timestamp: 1773619200 },
-    badges: ["Restricted"],
+    label: "People you follow",
+    total: SAMPLE.following,
+    rest: SAMPLE.following - SAMPLE.mutual,
+    restClass: "bg-data-3",
   },
   {
-    user: { username: "luca.codes", timestamp: 1773619200 },
-    badges: ["Close Friend"],
+    label: "People who follow you",
+    total: SAMPLE.followers,
+    rest: SAMPLE.followers - SAMPLE.mutual,
+    restClass: "bg-data-2",
   },
 ];
-
-const sampleStats = [
-  { label: "Followers", value: "342" },
-  { label: "Mutual", value: "128" },
-  { label: "Don't follow you back", value: "9" },
-];
-
-const formatSampleDate = () => "Mar 16, 2026";
 
 export function ProductPreview() {
   return (
@@ -44,7 +49,7 @@ export function ProductPreview() {
       <div inert className="bg-surface-0 flex flex-col gap-3 p-4 text-start">
         <div className="flex items-center justify-between gap-3">
           <p className="text-fg text-[15px] font-semibold tracking-[-0.01em]">
-            Your network analysis
+            Your results
           </p>
           <span className="text-success inline-flex items-center gap-1 text-xs">
             <Icon
@@ -58,31 +63,74 @@ export function ProductPreview() {
           </span>
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
-          {sampleStats.map((stat) => (
-            <div
-              key={stat.label}
-              className="border-line-subtle bg-surface-1 rounded-control border p-3"
+        <div className="border-line-strong bg-surface-1 flex items-center gap-4 rounded-card border bg-[radial-gradient(120%_140%_at_0%_0%,color-mix(in_srgb,var(--color-success)_16%,transparent),transparent_55%)] p-4">
+          <div className="min-w-0 flex-1">
+            <p className="text-fg-muted flex items-center gap-1.5 text-[11px] font-medium">
+              <span
+                aria-hidden="true"
+                className="bg-data-3 size-1.5 rounded-full"
+              />
+              Don&apos;t follow you back
+            </p>
+            <p className="text-fg mt-1 text-[40px] leading-none font-semibold tracking-[-0.04em] tabular-nums">
+              {SAMPLE.notFollowingBack}
+            </p>
+            <p className="text-fg-muted mt-1 text-xs">
+              of the{" "}
+              <strong className="text-fg font-semibold">
+                {SAMPLE.following} people you follow
+              </strong>
+            </p>
+            <span className="bg-brand text-on-brand mt-3 inline-flex rounded-control px-3 py-1.5 text-xs font-semibold">
+              See who →
+            </span>
+          </div>
+          <div className="relative size-[72px] shrink-0">
+            <svg
+              viewBox="0 0 36 36"
+              aria-hidden="true"
+              className="size-full -rotate-90"
             >
-              <p className="text-fg-muted truncate text-[11px] font-medium">
-                {stat.label}
-              </p>
-              <p className="text-fg mt-1 text-xl leading-none font-semibold tracking-[-0.02em] tabular-nums">
-                {stat.value}
-              </p>
-            </div>
-          ))}
+              <circle
+                cx={18}
+                cy={18}
+                r={RING_RADIUS}
+                fill="none"
+                strokeWidth={3.2}
+                className="stroke-surface-2"
+              />
+              <circle
+                cx={18}
+                cy={18}
+                r={RING_RADIUS}
+                fill="none"
+                strokeWidth={3.2}
+                strokeLinecap="round"
+                strokeDasharray={RING_LENGTH}
+                strokeDashoffset={RING_LENGTH * (1 - RATE / 100)}
+                className="stroke-success"
+              />
+            </svg>
+            <span className="text-fg absolute inset-0 flex items-center justify-center text-sm font-semibold tabular-nums">
+              {RATE}%
+            </span>
+          </div>
         </div>
 
-        <div className="border-line-subtle bg-surface-1 divide-line-subtle flex flex-col divide-y rounded-control border px-1">
-          {sampleUsers.map(({ user, badges }) => (
-            <div key={user.username} className="py-0.5">
-              <UserListItem
-                user={user}
-                badges={badges}
-                formatDate={formatSampleDate}
-                appearance="row"
-              />
+        <div className="border-line-subtle bg-surface-1 flex flex-col gap-2.5 rounded-card border p-4">
+          {bars.map((bar) => (
+            <div key={bar.label}>
+              <p className="text-fg flex justify-between text-xs">
+                {bar.label}
+                <span className="font-semibold tabular-nums">{bar.total}</span>
+              </p>
+              <div className="mt-1.5 flex h-1.5 overflow-hidden rounded-full">
+                <span
+                  className="bg-data-1"
+                  style={{ width: `${(SAMPLE.mutual / bar.total) * 100}%` }}
+                />
+                <span className={`${bar.restClass} flex-1`} />
+              </div>
             </div>
           ))}
         </div>

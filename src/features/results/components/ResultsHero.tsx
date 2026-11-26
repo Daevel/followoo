@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Orbits } from "@/components/ui/Orbits";
 import type {
   FollowBackLevel,
   FollowBackRateResult,
@@ -82,7 +83,7 @@ export function ResultsHero({
     <section
       aria-label="Who doesn't follow you back"
       style={cardStyle}
-      className="shadow-elev-1 grid gap-5 rounded-card border p-5 text-start sm:p-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-8"
+      className="shadow-elev-1 relative grid gap-5 overflow-hidden rounded-card border p-5 text-start sm:p-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-8"
     >
       <div className="min-w-0">
         <p className="text-fg-muted flex items-center gap-2 text-xs font-medium">
@@ -124,9 +125,16 @@ export function ResultsHero({
 
       <div className="border-line-subtle flex items-center gap-4 border-t pt-4 lg:border-t-0 lg:pt-0">
         <div className="relative size-[92px] shrink-0">
+          {/* The rate is the center of the orbits, like the avatar on the
+              loading screen. Wide screens only: phones stay calm. */}
+          <Orbits
+            size={270}
+            dotScale={1.1}
+            className="absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 opacity-60 lg:block"
+          />
           <svg
             viewBox={`0 0 ${RING_SIZE} ${RING_SIZE}`}
-            className="size-full -rotate-90"
+            className="relative size-full -rotate-90"
             aria-hidden="true"
           >
             <circle
@@ -156,7 +164,7 @@ export function ResultsHero({
           </span>
         </div>
 
-        <div className="min-w-0">
+        <div className="relative min-w-0">
           <p className="text-fg-muted text-xs font-medium">Follow-back rate</p>
           <Badge tone={style.tone} size="sm" className="mt-1.5">
             {followBackRate.label}

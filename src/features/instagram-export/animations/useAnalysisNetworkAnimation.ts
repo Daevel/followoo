@@ -99,7 +99,8 @@ export function useAnalysisNetworkAnimation({
         });
       }
 
-      // Only the ghost blinks; an avatar at the center has no eyes to animate.
+      // The mascot blinks on its own (CSS); this only runs for an SVG with
+      // data-network-eyes.
       if (eyes.length > 0) {
         gsap
           .timeline({ repeat: -1, repeatDelay: 2.4, delay: 1.2 })
