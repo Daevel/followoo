@@ -103,10 +103,13 @@ function HistoryList({
   masterKey,
   onOpen,
   onCompared,
+  openLatest,
 }: {
   masterKey: Uint8Array<ArrayBuffer>;
   onOpen: (analysis: InstagramAnalysisResult) => void;
   onCompared: (comparison: AnalysisComparison) => void;
+  /** Open the latest comparison as soon as it's ready (from the results). */
+  openLatest: { current: boolean };
 }) {
   const { items, status, removeSnapshot } = useHistorySnapshots();
   const { openSnapshot, status: openStatus } = useOpenSnapshot();
@@ -138,6 +141,14 @@ function HistoryList({
       isCurrent = false;
     };
   }, [newestId, previousId, masterKey, compareLatest]);
+
+  // Coming from "See who unfollowed you" on the results page.
+  useEffect(() => {
+    if (latest && openLatest.current) {
+      openLatest.current = false;
+      onCompared(latest);
+    }
+  }, [latest, openLatest, onCompared]);
 
   function toggleSelected(id: string) {
     setSelectedIds((previous) => {
@@ -468,9 +479,14 @@ export function HistoryExperience() {
     }
   }, [view]);
 
+  // "See who unfollowed you" on the results page lands on ?open=latest.
+  const openLatest = useRef(searchParams.get("open") === "latest");
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: on mount only
   useEffect(() => {
-    if (view !== null) setSearchParams({}, { replace: true });
+    if (view !== null || searchParams.has("open")) {
+      setSearchParams({}, { replace: true });
+    }
   }, []);
 
   function openAnalysis(analysis: InstagramAnalysisResult) {
@@ -586,6 +602,7 @@ export function HistoryExperience() {
         masterKey={masterKey}
         onOpen={openAnalysis}
         onCompared={openComparison}
+        openLatest={openLatest}
       />
     );
   }

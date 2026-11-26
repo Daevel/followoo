@@ -42,4 +42,9 @@ export type ResultsLocationState = {
   analysis: InstagramAnalysisResult;
   /** History is activated but was locked, so this analysis wasn't saved. */
   isHistorySavePending: boolean;
+  /**
+   * A new analysis of the user's own export (not the demo, signed in): the
+   * results compare it with the last one saved in History.
+   */
+  isFreshAnalysis?: boolean;
 };

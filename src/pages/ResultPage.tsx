@@ -14,6 +14,7 @@ export function ResultPage() {
     <ResultsExperience
       analysis={state.analysis}
       isHistorySavePending={state.isHistorySavePending}
+      compareWithLastAnalysis={state.isFreshAnalysis ?? false}
     />
   );
 }
