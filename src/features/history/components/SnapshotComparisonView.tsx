@@ -1,28 +1,30 @@
-import { useState } from "react";
-import { Badge, type BadgeTone } from "@/components/ui/Badge";
+import clsx from "clsx";
+import { type CSSProperties, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
-import { SnapshotComparisonChart } from "@/components/ui/charts/SnapshotComparisonChart";
-import { Icon } from "@/components/ui/Icon";
 import { UserListItem } from "@/components/ui/UserListItem";
 import type {
   AnalysisComparison,
   ComparisonDiff,
-  SnapshotPeriodSummary,
 } from "@/features/relationship/services/analysisComparisonService";
 import { formatDate } from "@/lib";
-import { formatSnapshotDate } from "../utils/formatSnapshotDate";
+import { formatSnapshotDay } from "../utils/formatSnapshotDate";
 
 const VISIBLE_USERS_LIMIT = 8;
 
-function ComparisonCategoryList({
+function DiffList({
   title,
   diff,
-  tone,
+  countClass,
+  datePrefix,
+  empty,
 }: {
   title: string;
   diff: ComparisonDiff;
-  tone: BadgeTone;
+  countClass: string;
+  /** What the row date means, e.g. "Followed you since". */
+  datePrefix: string;
+  empty: string;
 }) {
   const [showAll, setShowAll] = useState(false);
   const visibleUsers = showAll
@@ -31,22 +33,27 @@ function ComparisonCategoryList({
   const remaining = diff.users.length - visibleUsers.length;
 
   return (
-    <div className="border-line-subtle bg-surface-1 shadow-elev-1 flex flex-col gap-3 rounded-card border p-5 text-start">
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-fg text-sm font-semibold">{title}</h3>
-        <Badge tone={tone}>{diff.count}</Badge>
-      </div>
+    <section className="border-line-subtle bg-surface-1 shadow-elev-1 flex flex-col gap-2 rounded-card border p-5 text-start">
+      <h3 className="text-fg flex items-center justify-between gap-3 text-sm font-semibold">
+        {title}
+        <span
+          className={clsx("text-xs font-semibold tabular-nums", countClass)}
+        >
+          {diff.count}
+        </span>
+      </h3>
 
       {diff.users.length === 0 ? (
-        <p className="text-fg-muted text-[13px]">No changes here.</p>
+        <p className="text-fg-muted text-[13px]">{empty}</p>
       ) : (
         <>
-          <ul className="flex flex-col gap-1.5">
+          <ul className="flex flex-col">
             {visibleUsers.map((user) => (
               <li key={user.username}>
                 <UserListItem
                   user={user}
                   formatDate={formatDate}
+                  datePrefix={datePrefix}
                   appearance="row"
                 />
               </li>
@@ -56,46 +63,65 @@ function ComparisonCategoryList({
             <button
               type="button"
               onClick={() => setShowAll(true)}
-              className="text-fg-muted hover:text-fg self-start text-[13px] font-medium underline-offset-2 hover:underline"
+              className="text-brand-fg focus-visible:shadow-ring self-start rounded-control text-[13px] font-medium outline-none hover:underline"
             >
               Show {remaining} more
             </button>
           )}
         </>
       )}
-    </div>
+    </section>
   );
 }
 
-// The data date decides which side is "before", so it leads; the save
-// date is secondary. Old exports without timestamps fall back to it.
-function periodLabel(summary: SnapshotPeriodSummary) {
-  const dataUntil = formatDate(summary.dataUntil ?? undefined);
-  return dataUntil
-    ? `Data up to ${dataUntil}`
-    : formatSnapshotDate(summary.createdAt);
-}
+type Trend = "up" | "down" | "neutral";
 
-function PeriodSide({
-  side,
-  summary,
+function Delta({
+  label,
+  from,
+  to,
+  change,
+  trend,
 }: {
-  side: "Before" | "After";
-  summary: SnapshotPeriodSummary;
+  label: string;
+  from: string;
+  to: string;
+  change: string;
+  trend: Trend;
 }) {
   return (
-    <div className="min-w-0">
-      <p className="text-fg-muted text-xs font-medium">{side}</p>
-      <p className="text-fg mt-0.5 text-sm font-semibold sm:text-base">
-        {periodLabel(summary)}
+    <div className="border-line-subtle bg-surface-0 min-w-0 rounded-control border px-4 py-3.5">
+      <p className="text-fg-muted truncate text-xs">{label}</p>
+      <p className="text-fg mt-1 text-xl font-semibold tracking-[-0.02em] tabular-nums">
+        {to}
       </p>
-      {summary.dataUntil !== null && (
-        <p className="text-fg-faint mt-0.5 text-xs">
-          Saved {formatSnapshotDate(summary.createdAt)}
-        </p>
-      )}
+      <p className="text-fg-faint mt-0.5 text-xs tabular-nums">
+        from {from} ·{" "}
+        <span
+          className={clsx(
+            "font-semibold",
+            trend === "up" && "text-success",
+            trend === "down" && "text-danger",
+            trend === "neutral" && "text-fg-muted"
+          )}
+        >
+          {change}
+        </span>
+      </p>
     </div>
   );
+}
+
+function signed(value: number, unit = "") {
+  if (value === 0) return `0${unit}`;
+  // A real minus sign, so "−5" lines up with "+12".
+  return `${value > 0 ? "+" : "−"}${Math.abs(value)}${unit}`;
+}
+
+/** Up is good unless `lowerIsBetter`; no change is neutral. */
+function trendOf(change: number, lowerIsBetter = false): Trend {
+  if (change === 0) return "neutral";
+  return change > 0 !== lowerIsBetter ? "up" : "down";
 }
 
 type SnapshotComparisonViewProps = {
@@ -103,122 +129,170 @@ type SnapshotComparisonViewProps = {
   onBack: () => void;
 };
 
+// Answer first, like the results page: how many people unfollowed you
+// between the two analyses, then what changed in the totals, then who.
+// Your own follows and unfollows sit in a collapsed row: they explain
+// part of the totals but aren't the question people come with.
 export function SnapshotComparisonView({
   comparison,
   onBack,
 }: SnapshotComparisonViewProps) {
-  const [showFollowing, setShowFollowing] = useState(false);
-  const chartData = [
-    {
-      category: "Followers",
-      older: comparison.older.followersCount,
-      newer: comparison.newer.followersCount,
-    },
-    {
-      category: "Following",
-      older: comparison.older.followingCount,
-      newer: comparison.newer.followingCount,
-    },
-    {
-      category: "Mutuals",
-      older: comparison.older.mutualsCount,
-      newer: comparison.newer.mutualsCount,
-    },
-  ];
+  const [showOwnChanges, setShowOwnChanges] = useState(false);
+  const { older, newer } = comparison;
+  const unfollowedYou = comparison.lostFollowers.count;
 
-  const olderLabel = periodLabel(comparison.older);
-  const newerLabel = periodLabel(comparison.newer);
+  const followers = newer.followersCount - older.followersCount;
+  const following = newer.followingCount - older.followingCount;
+  const notBack = newer.notFollowingBackCount - older.notFollowingBackCount;
+  const rateChange =
+    older.followBackRate !== null && newer.followBackRate !== null
+      ? newer.followBackRate - older.followBackRate
+      : null;
+
+  const heroStyle: CSSProperties = {
+    background: [
+      "radial-gradient(560px 240px at 10% 0%, color-mix(in srgb, var(--color-brand-fg) 14%, transparent), transparent 70%)",
+      "var(--color-surface-1)",
+    ].join(", "),
+  };
 
   return (
-    <div className="flex flex-col gap-6" data-page-animate="item">
-      <div className="border-line-subtle bg-surface-1 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 rounded-card border p-4 text-start sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto] sm:gap-4">
-        <PeriodSide side="Before" summary={comparison.older} />
-        <span
-          aria-hidden="true"
-          className="border-line-strong bg-surface-2 text-fg-muted flex size-8 items-center justify-center rounded-full border"
-        >
-          <Icon
-            name="arrowRight"
-            color="current"
-            width={14}
-            height={14}
-            aria-hidden="true"
+    <div className="flex flex-col gap-5" data-page-animate="item">
+      <Button
+        variant="ghost"
+        size="sm"
+        icon="arrowLeft"
+        onClick={onBack}
+        className="-ml-3 self-start"
+      >
+        Back to history
+      </Button>
+
+      <section
+        aria-label="Who unfollowed you"
+        style={heroStyle}
+        className="border-line-subtle shadow-elev-1 rounded-card border p-5 text-start sm:p-7"
+      >
+        <p className="text-fg-muted text-xs font-medium tabular-nums">
+          {formatSnapshotDay(older.createdAt)} →{" "}
+          {formatSnapshotDay(newer.createdAt)}
+        </p>
+        <p className="text-fg mt-2.5 text-[52px] leading-none font-semibold tracking-[-0.04em] tabular-nums sm:text-[64px]">
+          {unfollowedYou}
+        </p>
+        <p className="text-fg-muted mt-2 text-base sm:text-[17px]">
+          <strong className="text-fg font-semibold">
+            {unfollowedYou === 1
+              ? "person unfollowed you"
+              : "people unfollowed you"}
+          </strong>{" "}
+          between these two analyses.
+        </p>
+        <p className="text-fg-faint mt-2.5 max-w-xl text-xs leading-relaxed">
+          Also counted here: accounts that were deactivated, changed username or
+          blocked you. Instagram&apos;s export can&apos;t tell these apart.
+        </p>
+
+        <div className="mt-5 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+          <Delta
+            label="Followers"
+            from={String(older.followersCount)}
+            to={String(newer.followersCount)}
+            change={signed(followers)}
+            trend={trendOf(followers)}
           />
-        </span>
-        <PeriodSide side="After" summary={comparison.newer} />
-        <Button
-          variant="ghost"
-          size="sm"
-          icon="arrowLeft"
-          onClick={onBack}
-          className="col-span-3 justify-self-start sm:col-span-1 sm:justify-self-end"
-        >
-          Back to history
-        </Button>
-      </div>
+          <Delta
+            label="Following"
+            from={String(older.followingCount)}
+            to={String(newer.followingCount)}
+            change={signed(following)}
+            trend="neutral"
+          />
+          <Delta
+            label="Follow-back rate"
+            from={
+              older.followBackRate === null ? "–" : `${older.followBackRate}%`
+            }
+            to={
+              newer.followBackRate === null ? "–" : `${newer.followBackRate}%`
+            }
+            change={rateChange === null ? "–" : signed(rateChange, " pts")}
+            trend={rateChange === null ? "neutral" : trendOf(rateChange)}
+          />
+          <Delta
+            label="Don't follow you back"
+            from={String(older.notFollowingBackCount)}
+            to={String(newer.notFollowingBackCount)}
+            change={signed(notBack)}
+            trend={trendOf(notBack, true)}
+          />
+        </div>
+      </section>
 
       {comparison.dataOrderMismatch && (
         <Callout title="Check which export is which" variant="info">
-          The data inside the export saved more recently looks older than the
-          data inside the other one. Double check you picked the right files
-          before reading this comparison - the dates and numbers below still
-          follow when each one was saved.
+          The export saved more recently contains older data than the other one.
+          The comparison follows the order they were saved in.
         </Callout>
       )}
 
-      <SnapshotComparisonChart
-        data={chartData}
-        olderLabel={olderLabel}
-        newerLabel={newerLabel}
-      />
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <ComparisonCategoryList
+      <div className="grid gap-4 md:grid-cols-2">
+        <DiffList
+          title="Unfollowed you"
+          diff={comparison.lostFollowers}
+          countClass="text-danger"
+          datePrefix="Followed you since"
+          empty="Nobody unfollowed you between these two analyses."
+        />
+        <DiffList
           title="New followers"
           diff={comparison.newFollowers}
-          tone="success"
-        />
-        <ComparisonCategoryList
-          title="Followers lost"
-          diff={comparison.lostFollowers}
-          tone="danger"
-        />
-        <ComparisonCategoryList
-          title="New mutuals"
-          diff={comparison.newMutuals}
-          tone="success"
-        />
-        <ComparisonCategoryList
-          title="Mutuals lost"
-          diff={comparison.lostMutuals}
-          tone="danger"
+          countClass="text-success"
+          datePrefix="Followed you on"
+          empty="No new followers between these two analyses."
         />
       </div>
 
-      <div>
+      <section className="border-line-subtle bg-surface-1 shadow-elev-1 rounded-card border text-start">
         <button
           type="button"
-          onClick={() => setShowFollowing((previous) => !previous)}
-          className="text-fg-muted hover:text-fg text-sm font-medium underline-offset-2 hover:underline"
+          aria-expanded={showOwnChanges}
+          onClick={() => setShowOwnChanges((previous) => !previous)}
+          className="focus-visible:shadow-ring flex w-full items-center justify-between gap-4 rounded-card px-5 py-4 text-start outline-none"
         >
-          {showFollowing ? "Hide" : "Show"} following changes
+          <span>
+            <span className="text-fg block text-sm font-semibold">
+              Your own changes
+            </span>
+            <span className="text-fg-muted text-[13px]">
+              You followed {comparison.newFollowing.count} and unfollowed{" "}
+              {comparison.lostFollowing.count}.
+            </span>
+          </span>
+          <span className="text-brand-fg shrink-0 text-[13px] font-medium">
+            {showOwnChanges ? "Hide" : "Show"}
+          </span>
         </button>
 
-        {showFollowing && (
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <ComparisonCategoryList
-              title="New following"
+        {showOwnChanges && (
+          <div className="grid gap-4 px-5 pb-5 md:grid-cols-2">
+            <DiffList
+              title="You followed"
               diff={comparison.newFollowing}
-              tone="neutral"
+              countClass="text-fg-muted"
+              datePrefix="Followed on"
+              empty="You didn't follow anyone new."
             />
-            <ComparisonCategoryList
-              title="Unfollowed"
+            <DiffList
+              title="You unfollowed"
               diff={comparison.lostFollowing}
-              tone="neutral"
+              countClass="text-fg-muted"
+              datePrefix="Following since"
+              empty="You didn't unfollow anyone."
             />
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

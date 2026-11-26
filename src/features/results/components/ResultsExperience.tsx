@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { useResultsPageAnimation } from "@/animations/pages/useResultsPageAnimation";
+import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Field } from "@/components/ui/Field";
 import { Icon } from "@/components/ui/Icon";
@@ -55,10 +56,13 @@ function prefersReducedMotion() {
 export function ResultsExperience({
   analysis,
   isHistorySavePending = false,
+  onBack,
 }: {
   analysis: InstagramAnalysisResult;
   /** Fresh analysis that wasn't saved because history was locked. */
   isHistorySavePending?: boolean;
+  /** Shown as "Back to history" when a saved analysis is opened. */
+  onBack?: () => void;
 }) {
   const [sortBy, setSortBy] = useState<SortKey>("recentDesc");
   // Opens on the list in the address (#…) or on the answer people come
@@ -275,6 +279,17 @@ export function ResultsExperience({
             ref={rootRef}
             className="flex w-full min-w-0 flex-1 flex-col gap-5 pt-8 pb-12 text-start md:pt-12"
           >
+            {onBack && (
+              <Button
+                variant="ghost"
+                size="sm"
+                icon="arrowLeft"
+                onClick={onBack}
+                className="-ml-3 self-start"
+              >
+                Back to history
+              </Button>
+            )}
             <header data-animate="hero-item" className="flex flex-col gap-1.5">
               <p className="text-success inline-flex items-center gap-1.5 text-xs font-medium">
                 <Icon
