@@ -6,8 +6,9 @@ import { UserListItem } from "@/components/ui/UserListItem";
 import type {
   AnalysisComparison,
   ComparisonDiff,
+  RenamedAccount,
 } from "@/features/relationship/services/analysisComparisonService";
-import { formatDate } from "@/lib";
+import { formatDate, normalizeUsername } from "@/lib";
 import { formatSnapshotDay } from "../utils/formatSnapshotDate";
 
 const VISIBLE_USERS_LIMIT = 8;
@@ -74,6 +75,49 @@ function DiffList({
   );
 }
 
+// Renamed accounts, once each even when they are both a follower and
+// followed: listed under the new name (its profile link works) with the
+// old one underneath. They count neither as lost nor as new.
+function RenamedList({ renamed }: { renamed: RenamedAccount[] }) {
+  return (
+    <section className="border-line-subtle bg-surface-1 shadow-elev-1 flex flex-col gap-2 rounded-card border p-5 text-start">
+      <h3 className="text-fg flex items-center justify-between gap-3 text-sm font-semibold">
+        Changed username
+        <span className="text-fg-muted text-xs font-semibold tabular-nums">
+          {renamed.length}
+        </span>
+      </h3>
+      <p className="text-fg-muted text-[13px] leading-snug">
+        Same account, new name: they didn&apos;t unfollow you.
+      </p>
+      <ul className="flex flex-col">
+        {renamed.map(({ from, to }) => (
+          <li key={`${from.username}-${to.username}`}>
+            <UserListItem
+              user={to}
+              formatDate={() => `Previously @${from.username}`}
+              appearance="row"
+            />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function uniqueRenamed(comparison: AnalysisComparison): RenamedAccount[] {
+  const seen = new Set<string>();
+  return [
+    ...comparison.renamedFollowers,
+    ...comparison.renamedFollowing,
+  ].filter((pair) => {
+    const key = normalizeUsername(pair.to.username);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 type Trend = "up" | "down" | "neutral";
 
 function Delta({
@@ -91,7 +135,7 @@ function Delta({
 }) {
   return (
     <div className="border-line-subtle bg-surface-0 min-w-0 rounded-control border px-4 py-3.5">
-      <p className="text-fg-muted truncate text-xs">{label}</p>
+      <p className="text-fg-muted text-xs leading-snug">{label}</p>
       <p className="text-fg mt-1 text-xl font-semibold tracking-[-0.02em] tabular-nums">
         {to}
       </p>
@@ -140,6 +184,7 @@ export function SnapshotComparisonView({
   const [showOwnChanges, setShowOwnChanges] = useState(false);
   const { older, newer } = comparison;
   const unfollowedYou = comparison.lostFollowers.count;
+  const renamed = uniqueRenamed(comparison);
 
   const followers = newer.followersCount - older.followersCount;
   const following = newer.followingCount - older.followingCount;
@@ -189,8 +234,9 @@ export function SnapshotComparisonView({
           between these two analyses.
         </p>
         <p className="text-fg-faint mt-2.5 max-w-xl text-xs leading-relaxed">
-          Also counted here: accounts that were deactivated, changed username or
-          blocked you. Instagram&apos;s export can&apos;t tell these apart.
+          Also counted here: accounts that were deactivated or blocked you,
+          which Instagram&apos;s export can&apos;t tell apart. Accounts that
+          only changed username are recognized and listed separately.
         </p>
 
         <div className="mt-5 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
@@ -252,6 +298,8 @@ export function SnapshotComparisonView({
           empty="No new followers between these two analyses."
         />
       </div>
+
+      {renamed.length > 0 && <RenamedList renamed={renamed} />}
 
       <section className="border-line-subtle bg-surface-1 shadow-elev-1 rounded-card border text-start">
         <button

@@ -35,6 +35,12 @@ export type SnapshotPeriodSummary = {
   followBackRate: number | null;
 };
 
+/** The same account under a new username, in the older and newer export. */
+export type RenamedAccount = {
+  from: InstagramUser;
+  to: InstagramUser;
+};
+
 export type AnalysisComparison = {
   older: SnapshotPeriodSummary;
   newer: SnapshotPeriodSummary;
@@ -44,6 +50,14 @@ export type AnalysisComparison = {
   lostMutuals: ComparisonDiff;
   newFollowing: ComparisonDiff;
   lostFollowing: ComparisonDiff;
+  /**
+   * Followers who changed username between the two exports (see
+   * `pairRenamed`). They are taken out of `lostFollowers`/`newFollowers`
+   * (and of the mutual diffs): nobody actually left or arrived.
+   */
+  renamedFollowers: RenamedAccount[];
+  /** Same, for accounts the user follows: out of new/lost following. */
+  renamedFollowing: RenamedAccount[];
   /**
    * True when `older.dataUntil` is actually more recent (by day) than
    * `newer.dataUntil` - i.e. the export saved first contains data that
@@ -108,6 +122,65 @@ function summarize(
     notFollowingBackCount: sets.following.length - sets.mutuals.length,
     followBackRate: rate.level === "noData" ? null : rate.rate,
   };
+}
+
+/**
+ * Instagram's export has no stable account id, only usernames, so a
+ * follower who renames looks like one follower lost and one gained. But
+ * the follow itself keeps its timestamp (to the second) across a rename:
+ * a lost and a new entry with the same timestamp are the same account.
+ * Only unambiguous one-to-one matches are paired; entries without a
+ * timestamp, or sharing it with others, stay where they are.
+ */
+function pairRenamed(
+  lost: InstagramUser[],
+  gained: InstagramUser[]
+): { pairs: RenamedAccount[]; lost: InstagramUser[]; gained: InstagramUser[] } {
+  const byTimestamp = (users: InstagramUser[]) => {
+    const map = new Map<number, InstagramUser[]>();
+    for (const user of users) {
+      if (typeof user.timestamp !== "number" || user.timestamp <= 0) continue;
+      map.set(user.timestamp, [...(map.get(user.timestamp) ?? []), user]);
+    }
+    return map;
+  };
+  const lostByTime = byTimestamp(lost);
+  const gainedByTime = byTimestamp(gained);
+  const pairs: RenamedAccount[] = [];
+
+  for (const [timestamp, lostUsers] of lostByTime) {
+    const gainedUsers = gainedByTime.get(timestamp);
+    if (lostUsers.length === 1 && gainedUsers?.length === 1) {
+      pairs.push({ from: lostUsers[0], to: gainedUsers[0] });
+    }
+  }
+
+  const paired = new Set(pairs.flatMap((pair) => [pair.from, pair.to]));
+  return {
+    pairs,
+    lost: lost.filter((user) => !paired.has(user)),
+    gained: gained.filter((user) => !paired.has(user)),
+  };
+}
+
+function toDiff(users: InstagramUser[]): ComparisonDiff {
+  return { count: users.length, users };
+}
+
+/** Drops renamed accounts (either name) from a diff. */
+function withoutRenamed(
+  diff: ComparisonDiff,
+  renamed: RenamedAccount[]
+): ComparisonDiff {
+  const names = new Set(
+    renamed.flatMap((pair) => [
+      normalizeUsername(pair.from.username),
+      normalizeUsername(pair.to.username),
+    ])
+  );
+  return toDiff(
+    diff.users.filter((user) => !names.has(normalizeUsername(user.username)))
+  );
 }
 
 /** `a` minus `b`, by normalized username - users present in `a` but not `b`. */
@@ -192,16 +265,33 @@ export function compareAnalysisSnapshots(
 
   const olderSets = buildRelationshipSets(older.analysis);
   const newerSets = buildRelationshipSets(newer.analysis);
+  const followers = pairRenamed(
+    diffUsers(olderSets.followers, newerSets.followers).users,
+    diffUsers(newerSets.followers, olderSets.followers).users
+  );
+  const following = pairRenamed(
+    diffUsers(olderSets.following, newerSets.following).users,
+    diffUsers(newerSets.following, olderSets.following).users
+  );
+  const renamed = [...followers.pairs, ...following.pairs];
 
   return {
     older: summarize(older, olderSets),
     newer: summarize(newer, newerSets),
-    newFollowers: diffUsers(newerSets.followers, olderSets.followers),
-    lostFollowers: diffUsers(olderSets.followers, newerSets.followers),
-    newMutuals: diffUsers(newerSets.mutuals, olderSets.mutuals),
-    lostMutuals: diffUsers(olderSets.mutuals, newerSets.mutuals),
-    newFollowing: diffUsers(newerSets.following, olderSets.following),
-    lostFollowing: diffUsers(olderSets.following, newerSets.following),
+    newFollowers: toDiff(followers.gained),
+    lostFollowers: toDiff(followers.lost),
+    newMutuals: withoutRenamed(
+      diffUsers(newerSets.mutuals, olderSets.mutuals),
+      renamed
+    ),
+    lostMutuals: withoutRenamed(
+      diffUsers(olderSets.mutuals, newerSets.mutuals),
+      renamed
+    ),
+    newFollowing: toDiff(following.gained),
+    lostFollowing: toDiff(following.lost),
+    renamedFollowers: followers.pairs,
+    renamedFollowing: following.pairs,
     dataOrderMismatch,
   };
 }

@@ -18,6 +18,7 @@ export function SinceLastAnalysis({
   const { older, newer } = comparison;
   const unfollowed = comparison.lostFollowers;
   const newFollowers = comparison.newFollowers.count;
+  const renamedCount = comparison.renamedFollowers.length;
   const headline =
     unfollowed.count === 0
       ? "Nobody unfollowed you"
@@ -49,6 +50,7 @@ export function SinceLastAnalysis({
         </p>
         <p className="text-fg-muted mt-1 text-[13px] tabular-nums">
           {newFollowers} new {newFollowers === 1 ? "follower" : "followers"}
+          {renamedCount > 0 && ` · ${renamedCount} changed username`}
           {rateChange &&
             ` · follow-back rate ${rateChange.from}% → ${rateChange.to}%`}
         </p>
