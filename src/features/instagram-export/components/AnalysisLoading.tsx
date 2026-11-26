@@ -4,6 +4,12 @@ import { Container } from "@/components/ui/Container";
 import { chartTheme } from "@/components/ui/charts/chartTheme";
 import { Icon } from "@/components/ui/Icon";
 import {
+  LOGO_BODY,
+  LOGO_CENTER,
+  LOGO_EYES,
+  LOGO_MOUTH,
+} from "@/components/ui/logoShape";
+import {
   RELATIONSHIP_GROUPS,
   type RelationshipGroupCounts,
 } from "@/features/relationship/constants/relationshipGroups";
@@ -41,9 +47,6 @@ const STEPS = [
 const EXPECTED_MS = 2200;
 /** The dots sort themselves into orbits from this progress on. */
 const SETTLE_AT = 56;
-
-const LOGO_BODY =
-  "M20.512 20.965C19.5248 19.4874 18.9986 17.75 19 15.973V9.293C19.0237 7.17831 18.2308 5.13598 16.7864 3.59122C15.342 2.04645 13.3575 1.1183 11.246 0.999999C10.1749 0.967047 9.10811 1.14962 8.10893 1.53688C7.10976 1.92414 6.19856 2.50819 5.42944 3.25436C4.66032 4.00054 4.04895 4.89363 3.63162 5.88062C3.21428 6.86762 2.99949 7.9284 3 9V12C3.00344 14.9163 4.16347 17.7122 6.22563 19.7744C8.28778 21.8365 11.0837 22.9966 14 23H20C20.181 23 20.3587 22.9509 20.514 22.8579C20.6693 22.7648 20.7965 22.6314 20.8819 22.4718C20.9673 22.3121 21.0078 22.1323 20.999 21.9515C20.9902 21.7707 20.9325 21.5956 20.832 21.445L20.512 20.965ZM14 21C11.6139 20.9974 9.32622 20.0483 7.63896 18.361C5.95171 16.6738 5.00265 14.3861 5 12V9C5 7.4087 5.63214 5.88258 6.75736 4.75736C7.88258 3.63214 9.4087 3 11 3C11.062 3 11.124 3 11.186 3C12.7787 3.09912 14.2719 3.80857 15.3548 4.98071C16.4378 6.15285 17.027 7.69741 17 9.293V15.973C16.9984 17.7216 17.415 19.4452 18.215 21H14Z";
 
 function readMedia(query: string) {
   return typeof window !== "undefined" && window.matchMedia(query).matches;
@@ -208,15 +211,15 @@ export const AnalysisLoading = forwardRef<HTMLDivElement, AnalysisLoadingProps>(
                 <g data-network-ghost>
                   <circle r={20} className="fill-brand" />
                   <g
-                    transform="translate(-13.2 -13.2) scale(1.1)"
-                    className="fill-on-brand"
+                    transform={`scale(0.27) translate(${-LOGO_CENTER} ${-LOGO_CENTER})`}
                   >
-                    <path d={LOGO_BODY} />
-                    <g data-network-eyes>
-                      <rect x={7} y={8} width={2} height={4} rx={1} />
-                      <rect x={13} y={8} width={2} height={4} rx={1} />
+                    <path d={LOGO_BODY} className="fill-on-brand" />
+                    <g data-network-eyes className="fill-brand">
+                      {LOGO_EYES.map((eye) => (
+                        <rect key={eye.x} {...eye} />
+                      ))}
                     </g>
-                    <rect x={9} y={13} width={4} height={2} rx={1} />
+                    <rect {...LOGO_MOUTH} className="fill-brand" />
                   </g>
                 </g>
               )}
