@@ -1,3 +1,4 @@
+import type { MascotPose } from "@/components/ui/Mascot";
 import type { InstagramAnalysisResult } from "@/types/instagram.types";
 
 export type SortKey =
@@ -21,6 +22,9 @@ export type TabKey =
 export type ResultsEmptyState = {
   title: string;
   description: string;
+  /** Mascot pose: party when an empty list is good news, search for an
+   * empty search, sleep when there is simply nothing to show. */
+  mascot: MascotPose;
 };
 
 export type ResultsTabInfo = {

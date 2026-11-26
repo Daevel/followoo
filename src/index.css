@@ -184,6 +184,75 @@
   --clerk-font-family-buttons: var(--font-inter);
 }
 
+/* Mascot (src/components/ui/Mascot.tsx): it floats gently, blinks every
+   few seconds and waves. Orbits (Orbits.tsx) turn forever; each ring sets its
+   own duration and direction inline. */
+.mascot-animated .mascot-body {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: mascot-bob 3.4s ease-in-out infinite;
+}
+.mascot-animated .mascot-shadow {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: mascot-shadow 3.4s ease-in-out infinite;
+}
+.mascot-animated .mascot-eyes {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: mascot-blink 4.2s infinite;
+}
+.mascot-animated .mascot-wave {
+  transform-box: fill-box;
+  transform-origin: 80% 90%;
+  animation: mascot-wave 1.6s ease-in-out infinite;
+}
+.mascot-animated .mascot-float {
+  animation: mascot-float 2.4s ease-in-out infinite;
+}
+.orbit-spin {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: orbit-spin linear infinite;
+}
+@keyframes mascot-bob {
+  50% {
+    transform: translateY(-5px);
+  }
+}
+@keyframes mascot-shadow {
+  50% {
+    transform: scaleX(0.82);
+    opacity: 0.1;
+  }
+}
+@keyframes mascot-blink {
+  0%,
+  90%,
+  100% {
+    transform: scaleY(1);
+  }
+  94% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes mascot-wave {
+  50% {
+    transform: rotate(-22deg);
+  }
+}
+@keyframes mascot-float {
+  50% {
+    transform: translateY(-4px);
+    opacity: 0.6;
+  }
+}
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* "Reduce motion": every CSS transition and animation lands on its final
    state at once (GSAP is handled in src/animations/gsap.ts). Unlayered on
    purpose: it beats every Tailwind utility without !important. */

@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
+import { Mascot } from "@/components/ui/Mascot";
+import { Orbits } from "@/components/ui/Orbits";
 import { ProductPreview } from "./ProductPreview";
 
 const proofPoints = ["100% local", "No API calls", "Open Source (MIT)"];
@@ -17,7 +19,10 @@ export function HeroSection({ ctaRef }: HeroSectionProps) {
   const navigate = useNavigate();
 
   return (
-    <section data-section="hero" className="pt-12 pb-20 md:pt-20 md:pb-24">
+    <section
+      data-section="hero"
+      className="overflow-x-clip pt-12 pb-20 md:pt-20 md:pb-24"
+    >
       <Container
         size="app"
         className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_520px] lg:gap-14"
@@ -103,8 +108,28 @@ export function HeroSection({ ctaRef }: HeroSectionProps) {
           </ul>
         </div>
 
-        <div data-animate="hero-visual" className="min-w-0">
-          <ProductPreview />
+        {/* The mascot waves from the window's corner; on wide screens the
+            orbits turn behind it. Phones get a small, still-standing mascot
+            peeking from behind the window and no orbits. */}
+        <div data-animate="hero-visual" className="relative min-w-0">
+          <Orbits
+            size={760}
+            dotScale={0.55}
+            className="absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 opacity-85 lg:block"
+          />
+          <Mascot
+            pose="happy"
+            size={56}
+            className="absolute -top-10 right-5 lg:hidden"
+          />
+          <div className="relative">
+            <ProductPreview />
+          </div>
+          <Mascot
+            pose="wave"
+            size={112}
+            className="absolute -top-21 -right-6.5 hidden lg:block"
+          />
         </div>
       </Container>
     </section>

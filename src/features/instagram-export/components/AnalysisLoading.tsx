@@ -3,12 +3,7 @@ import { forwardRef, useEffect, useId, useMemo, useRef, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { chartTheme } from "@/components/ui/charts/chartTheme";
 import { Icon } from "@/components/ui/Icon";
-import {
-  LOGO_BODY,
-  LOGO_CENTER,
-  LOGO_EYES,
-  LOGO_MOUTH,
-} from "@/components/ui/logoShape";
+import { Mascot } from "@/components/ui/Mascot";
 import {
   RELATIONSHIP_GROUPS,
   type RelationshipGroupCounts,
@@ -27,7 +22,7 @@ type AnalysisLoadingProps = {
   counts: RelationshipGroupCounts | null;
   /**
    * Profile photo of the signed-in Followoo account (from Clerk, never from
-   * Instagram). Without one, the Followoo ghost sits at the center.
+   * Instagram). Without one, the mascot sits at the center, thinking.
    */
   avatarUrl?: string | null;
 };
@@ -209,18 +204,7 @@ export const AnalysisLoading = forwardRef<HTMLDivElement, AnalysisLoadingProps>(
                 </g>
               ) : (
                 <g data-network-ghost>
-                  <circle r={20} className="fill-brand" />
-                  <g
-                    transform={`scale(0.27) translate(${-LOGO_CENTER} ${-LOGO_CENTER})`}
-                  >
-                    <path d={LOGO_BODY} className="fill-on-brand" />
-                    <g data-network-eyes className="fill-brand">
-                      {LOGO_EYES.map((eye) => (
-                        <rect key={eye.x} {...eye} />
-                      ))}
-                    </g>
-                    <rect {...LOGO_MOUTH} className="fill-brand" />
-                  </g>
+                  <Mascot pose="think" size={50} x={-25} y={-27} />
                 </g>
               )}
             </svg>
