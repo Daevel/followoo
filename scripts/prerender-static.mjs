@@ -17,6 +17,9 @@ const routes = [
   "/terms-and-conditions",
   "/support",
   "/updates",
+  // Any unknown address: written to dist/404.html, which Vercel serves with
+  // a real 404 status for every path that matches no file or rewrite.
+  "/404",
 ];
 
 const siteUrl = "https://followoo.app";
@@ -96,11 +99,21 @@ const routeSeo = {
       "Read the latest Followoo updates, improvements and fixes for private Instagram export analysis.",
     canonical: `${siteUrl}/updates`,
   },
+  "/404": {
+    title: "Page not found - Followoo",
+    description:
+      "This page doesn't exist. Go back to Followoo's home or analyze your Instagram export privately in your browser.",
+    canonical: `${siteUrl}/`,
+  },
 };
 
 function getOutputPath(route) {
   if (route === "/") {
     return path.join(distDir, "index.html");
+  }
+
+  if (route === "/404") {
+    return path.join(distDir, "404.html");
   }
 
   return path.join(distDir, route.slice(1), "index.html");

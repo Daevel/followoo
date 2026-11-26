@@ -18,6 +18,11 @@ const InstructionsToStart = lazy(() =>
     default: module.InstructionsToStart,
   }))
 );
+const NotFound = lazy(() =>
+  import("./pages/NotFound").then((module) => ({
+    default: module.NotFound,
+  }))
+);
 const PrivacyPolicy = lazy(() =>
   import("./pages/PrivacyPolicy").then((module) => ({
     default: module.PrivacyPolicy,
@@ -54,6 +59,7 @@ export function AppRoutes() {
         GetStarted,
         History,
         InstructionsToStart,
+        NotFound,
         PrivacyPolicy,
         ResultPage,
         SupportSection,

@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from "react";
-import { Navigate, Route, Routes } from "react-router";
+import { Route, Routes } from "react-router";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
 import { RouteAwareErrorBoundary } from "./errors";
 
@@ -8,6 +8,7 @@ type AppRouteComponents = {
   GetStarted: ComponentType;
   History: ComponentType;
   InstructionsToStart: ComponentType;
+  NotFound: ComponentType;
   PrivacyPolicy: ComponentType;
   ResultPage: ComponentType;
   SupportSection: ComponentType;
@@ -26,6 +27,7 @@ export function AppRouteTree({ components, wrapper }: AppRouteTreeProps) {
     GetStarted,
     History,
     InstructionsToStart,
+    NotFound,
     PrivacyPolicy,
     ResultPage,
     SupportSection,
@@ -35,7 +37,6 @@ export function AppRouteTree({ components, wrapper }: AppRouteTreeProps) {
 
   const routes = (
     <Routes>
-      <Route path="*" element={<Navigate to="/" />} />
       <Route path="/" element={<Home />} />
       <Route path="/get-started" element={<GetStarted />} />
       <Route path="/instructions-to-start" element={<InstructionsToStart />} />
@@ -45,6 +46,7 @@ export function AppRouteTree({ components, wrapper }: AppRouteTreeProps) {
       <Route path="/results" element={<ResultPage />} />
       <Route path="/history" element={<History />} />
       <Route path="/updates" element={<Updates />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 
