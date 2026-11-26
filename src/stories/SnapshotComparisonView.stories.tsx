@@ -75,6 +75,21 @@ export const NobodyUnfollowed: Story = {
   },
 };
 
+/** A follower renamed: not counted as lost or new; the tag opens the list. */
+export const ChangedUsername: Story = {
+  args: {
+    comparison: {
+      ...comparison,
+      renamedFollowers: [
+        {
+          from: at("luca.photos", "2026-01-08T10:12:00Z"),
+          to: at("luca.shoots_film", "2026-01-08T10:12:00Z"),
+        },
+      ],
+    },
+  },
+};
+
 /** The export saved second holds older data than the first one. */
 export const DataOrderMismatch: Story = {
   args: {

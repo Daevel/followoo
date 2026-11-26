@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { Button } from "@/components/ui/Button";
+import { RenamedAccounts } from "@/features/history/components/RenamedAccounts";
 import { formatSnapshotDay } from "@/features/history/utils/formatSnapshotDate";
 import type { AnalysisComparison } from "@/features/relationship/services/analysisComparisonService";
 
@@ -18,7 +19,6 @@ export function SinceLastAnalysis({
   const { older, newer } = comparison;
   const unfollowed = comparison.lostFollowers;
   const newFollowers = comparison.newFollowers.count;
-  const renamedCount = comparison.renamedFollowers.length;
   const headline =
     unfollowed.count === 0
       ? "Nobody unfollowed you"
@@ -50,10 +50,12 @@ export function SinceLastAnalysis({
         </p>
         <p className="text-fg-muted mt-1 text-[13px] tabular-nums">
           {newFollowers} new {newFollowers === 1 ? "follower" : "followers"}
-          {renamedCount > 0 && ` · ${renamedCount} changed username`}
           {rateChange &&
             ` · follow-back rate ${rateChange.from}% → ${rateChange.to}%`}
         </p>
+        <div className="mt-2.5 empty:hidden">
+          <RenamedAccounts comparison={comparison} />
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-3.5">

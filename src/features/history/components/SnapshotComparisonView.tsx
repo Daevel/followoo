@@ -9,6 +9,7 @@ import type {
 } from "@/features/relationship/services/analysisComparisonService";
 import { formatDate } from "@/lib";
 import { formatSnapshotDay } from "../utils/formatSnapshotDate";
+import { RenamedAccounts } from "./RenamedAccounts";
 
 const VISIBLE_USERS_LIMIT = 8;
 
@@ -190,10 +191,11 @@ export function SnapshotComparisonView({
         </p>
         <p className="text-fg-faint mt-2.5 max-w-xl text-xs leading-relaxed">
           Also counted here: accounts that were deactivated or blocked you,
-          which Instagram&apos;s export can&apos;t tell apart. Accounts that
-          only changed username aren&apos;t counted: in your results they carry
-          a &ldquo;Renamed&rdquo; tag with their previous name.
+          which Instagram&apos;s export can&apos;t tell apart.
         </p>
+        <div className="mt-3 empty:hidden">
+          <RenamedAccounts comparison={comparison} />
+        </div>
 
         <div className="mt-5 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
           <Delta
