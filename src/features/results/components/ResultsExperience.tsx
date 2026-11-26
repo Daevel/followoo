@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router";
 import { ANALYTICS_EVENTS, analyticsService } from "@/analytics";
 import { useResultsPageAnimation } from "@/animations/pages/useResultsPageAnimation";
 import { Button } from "@/components/ui/Button";
@@ -15,6 +16,7 @@ import { SiteFooter } from "@/components/ui/SiteFooter";
 import { SortSelect } from "@/components/ui/SortSelect";
 import { UserListItem } from "@/components/ui/UserListItem";
 import { HistorySavePrompt } from "@/features/history/components/HistorySavePrompt";
+import { useSinceLastAnalysis } from "@/features/history/hooks/useSinceLastAnalysis";
 import type { RelationshipGroupCounts } from "@/features/relationship/constants/relationshipGroups";
 import { calculateFollowBackRate } from "@/features/relationship/services/followBackRateService";
 import {
@@ -37,6 +39,7 @@ import { ImproveActions } from "./ImproveActions";
 import { NetworkComposition } from "./NetworkComposition";
 import { ResultsHero } from "./ResultsHero";
 import { ResultsListSwitcher } from "./ResultsListSwitcher";
+import { SinceLastAnalysis } from "./SinceLastAnalysis";
 
 // Outline shown for a moment around the lists when a link opens one, in
 // the color of the list's group.
@@ -56,14 +59,19 @@ function prefersReducedMotion() {
 export function ResultsExperience({
   analysis,
   isHistorySavePending = false,
+  compareWithLastAnalysis = false,
   onBack,
 }: {
   analysis: InstagramAnalysisResult;
   /** Fresh analysis that wasn't saved because history was locked. */
   isHistorySavePending?: boolean;
+  /** Fresh analysis: compare it with the last one saved in History. */
+  compareWithLastAnalysis?: boolean;
   /** Shown as "Back to history" when a saved analysis is opened. */
   onBack?: () => void;
 }) {
+  const navigate = useNavigate();
+  const sinceLast = useSinceLastAnalysis(analysis, compareWithLastAnalysis);
   const [sortBy, setSortBy] = useState<SortKey>("recentDesc");
   // Opens on the list in the address (#…) or on the answer people come
   // for: who doesn't follow them back.
@@ -331,6 +339,15 @@ export function ResultsExperience({
               />
             </div>
 
+            {sinceLast.status === "ready" && (
+              <div data-animate="hero-item">
+                <SinceLastAnalysis
+                  comparison={sinceLast.comparison}
+                  onSeeWho={() => navigate("/history?open=latest")}
+                />
+              </div>
+            )}
+
             <div data-animate="hero-item">
               <NetworkComposition counts={counts} onOpenList={openList} />
             </div>
@@ -340,7 +357,7 @@ export function ResultsExperience({
             </div>
 
             <div data-animate="hero-item" className="empty:hidden">
-              <ComparisonNote />
+              {sinceLast.status !== "ready" && <ComparisonNote />}
             </div>
 
             <section

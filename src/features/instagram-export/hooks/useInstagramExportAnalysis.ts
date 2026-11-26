@@ -209,6 +209,7 @@ export function useInstagramExportAnalysis({ isDemo }: { isDemo: boolean }) {
       const resultsState: ResultsLocationState = {
         analysis,
         isHistorySavePending,
+        isFreshAnalysis: !isDemo && Boolean(isSignedIn),
       };
       navigate("/results", { state: resultsState });
     } catch (error) {

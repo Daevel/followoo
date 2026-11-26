@@ -37,7 +37,7 @@ export function HistorySavePrompt({ analysis }: HistorySavePromptProps) {
       setIsSaved(true);
       toastService.success({
         title: "Saved to your history",
-        description: "You can compare this analysis from the History page.",
+        description: "It's compared with your last analysis automatically.",
       });
     }
   }, [status, isSaved, isDismissed, analysis, saveSnapshot]);
