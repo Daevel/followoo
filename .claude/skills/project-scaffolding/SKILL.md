@@ -487,6 +487,7 @@ Rules:
 - Do not use lazy route components in `src/AppRoutesPrerender.tsx`; `renderToString` cannot wait for them and may output only fallback markup.
 - Avoid module-level DOM or animation side effects in code imported by prerendered routes.
 - When adding a new public SEO route, update the shared route tree, sitemap config, and prerender route list together.
+- Unknown paths: the route tree ends with `path="*"` -> `NotFound` (`src/pages/NotFound.tsx`, `noIndex`), never a redirect to `/`. The prerender list includes `/404`, written to `dist/404.html`; Vercel serves that file with a real 404 status for every path that matches no static file or rewrite, so a new client-only route also needs a `vercel.json` rewrite (like `/results` and `/history`) or it will 404 on reload.
 
 ## Errors
 
