@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
@@ -43,6 +43,12 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
   function handleClose() {
     if (isBusy) return;
     onClose();
+  }
+
+  // Buttons inside the dialog close it with its exit animation too.
+  const closeRef = useRef<(() => void) | null>(null);
+  function closeWithExit() {
+    (closeRef.current ?? onClose)();
   }
 
   const onSubmitPassphrase = passphraseForm.handleSubmit((values) => {
@@ -90,7 +96,12 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
   }
 
   return (
-    <Modal onClose={handleClose} labelledBy={TITLE_ID} closeDisabled={isBusy}>
+    <Modal
+      closeRef={closeRef}
+      onClose={handleClose}
+      labelledBy={TITLE_ID}
+      closeDisabled={isBusy}
+    >
       {step === "intro" && (
         <div className="flex flex-col gap-4">
           <h2 id={TITLE_ID} className="text-fg text-xl font-semibold">
@@ -239,7 +250,7 @@ export function SyncActivationWizard({ onClose }: SyncActivationWizardProps) {
             recovery code somewhere safe.
           </p>
           <div>
-            <Button onClick={onClose}>Done</Button>
+            <Button onClick={closeWithExit}>Done</Button>
           </div>
         </div>
       )}

@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button, buttonClasses } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Collapse } from "@/components/ui/Collapse";
 import { Container } from "@/components/ui/Container";
 import { FabIcon } from "@/components/ui/FabIcon";
 import { Icon, type IconName } from "@/components/ui/Icon";
@@ -59,7 +60,10 @@ function LatestChange({
       : "";
 
   return (
-    <section aria-labelledby="latest-change-title" className="text-start">
+    <section
+      aria-labelledby="latest-change-title"
+      className="animate-enter text-start"
+    >
       <div className="mb-2.5 flex items-baseline justify-between gap-3">
         <h2
           id="latest-change-title"
@@ -95,6 +99,9 @@ function LatestChange({
   );
 }
 
+/** How long a deleted row takes to fold away (Collapse toggle exit + 2 frames). */
+const ROW_EXIT_MS = 250;
+
 // Only mounted once encrypted history is unlocked - its own data fetch
 // (useHistorySnapshots) has no reason to run otherwise. The list arrives
 // newest first; the two newest entries are compared on their own, and
@@ -120,6 +127,11 @@ function HistoryList({
   const [deleteTarget, setDeleteTarget] = useState<SnapshotListItem | null>(
     null
   );
+  // The row folds away first, then the entry is deleted; on failure it
+  // opens again. Deleting only after the fold keeps the list from jumping.
+  const [leavingId, setLeavingId] = useState<string | null>(null);
+  const closeDeleteDialog = useRef<(() => void) | null>(null);
+  const confirmedDelete = useRef<SnapshotListItem | null>(null);
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -175,11 +187,27 @@ function HistoryList({
     }
   }
 
-  async function handleDelete(item: SnapshotListItem) {
+  function confirmDelete(item: SnapshotListItem) {
+    confirmedDelete.current = item;
+    (closeDeleteDialog.current ?? handleDeleteDialogClosed)();
+  }
+
+  // Called once the dialog's exit animation is over, however it closed.
+  function handleDeleteDialogClosed() {
     setDeleteTarget(null);
+    const item = confirmedDelete.current;
+    confirmedDelete.current = null;
+    if (item) void handleDelete(item);
+  }
+
+  async function handleDelete(item: SnapshotListItem) {
     setPendingId(item.id);
-    await removeSnapshot(item.id);
+    setLeavingId(item.id);
+    await new Promise((resolve) => window.setTimeout(resolve, ROW_EXIT_MS));
+    const removed = await removeSnapshot(item.id);
     setPendingId(null);
+    setLeavingId(null);
+    if (!removed) return;
     setSelectedIds((previous) =>
       previous.filter((selectedId) => selectedId !== item.id)
     );
@@ -218,7 +246,7 @@ function HistoryList({
 
   if (items.length === 0) {
     return (
-      <div className="border-line-subtle bg-surface-1 shadow-elev-1 flex flex-col items-center rounded-card border px-6 py-11 text-center">
+      <div className="border-line-subtle bg-surface-1 shadow-elev-1 animate-enter flex flex-col items-center rounded-card border px-6 py-11 text-center">
         <Mascot pose="sleep" size={96} />
         <h2 className="text-fg mt-3.5 text-lg font-semibold tracking-[-0.015em]">
           Nothing saved yet
@@ -249,7 +277,7 @@ function HistoryList({
   }
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="animate-enter flex flex-col gap-7">
       {items.length === 1 ? (
         <Callout title="Your first analysis is saved" variant="info">
           From your next analysis, Followoo compares it with this one and shows
@@ -271,14 +299,18 @@ function HistoryList({
 
       <section aria-labelledby="saved-title" className="text-start">
         <div className="mb-1 flex min-h-9 items-center justify-between gap-3">
-          <h2 id="saved-title" className="text-fg text-base font-semibold">
+          <h2
+            key={isSelecting ? "picking" : "saved"}
+            id="saved-title"
+            className="text-fg animate-fade-in text-base font-semibold"
+          >
             {isSelecting ? "Pick two analyses" : "Saved analyses"}{" "}
             <span className="text-fg-faint font-medium tabular-nums">
               {isSelecting ? `${selectedIds.length} of 2` : items.length}
             </span>
           </h2>
           {isSelecting ? (
-            <span className="flex items-center gap-2">
+            <span className="animate-fade-in flex items-center gap-2">
               <Button variant="ghost" size="sm" onClick={stopSelecting}>
                 Cancel
               </Button>
@@ -296,7 +328,7 @@ function HistoryList({
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-brand-fg"
+                className="text-brand-fg animate-fade-in"
                 onClick={() => setIsSelecting(true)}
               >
                 Compare other dates
@@ -313,45 +345,51 @@ function HistoryList({
             const date = formatSnapshotDate(item.createdAt);
 
             return (
-              <li
-                key={item.id}
-                className="border-line-subtle flex items-center gap-3 border-t py-3.5"
-              >
-                {isSelecting && (
-                  <Checkbox
-                    checked={isSelected}
-                    disabled={
-                      isComparing || (!isSelected && selectedIds.length >= 2)
-                    }
-                    onChange={() => toggleSelected(item.id)}
-                    aria-label={`Select ${date} for comparison`}
-                  />
-                )}
-                <span className="text-fg flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium">
-                  {date}
-                  {index === 0 && (
-                    <Badge tone="brand" size="sm">
-                      Latest
-                    </Badge>
-                  )}
-                </span>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  loading={isPending}
-                  disabled={isDeleting}
-                  onClick={() => handleOpen(item.id)}
-                >
-                  View
-                </Button>
-                <FabIcon
-                  size="sm"
-                  variant="ghost"
-                  icon="trash"
-                  disabled={isPending || isDeleting}
-                  onClick={() => setDeleteTarget(item)}
-                  aria-label={`Delete the analysis saved ${date}`}
-                />
+              <li key={item.id}>
+                <Collapse open={leavingId !== item.id} motion="toggle">
+                  <div className="border-line-subtle flex items-center border-t py-3.5">
+                    <Collapse open={isSelecting} axis="x">
+                      <span className="flex py-1 pr-3 pl-0.5">
+                        <Checkbox
+                          checked={isSelected}
+                          disabled={
+                            isComparing ||
+                            (!isSelected && selectedIds.length >= 2)
+                          }
+                          onChange={() => toggleSelected(item.id)}
+                          aria-label={`Select ${date} for comparison`}
+                        />
+                      </span>
+                    </Collapse>
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                      <span className="text-fg flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium">
+                        {date}
+                        {index === 0 && (
+                          <Badge tone="brand" size="sm">
+                            Latest
+                          </Badge>
+                        )}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        loading={isPending}
+                        disabled={isDeleting}
+                        onClick={() => handleOpen(item.id)}
+                      >
+                        View
+                      </Button>
+                      <FabIcon
+                        size="sm"
+                        variant="ghost"
+                        icon="trash"
+                        disabled={isPending || isDeleting}
+                        onClick={() => setDeleteTarget(item)}
+                        aria-label={`Delete the analysis saved ${date}`}
+                      />
+                    </div>
+                  </div>
+                </Collapse>
               </li>
             );
           })}
@@ -361,7 +399,8 @@ function HistoryList({
       {deleteTarget && (
         <Modal
           labelledBy="delete-snapshot-title"
-          onClose={() => setDeleteTarget(null)}
+          onClose={handleDeleteDialogClosed}
+          closeRef={closeDeleteDialog}
         >
           <h2
             id="delete-snapshot-title"
@@ -375,10 +414,18 @@ function HistoryList({
             stay.
           </p>
           <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
-            <Button variant="secondary" onClick={() => setDeleteTarget(null)}>
+            <Button
+              variant="secondary"
+              onClick={() =>
+                (closeDeleteDialog.current ?? handleDeleteDialogClosed)()
+              }
+            >
               Cancel
             </Button>
-            <Button variant="danger" onClick={() => handleDelete(deleteTarget)}>
+            <Button
+              variant="danger"
+              onClick={() => confirmDelete(deleteTarget)}
+            >
               Delete
             </Button>
           </div>
@@ -488,6 +535,22 @@ export function HistoryExperience() {
       setSearchParams({}, { replace: true });
     }
   }, []);
+
+  // Each state of the page (signed out, locked, the list, a comparison)
+  // enters like a page block when it replaces another; the first one is
+  // already part of the page's own entrance.
+  const screen = !isLoaded
+    ? "loading"
+    : !isSignedIn
+      ? "signed-out"
+      : !isSyncEnabled
+        ? "not-available"
+        : comparisonResult
+          ? "comparison"
+          : status;
+  const initialScreen = useRef(screen);
+  const hasScreenChanged = useRef(false);
+  if (screen !== initialScreen.current) hasScreenChanged.current = true;
 
   function openAnalysis(analysis: InstagramAnalysisResult) {
     setOpenedAnalysis(analysis);
@@ -628,7 +691,15 @@ export function HistoryExperience() {
             />
 
             <div data-page-animate="content" className="flex w-full flex-col">
-              {renderContent()}
+              <div
+                key={screen}
+                className={clsx(
+                  "flex w-full flex-col",
+                  hasScreenChanged.current && "animate-enter"
+                )}
+              >
+                {renderContent()}
+              </div>
             </div>
           </div>
         </Container>

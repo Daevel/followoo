@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { Collapse } from "@/components/ui/Collapse";
 import { Icon } from "@/components/ui/Icon";
 import { useSyncKey } from "@/providers/SyncKeyProvider";
 import { toastService } from "@/services/toastService";
@@ -14,6 +15,8 @@ const SyncUnlockWizard = lazy(() =>
 
 type HistorySavePromptProps = {
   analysis: InstagramAnalysisResult;
+  /** On the banner's wrapper, e.g. spacing that should fold with it. */
+  className?: string;
 };
 
 /**
@@ -22,7 +25,10 @@ type HistorySavePromptProps = {
  * the results are already on screen. "Unlock and save" opens the unlock
  * dialog and saves this analysis as soon as history is unlocked.
  */
-export function HistorySavePrompt({ analysis }: HistorySavePromptProps) {
+export function HistorySavePrompt({
+  analysis,
+  className,
+}: HistorySavePromptProps) {
   const { status } = useSyncKey();
   const { saveSnapshot } = useAutoSaveSnapshot();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -48,7 +54,12 @@ export function HistorySavePrompt({ analysis }: HistorySavePromptProps) {
 
   return (
     <>
-      {isBannerVisible && (
+      <Collapse
+        open={isBannerVisible}
+        motion="entrance"
+        unmountOnClose
+        className={className}
+      >
         <section
           aria-label="History"
           className="border-line-subtle bg-surface-1 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-card border px-4 py-3.5"
@@ -87,7 +98,7 @@ export function HistorySavePrompt({ analysis }: HistorySavePromptProps) {
             </Button>
           </div>
         </section>
-      )}
+      </Collapse>
 
       {isDialogOpen && (
         <Suspense fallback={null}>
