@@ -3,6 +3,7 @@ import { AppRouteTree } from "./AppRouteTree";
 import { GetStarted } from "./pages/GetStarted";
 import { History } from "./pages/History";
 import { InstructionsToStart } from "./pages/InstructionsToStart";
+import { NotFound } from "./pages/NotFound";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { ResultPage } from "./pages/ResultPage";
 import { SupportSection } from "./pages/SupportSection";
@@ -17,6 +18,7 @@ export function AppRoutesPrerender() {
         GetStarted,
         History,
         InstructionsToStart,
+        NotFound,
         PrivacyPolicy,
         ResultPage,
         SupportSection,

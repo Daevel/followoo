@@ -106,7 +106,7 @@ Avoid changing these semantics during refactors unless the user explicitly asks 
 - `src/AppRoutes.tsx` lazy-loads route pages for client bundle splitting, while `src/AppRoutesPrerender.tsx` imports route pages statically for SEO prerender output.
 - `src/AppRouteTree.tsx` owns the shared route definitions used by both client and prerender route wrappers.
 - `src/entry-prerender.tsx` and `scripts/prerender-static.mjs` generate static HTML for public SEO routes after the Vite client and SSR builds.
-- Vercel should serve prerendered public SEO routes from the generated static files; only SPA-only routes such as `/results` should rewrite to `/index.html`.
+- Vercel should serve prerendered public SEO routes from the generated static files; only SPA-only routes such as `/results` and `/history` should rewrite to `/index.html`. Any other path gets the prerendered `dist/404.html` (the `NotFound` page) with a 404 status.
 - PWA service worker registration, update prompts, and manifest injection are handled by `vite-plugin-pwa`; do not add a manual `public/sw.js` or manual `/manifest.json` link.
 - PWA install and update prompts use the global toast system via `src/features/pwa-install/hooks/usePwaInstallPrompt.ts` and `src/pwa/usePwaUpdateToast.ts`.
 - The viewport uses `viewport-fit=cover` with the iOS `black-translucent` status bar, so in the installed app the page extends under the notch/Dynamic Island and home indicator: anything pinned to a screen edge (header, `ScreenMount` toasts, future bottom bars) must offset itself with `env(safe-area-inset-*)`. Manifest `background_color`/`theme_color` and `<meta name="theme-color">` match `surface-0` (`#0b0d17`, which `color-bg` now aliases); change them together with that token.

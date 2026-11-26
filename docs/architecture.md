@@ -15,7 +15,7 @@ The privacy boundary is the point of the picture: the Instagram export ZIP is pa
 ```mermaid
 flowchart TB
     subgraph Browser["Browser - client-side, privacy-first core"]
-        SPA["React 19 + Vite 7 SPA<br/>routes: / /get-started /instructions-to-start<br/>/results /history /updates /support /privacy-and-policy /terms-and-conditions"]
+        SPA["React 19 + Vite 7 SPA<br/>routes: / /get-started /instructions-to-start<br/>/results /history /updates /support /privacy-and-policy /terms-and-conditions<br/>* (any other path): NotFound"]
         Parse["Instagram export parsing - JSZip<br/>(src/features/instagram-export)<br/>never leaves the device"]
         Analysis["Relationship analysis<br/>mutual, don't follow you back, you don't follow back,<br/>follow-back rate, other lists, relationship facts<br/>(src/features/relationship)"]
         Gate["useFreeAnalysisGate<br/>localStorage followoo_free_analysis_used"]
@@ -30,7 +30,7 @@ flowchart TB
 
     subgraph Vercel["Vercel"]
         Hosting["Static hosting + CDN<br/>production = main, preview = preview branch"]
-        Prerender["Prerendered public pages for SEO<br/>(scripts/prerender-static.mjs)"]
+        Prerender["Prerendered public pages for SEO<br/>+ 404.html for unknown paths<br/>(scripts/prerender-static.mjs)"]
         PWA["PWA manifest + service worker<br/>(vite-plugin-pwa)"]
     end
 
