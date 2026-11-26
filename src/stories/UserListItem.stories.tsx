@@ -30,3 +30,27 @@ export const UserListItem_: Story = {
     badges: ["Close Friend"],
   },
 };
+
+/**
+ * Badge con spiegazione: su desktop il fumetto si apre al passaggio del
+ * mouse (o con il focus da tastiera), su telefono la spiegazione è scritta
+ * accanto al badge.
+ */
+export const RenamedBadge: Story = {
+  args: {
+    user: { username: "luca.shoots_film", timestamp: 1767867120 },
+    formatDate: (timestamp) =>
+      timestamp
+        ? new Date(timestamp * 1000).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })
+        : null,
+    datePrefix: "Follows you since",
+    badges: [
+      { label: "Renamed", hint: "Previously @luca.photos" },
+      "Close Friend",
+    ],
+  },
+};

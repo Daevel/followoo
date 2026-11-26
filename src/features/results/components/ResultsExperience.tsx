@@ -14,7 +14,7 @@ import { Paginator } from "@/components/ui/Paginator";
 import Seo from "@/components/ui/Seo";
 import { SiteFooter } from "@/components/ui/SiteFooter";
 import { SortSelect } from "@/components/ui/SortSelect";
-import { UserListItem } from "@/components/ui/UserListItem";
+import { type UserListBadge, UserListItem } from "@/components/ui/UserListItem";
 import { HistorySavePrompt } from "@/features/history/components/HistorySavePrompt";
 import { useSinceLastAnalysis } from "@/features/history/hooks/useSinceLastAnalysis";
 import type { RelationshipGroupCounts } from "@/features/relationship/constants/relationshipGroups";
@@ -32,7 +32,7 @@ import {
   getResultsTabInfo,
 } from "@/features/results/config/resultTabContent";
 import type { SortKey, TabKey } from "@/features/results/types/results.types";
-import { formatDate } from "@/lib";
+import { formatDate, normalizeUsername } from "@/lib";
 import type { InstagramAnalysisResult } from "@/types/instagram.types";
 import { ComparisonNote } from "./ComparisonNote";
 import { ImproveActions } from "./ImproveActions";
@@ -72,6 +72,25 @@ export function ResultsExperience({
 }) {
   const navigate = useNavigate();
   const sinceLast = useSinceLastAnalysis(analysis, compareWithLastAnalysis);
+
+  // Accounts that changed username since the last analysis: same person,
+  // tagged "Renamed" with the old name, instead of counting as gone.
+  const previousNames = useMemo(() => {
+    const names = new Map<string, string>();
+    if (sinceLast.status !== "ready") return names;
+    const { renamedFollowers, renamedFollowing } = sinceLast.comparison;
+    for (const { from, to } of [...renamedFollowers, ...renamedFollowing]) {
+      names.set(normalizeUsername(to.username), from.username);
+    }
+    return names;
+  }, [sinceLast]);
+
+  function renamedBadges(username: string): UserListBadge[] {
+    const previous = previousNames.get(normalizeUsername(username));
+    return previous
+      ? [{ label: "Renamed", hint: `Previously @${previous}` }]
+      : [];
+  }
   const [sortBy, setSortBy] = useState<SortKey>("recentDesc");
   // Opens on the list in the address (#…) or on the answer people come
   // for: who doesn't follow them back.
@@ -470,11 +489,14 @@ export function ResultsExperience({
                           user={user}
                           formatDate={formatDate}
                           datePrefix={tabInfo.dateLabel}
-                          badges={getRelationshipFacts(
-                            factIndex,
-                            user.username,
-                            activeTab
-                          ).map((fact) => fact.label)}
+                          badges={[
+                            ...renamedBadges(user.username),
+                            ...getRelationshipFacts(
+                              factIndex,
+                              user.username,
+                              activeTab
+                            ).map((fact) => fact.label),
+                          ]}
                           appearance="row"
                         />
                       </li>
