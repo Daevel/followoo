@@ -92,7 +92,10 @@ export function UserListItem({
             ) : (
               // The row is one link, so the hint opens on hover, or while
               // the row has keyboard focus, never on a click of its own.
-              <span key={badge.label} className="group/badge relative">
+              <span
+                key={badge.label}
+                className="group/badge relative inline-flex"
+              >
                 <Badge tone={badge.tone ?? "brand"} size="sm">
                   {badge.label}
                 </Badge>
