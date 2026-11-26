@@ -4,7 +4,6 @@ import type {
   InstagramUser,
 } from "@/types/instagram.types";
 import {
-  buildComparisonChartData,
   compareAnalysisSnapshots,
   getAnalysisDataUntil,
 } from "./analysisComparisonService";
@@ -41,6 +40,46 @@ function buildAnalysis(
 }
 
 describe("compareAnalysisSnapshots", () => {
+  it("summarizes each side with don't-follow-you-back and the follow-back rate", () => {
+    const older = {
+      createdAt: "2026-10-17T09:00:00Z",
+      analysis: buildAnalysis({
+        mutual: [mkUser("a"), mkUser("b")],
+        unfollowers: [mkUser("c"), mkUser("d")],
+      }),
+    };
+    const newer = {
+      createdAt: "2026-11-24T18:00:00Z",
+      analysis: buildAnalysis({
+        mutual: [mkUser("a"), mkUser("b"), mkUser("c")],
+        unfollowers: [mkUser("d")],
+      }),
+    };
+
+    const result = compareAnalysisSnapshots(newer, older);
+
+    expect(result.older.notFollowingBackCount).toBe(2);
+    expect(result.older.followBackRate).toBe(50);
+    expect(result.newer.notFollowingBackCount).toBe(1);
+    expect(result.newer.followBackRate).toBe(75);
+  });
+
+  it("has no follow-back rate when an export follows nobody", () => {
+    const empty = {
+      createdAt: "2026-10-17T09:00:00Z",
+      analysis: buildAnalysis({}),
+    };
+    const later = {
+      createdAt: "2026-11-24T18:00:00Z",
+      analysis: buildAnalysis({}),
+    };
+
+    const result = compareAnalysisSnapshots(empty, later);
+
+    expect(result.older.followBackRate).toBeNull();
+    expect(result.newer.notFollowingBackCount).toBe(0);
+  });
+
   it("orders by createdAt (save date), not by the date of the data, even when they disagree", () => {
     // Saved first (createdAt earlier), but its data runs until October.
     const savedFirst = {
@@ -388,35 +427,5 @@ describe("getAnalysisDataUntil", () => {
     expect(
       getAnalysisDataUntil(buildAnalysis({ mutual: [mkUser("alice")] }))
     ).toBeNull();
-  });
-});
-
-describe("buildComparisonChartData", () => {
-  it("maps older/newer totals into one datum per category", () => {
-    const older = {
-      createdAt: "2026-09-01T00:00:00Z",
-      analysis: buildAnalysis({
-        mutual: ["alice"].map(mkUser),
-        followersOnly: ["bob"].map(mkUser),
-        unfollowers: ["carol"].map(mkUser),
-      }),
-    };
-    const newer = {
-      createdAt: "2026-10-01T00:00:00Z",
-      analysis: buildAnalysis({
-        mutual: ["alice", "dave"].map(mkUser),
-        followersOnly: [].map(mkUser),
-        unfollowers: ["carol", "erin"].map(mkUser),
-      }),
-    };
-
-    const comparison = compareAnalysisSnapshots(older, newer);
-    const chartData = buildComparisonChartData(comparison);
-
-    expect(chartData).toEqual([
-      { category: "Followers", older: 2, newer: 2 },
-      { category: "Following", older: 2, newer: 4 },
-      { category: "Mutuals", older: 1, newer: 2 },
-    ]);
   });
 });

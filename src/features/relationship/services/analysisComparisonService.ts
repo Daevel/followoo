@@ -3,6 +3,7 @@ import type {
   InstagramAnalysisResult,
   InstagramUser,
 } from "@/types/instagram.types";
+import { calculateFollowBackRate } from "./followBackRateService";
 
 export type SnapshotForComparison = {
   createdAt: string;
@@ -25,6 +26,13 @@ export type SnapshotPeriodSummary = {
   followersCount: number;
   followingCount: number;
   mutualsCount: number;
+  /** Following minus mutuals: you follow them, they don't follow you back. */
+  notFollowingBackCount: number;
+  /**
+   * Follow-back rate in %, computed exactly like the results page
+   * (calculateFollowBackRate). `null` when the export follows nobody.
+   */
+  followBackRate: number | null;
 };
 
 export type AnalysisComparison = {
@@ -46,12 +54,6 @@ export type AnalysisComparison = {
    * unsafe as an ordering criterion.
    */
   dataOrderMismatch: boolean;
-};
-
-export type ComparisonChartDatum = {
-  category: string;
-  older: number;
-  newer: number;
 };
 
 // normalizeUsername (trim+lowercase, @/lib) before comparing - see
@@ -88,6 +90,23 @@ function buildRelationshipSets(analysis: InstagramAnalysisResult) {
     ]),
     following: dedupeByUsername([...analysis.mutual, ...analysis.unfollowers]),
     mutuals: dedupeByUsername(analysis.mutual),
+  };
+}
+
+function summarize(
+  snapshot: SnapshotForComparison & { dataUntil: number | null },
+  sets: ReturnType<typeof buildRelationshipSets>
+): SnapshotPeriodSummary {
+  const rate = calculateFollowBackRate(snapshot.analysis);
+
+  return {
+    createdAt: snapshot.createdAt,
+    dataUntil: snapshot.dataUntil,
+    followersCount: sets.followers.length,
+    followingCount: sets.following.length,
+    mutualsCount: sets.mutuals.length,
+    notFollowingBackCount: sets.following.length - sets.mutuals.length,
+    followBackRate: rate.level === "noData" ? null : rate.rate,
   };
 }
 
@@ -175,20 +194,8 @@ export function compareAnalysisSnapshots(
   const newerSets = buildRelationshipSets(newer.analysis);
 
   return {
-    older: {
-      createdAt: older.createdAt,
-      dataUntil: older.dataUntil,
-      followersCount: olderSets.followers.length,
-      followingCount: olderSets.following.length,
-      mutualsCount: olderSets.mutuals.length,
-    },
-    newer: {
-      createdAt: newer.createdAt,
-      dataUntil: newer.dataUntil,
-      followersCount: newerSets.followers.length,
-      followingCount: newerSets.following.length,
-      mutualsCount: newerSets.mutuals.length,
-    },
+    older: summarize(older, olderSets),
+    newer: summarize(newer, newerSets),
     newFollowers: diffUsers(newerSets.followers, olderSets.followers),
     lostFollowers: diffUsers(olderSets.followers, newerSets.followers),
     newMutuals: diffUsers(newerSets.mutuals, olderSets.mutuals),
@@ -197,27 +204,4 @@ export function compareAnalysisSnapshots(
     lostFollowing: diffUsers(olderSets.following, newerSets.following),
     dataOrderMismatch,
   };
-}
-
-/** Pure data prep for the grouped bar chart - kept separate from rendering. */
-export function buildComparisonChartData(
-  comparison: AnalysisComparison
-): ComparisonChartDatum[] {
-  return [
-    {
-      category: "Followers",
-      older: comparison.older.followersCount,
-      newer: comparison.newer.followersCount,
-    },
-    {
-      category: "Following",
-      older: comparison.older.followingCount,
-      newer: comparison.newer.followingCount,
-    },
-    {
-      category: "Mutuals",
-      older: comparison.older.mutualsCount,
-      newer: comparison.newer.mutualsCount,
-    },
-  ];
 }

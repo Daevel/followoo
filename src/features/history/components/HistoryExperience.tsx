@@ -1,4 +1,5 @@
 import { SignInButton, useAuth } from "@clerk/react";
+import clsx from "clsx";
 import {
   lazy,
   type ReactNode,
@@ -7,14 +8,18 @@ import {
   useRef,
   useState,
 } from "react";
+import { Link, useSearchParams } from "react-router";
 import { useFeatureFlag } from "@/analytics";
 import { useStandardPageAnimation } from "@/animations/pages/useStandardPageAnimation";
-import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { Button, buttonClasses } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Container } from "@/components/ui/Container";
 import { FabIcon } from "@/components/ui/FabIcon";
 import { Icon, type IconName } from "@/components/ui/Icon";
+import { Mascot } from "@/components/ui/Mascot";
+import { Modal } from "@/components/ui/Modal";
 import { NavBar } from "@/components/ui/NavBar";
 import { PageHeader } from "@/components/ui/PageHeader";
 import Seo from "@/components/ui/Seo";
@@ -28,11 +33,72 @@ import type { InstagramAnalysisResult } from "@/types/instagram.types";
 import { useHistorySnapshots } from "../hooks/useHistorySnapshots";
 import { useOpenSnapshot } from "../hooks/useOpenSnapshot";
 import { useSnapshotComparison } from "../hooks/useSnapshotComparison";
-import { formatSnapshotDate } from "../utils/formatSnapshotDate";
+import type { SnapshotListItem } from "../services/historyService";
+import {
+  formatSnapshotDate,
+  formatSnapshotDay,
+} from "../utils/formatSnapshotDate";
 import { SnapshotComparisonView } from "./SnapshotComparisonView";
 
+function LatestChange({
+  comparison,
+  onOpen,
+}: {
+  comparison: AnalysisComparison;
+  onOpen: () => void;
+}) {
+  const { older, newer } = comparison;
+  const unfollowedYou = comparison.lostFollowers.count;
+  const headline =
+    unfollowedYou === 0
+      ? "Nobody unfollowed you"
+      : `${unfollowedYou} ${unfollowedYou === 1 ? "person" : "people"} unfollowed you`;
+  const rate =
+    older.followBackRate !== null && newer.followBackRate !== null
+      ? ` · follow-back rate ${older.followBackRate}% → ${newer.followBackRate}%`
+      : "";
+
+  return (
+    <section aria-labelledby="latest-change-title" className="text-start">
+      <div className="mb-2.5 flex items-baseline justify-between gap-3">
+        <h2
+          id="latest-change-title"
+          className="text-fg text-base font-semibold"
+        >
+          Latest change
+        </h2>
+        <p className="text-fg-faint hidden text-xs sm:block">
+          Your last two analyses, compared automatically
+        </p>
+      </div>
+      <div className="border-line-subtle bg-surface-1 shadow-elev-1 flex flex-col gap-4 rounded-card border p-5 sm:flex-row sm:items-center sm:gap-6 sm:px-6">
+        <div className="min-w-0 flex-1">
+          <p className="text-fg-muted text-xs font-medium tabular-nums">
+            {formatSnapshotDay(older.createdAt)} →{" "}
+            {formatSnapshotDay(newer.createdAt)}
+          </p>
+          <p className="text-fg mt-2 text-[22px] font-semibold tracking-[-0.025em] sm:text-[26px]">
+            {headline}
+          </p>
+          <p className="text-fg-muted mt-1 text-[13px] tabular-nums">
+            {comparison.newFollowers.count} new{" "}
+            {comparison.newFollowers.count === 1 ? "follower" : "followers"} ·
+            following {older.followingCount} → {newer.followingCount}
+            {rate}
+          </p>
+        </div>
+        <Button icon="arrowRight" iconPosition="right" onClick={onOpen}>
+          Open comparison
+        </Button>
+      </div>
+    </section>
+  );
+}
+
 // Only mounted once encrypted history is unlocked - its own data fetch
-// (useHistorySnapshots) has no reason to run otherwise.
+// (useHistorySnapshots) has no reason to run otherwise. The list arrives
+// newest first; the two newest entries are compared on their own, and
+// picking two other dates is the secondary path.
 function HistoryList({
   masterKey,
   onOpen,
@@ -45,23 +111,47 @@ function HistoryList({
   const { items, status, removeSnapshot } = useHistorySnapshots();
   const { openSnapshot, status: openStatus } = useOpenSnapshot();
   const { status: comparisonStatus, compare } = useSnapshotComparison();
+  const { compare: compareLatest } = useSnapshotComparison();
+  const [latest, setLatest] = useState<AnalysisComparison | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<SnapshotListItem | null>(
+    null
+  );
+  const [isSelecting, setIsSelecting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const isComparing = comparisonStatus === "loading";
+  const newestId = items[0]?.id;
+  const previousId = items[1]?.id;
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-run only when the two newest entries change, not on every new items array
+  useEffect(() => {
+    const [newest, previous] = items;
+    setLatest(null);
+    if (!newest || !previous) return;
+
+    let isCurrent = true;
+    void compareLatest(previous, newest, masterKey).then((comparison) => {
+      if (isCurrent) setLatest(comparison);
+    });
+    return () => {
+      isCurrent = false;
+    };
+  }, [newestId, previousId, masterKey, compareLatest]);
 
   function toggleSelected(id: string) {
     setSelectedIds((previous) => {
       if (previous.includes(id)) {
         return previous.filter((selectedId) => selectedId !== id);
       }
-
-      if (previous.length >= 2) {
-        return previous;
-      }
-
+      if (previous.length >= 2) return previous;
       return [...previous, id];
     });
+  }
+
+  function stopSelecting() {
+    setIsSelecting(false);
+    setSelectedIds([]);
   }
 
   async function handleOpen(id: string) {
@@ -74,16 +164,13 @@ function HistoryList({
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!window.confirm("Delete this history entry? This cannot be undone.")) {
-      return;
-    }
-
-    setPendingId(id);
-    await removeSnapshot(id);
+  async function handleDelete(item: SnapshotListItem) {
+    setDeleteTarget(null);
+    setPendingId(item.id);
+    await removeSnapshot(item.id);
     setPendingId(null);
     setSelectedIds((previous) =>
-      previous.filter((selectedId) => selectedId !== id)
+      previous.filter((selectedId) => selectedId !== item.id)
     );
   }
 
@@ -99,6 +186,7 @@ function HistoryList({
     const comparison = await compare(itemA, itemB, masterKey);
 
     if (comparison) {
+      stopSelecting();
       onCompared(comparison);
     }
   }
@@ -119,63 +207,123 @@ function HistoryList({
 
   if (items.length === 0) {
     return (
-      <p className="text-fg-muted text-start">
-        No saved analyses yet. Run an analysis while signed in to start building
-        your history.
-      </p>
+      <div className="border-line-subtle bg-surface-1 shadow-elev-1 flex flex-col items-center rounded-card border px-6 py-11 text-center">
+        <Mascot pose="sleep" size={96} />
+        <h2 className="text-fg mt-3.5 text-lg font-semibold tracking-[-0.015em]">
+          Nothing saved yet
+        </h2>
+        <p className="text-fg-muted mt-2 max-w-md text-sm leading-[1.55]">
+          Analyze your export while signed in and it&apos;s saved here,
+          encrypted. From the second one on, Followoo shows who unfollowed you
+          automatically.
+        </p>
+        <Link
+          to="/get-started"
+          className={clsx(
+            buttonClasses({ variant: "primary", size: "md" }),
+            "mt-6"
+          )}
+        >
+          Analyze your export
+          <Icon
+            name="arrowRight"
+            color="current"
+            width={16}
+            height={16}
+            aria-hidden="true"
+          />
+        </Link>
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {items.length < 2 ? (
-        <Callout title="Not enough history yet" variant="info">
-          Save at least one more analysis to be able to compare two snapshots.
+    <div className="flex flex-col gap-7">
+      {items.length === 1 ? (
+        <Callout title="Your first analysis is saved" variant="info">
+          From your next analysis, Followoo compares it with this one and shows
+          who unfollowed you. Nothing extra to do.
         </Callout>
+      ) : latest ? (
+        <LatestChange comparison={latest} onOpen={() => onCompared(latest)} />
       ) : (
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-fg-muted text-[13px]">
-            Select exactly two entries to compare them.
-          </p>
-          <Button
-            size="sm"
-            disabled={selectedIds.length !== 2}
-            loading={isComparing}
-            onClick={handleCompare}
-          >
-            Compare
-          </Button>
-        </div>
+        <Skeleton
+          variant="list"
+          items={1}
+          lines={2}
+          shape="rectangle"
+          animation="wave"
+          size="lg"
+          ariaLabel="Comparing your last two analyses"
+        />
       )}
 
-      <ul className="flex flex-col">
-        {items.map((item) => {
-          const isPending = pendingId === item.id && openStatus === "loading";
-          const isDeleting = pendingId === item.id;
-          const isSelected = selectedIds.includes(item.id);
-          const isSelectionDisabled =
-            isComparing || (!isSelected && selectedIds.length >= 2);
+      <section aria-labelledby="saved-title" className="text-start">
+        <div className="mb-1 flex min-h-9 items-center justify-between gap-3">
+          <h2 id="saved-title" className="text-fg text-base font-semibold">
+            {isSelecting ? "Pick two analyses" : "Saved analyses"}{" "}
+            <span className="text-fg-faint font-medium tabular-nums">
+              {isSelecting ? `${selectedIds.length} of 2` : items.length}
+            </span>
+          </h2>
+          {isSelecting ? (
+            <span className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={stopSelecting}>
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                disabled={selectedIds.length !== 2}
+                loading={isComparing}
+                onClick={handleCompare}
+              >
+                Compare
+              </Button>
+            </span>
+          ) : (
+            items.length >= 3 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-brand-fg"
+                onClick={() => setIsSelecting(true)}
+              >
+                Compare other dates
+              </Button>
+            )
+          )}
+        </div>
 
-          return (
-            <li
-              key={item.id}
-              className="border-line-subtle flex items-center justify-between gap-4 border-t py-4 text-start"
-            >
-              <span className="flex items-center gap-3">
-                {items.length >= 2 && (
+        <ul className="flex flex-col">
+          {items.map((item, index) => {
+            const isPending = pendingId === item.id && openStatus === "loading";
+            const isDeleting = pendingId === item.id;
+            const isSelected = selectedIds.includes(item.id);
+            const date = formatSnapshotDate(item.createdAt);
+
+            return (
+              <li
+                key={item.id}
+                className="border-line-subtle flex items-center gap-3 border-t py-3.5"
+              >
+                {isSelecting && (
                   <Checkbox
                     checked={isSelected}
-                    disabled={isSelectionDisabled}
+                    disabled={
+                      isComparing || (!isSelected && selectedIds.length >= 2)
+                    }
                     onChange={() => toggleSelected(item.id)}
-                    aria-label={`Select ${formatSnapshotDate(item.createdAt)} for comparison`}
+                    aria-label={`Select ${date} for comparison`}
                   />
                 )}
-                <span className="text-fg text-sm font-medium">
-                  {formatSnapshotDate(item.createdAt)}
+                <span className="text-fg flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium">
+                  {date}
+                  {index === 0 && (
+                    <Badge tone="brand" size="sm">
+                      Latest
+                    </Badge>
+                  )}
                 </span>
-              </span>
-
-              <span className="flex items-center gap-2">
                 <Button
                   size="sm"
                   variant="secondary"
@@ -190,14 +338,41 @@ function HistoryList({
                   variant="ghost"
                   icon="trash"
                   disabled={isPending || isDeleting}
-                  onClick={() => handleDelete(item.id)}
-                  aria-label="Delete this history entry"
+                  onClick={() => setDeleteTarget(item)}
+                  aria-label={`Delete the analysis saved ${date}`}
                 />
-              </span>
-            </li>
-          );
-        })}
-      </ul>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      {deleteTarget && (
+        <Modal
+          labelledBy="delete-snapshot-title"
+          onClose={() => setDeleteTarget(null)}
+        >
+          <h2
+            id="delete-snapshot-title"
+            className="text-fg pr-8 text-lg font-semibold tracking-[-0.015em]"
+          >
+            Delete this analysis?
+          </h2>
+          <p className="text-fg-muted mt-2 text-sm leading-[1.55]">
+            The analysis saved on {formatSnapshotDate(deleteTarget.createdAt)}{" "}
+            will be removed from your history for good. Your other analyses
+            stay.
+          </p>
+          <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
+            <Button variant="secondary" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={() => handleDelete(deleteTarget)}>
+              Delete
+            </Button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
@@ -258,6 +433,8 @@ export function HistoryExperience() {
   const [comparisonResult, setComparisonResult] =
     useState<AnalysisComparison | null>(null);
   const [dialog, setDialog] = useState<"unlock" | "activate" | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const view = searchParams.get("view");
   const hasPromptedUnlock = useRef(false);
 
   // Unlocking is part of opening History, not a separate step: the first
@@ -275,10 +452,48 @@ export function HistoryExperience() {
     animateItems: status === "unlocked" && !comparisonResult,
   });
 
+  // An opened analysis or comparison is a step in the browser history
+  // (?view=analysis|comparison), so Back returns to the list. The data
+  // itself only lives in memory. React Router updates the URL a moment
+  // after the state, so only the change from a view back to none closes
+  // it; a view in the URL with nothing in memory (after a reload) is
+  // dropped once, on mount.
+  const previousView = useRef(view);
+  useEffect(() => {
+    const previous = previousView.current;
+    previousView.current = view;
+    if (previous !== null && view === null) {
+      setOpenedAnalysis(null);
+      setComparisonResult(null);
+    }
+  }, [view]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: on mount only
+  useEffect(() => {
+    if (view !== null) setSearchParams({}, { replace: true });
+  }, []);
+
+  function openAnalysis(analysis: InstagramAnalysisResult) {
+    setOpenedAnalysis(analysis);
+    setSearchParams({ view: "analysis" });
+    window.scrollTo({ top: 0 });
+  }
+
+  function openComparison(comparison: AnalysisComparison) {
+    setComparisonResult(comparison);
+    setSearchParams({ view: "comparison" });
+    window.scrollTo({ top: 0 });
+  }
+
+  function backToList() {
+    // Same as the browser's Back, so the two never disagree.
+    window.history.back();
+  }
+
   // Reusing ResultsExperience as-is (its NavBar carries the History link)
   // instead of building a second results UI from scratch.
   if (openedAnalysis) {
-    return <ResultsExperience analysis={openedAnalysis} />;
+    return <ResultsExperience analysis={openedAnalysis} onBack={backToList} />;
   }
 
   function renderContent() {
@@ -364,13 +579,13 @@ export function HistoryExperience() {
     return comparisonResult ? (
       <SnapshotComparisonView
         comparison={comparisonResult}
-        onBack={() => setComparisonResult(null)}
+        onBack={backToList}
       />
     ) : (
       <HistoryList
         masterKey={masterKey}
-        onOpen={setOpenedAnalysis}
-        onCompared={setComparisonResult}
+        onOpen={openAnalysis}
+        onCompared={openComparison}
       />
     );
   }
