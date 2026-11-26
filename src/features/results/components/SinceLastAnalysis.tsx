@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { Button } from "@/components/ui/Button";
+import { RenamedAccounts } from "@/features/history/components/RenamedAccounts";
 import { formatSnapshotDay } from "@/features/history/utils/formatSnapshotDate";
 import type { AnalysisComparison } from "@/features/relationship/services/analysisComparisonService";
 
@@ -52,6 +53,9 @@ export function SinceLastAnalysis({
           {rateChange &&
             ` · follow-back rate ${rateChange.from}% → ${rateChange.to}%`}
         </p>
+        <div className="mt-2.5 empty:hidden">
+          <RenamedAccounts comparison={comparison} />
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-3.5">

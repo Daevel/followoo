@@ -40,6 +40,76 @@ function buildAnalysis(
 }
 
 describe("compareAnalysisSnapshots", () => {
+  it("recognizes a follower who changed username by the follow timestamp", () => {
+    const since = "2026-01-08T10:12:00Z";
+    const older = {
+      createdAt: "2026-10-17T09:00:00Z",
+      analysis: buildAnalysis({
+        followersOnly: [
+          mkUserAt("luca.photos", since),
+          mkUserAt("anna", "2025-02-01T00:00:00Z"),
+        ],
+      }),
+    };
+    const newer = {
+      createdAt: "2026-11-24T18:00:00Z",
+      analysis: buildAnalysis({
+        followersOnly: [mkUserAt("luca.shoots_film", since)],
+      }),
+    };
+
+    const result = compareAnalysisSnapshots(older, newer);
+
+    expect(
+      result.renamedFollowers.map((p) => [p.from.username, p.to.username])
+    ).toEqual([["luca.photos", "luca.shoots_film"]]);
+    expect(usernamesOf(result.lostFollowers.users)).toEqual(["anna"]);
+    expect(result.newFollowers.count).toBe(0);
+  });
+
+  it("does not pair ambiguous or undated entries", () => {
+    const same = "2026-01-08T10:12:00Z";
+    const older = {
+      createdAt: "2026-10-17T09:00:00Z",
+      analysis: buildAnalysis({
+        followersOnly: [mkUserAt("a", same), mkUserAt("b", same), mkUser("c")],
+      }),
+    };
+    const newer = {
+      createdAt: "2026-11-24T18:00:00Z",
+      analysis: buildAnalysis({
+        followersOnly: [mkUserAt("x", same), mkUser("y")],
+      }),
+    };
+
+    const result = compareAnalysisSnapshots(older, newer);
+
+    expect(result.renamedFollowers).toEqual([]);
+    expect(usernamesOf(result.lostFollowers.users)).toEqual(["a", "b", "c"]);
+    expect(usernamesOf(result.newFollowers.users)).toEqual(["x", "y"]);
+  });
+
+  it("keeps a renamed mutual out of the mutual and following diffs", () => {
+    const followedYou = "2026-01-08T10:12:00Z";
+    const older = {
+      createdAt: "2026-10-17T09:00:00Z",
+      analysis: buildAnalysis({ mutual: [mkUserAt("old.name", followedYou)] }),
+    };
+    const newer = {
+      createdAt: "2026-11-24T18:00:00Z",
+      analysis: buildAnalysis({ mutual: [mkUserAt("new.name", followedYou)] }),
+    };
+
+    const result = compareAnalysisSnapshots(older, newer);
+
+    expect(result.renamedFollowers).toHaveLength(1);
+    expect(result.renamedFollowing).toHaveLength(1);
+    expect(result.lostMutuals.count).toBe(0);
+    expect(result.newMutuals.count).toBe(0);
+    expect(result.lostFollowing.count).toBe(0);
+    expect(result.newFollowing.count).toBe(0);
+  });
+
   it("summarizes each side with don't-follow-you-back and the follow-back rate", () => {
     const older = {
       createdAt: "2026-10-17T09:00:00Z",

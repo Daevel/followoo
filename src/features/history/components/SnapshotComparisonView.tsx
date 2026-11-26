@@ -9,6 +9,7 @@ import type {
 } from "@/features/relationship/services/analysisComparisonService";
 import { formatDate } from "@/lib";
 import { formatSnapshotDay } from "../utils/formatSnapshotDate";
+import { RenamedAccounts } from "./RenamedAccounts";
 
 const VISIBLE_USERS_LIMIT = 8;
 
@@ -91,7 +92,7 @@ function Delta({
 }) {
   return (
     <div className="border-line-subtle bg-surface-0 min-w-0 rounded-control border px-4 py-3.5">
-      <p className="text-fg-muted truncate text-xs">{label}</p>
+      <p className="text-fg-muted text-xs leading-snug">{label}</p>
       <p className="text-fg mt-1 text-xl font-semibold tracking-[-0.02em] tabular-nums">
         {to}
       </p>
@@ -189,9 +190,12 @@ export function SnapshotComparisonView({
           between these two analyses.
         </p>
         <p className="text-fg-faint mt-2.5 max-w-xl text-xs leading-relaxed">
-          Also counted here: accounts that were deactivated, changed username or
-          blocked you. Instagram&apos;s export can&apos;t tell these apart.
+          Also counted here: accounts that were deactivated or blocked you,
+          which Instagram&apos;s export can&apos;t tell apart.
         </p>
+        <div className="mt-3 empty:hidden">
+          <RenamedAccounts comparison={comparison} />
+        </div>
 
         <div className="mt-5 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
           <Delta

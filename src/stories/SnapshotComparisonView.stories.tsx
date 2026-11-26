@@ -51,6 +51,8 @@ const comparison: AnalysisComparison = {
   lostMutuals: diff([]),
   newFollowing: diff([at("sofia_fer", "2026-11-02T00:00:00Z")]),
   lostFollowing: diff([at("old.brand", "2023-02-11T00:00:00Z")]),
+  renamedFollowers: [],
+  renamedFollowing: [],
   dataOrderMismatch: false,
 };
 
@@ -70,6 +72,21 @@ export const Default: Story = {};
 export const NobodyUnfollowed: Story = {
   args: {
     comparison: { ...comparison, lostFollowers: diff([]) },
+  },
+};
+
+/** A follower renamed: not counted as lost or new; the tag opens the list. */
+export const ChangedUsername: Story = {
+  args: {
+    comparison: {
+      ...comparison,
+      renamedFollowers: [
+        {
+          from: at("luca.photos", "2026-01-08T10:12:00Z"),
+          to: at("luca.shoots_film", "2026-01-08T10:12:00Z"),
+        },
+      ],
+    },
   },
 };
 
